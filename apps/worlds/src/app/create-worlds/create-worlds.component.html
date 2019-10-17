@@ -1,0 +1,7 @@
+<h2>Create Worlds</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <input type="number" formControlName="WorldsCount" /><br />
+  <span [hidden]="!form.get('WorldsCount').hasError('required')">WorldsCount is required</span><br />
+  
+  <button [disabled]="!form.valid">Save</button>
+</form>

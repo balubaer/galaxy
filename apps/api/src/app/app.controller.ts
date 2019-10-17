@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { Message } from '@galaxy/api-interfaces';
-import { IPlayer, World } from '@galaxy/game-objects';
+import { IPlayer, World, GamePref } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
 
@@ -22,10 +22,16 @@ export class AppController {
   @Get('World')
   getWorld(): World {
     const world : World = this.appService.getWorld();
-    const data = JSON.stringify(world);
+    let data = JSON.stringify(world);
     const fs = require('fs');
+    const gamePref: GamePref = {
+      worldCount: 1
+    };
 
     fs.writeFileSync('world.json', data);
+    data = JSON.stringify(gamePref);
+    fs.writeFileSync('gamePref.json', data);
+
     return world;
   }
 }
