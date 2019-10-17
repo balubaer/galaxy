@@ -200,6 +200,31 @@
           }
         }
       }
+    },
+    "game-objects": {
+      "root": "libs/game-objects",
+      "sourceRoot": "libs/game-objects/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/game-objects/tsconfig.lib.json",
+              "libs/game-objects/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/game-objects/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/game-objects/jest.config.js",
+            "tsConfig": "libs/game-objects/tsconfig.spec.json"
+          }
+        }
+      }
     }
   },
   "cli": {
