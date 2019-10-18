@@ -1,10 +1,25 @@
 # Galaxy
 
-Ist ein Spiel nach den <p align="center">
+Ist ein Spiel nach den
 <a href="http://rswgame.com/de/help/core_game_type.htm" 
    title="mehr Informationen">
     Regeln
 </a>
+
+## Implementierungen in anderen Sprachen
+
+### Java
+<a href="http://bitbucket.solutio.intern/users/bernd.niklas/repos/planetgeneratorjava/browse" 
+   title="PlanetGeneratorJava">
+    PlanetGeneratorJava
+</a>
+### Swift
+<a href="http://bitbucket.solutio.intern/users/bernd.niklas/repos/planetgeneratorswift/browse" 
+   title="PlanetGeneratorSwift">
+    PlanetGeneratorSwift
+</a>
+
+## Projekt
 
 This project was generated using [Nx](https://nx.dev).
 
