@@ -19,4 +19,13 @@ export class AppService {
     return new World;
   }
 
+  getWorlds(): World[] {
+    const fs = require('fs');
+
+    const rawdata = fs.readFileSync('worlds.json');
+    const worlds: World[] = JSON.parse(rawdata);
+    console.log(worlds);
+
+    return worlds;
+  }
 }

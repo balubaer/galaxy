@@ -33,5 +33,11 @@ export class AppController {
     fs.writeFileSync('gamePref.json', data);
 
     return world;
-  }
+  } 
+
+  @Get('Worlds')
+  getWorlds(): World[] {
+    const worlds : World[] = this.appService.getWorlds();
+    return worlds;
+  } 
 }
