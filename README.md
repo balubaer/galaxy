@@ -1,5 +1,11 @@
 # Galaxy
 
+Ist ein Spiel nach den <p align="center">
+<a href="http://rswgame.com/de/help/core_game_type.htm" 
+   title="mehr Informationen">
+    Regeln
+</a>
+
 This project was generated using [Nx](https://nx.dev).
 
 <p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/nx-logo.png" width="450"></p>
