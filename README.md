@@ -19,6 +19,11 @@ Ist ein Spiel nach den
     PlanetGeneratorSwift
 </a>
 
+## TODOs
+
+## Erledigte TODOs
+- Dice ist vollfunktionsfähig
+
 ## Projekt
 
 This project was generated using [Nx](https://nx.dev).

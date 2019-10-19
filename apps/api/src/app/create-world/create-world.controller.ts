@@ -12,11 +12,11 @@ export class CreateWorldController {
     getData(): String {
         const rawdata = fs.readFileSync('gamePref.json');
         const gamepref:GamePref = JSON.parse(rawdata);
-        const dice:Dice = new Dice;
         const worldCount = gamepref.worldCount;
+        const dice:Dice = new Dice(worldCount);
+
         const worlds:World[] = new Array;
 
-        dice.sides = worldCount
         let outString = '';
 
         for (let i = 0; i < worldCount; i++) {

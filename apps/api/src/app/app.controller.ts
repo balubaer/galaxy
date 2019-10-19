@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { Message } from '@galaxy/api-interfaces';
-import { IPlayer, World, GamePref } from '@galaxy/game-objects';
+import { Player, World, GamePref } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
 
@@ -15,7 +15,7 @@ export class AppController {
   }
 
   @Get('Player')
-  getPlayer(): IPlayer {
+  getPlayer(): Player {
     return  this.appService.getPlayer();
   }
 

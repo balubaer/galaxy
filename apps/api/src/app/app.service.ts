@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Message } from '@galaxy/api-interfaces';
-import { IPlayer, World } from '@galaxy/game-objects';
+import { Player, World } from '@galaxy/game-objects';
 
 @Injectable()
 export class AppService {
@@ -8,7 +8,7 @@ export class AppService {
     return { message: 'Welcome to api!' };
   }
 
-  getPlayer(): IPlayer {
+  getPlayer(): Player {
     return { name: 'Bernd',
              points: 10,
              ambushOff: false
