@@ -1,8 +1,14 @@
 export class Port {
-    private worldNumbers: number[];
+    worldNumbers: number[];
     private worldNumber: number;
 
     description: String;
+
+    constructor(worldNumbers: number[], worldNumber: number) {
+        this.worldNumbers = worldNumbers;
+        this.worldNumber = worldNumber;
+        this.description = this.makeDiscription(this.worldNumbers, this.worldNumber);
+    }
 
     makeDiscription(worldNumbers: number[], worldNumber: number): string {
         let result: string;
@@ -21,10 +27,8 @@ export class Port {
         return result;
     }
 
-constructor(worldNumbers: number[], worldNumber: number) {
-    this.worldNumbers = worldNumbers;
-    this.worldNumber = worldNumber;
-    this.description = this.makeDiscription(this.worldNumbers, this.worldNumber);
+    hasConnectionToWorld(worldNumber: number): boolean {
+        return (this.worldNumbers.indexOf(worldNumber) > -1);
     }
 
 }

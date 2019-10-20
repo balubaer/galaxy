@@ -1,8 +1,11 @@
-export class World {
-    number: Number = 0
-    name: String = `W${this.number}`;
+import { Port } from './port';
 
-    setNumber(aNumber:Number) {
+export class World {
+    number: number;
+    name: string;
+    port: Port;
+
+    setNumber(aNumber: number) {
         this.name = `W${this.number}`;
         this.number = aNumber;
     }

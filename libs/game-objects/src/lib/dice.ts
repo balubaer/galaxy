@@ -1,8 +1,12 @@
 export class Dice {
     private sides: number;
 
-    constructor(diceSides: number) {
-        this.sides = diceSides;
+    constructor() {
+        this.sides = 0;
+    }
+  
+    setSites(sides: number) {
+        this.sides = sides;
     }
 
     roll(): number {

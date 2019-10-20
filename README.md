@@ -20,9 +20,15 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
+- World fertig implementieren
+- Command fertig implementieren
+- Player fertig implementieren
+- PortFactory fertig implementieren
+- Fleet fertig implementieren
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig
+- Port ist vollfunktionsfähig
 
 ## Projekt
 

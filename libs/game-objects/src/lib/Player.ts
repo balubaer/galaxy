@@ -1,7 +1,15 @@
 export class Player {
-    name: String;
-    points: Number = 0;
+    playerName: string;
+    points: number;
     //role: Role?
-    ambushOff: Boolean = true;
-   // var teammates: Set <Player> = Set()  
+    ambushOff: boolean;
+   // var teammates: Set <Player> = Set()
+  
+   constructor(name: string) {
+       this.playerName = name;
+   }
+
+   stringName(): string {
+       return `[${this.playerName}]`;
+   }
 }

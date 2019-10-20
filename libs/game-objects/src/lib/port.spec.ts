@@ -13,6 +13,10 @@ describe('Port', () => {
   it('test makeDiscription', () => {
     expect(port.makeDiscription(worldNumbers, worldNumber)).toBe(testString);
   })
+  it('test has Connection to World', () => {
+    expect(port.hasConnectionToWorld(2)).toBe(true);
+    expect(port.hasConnectionToWorld(4)).toBe(false);
+  })
 });
 
 /*
