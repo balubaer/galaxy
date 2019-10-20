@@ -9,10 +9,8 @@ export class AppService {
   }
 
   getPlayer(): Player {
-    return { name: 'Bernd',
-             points: 10,
-             ambushOff: false
-                              }
+    const player: Player = new Player('Bernd');
+    return player;
   }
 
   getWorld(): World {
