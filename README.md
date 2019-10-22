@@ -22,13 +22,21 @@ Ist ein Spiel nach den
 ## TODOs
 - World fertig implementieren
 - Command fertig implementieren
+- CommandFactory fertig implementieren
+- DistanceLevel fertig implementieren
+- FinalPhaseCoreGame fertig implementieren
+- FleetMovement fertig implementieren
 - Player fertig implementieren
+- PlayerFactory fertig implementieren
+- OutputPlyerStatisticCoreGame fertig implementieren
 - PortFactory fertig implementieren
 - Fleet fertig implementieren
+- FleetFactory Test noch vervollständigen
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig
 - Port ist vollfunktionsfähig
+- FleetFactory ist vollfunktionsfähig
 
 ## Projekt
 
