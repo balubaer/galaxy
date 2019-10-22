@@ -31,7 +31,6 @@ Ist ein Spiel nach den
 - OutputPlyerStatisticCoreGame fertig implementieren
 - PortFactory fertig implementieren
 - Fleet fertig implementieren
-- FleetFactory Test noch vervollständigen
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig

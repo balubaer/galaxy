@@ -11,7 +11,7 @@ export class FleetFactory {
         this.fleetCount = aFleetCount;
     }
     
-    createWithPlanetArray(worldArray:Array <World>) {
+    createWithWorldArray(worldArray:Array <World>) {
         const worldCount = worldArray.length;
         const worldCountPlusOne = worldCount + 1;
         this.dice.setSites(worldArray.length)
