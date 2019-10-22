@@ -2,7 +2,7 @@ export class Port {
     worldNumbers: number[];
     private worldNumber: number;
 
-    description: String;
+    description: string;
 
     constructor(worldNumbers: number[], worldNumber: number) {
         this.worldNumbers = worldNumbers;
