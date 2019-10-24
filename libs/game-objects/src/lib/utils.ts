@@ -6,7 +6,7 @@ export function createBracketAndCommarStringWithStringArray(aStringArray:Array <
     for (const string of aStringArray) {
         result += string
         if (counter < maxCounter) {
-            result += ','
+            result += ', '
         }
         counter++
     }
@@ -14,3 +14,5 @@ export function createBracketAndCommarStringWithStringArray(aStringArray:Array <
 
     return result
 }
+
+export const TESTRESOUCESPATH = 'testResources';

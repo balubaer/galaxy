@@ -2,9 +2,9 @@ import { Fleet } from './fleet'
 import { World } from './world';
 
 export class FleetMovement {
-    fleet: Fleet;
-    toPlanet: World;
-    fromPlanet: World;
+    fleet: Fleet = null;
+    toPlanet: World = null;
+    fromPlanet: World = null;
     isMovementDone = false;
     
     description(): String {

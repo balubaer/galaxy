@@ -1,9 +1,9 @@
 import { Port } from './port';
 
 const worldNumbers = [2, 3];
-    const worldNumber = 1;
-    const port = new Port(worldNumbers, worldNumber);
-    const testString = 'W1(2,3)';
+const worldNumber = 1;
+const port = new Port(worldNumbers, worldNumber);
+const testString = 'W1(2,3)';
 
 describe('Port', () => {
   it('should create an instance', () => {

@@ -18,15 +18,14 @@ export function worldWithNumber(worlds: Array<World>, number: number): World {
 export class World {
     number: number;
     name: string;
-    port: Port;
-    fleets: Array<Fleet>;
-    fleetMovements: Array<FleetMovement>;
-    player: Player;
-    round: number;
+    port: Port = null;
+    fleets: Array<Fleet> = null;
+    fleetMovements: Array<FleetMovement> = null;
+    player: Player = null;
     dShips: number;
     dShipsAmbush: number;
     dShipsFired: boolean;
-    dShipsFiredFleet: Fleet;
+    dShipsFiredFleet: Fleet = null;
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
@@ -36,8 +35,8 @@ export class World {
     }
 
     setNumber(aNumber: number) {
-        this.name = `W${this.number}`;
         this.number = aNumber;
+        this.name = `W${this.number}`;
     }
 
     createResourceString(): string {
@@ -46,9 +45,6 @@ export class World {
 
         if (this.ambushOff === true) {
             resourceArray.push('Ambush "Aus" für diese Runde!!!');
-        }
-        if (this.round !== 0) {
-            resourceArray.push(`Runden=${this.round}`)
         }
         if (this.dShips !== 0) {
             if (this.dShipsAmbush === 0) {
@@ -70,7 +66,7 @@ export class World {
                 resourceArray.push(desc);
             } else if (this.dShipsFired === true) {
                 if (this.dShipsFiredFleet !== null) {
-                    resourceArray.push(`D-Schiffe=${this.dShips} (feuert auf ${this.dShipsFiredFleet.name})`);
+                    resourceArray.push(`D-Schiffe=${this.dShips} (feuert auf ${this.dShipsFiredFleet.name()})`);
                 }
             } else {
                 resourceArray.push(`D-Schiffe=${this.dShips}`);
@@ -84,7 +80,7 @@ export class World {
     }
 
     description(): string {
-        let desc = self.name
+        let desc = this.name;
         if (this.port !== null) {
             desc = this.port.description;
         }
@@ -106,7 +102,10 @@ export class World {
             }
         }
 
-        const fleetMovementsCount = this.fleetMovements.length;
+        let fleetMovementsCount = 0;
+        if (this.fleetMovements !== null) {
+            fleetMovementsCount = this.fleetMovements.length;
+        }
 
         if (fleetMovementsCount > 0) {
             let counter = 0;
@@ -124,24 +123,22 @@ export class World {
 
         return desc;
     }
-}
-/*
-    func addHitAmbushFleets(aFleet: Fleet) {
-        if hitAmbuschFleets.contains(aFleet) != true {
-            let fleetClone = Fleet();
-            fleetClone.player = aFleet.player
-            fleetClone.ships = aFleet.ships
-            fleetClone.number = aFleet.number
-            hitAmbuschFleets.append(fleetClone)
+
+    addHitAmbushFleets(aFleet: Fleet) {
+        if (this.hitAmbuschFleets.indexOf(aFleet) === -1) {
+            const fleetClone = new Fleet();
+            fleetClone.player = aFleet.player;
+            fleetClone.ships = aFleet.ships;
+            fleetClone.number = aFleet.number;
+            this.hitAmbuschFleets.push(fleetClone);
         }
     }
 
-    func hasConnectionToPlanet(aPlant: Planet) -> Bool {
-    var result = false
-    if port != nil {
-        result = port!.hasConnectionToPlanet(aPlant)
+    hasConnectionToWorld(aWorld: World): boolean {
+        let result = false;
+        if (this.port !== null) {
+            result = this.port.hasConnectionToWorld(aWorld.number);
+        }
+        return result;
     }
-    return result
 }
-    
-    */

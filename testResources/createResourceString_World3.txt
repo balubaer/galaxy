@@ -1,0 +1,1 @@
+(D-Schiffe=3 (feuert auf F3[ZAPHOD]))

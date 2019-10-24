@@ -10,14 +10,14 @@ export class Fleet {
 	firesTo: string;
 	firesToCommand: string;
 	moved: boolean;
-	hitAmbuschFleets: Array<number>;
+	hitAmbuschFleets: Array<number> = null;
 		    
 	
 
 	//TODO: niklas Kunstwerke ... V70:Plastik Mondstein
 	//TODO: niklas schenken
 
-    player: Player;
+    player: Player = null;
 
 
 	constructor() {
