@@ -98,7 +98,7 @@ export class World {
         if (this.fleets.length > 0) {
             for (const fleet of this.fleets) {
                 desc += '\n   '
-                desc += fleet.name();
+                desc += fleet.description();
             }
         }
 

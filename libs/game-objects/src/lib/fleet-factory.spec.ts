@@ -2,7 +2,7 @@ import { FleetFactory } from './fleet-factory';
 import { World } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 
-const fleetCount = 3;
+const fleetCount = 4;
 const worldsArray: Array <World> = new TestWorldsArrayFactory().worlds;
 const fleetFactory: FleetFactory = new FleetFactory(fleetCount);
 
@@ -22,6 +22,7 @@ describe('FleetFactory', () => {
         fleetNumberSet.add(aFleet);
       }
     }
-    expect(fleetNumberSet.size === fleetCount).toBe(true);
+    // (fleetCount + 1) weil World 4 schon eine Flotte hat
+    expect(fleetNumberSet.size === (fleetCount + 1)).toBe(true);
   });
 });

@@ -32,9 +32,20 @@ describe('World', () => {
   it('test description', () => {
     const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
     let testString = worlds[0].description();
-    fs.writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
+    let descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, 'utf8');
+    expect(testString).toBe(descriptionString);
 
-        //TODO: Test
+    testString = worlds[1].description();
+    descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, 'utf8');
+    expect(testString).toBe(descriptionString);
+
+    testString = worlds[2].description();
+    descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, 'utf8');
+    expect(testString).toBe(descriptionString);
+
+    testString = worlds[3].description();
+        fs.writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
+
   });
   it('test addHitAmbushFleets', () => {
         //TODO: Test

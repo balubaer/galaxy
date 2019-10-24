@@ -1,0 +1,2 @@
+W4(1,2) [ZAPHOD] (D-Schiffe=4)
+   F4[ZAPHOD] = 4
