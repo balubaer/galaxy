@@ -28,7 +28,6 @@ Ist ein Spiel nach den
 - PlayerFactory fertig implementieren
 - OutputPlyerStatisticCoreGame fertig implementieren
 - PortFactory fertig implementieren
-- Fleet fertig implementieren
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig
@@ -36,6 +35,8 @@ Ist ein Spiel nach den
 - FleetFactory ist vollfunktionsfähig
 - FleetMovement ist vollfunktionsfähig
 - World ist vollfunktionsfähig
+- Fleet ist vollfunktionsfähig
+
 
 ## Projekt
 
