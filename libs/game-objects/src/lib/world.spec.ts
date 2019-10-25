@@ -1,8 +1,10 @@
 import { World, worldWithNumber } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 import { TESTRESOUCESPATH } from './utils';
+import { Fleet } from './fleet';
 
 const fs = require('fs');
+const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 
 describe('World', () => {
   it('should create an instance', () => {
@@ -10,12 +12,10 @@ describe('World', () => {
   });
   it('test setNumber', () => {
     //TestWorldsArrayFactory use setNumber
-    const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
     expect(worlds[0].number).toBe(1);
     expect(worlds[1].name).toBe('W2');
   });
   it('test createResourceString', () => {
-    const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
     let testString = worlds[0].createResourceString();
     let resourceString = fs.readFileSync(`${TESTRESOUCESPATH}/createResourceString_World1.txt`, 'utf8');
     expect(testString).toBe(resourceString);
@@ -30,7 +30,6 @@ describe('World', () => {
     expect(testString).toBe(resourceString);
   });
   it('test description', () => {
-    const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
     let testString = worlds[0].description();
     let descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
@@ -44,18 +43,29 @@ describe('World', () => {
     expect(testString).toBe(descriptionString);
 
     testString = worlds[3].description();
-        fs.writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
+    descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, 'utf8');
+    expect(testString).toBe(descriptionString);
 
+    testString = worlds[4].description();
+    descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, 'utf8');
+    expect(testString).toBe(descriptionString);
+
+    //fs.writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
   });
   it('test addHitAmbushFleets', () => {
-        //TODO: Test
+    const testWorld = new World();
+    const testFleet = worlds[3].fleets[0];
 
+    testWorld.addHitAmbushFleets(testFleet);
+    expect(testWorld.hitAmbuschFleets[0].player).toBe(testFleet.player);
+    expect(testWorld.hitAmbuschFleets[0].ships).toBe(testFleet.ships);
+    expect(testWorld.hitAmbuschFleets[0].number).toBe(testFleet.number);
   });
   it('test hasConnectionToWorld', () => {
-        //TODO: Test
+    expect(worlds[0].hasConnectionToWorld(worlds[1])).toBe(true);
+    expect(worlds[0].hasConnectionToWorld(worlds[4])).toBe(false);
   });
   it('test funktion worldWithNumber', () => {
-    const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
     let foundWorld = null;
 
     foundWorld = worldWithNumber(worlds, worlds.length + 1);

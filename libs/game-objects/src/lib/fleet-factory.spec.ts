@@ -2,7 +2,7 @@ import { FleetFactory } from './fleet-factory';
 import { World } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 
-const fleetCount = 4;
+const fleetCount = 5;
 const worldsArray: Array <World> = new TestWorldsArrayFactory().worlds;
 const fleetFactory: FleetFactory = new FleetFactory(fleetCount);
 

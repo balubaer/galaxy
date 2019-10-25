@@ -3,14 +3,14 @@ import { World } from './world';
 
 export class FleetMovement {
     fleet: Fleet = null;
-    toPlanet: World = null;
-    fromPlanet: World = null;
+    toWorld: World = null;
+    fromWorld: World = null;
     isMovementDone = false;
     
-    description(): String {
+    description(): string {
         let desc = '(---)';
-        if (this.fleet !== null && this.toPlanet !== null) {
-            desc = `${this.fleet.name}-->${this.toPlanet.name}`;
+        if (this.fleet !== null && this.toWorld !== null) {
+            desc = `${this.fleet.name()}-->${this.toWorld.name}`;
         }
         return desc;
     }

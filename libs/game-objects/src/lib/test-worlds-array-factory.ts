@@ -2,6 +2,7 @@ import { World } from '..';
 import { Fleet } from './fleet';
 import { Player } from './player';
 import { Port } from './port';
+import { FleetMovement } from './fleet-movement';
 
 export class TestWorldsArrayFactory {
     worlds: Array<World> = new Array();
@@ -39,6 +40,17 @@ export class TestWorldsArrayFactory {
         world.fleets[0].number = 4;
         world.fleets[0].player = world.player;
         world.port = new Port([1,2], 4);
+        this.worlds.push(world);
+
+        world = new World();
+        world.setNumber(5);
+        world.dShips = 5;
+        world.player = new Player('ZAPHOD');
+        const fleetMovement = new FleetMovement();
+        fleetMovement.fleet = this.worlds[3].fleets[0];
+        fleetMovement.toWorld = this.worlds[3];
+        world.port = new Port([2,4], 5);
+        world.fleetMovements.push(fleetMovement);
         this.worlds.push(world);
 
     }

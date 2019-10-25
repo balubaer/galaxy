@@ -32,6 +32,8 @@ export class World {
 
     constructor() {
         this.fleets = new Array<Fleet>();
+        this.fleetMovements = new Array<FleetMovement>();
+        this.hitAmbuschFleets = new Array<Fleet>();
     }
 
     setNumber(aNumber: number) {
@@ -112,8 +114,8 @@ export class World {
 
             desc += '\n   (';
             for (const fleetMovement of this.fleetMovements) {
-                desc += fleetMovement.description
-                counter++
+                desc += fleetMovement.description();
+                counter++;
                 if (counter < fleetMovementsCount) {
                     desc += '';
                 }

@@ -20,12 +20,10 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-- World fertig implementieren
 - Command fertig implementieren
 - CommandFactory fertig implementieren
 - DistanceLevel fertig implementieren
 - FinalPhaseCoreGame fertig implementieren
-- FleetMovement fertig implementieren
 - Player fertig implementieren
 - PlayerFactory fertig implementieren
 - OutputPlyerStatisticCoreGame fertig implementieren
@@ -36,6 +34,8 @@ Ist ein Spiel nach den
 - Dice ist vollfunktionsfähig
 - Port ist vollfunktionsfähig
 - FleetFactory ist vollfunktionsfähig
+- FleetMovement ist vollfunktionsfähig
+- World ist vollfunktionsfähig
 
 ## Projekt
 

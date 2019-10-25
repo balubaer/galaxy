@@ -1,0 +1,2 @@
+W5(2,4) [ZAPHOD] (D-Schiffe=5)
+   (F4[ZAPHOD]-->W4)
