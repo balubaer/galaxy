@@ -11,14 +11,12 @@ export class TestWorldsArrayFactory {
         let world: World = new World();
         world.setNumber(1);
         world.dShips = 1;
-        world.port = new Port([2,3], 1);
         this.worlds.push(world);
 
         world = new World();
         world.setNumber(2);
         world.dShips = 2;
         world.ambushOff = true;
-        world.port = new Port([1,3], 2);
         this.worlds.push(world);
 
         world = new World();
@@ -28,7 +26,6 @@ export class TestWorldsArrayFactory {
         world.dShipsFiredFleet = new Fleet();
         world.dShipsFiredFleet.player = new Player('ZAPHOD');
         world.dShipsFiredFleet.number = 3;
-        world.port = new Port([1,2], 3);
         this.worlds.push(world);
 
         world = new World();
@@ -39,7 +36,6 @@ export class TestWorldsArrayFactory {
         world.fleets[0].ships = 4;
         world.fleets[0].number = 4;
         world.fleets[0].player = world.player;
-        world.port = new Port([1,2], 4);
         this.worlds.push(world);
 
         world = new World();
@@ -49,9 +45,12 @@ export class TestWorldsArrayFactory {
         const fleetMovement = new FleetMovement();
         fleetMovement.fleet = this.worlds[3].fleets[0];
         fleetMovement.toWorld = this.worlds[3];
-        world.port = new Port([2,4], 5);
         world.fleetMovements.push(fleetMovement);
         this.worlds.push(world);
-
+        this.worlds[0].port = new Port([this.worlds[1],this.worlds[2]], this.worlds[0]);
+        this.worlds[1].port = new Port([this.worlds[0]], this.worlds[1]);
+        this.worlds[2].port = new Port([this.worlds[0],this.worlds[1]], this.worlds[2]);
+        this.worlds[3].port = new Port([this.worlds[0],this.worlds[1],this.worlds[2]], this.worlds[3]);
+        this.worlds[4].port = new Port([this.worlds[0],this.worlds[1],this.worlds[2],this.worlds[3]], this.worlds[4]);
     }
 }

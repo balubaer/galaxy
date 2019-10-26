@@ -35,18 +35,23 @@ describe('World', () => {
     expect(testString).toBe(descriptionString);
 
     testString = worlds[1].description();
+    //fs.writeFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, testString);
     descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = worlds[2].description();
+    //fs.writeFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, testString);
     descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = worlds[3].description();
+    //fs.writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
     descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, 'utf8');
+
     expect(testString).toBe(descriptionString);
 
     testString = worlds[4].description();
+    //fs.writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
     descriptionString = fs.readFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 

@@ -1,25 +1,27 @@
+import { World } from './world';
+
 export class Port {
-    worldNumbers: number[];
-    private worldNumber: number;
+    worlds: World[];
+    private world: World;
 
     description: string;
 
-    constructor(worldNumbers: number[], worldNumber: number) {
-        this.worldNumbers = worldNumbers;
-        this.worldNumber = worldNumber;
-        this.description = this.makeDiscription(this.worldNumbers, this.worldNumber);
+    constructor(worlds: World[], world: World) {
+        this.worlds = worlds;
+        this.world = world;
+        this.description = this.makeDiscription(this.worlds, this.world);
     }
 
-    makeDiscription(worldNumbers: number[], worldNumber: number): string {
+    makeDiscription(worlds: World[], world: World): string {
         let result: string;
-        const connectionCount = worldNumbers.length;
+        const connectionCount = worlds.length;
 
-        result = `W${worldNumber}`;
+        result = `W${world.number}`;
 
         if (connectionCount > 0) {
             result += '(';
-            for (const aWorldNumber of worldNumbers){
-                result += `${aWorldNumber},`;
+            for (const aWorld of worlds){
+                result += `${aWorld.number},`;
             }
             result = result.substring(0, result.length - 1);
             result += ')';
@@ -27,8 +29,8 @@ export class Port {
         return result;
     }
 
-    hasConnectionToWorld(worldNumber: number): boolean {
-        return (this.worldNumbers.indexOf(worldNumber) > -1);
+    hasConnectionToWorld(world: World): boolean {
+        return (this.worlds.indexOf(world) > -1);
     }
 
 }

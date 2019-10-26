@@ -1,11 +1,10 @@
 import { PortFactory } from './portfactory';
 import { World } from './world';
 import { Port } from './port';
+import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 
 const portFactory: PortFactory = new PortFactory();
-const world: World = new World();
-
-world.setNumber(1);
+const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 
 describe('PortFactory', () => {
   it('should create an instance', () => {
@@ -14,23 +13,16 @@ describe('PortFactory', () => {
   
   it('test Method hasWorldMaxConnetion', () => {
     //MaxConnetion === 3
-    world.port = new Port([2, 3, 4], 1);;
-    expect(portFactory.hasWorldMaxConnetion(world)).toBeTruthy();
-    world.port = new Port([3, 4], 1);
-    expect(portFactory.hasWorldMaxConnetion(world)).toBeFalsy();
-    world.port = new Port([3, 4, 5, 6], 1);
-    expect(portFactory.hasWorldMaxConnetion(world)).toBeFalsy();
+    expect(portFactory.hasWorldMaxConnetion(worlds[3])).toBeTruthy();
+    expect(portFactory.hasWorldMaxConnetion(worlds[0])).toBeFalsy();
+    expect(portFactory.hasWorldMaxConnetion(worlds[4])).toBeFalsy();
   });
 
   it('test Method hasWorldEnoughConnection', () => {
     //MaxConnetion === 3
-    world.port = new Port([2, 3, 4], 1);;
-    expect(portFactory.hasWorldEnoughConnection(world)).toBeTruthy();
-    world.port = new Port([3, 4], 1);
-    expect(portFactory.hasWorldEnoughConnection(world)).toBeTruthy();
-    world.port = new Port([4], 1);
-    expect(portFactory.hasWorldEnoughConnection(world)).toBeFalsy();
-    world.port = new Port([3, 4, 5, 6], 1);
-    expect(portFactory.hasWorldEnoughConnection(world)).toBeFalsy();
+    expect(portFactory.hasWorldEnoughConnection(worlds[3])).toBeTruthy();
+    expect(portFactory.hasWorldEnoughConnection(worlds[0])).toBeTruthy();
+    expect(portFactory.hasWorldEnoughConnection(worlds[1])).toBeFalsy();
+    expect(portFactory.hasWorldEnoughConnection(worlds[4])).toBeFalsy();
   });
 });

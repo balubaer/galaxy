@@ -26,7 +26,7 @@ export class PortFactory {
     hasWorldMaxConnetion(world: World): boolean {
         let result = false;
         if (world.port !== null) {
-            const connectionCount = world.port.worldNumbers.length;
+            const connectionCount = world.port.worlds.length;
             if (connectionCount === this.maxCount) {
                 result = true;
             }
@@ -37,7 +37,7 @@ export class PortFactory {
     hasWorldEnoughConnection(world: World): boolean {
         let result = false;
         if (world.port !== null) {
-            const connectionCount = world.port.worldNumbers.length;
+            const connectionCount = world.port.worlds.length;
             if (connectionCount >= 2 && connectionCount <= this.maxCount) {
                 result = true;
             }

@@ -1,9 +1,14 @@
 import { Port } from './port';
+import { TestWorldsArrayFactory } from './test-worlds-array-factory';
+import { World } from '..';
 
-const worldNumbers = [2, 3];
-const worldNumber = 1;
-const port = new Port(worldNumbers, worldNumber);
+const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
+const twoWorlds = [worlds[1], worlds[2]];
+const world = worlds[0];
+const port = new Port(twoWorlds, world);
 const testString = 'W1(2,3)';
+const world2 = worlds[1];
+const world4 = worlds[3];
 
 describe('Port', () => {
   it('should create an instance', () => {
@@ -11,11 +16,11 @@ describe('Port', () => {
     expect(port.description).toBe(testString);
   });
   it('test makeDiscription', () => {
-    expect(port.makeDiscription(worldNumbers, worldNumber)).toBe(testString);
+    expect(port.makeDiscription(twoWorlds, world)).toBe(testString);
   })
   it('test has Connection to World', () => {
-    expect(port.hasConnectionToWorld(2)).toBe(true);
-    expect(port.hasConnectionToWorld(4)).toBe(false);
+    expect(port.hasConnectionToWorld(world2)).toBe(true);
+    expect(port.hasConnectionToWorld(world4)).toBe(false);
   })
 });
 

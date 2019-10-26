@@ -139,7 +139,7 @@ export class World {
     hasConnectionToWorld(aWorld: World): boolean {
         let result = false;
         if (this.port !== null) {
-            result = this.port.hasConnectionToWorld(aWorld.number);
+            result = this.port.hasConnectionToWorld(aWorld);
         }
         return result;
     }
