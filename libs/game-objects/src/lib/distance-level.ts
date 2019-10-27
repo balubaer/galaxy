@@ -1,4 +1,4 @@
-import { World } from '..';
+import { World } from './world';
 import { Port } from './port';
 
 export class DistanceLevel {

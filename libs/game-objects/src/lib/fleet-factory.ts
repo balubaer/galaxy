@@ -1,4 +1,4 @@
-import { Dice } from '..'
+import { Dice } from './dice'
 import { World, worldWithNumber } from './world';
 import { Fleet } from './fleet';
 

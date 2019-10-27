@@ -1,4 +1,4 @@
-import { Player } from '..'
+import { Player } from './player'
 
 export interface ExecuteCommand {
     executeCommand(): void;

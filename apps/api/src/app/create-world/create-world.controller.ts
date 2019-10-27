@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { Dice, GamePref, World } from '@galaxy/game-objects';
+import { Message } from '@galaxy/api-interfaces';
 
 const fs = require('fs');
 
@@ -9,7 +10,7 @@ export class CreateWorldController {
     constructor(private readonly appService: AppService) {}
 
     @Get('CreateWorld')
-    getData(): String {
+    getData(): Message {
         const rawdata = fs.readFileSync('gamePref.json');
         const gamepref:GamePref = JSON.parse(rawdata);
         const worldCount = gamepref.worldCount;
@@ -30,7 +31,7 @@ export class CreateWorldController {
         const data = JSON.stringify(worlds);
         fs.writeFileSync('worlds.json', data);
         fs.writeFileSync('worlds.txt', outString);
-        return outString;
+        return { message: 'OK' };
       }
 
     @Post('SetGamePref')

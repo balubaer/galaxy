@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Validators, FormBuilder, FormGroup} from '@angular/forms';
 import { GamePref } from '@galaxy/game-objects';
 import { GameServiceService } from '../game-service.service';
+import { Message } from '@galaxy/api-interfaces';
 
 
 @Component({
@@ -12,8 +13,12 @@ import { GameServiceService } from '../game-service.service';
 export class CreateWorldsComponent implements OnInit {
 
   form: FormGroup;
+  message: Message;
+  ishidden:boolean;
 
-  constructor(private fb: FormBuilder, private gameService: GameServiceService) { }
+  constructor(private fb: FormBuilder, private gameService: GameServiceService) { 
+    this.ishidden = true;
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -33,4 +38,18 @@ export class CreateWorldsComponent implements OnInit {
       .subscribe((gamepref01: GamePref) => console.log('Added new book', gamepref01));
   }
 
+  onSubmitCreateWorld() {
+    //subscribe(books => this.books = books);
+    this.gameService.createWorlds().subscribe( aMessage => {
+      this.message = aMessage;
+      console.log(`onSubmitCreateWorld ${this.message.message}`);
+      if (aMessage !== undefined && aMessage !== null) {
+        if (this.message.message === 'OK') {
+        this.ishidden = false;
+        } else {
+          console.log(`onSubmitCreateWorld ${this.message.message}`);
+        }
+      }
+    });
+  }
 }

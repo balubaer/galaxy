@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import { GamePref } from '@galaxy/game-objects';
+import { Message } from '@galaxy/api-interfaces';
+
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +18,9 @@ export class GameServiceService {
       worldCount: gamepref.worldCount
     })
   }
-  
-  createMessage(message): Observable<Object> {
 
-    return this.http.post('http://localhost:3000/messages', {
-      content: message.content,
-      submittedBy: message.submittedBy
-    });
-
+  createWorlds():Observable<Message> {
+    console.log('createWorlds')
+    return this.http.get<Message>('/api/create-world/CreateWorld');
   }
 }

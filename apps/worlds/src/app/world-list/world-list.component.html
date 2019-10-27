@@ -1,0 +1,8 @@
+<h2>World List</h2>
+<pre *ngFor="let world of worldList$ | async">{{ world }}</pre>
+<br/>
+<tr *ngFor="let world of worlds$ | async">
+    <td>{{ world }}</td>
+</tr>
+<br/>
+<pre *ngFor="let world of worlds$ | async">{{ world }}</pre>

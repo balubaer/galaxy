@@ -1,4 +1,4 @@
-import { World } from '..';
+import { World } from './world';
 import { Fleet } from './fleet';
 import { Player } from './player';
 import { Port } from './port';

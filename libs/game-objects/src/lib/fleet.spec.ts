@@ -1,6 +1,6 @@
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
-import { World } from '..';
+import { World } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 
 const palyerName = 'ZAPHOD';

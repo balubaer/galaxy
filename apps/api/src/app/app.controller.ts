@@ -37,7 +37,19 @@ export class AppController {
 
   @Get('Worlds')
   getWorlds(): World[] {
-    const worlds : World[] = this.appService.getWorlds();
+    const worlds: World[] = this.appService.getWorlds();
     return worlds;
   } 
+
+  @Get('WorldsString')
+  getWorldsString(): string[] {
+    const stringArray: string[] = this.appService.getWorldsString();
+    return stringArray;
+  } 
+
+  @Get('WorldStringList')
+  getWorldStringList(): string[] {
+    const worldStringList: string[] = this.appService.getWorldStringList(); 
+    return worldStringList;
+  }
 }
