@@ -16,3 +16,20 @@ export function createBracketAndCommarStringWithStringArray(aStringArray:Array <
 }
 
 export const TESTRESOUCESPATH = 'testResources';
+
+export function isCharacterANumber(aCharacter: string): Boolean {
+
+    return (aCharacter >= '0' && aCharacter <= '9');
+}
+
+export function extractNumberString(aString: string): string {
+    let result = '';
+    const aStringObject: String = String(aString);
+    
+    for (const aCharacter of aStringObject) {
+        if (isCharacterANumber(aCharacter)) {
+            result += aCharacter;
+        }
+    }
+    return result;
+}

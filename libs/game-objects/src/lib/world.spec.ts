@@ -1,7 +1,6 @@
 import { World, worldWithNumber } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 import { TESTRESOUCESPATH } from './utils';
-import { Fleet } from './fleet';
 
 const fs = require('fs');
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;

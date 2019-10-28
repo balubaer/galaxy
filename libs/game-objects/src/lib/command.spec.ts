@@ -7,7 +7,7 @@ const command = new Command('F1W2', new Player('ZAPHOD'), TurnPhase.Movement);
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 const world4 = worlds[3];
 const world2 = worlds[1];
-const fleet4 = world4.fleets[0];
+const fleet4: Fleet = world4.fleets[0];
 const player = world4.player;
 const moveWorldArray = new Array();
 moveWorldArray.push(world2);
