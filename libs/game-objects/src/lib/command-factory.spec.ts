@@ -66,4 +66,26 @@ describe('CommandFactory', () => {
 
     expect(aMoveCommand instanceof MoveCommand).toBeTruthy();
   });
+
+  it ('test getCommandInstance', () => {
+    const commandFactory = new CommandFactory(worlds, allPlayerDict);
+    commandFactory.processCommand = 'F4W2';
+    commandFactory.fillCommandElements();
+
+    const commandInstance = commandFactory.getCommandInstance();
+
+    expect(commandInstance instanceof MoveCommand).toBeTruthy();
+  });
+
+  it ('test executeCommands', () => {
+    const allPlayerDictForExecuteCommands : Map<string, Player> = new Map<string, Player>();
+    allPlayerDictForExecuteCommands.set('ZAPHOD', new Player('ZAPHOD'));
+    const commandFactory = new CommandFactory(worlds, allPlayerDictForExecuteCommands);
+    const commandString = 'F4W2';
+
+    commandFactory.setCommandStringsWithLongString('ZAPHOD', commandString);
+    commandFactory.executeCommands();
+
+    //expect(aMoveCommand instanceof MoveCommand).toBeTruthy();
+  });
 });

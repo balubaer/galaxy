@@ -121,12 +121,12 @@ export class CommandFactory {
         const charCount = this.processCommand.length;
         let foundCommandElementEnd = false;
         let commandElement = '';
-        let commandChars = '';
+        this.commandChars = '';
         let counter = 0;
 
         for (const aCharacter of this.processCommand) {
             if (isCharacterANumber(aCharacter) === false) {
-                commandChars += aCharacter;
+                this.commandChars += aCharacter;
                 if (counter !== 0) {
                     foundCommandElementEnd = true;
                 }
@@ -157,7 +157,7 @@ export class CommandFactory {
                 this.processCommand = command;
                 this.fillCommandElements();
 
-                this.commandPlayer = this.allPlayerDict[playerName];
+                this.commandPlayer = this.allPlayerDict.get(playerName);
                 const commandInstance = this.getCommandInstance();
                 if (commandInstance !== null) {
                     if (commandInstance instanceof Command) {
