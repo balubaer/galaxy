@@ -4,6 +4,7 @@ import { Message } from '@galaxy/api-interfaces';
 import { Player, World, GamePref } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
+import { readFileSync, writeFileSync } from 'fs';
 
 @Controller()
 export class AppController {
@@ -23,14 +24,13 @@ export class AppController {
   getWorld(): World {
     const world : World = this.appService.getWorld();
     let data = JSON.stringify(world);
-    const fs = require('fs');
     const gamePref: GamePref = {
       worldCount: 1
     };
 
-    fs.writeFileSync('world.json', data);
+    writeFileSync('world.json', data);
     data = JSON.stringify(gamePref);
-    fs.writeFileSync('gamePref.json', data);
+    writeFileSync('gamePref.json', data);
 
     return world;
   } 

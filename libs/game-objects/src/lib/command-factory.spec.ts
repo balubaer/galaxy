@@ -2,8 +2,7 @@ import { CommandFactory } from './command-factory';
 import { TestWorldsArrayFactory, World, Player } from '..';
 import { TESTRESOUCESPATH } from './utils';
 import { MoveCommand } from './command';
-
-const fs = require('fs');
+import { readFileSync } from 'fs';
 
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 const allPlayerDict: Map<string, Player> = new Map<string, Player>();
@@ -16,7 +15,7 @@ describe('CommandFactory', () => {
   });
 
   it ('test setCommandStringsWithLongString', () => {
-    const resourceString = fs.readFileSync(`${TESTRESOUCESPATH}/commands.txt`, 'utf8');
+    const resourceString = readFileSync(`${TESTRESOUCESPATH}/commands.txt`, 'utf8');
     const commandFactory = new CommandFactory(worlds, allPlayerDict);
 
     commandFactory.setCommandStringsWithLongString('ZAPHOD', resourceString);

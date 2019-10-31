@@ -2,6 +2,7 @@ import { Player } from './player'
 import { Fleet } from './fleet';
 import { World } from './world';
 import { FleetMovement } from './fleet-movement';
+import { DistanceLevel } from './distance-level';
 
 export interface ExecuteCommand {
     executeCommand(): void;
@@ -17,6 +18,16 @@ export const TurnPhase = {
     Movement: 7,
     Final: 8
 }
+
+export function compareCommand( a: Command, b: Command ) {
+    if ( a.turnPhase < b.turnPhase ){
+      return -1;
+    }
+    if ( a.turnPhase > b.turnPhase ){
+      return 1;
+    }
+    return 0;
+  }
 
 Object.freeze(TurnPhase);
 
@@ -93,6 +104,71 @@ export class MoveCommand extends Command implements ExecuteCommand {
             }
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
+        }
+    }
+}
+
+export class BuildDShips extends Command implements ExecuteCommand  {
+    worlds: Array <World>;
+    maxBuild = 4;
+   
+    constructor(aWorldArray: Array <World>, aPlayer: Player) {
+        super('', aPlayer, TurnPhase.Building);
+        this.worlds = aWorldArray;
+    }
+    
+    testPlayerInNextLevelPlanets(nextLevelWorlds: Array <World>): boolean {
+        let result = true;
+        
+        if (nextLevelWorlds.length > 0) {
+            for (const world of nextLevelWorlds) {
+                if (world.player !== null) {
+                    if (this.player !== world.player) {
+                        result = false;
+                        break;
+                    }
+                } else {
+                    result = false;
+                    break;
+                }
+            }
+        } else {
+            result = false;
+        }
+        return result;
+    }
+    
+    calculateNumberOfShipsToBuild(world: World): number {
+        let result = 0;
+        let foundDistanceLevel = false;
+        const disLevel = new DistanceLevel(world, 1);
+        
+        while (foundDistanceLevel !== true) {
+            if (this.testPlayerInNextLevelPlanets(disLevel.nextLevelWorlds) === false) {
+                foundDistanceLevel = true;
+            } else {
+                if (this.maxBuild <= disLevel.distanceLevel) {
+                    foundDistanceLevel = true;
+                } else {
+                    disLevel.goNextLevel();
+                }
+            }
+        }
+        
+        result = disLevel.distanceLevel;
+
+        if (result < 1) {
+            result = 1;
+        }
+        return result
+    }
+    
+    executeCommand() {
+        for (const world of this.worlds) {
+            if (world.player === this.player) {
+                const shipsToBuild = this.calculateNumberOfShipsToBuild(world);
+                world.dShips += shipsToBuild;
+            }
         }
     }
 }

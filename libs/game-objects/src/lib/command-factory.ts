@@ -2,7 +2,7 @@ import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber } from './utils';
-import { MoveCommand, Command, ExecuteCommand } from './command';
+import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips } from './command';
 
 export class CommandFactory {
     public static readonly FLEET_INDEX = 0;
@@ -167,41 +167,19 @@ export class CommandFactory {
             }
 
             if (this.coreGame === true) {
-                //TODO: BuildDShips impementieren
-                //  for (const playerName of this.allPlayerDict.keys()) {
-                //let buildDShips = BuildDShips(aPlanetArray: planets, aPlayer: player)
-                // commandArray.append(buildDShips as Command)
-
-                //  }
-            }
-
-            // commandArray.sortInPlace { $0 < $1 }
-
-            for (const command of commandArray) {
-                const executeCommand = command as unknown as ExecuteCommand;
-                executeCommand.executeCommand();
-            }
-
-
-
-            /*
-                if (coreGame == true) {
-                    Collection<String> playerKeys = allPlayerDict.keySet();
-        
-                    for (Iterator<String> iterator = playerKeys.iterator(); iterator.hasNext();) {
-                        String playerName = iterator.next();
-                        Player player = allPlayerDict.get(playerName);
-                        BuildDShips buildDShips = new BuildDShips( planets, player);
-                        commandArray.add((Command)buildDShips);
-                    }
+                for (const aPlayerName of this.allPlayerDict.keys()) {
+                    const player = this.allPlayerDict.get(aPlayerName);
+                    const buildDShips = new BuildDShips(this.worlds, player)
+                    commandArray.push(buildDShips as Command);
                 }
-        
-                Collections.sort(commandArray);
-        
-                for (Command aCommand : commandArray) {
-                    ExecuteCommand executeCommand = (ExecuteCommand)aCommand;
+
+                commandArray.sort(compareCommand);
+
+                for (const command of commandArray) {
+                    const executeCommand = command as unknown as ExecuteCommand;
                     executeCommand.executeCommand();
-                }*/
+                }
+            }
         }
     }
 

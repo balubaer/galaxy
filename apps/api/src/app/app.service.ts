@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Message } from '@galaxy/api-interfaces';
 import { Player, World, TestWorldsArrayFactory } from '@galaxy/game-objects';
-const fs = require('fs');
+import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class AppService {
@@ -20,14 +20,14 @@ export class AppService {
 
   getWorlds(): World[] {
 
-    const rawdata = fs.readFileSync('worlds.json');
+    const rawdata = readFileSync('worlds.json', 'utf8');
     const worlds: World[] = JSON.parse(rawdata);
     return worlds;
   }
 
   getWorldsString(): string[] {
     const stringArray = new Array();
-    const string = fs.readFileSync(`worlds.txt`, 'utf8');
+    const string = readFileSync(`worlds.txt`, 'utf8');
     stringArray.push(string);
     return stringArray;
   }
