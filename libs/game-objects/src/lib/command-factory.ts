@@ -1,8 +1,8 @@
 import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
-import { extractNumberString } from './utils';
-import { MoveCommand } from './command';
+import { extractNumberString, isCharacterANumber } from './utils';
+import { MoveCommand, Command, ExecuteCommand } from './command';
 
 export class CommandFactory {
     public static readonly FLEET_INDEX = 0;
@@ -20,11 +20,10 @@ export class CommandFactory {
         this.worlds = aWorldArray;
         this.allPlayerDict = aAllPlayerDict;
         this.commandStringsDict = new Map<string, Array<string>>();
-        this.commandElements = new Array<string>();
     }
 
     setCommandStringsWithLongString(playerName: string, commandString: string) {
-        const stringArray = commandString.split(' \n\r');
+        const stringArray = commandString.split(/ |\r\n|\n|\r/);
         const aSet = new Set();
         const array = new Array();
 
@@ -116,4 +115,209 @@ export class CommandFactory {
         const fleetAndPlanets: { fleet: Fleet, homeWorld: World, worldArray: Array<World> } = this.findFleetAndWorld();
         return new MoveCommand(fleetAndPlanets.fleet, fleetAndPlanets.homeWorld, fleetAndPlanets.worldArray, this.processCommand, this.commandPlayer)
     }
+
+    fillCommandElements() {
+        this.commandElements = new Array<string>();
+        const charCount = this.processCommand.length;
+        let foundCommandElementEnd = false;
+        let commandElement = '';
+        let commandChars = '';
+        let counter = 0;
+
+        for (const aCharacter of this.processCommand) {
+            if (isCharacterANumber(aCharacter) === false) {
+                commandChars += aCharacter;
+                if (counter !== 0) {
+                    foundCommandElementEnd = true;
+                }
+                if (foundCommandElementEnd) {
+                    this.commandElements.push(commandElement);
+                    commandElement = '';
+                    foundCommandElementEnd = false;
+                }
+                commandElement += aCharacter;
+            } else {
+                commandElement += aCharacter;
+            }
+            counter++
+            if (counter === charCount) {
+                this.commandElements.push(commandElement);
+            }
+        }
+    }
+
+    executeCommands() {
+        const commandArray: Array<Command> = new Array<Command>();
+
+        for (const playerName of this.commandStringsDict.keys()) {
+            const commands: Array<string> = this.commandStringsDict.get(playerName);
+
+            for (const command of commands) {
+                console.log(`Command: ${command}`);
+                this.processCommand = command;
+                this.fillCommandElements();
+
+                this.commandPlayer = this.allPlayerDict[playerName];
+                const commandInstance = this.getCommandInstance();
+                if (commandInstance !== null) {
+                    if (commandInstance instanceof Command) {
+                        commandArray.push(commandInstance);
+                    }
+                }
+            }
+
+            if (this.coreGame === true) {
+                //TODO: BuildDShips impementieren
+                //  for (const playerName of this.allPlayerDict.keys()) {
+                //let buildDShips = BuildDShips(aPlanetArray: planets, aPlayer: player)
+                // commandArray.append(buildDShips as Command)
+
+                //  }
+            }
+
+            // commandArray.sortInPlace { $0 < $1 }
+
+            for (const command of commandArray) {
+                const executeCommand = command as unknown as ExecuteCommand;
+                executeCommand.executeCommand();
+            }
+
+
+
+            /*
+                if (coreGame == true) {
+                    Collection<String> playerKeys = allPlayerDict.keySet();
+        
+                    for (Iterator<String> iterator = playerKeys.iterator(); iterator.hasNext();) {
+                        String playerName = iterator.next();
+                        Player player = allPlayerDict.get(playerName);
+                        BuildDShips buildDShips = new BuildDShips( planets, player);
+                        commandArray.add((Command)buildDShips);
+                    }
+                }
+        
+                Collections.sort(commandArray);
+        
+                for (Command aCommand : commandArray) {
+                    ExecuteCommand executeCommand = (ExecuteCommand)aCommand;
+                    executeCommand.executeCommand();
+                }*/
+        }
+    }
+
+    getCommandInstance(): Object {
+        let result: Object = null;
+        if (this.commandChars !== null) {
+            if (this.commandChars.length >= 2) {
+                switch (this.commandChars.charAt(0)) {
+                    case 'F':
+                        switch (this.commandChars.charAt(1)) {
+                            case 'W':
+                                result = this.createMoveCommand();
+                                break;
+                            case 'U':
+                                result = null; //createUnloadingMetalCommand()
+                                break;
+                            case 'T':
+                                if (this.commandChars.length === 3) {
+                                    switch (this.commandChars.charAt(2)) {
+                                        case 'F':
+                                            result = null; //createTransferShipsFleetToFleetCommand()
+                                            break;
+                                        case 'D':
+                                            result = null; //createTransferShipsFleetToDShipsCommand()
+                                            break;
+                                        default:
+                                            result = null;
+                                            break;
+                                    }
+                                }
+                                break;
+                            case 'A':
+                                if (this.commandChars.length === 3) {
+                                    switch (this.commandChars.charAt(2)) {
+                                        case 'F':
+                                            result = null; //createFireFleetToFleetCommand()
+                                            break;
+                                        case 'D':
+                                            result = null; //createFireFleetToDShipsCommand()
+                                            break;
+                                        default:
+                                            result = null;
+                                            break;
+                                    }
+                                }
+                                break;
+                            default:
+                                result = null;
+                                break;
+                        }
+                        break;
+                    case 'W':
+                        switch (this.commandChars.charAt(1)) {
+                            case 'B':
+                                if (this.commandChars.length === 3) {
+                                    if (this.commandChars.charAt(2) === 'F') {
+                                        result = null; //createBuildFleetShipCommand()
+                                    }
+                                }
+                                break;
+                            default:
+                                result = null;
+                                break;
+                        }
+                        break;
+                    case 'D':
+                        switch (this.commandChars.charAt(1)) {
+                            case 'A':
+                                if (this.commandChars.length === 3) {
+                                    if (this.commandChars.charAt(2) === 'F') {
+                                        result = null; //createFireDShipsToFleetCommand()
+                                    }
+                                }
+                                break;
+                            case 'T':
+                                if (this.commandChars.length === 3) {
+                                    if (this.commandChars.charAt(2) === 'F') {
+                                        result = null; //createTransferDShipsToFleetCommand()
+                                    }
+                                }
+                                break;
+                            default:
+                                result = null;
+                                break;
+                        }
+                        break;
+                    case 'Z':
+                        result = null //createAmbushOffForPlanet()
+                        break;
+                    case 'A':
+                        if (this.commandChars.charAt(1) === '=') {
+                            result = null //createTeammateForPlayer();
+                        }
+                        break;
+                    case 'N':
+                        if (this.commandChars.charAt(1) === '=') {
+                            result = null; //createRemoveTeammateForPlayer();
+                        }
+                        break;
+                    default:
+                        result = null;
+                        break;
+                }
+            } else if (this.commandChars.length === 1) {
+                switch (this.commandChars.charAt(0)) {
+                    case 'Z':
+                        result = null; //createAmbushOffForPlayer()
+                        break;
+                    default:
+                        result = null;
+                        break;
+                }
+            }
+        }
+        return result;
+    }
+
+
 }

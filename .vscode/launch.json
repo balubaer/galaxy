@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
       {
         "name": "Debug Jest Tests",
         "type": "node",
@@ -9,6 +10,19 @@
           "--inspect-brk",
           "${workspaceRoot}/node_modules/.bin/jest",
           "--runInBand"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "port": 9229
+      },
+      {
+        "name": "Debug Jest command-factory",
+        "type": "node",
+        "request": "launch",
+        "runtimeArgs": [
+          "--inspect-brk",
+          "${workspaceRoot}/node_modules/.bin/jest",
+          "--testPathPattern=command-factory"
         ],
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",
