@@ -45,7 +45,7 @@ export class PortFactory {
         return result
     }
 
-    addPlanetWithEnoughConnectionTest(world: World) {
+    addWorldWithEnoughConnectionTest(world: World) {
         if (this.hasWorldEnoughConnection(world)) {
             if (this.worldsWithEnoughConnections.indexOf(world) === -1) {
                 this.worldsWithEnoughConnections.push(world);

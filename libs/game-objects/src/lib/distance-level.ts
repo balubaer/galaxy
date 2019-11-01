@@ -25,7 +25,7 @@ export class DistanceLevel {
                     }
                 }
             } else {
-                this.createNewNextLevelPlanets()
+                this.createNewNextLevelWorlds()
                 if (this.stopCreateNewNextLevelWorlds === true) {
                     this.distanceLevel = levelCount - 1
                     break
@@ -34,7 +34,7 @@ export class DistanceLevel {
         }
     }
     
-    createNewNextLevelPlanets() {
+    createNewNextLevelWorlds() {
         const oldNextLevelWorlds = Object.assign([], this.nextLevelWorlds);
         const newPassedWorlds = this.passedWorlds;
         
@@ -70,6 +70,6 @@ export class DistanceLevel {
 
     goNextLevel() {
         this.distanceLevel++;
-        this.createNewNextLevelPlanets()
+        this.createNewNextLevelWorlds()
     }
 }

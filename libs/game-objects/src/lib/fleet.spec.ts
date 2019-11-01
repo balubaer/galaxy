@@ -24,13 +24,13 @@ describe('Fleet', () => {
     it('test funktion fleetAndHomeWorldWithNumber', () => {
         const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 
-        let [aFleet, homeWorld] = fleetAndHomeWorldWithNumber(worlds, 4);
+        let aFleetHomeWorld = fleetAndHomeWorldWithNumber(worlds, 4);
     
-        expect(aFleet).toBe(worlds[3].fleets[0]);
-        expect(homeWorld).toBe(worlds[3]);
+        expect(aFleetHomeWorld.fleet).toBe(worlds[3].fleets[0]);
+        expect(aFleetHomeWorld.homeWorld).toBe(worlds[3]);
     
-        [aFleet, homeWorld] = fleetAndHomeWorldWithNumber(worlds, 1);
-        expect(aFleet).toBe(null);
-        expect(homeWorld).toBe(null);
+        aFleetHomeWorld = fleetAndHomeWorldWithNumber(worlds, 1);
+        expect(aFleetHomeWorld.fleet).toBe(null);
+        expect(aFleetHomeWorld.homeWorld).toBe(null);
       });
 });

@@ -2,7 +2,7 @@ import { Player, World } from "..";
 import { createBracketAndCommarStringWithStringArray } from './utils';
 import { FleetMovement } from './fleet-movement';
 
-export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number): [Fleet, World] {
+export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number): { fleet: Fleet, homeWorld: World} {
     let fleet: Fleet = null;
     let homeWorld: World = null;
     for (const world of worlds) {
@@ -15,7 +15,7 @@ export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number
         }
     }
 
-    return [fleet, homeWorld];
+    return {fleet, homeWorld};
 }
 
 export class Fleet {
