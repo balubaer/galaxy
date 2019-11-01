@@ -20,8 +20,6 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-- Command fertig implementieren
-- CommandFactory fertig implementieren
 - DistanceLevel fertig implementieren
 - FinalPhaseCoreGame fertig implementieren
 - Player fertig implementieren
@@ -36,7 +34,8 @@ Ist ein Spiel nach den
 - FleetMovement ist vollfunktionsfähig
 - World ist vollfunktionsfähig
 - Fleet ist vollfunktionsfähig
-
+- Command ist vollfunktionsfähig
+- CommandFactory ist vollfunktionsfähig
 
 ## Projekt
 

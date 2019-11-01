@@ -20,6 +20,8 @@ export const TurnPhase = {
     Final: 8
 }
 
+Object.freeze(TurnPhase);
+
 export function compareCommand(a: Command, b: Command) {
     if (a.turnPhase < b.turnPhase) {
         return -1;
@@ -29,8 +31,6 @@ export function compareCommand(a: Command, b: Command) {
     }
     return 0;
 }
-
-Object.freeze(TurnPhase);
 
 export class Command {
     string: string;
@@ -382,6 +382,7 @@ export class BuildDShips extends Command implements ExecuteCommand {
         }
     }
 }
+
 //FaaAFbb
 export const enum FireFleetToFleetEnum {
     FLEEDFROM,
@@ -434,7 +435,7 @@ export const enum FireDShipsToFleetEnum {
     FLEED
 }
 
-class FireDShipsToFleet extends Command implements ExecuteCommand {
+export class FireDShipsToFleet extends Command implements ExecuteCommand {
     toFleet: Fleet;
     fromHomeWorld: World;
     toHomeWorld: World;
@@ -475,7 +476,7 @@ export const enum FireFleetToDShipsEnum {
     FLEED
 }
 
-class FireFleetToDShips extends Command implements ExecuteCommand {
+export class FireFleetToDShips extends Command implements ExecuteCommand {
     fromFleet: Fleet;
     fromHomeWorld: World;
 
@@ -487,7 +488,7 @@ class FireFleetToDShips extends Command implements ExecuteCommand {
 
     executeCommand() {
         if (this.player.playerName === this.fromFleet.player.playerName) {
-            let isError = false;
+            const isError = false;
 
             //TODO: Weiter Tests implementieren
 
@@ -501,5 +502,88 @@ class FireFleetToDShips extends Command implements ExecuteCommand {
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
         }
+    }
+}
+
+//Znn
+export const enum AmbushOffForWorldEnum {
+    WORLD
+}
+
+export class AmbushOffForWorld extends Command implements ExecuteCommand {
+    world: World;
+
+    constructor(aWorld: World, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+        this.world = aWorld;
+    }
+
+    executeCommand() {
+        if (this.world.player.playerName === this.player.playerName) {
+            const worldPlayer = this.world.player;
+
+            if (worldPlayer !== null) {
+                if (worldPlayer === this.player) {
+                    this.world.ambushOff = true;
+                } else {
+                    //TODO: Fehler
+                }
+            }
+        } else {
+            //TODO: Fehler Welt ist nicht vom Spieler
+        }
+    }
+}
+
+//Z
+export class AmbushOffForPlayer extends Command implements ExecuteCommand {
+    worlds: Array<World>;
+
+    constructor(aWorldsArray: Array<World>, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+        this.worlds = aWorldsArray;
+    }
+
+    executeCommand() {
+        for (const world of this.worlds) {
+            const worldPlayer = world.player;
+            if (worldPlayer !== null) {
+                if (worldPlayer === this.player) {
+                    world.ambushOff = true;
+                }
+            }
+        }
+    }
+}
+
+//A=handel
+export class AddTeammate extends Command implements ExecuteCommand {
+    allPlayerDict: Map<string, Player>;
+
+    constructor(aAllPlayerDict: Map<string, Player>, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+        this.allPlayerDict = aAllPlayerDict;
+    }
+
+    executeCommand() {
+        const keyString = this.string.substring(2);
+        const aPlayer = this.allPlayerDict.get(keyString);
+        this.player.teammates.add(aPlayer);
+    }
+}
+
+//N=handel
+export class RemoveTeammate extends Command implements ExecuteCommand {
+    allPlayerDict: Map<string, Player>;
+
+    constructor(aAllPlayerDict: Map<string, Player>, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+        this.allPlayerDict = aAllPlayerDict
+    }
+
+    executeCommand() {
+        const keyString = this.string.substring(2);
+        const aPlayer = this.allPlayerDict.get(keyString);
+        this.player.teammates.delete(aPlayer);
     }
 }
