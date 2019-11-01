@@ -1,8 +1,8 @@
 import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
-import { extractNumberString, isCharacterANumber } from './utils';
-import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet } from './command';
+import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
+import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum } from './command';
 
 export class CommandFactory {
     public static readonly FLEET_INDEX = 0;
@@ -13,6 +13,7 @@ export class CommandFactory {
     commandChars: string;
     commandPlayer: Player;
     commandElements: Array<string>;
+    commandNumberArray: Array<number>;
     allPlayerDict: Map<string, Player>;
     coreGame = false;
 
@@ -20,6 +21,14 @@ export class CommandFactory {
         this.worlds = aWorldArray;
         this.allPlayerDict = aAllPlayerDict;
         this.commandStringsDict = new Map<string, Array<string>>();
+    }
+
+    initMembers(command: string, playerName: string) {
+        this.processCommand = command;
+        this.commandElements = this.getCommandElements(command);
+        this.commandChars = extractCharsFromString(command);
+        this.commandNumberArray = this.getCommandNummerArray(this.commandElements);
+        this.commandPlayer = this.allPlayerDict.get(playerName);
     }
 
     setCommandStringsWithLongString(playerName: string, commandString: string) {
@@ -39,45 +48,41 @@ export class CommandFactory {
     }
 
     //WnnnBqqqFmmm
-    
-    findBuildParameterForFleet(): { fleet: Fleet, homeWorld: World, worldNumber: number,  shipsToBuild: number } {
-         let counter = 0;
-         let worldNumber = 0;
-         let shipsToBuild = 0;
-         let fleet: Fleet = null;
-         let homeWorld: World = null;
- 
-         for (const commantElement of this.commandElements) {
-             if (counter ===0) {
-                 const aWorldNumber = +extractNumberString(commantElement);
-                 if (aWorldNumber !== null) {
-                     worldNumber = aWorldNumber;
-                 }
-             } else if (counter === 1) {
-                const aShipsToBuild = +extractNumberString(commantElement);
-                 if (aShipsToBuild !== null) {
-                     shipsToBuild = aShipsToBuild;
-                 }
-             } else {
-                const fleetNumber = +extractNumberString(commantElement);
-                 if (fleetNumber !== null) {
-                     const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
-                     if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
-                         fleet = aFleetAndHomeWorld.fleet;
-                         homeWorld = aFleetAndHomeWorld.homeWorld;
-                     }
-                 }
-             }
-             counter++
-         }
-         return {fleet, homeWorld, worldNumber, shipsToBuild}
-     }
-     
+
+    findBuildParameterForFleet(): { fleet: Fleet, homeWorld: World, worldNumber: number, shipsToBuild: number } {
+        let counter = 0;
+        let worldNumber = 0;
+        let shipsToBuild = 0;
+        let fleet: Fleet = null;
+        let homeWorld: World = null;
+
+        for (const commantNumber of this.commandNumberArray) {
+            switch (counter) {
+                case BuildFleetShipEnum.WORLD:
+                    worldNumber = commantNumber;
+                    break;
+                case BuildFleetShipEnum.SHIPTOBUILD:
+                    shipsToBuild = commantNumber;
+                    break;
+                case BuildFleetShipEnum.FLEED:
+                    const fleetNumber = commantNumber;
+                    const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
+                    if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
+                        fleet = aFleetAndHomeWorld.fleet;
+                        homeWorld = aFleetAndHomeWorld.homeWorld;
+                    }
+                    break;
+            }
+            counter++
+        }
+        return { fleet, homeWorld, worldNumber, shipsToBuild }
+    }
+
     createBuildFleetShipCommand(): BuildFleetShip {
-         const bulidParameterForFleet = this.findBuildParameterForFleet();
-         return new BuildFleetShip(bulidParameterForFleet.fleet, bulidParameterForFleet.homeWorld, bulidParameterForFleet.worldNumber, bulidParameterForFleet.shipsToBuild, this.processCommand, this.commandPlayer)
-     }
- 
+        const bulidParameterForFleet = this.findBuildParameterForFleet();
+        return new BuildFleetShip(bulidParameterForFleet.fleet, bulidParameterForFleet.homeWorld, bulidParameterForFleet.worldNumber, bulidParameterForFleet.shipsToBuild, this.processCommand, this.commandPlayer)
+    }
+
 
     // FnnnWmmm FnnnWmmmWooo FnnnWmmmWoooWrrr
     findFleetAndWorld(): { fleet: Fleet, homeWorld: World, worldArray: Array<World> } {
@@ -115,66 +120,105 @@ export class CommandFactory {
         const fleetAndWorlds: { fleet: Fleet, homeWorld: World, worldArray: Array<World> } = this.findFleetAndWorld();
         return new MoveCommand(fleetAndWorlds.fleet, fleetAndWorlds.homeWorld, fleetAndWorlds.worldArray, this.processCommand, this.commandPlayer)
     }
-
-    findFromFleetToFleetAndWorlds(): {fromFleet: Fleet, toFleet: Fleet, fromHomeWorld: World, toHomeWorld:World, shipsToTransfer: number} {
-        let counter = 0;
-        let shipsToTransfer = 0;
-        let fromFleet: Fleet = null;
-        let toFleet: Fleet = null;
-        let fromHomeWorld: World = null;
-        let toHomeWorld: World = null;
-        
-        for (const commantElement of this.commandElements) {
-            if (counter === 0) {
-                const fleetNumber = +extractNumberString(commantElement);
-                if (fleetNumber !== null) {
-                    const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
-                    if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
-                        fromFleet = aFleetAndHomeWorld.fleet;
-                        fromHomeWorld = aFleetAndHomeWorld.homeWorld;
+    /*
+        findFromFleetToFleetAndWorlds(): {fromFleet: Fleet, toFleet: Fleet, fromHomeWorld: World, toHomeWorld:World, shipsToTransfer: number} {
+            let counter = 0;
+            let shipsToTransfer = 0;
+            let fromFleet: Fleet = null;
+            let toFleet: Fleet = null;
+            let fromHomeWorld: World = null;
+            let toHomeWorld: World = null;
+            
+            for (const commantElement of this.commandElements) {
+                if (counter === 0) {
+                    const fleetNumber = +extractNumberString(commantElement);
+                    if (fleetNumber !== null) {
+                        const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
+                        if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
+                            fromFleet = aFleetAndHomeWorld.fleet;
+                            fromHomeWorld = aFleetAndHomeWorld.homeWorld;
+                        }
+                    }
+                } else if (counter === 1) {
+                    const aShipsToTransfer = +extractNumberString(commantElement);
+                    if (aShipsToTransfer !== null) {
+                        shipsToTransfer = aShipsToTransfer;
+                    }
+                } else {
+                    const fleetNumber = +extractNumberString(commantElement);
+                    if (fleetNumber !== null) {
+                        const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
+                        if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld != null) {
+                            toFleet = aFleetAndHomeWorld.fleet;
+                            toHomeWorld = aFleetAndHomeWorld.homeWorld;
+                        }
                     }
                 }
-            } else if (counter === 1) {
-                const aShipsToTransfer = +extractNumberString(commantElement);
-                if (aShipsToTransfer !== null) {
-                    shipsToTransfer = aShipsToTransfer;
-                }
-            } else {
-                const fleetNumber = +extractNumberString(commantElement);
-                if (fleetNumber !== null) {
-                    const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
-                    if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld != null) {
-                        toFleet = aFleetAndHomeWorld.fleet;
-                        toHomeWorld = aFleetAndHomeWorld.homeWorld;
-                    }
-                }
+                counter++
             }
-            counter++
+            return {fromFleet, toFleet, fromHomeWorld, toHomeWorld, shipsToTransfer}
         }
-        return {fromFleet, toFleet, fromHomeWorld, toHomeWorld, shipsToTransfer}
-    }
+        
+        createTransferShipsFleetToFleetCommand(): TransferShipsFleetToFleet {
+            const fromFleetToFleetAndWorls = this.findFromFleetToFleetAndWorlds();
+            return new TransferShipsFleetToFleet(fromFleetToFleetAndWorls.fromFleet, fromFleetToFleetAndWorls.toFleet, fromFleetToFleetAndWorls.fromHomeWorld, fromFleetToFleetAndWorls.toHomeWorld, fromFleetToFleetAndWorls.shipsToTransfer, this.processCommand, this.commandPlayer);
+        }
     
-    createTransferShipsFleetToFleetCommand(): TransferShipsFleetToFleet {
-        const fromFleetToFleetAndWorls = this.findFromFleetToFleetAndWorlds();
-        return new TransferShipsFleetToFleet(fromFleetToFleetAndWorls.fromFleet, fromFleetToFleetAndWorls.toFleet, fromFleetToFleetAndWorls.fromHomeWorld, fromFleetToFleetAndWorls.toHomeWorld, fromFleetToFleetAndWorls.shipsToTransfer, this.processCommand, this.commandPlayer);
+        func findFromFleetToDShipsAndPlanet() -> (fromFleet: Fleet, fromHomePlanet:Planet, shipsToTransfer: Int) {
+            var counter = 0
+            var fromFleet: Fleet = Fleet()
+            var fromHomePlanet: Planet = Planet()
+            var shipsToTransfer = 0
+    
+            for commantElement in commandElements {
+                if counter == 0 {
+                    var fleetNumber = Int(extractNumberString(commantElement))
+                    if fleetNumber != nil {
+                        var aFleetAndHomePlanet = fleetAndHomePlanetWithNumber(planets, number: fleetNumber!)
+                        if aFleetAndHomePlanet.fleet != nil && aFleetAndHomePlanet.homePlanet != nil {
+                            fromFleet = aFleetAndHomePlanet.fleet!
+                            fromHomePlanet = aFleetAndHomePlanet.homePlanet!
+                        }
+                    }
+                } else if counter == 1 {
+                    var aShipsToTransfer = Int(extractNumberString(commantElement))
+                    if aShipsToTransfer != nil {
+                        shipsToTransfer = aShipsToTransfer!
+                    }
+                }
+                
+                counter++
+            }
+            return (fromFleet, fromHomePlanet, shipsToTransfer)
+        }
+    
+        func createTransferShipsFleetToDShipsCommand() -> TransferShipsFleetToDShips {
+            let fromFleetToDShipsAndPlanet = findFromFleetToDShipsAndPlanet()
+            return TransferShipsFleetToDShips(aFromFleet: fromFleetToDShipsAndPlanet.fromFleet, aFromHomePlanet: fromFleetToDShipsAndPlanet.fromHomePlanet, aShipsToTransfer: fromFleetToDShipsAndPlanet.shipsToTransfer, aString: processCommand!, aPlayer: commandPlayer!)
+        } */
+
+    getCommandNummerArray(withCommandElements: Array<string>): Array<number> {
+        const result = new Array<number>();
+        for (const commantElement of withCommandElements) {
+            const aNumber = +extractNumberString(commantElement);
+            result.push(aNumber);
+        } return result;
     }
 
-    fillCommandElements() {
-        this.commandElements = new Array<string>();
-        const charCount = this.processCommand.length;
+    getCommandElements(withProcessCommand: string): Array<string> {
+        const result = new Array<string>();
+        const charCount = withProcessCommand.length;
         let foundCommandElementEnd = false;
         let commandElement = '';
-        this.commandChars = '';
         let counter = 0;
 
-        for (const aCharacter of this.processCommand) {
+        for (const aCharacter of withProcessCommand) {
             if (isCharacterANumber(aCharacter) === false) {
-                this.commandChars += aCharacter;
                 if (counter !== 0) {
                     foundCommandElementEnd = true;
                 }
                 if (foundCommandElementEnd) {
-                    this.commandElements.push(commandElement);
+                    result.push(commandElement);
                     commandElement = '';
                     foundCommandElementEnd = false;
                 }
@@ -184,9 +228,10 @@ export class CommandFactory {
             }
             counter++
             if (counter === charCount) {
-                this.commandElements.push(commandElement);
+                result.push(commandElement);
             }
         }
+        return result;
     }
 
     executeCommands() {
@@ -197,10 +242,8 @@ export class CommandFactory {
 
             for (const command of commands) {
                 console.log(`Command: ${command}`);
-                this.processCommand = command;
-                this.fillCommandElements();
-
-                this.commandPlayer = this.allPlayerDict.get(playerName);
+                this.initMembers(command, playerName);
+               
                 const commandInstance = this.getCommandInstance();
                 if (commandInstance !== null) {
                     if (commandInstance instanceof Command) {

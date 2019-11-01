@@ -109,6 +109,13 @@ export class MoveCommand extends Command implements ExecuteCommand {
     }
 }
 
+export const enum BuildFleetShipEnum
+{
+    WORLD,
+    SHIPTOBUILD,
+    FLEED
+}
+
 //WnnnBqqqFmmm
 export class BuildFleetShip extends Command implements ExecuteCommand {
     fleet: Fleet;

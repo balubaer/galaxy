@@ -31,22 +31,31 @@ describe('CommandFactory', () => {
     expect(stringArray[7]).toBe('F4T2F5');
   });
 
-  it ('test fillCommandElements', () => {
+  it ('test getCommandElements', () => {
     const commandFactory = new CommandFactory(worlds, allPlayerDict);
+    const commandElements = commandFactory.getCommandElements('F3W2W1');
+    expect(commandElements.length).toBe(3);
 
-    commandFactory.processCommand = 'F3W2W1';
-    commandFactory.fillCommandElements();
-    expect(commandFactory.commandElements.length).toBe(3);
+    expect(commandElements[0]).toBe('F3');
+    expect(commandElements[1]).toBe('W2');
+    expect(commandElements[2]).toBe('W1');
+  });
 
-    expect(commandFactory.commandElements[0]).toBe('F3');
-    expect(commandFactory.commandElements[1]).toBe('W2');
-    expect(commandFactory.commandElements[2]).toBe('W1');
+  it ('test getCommandNummerArray', () => {
+    const commandFactory = new CommandFactory(worlds, allPlayerDict);
+    const commandElements = commandFactory.getCommandElements('F3W2W1');
+
+    const commandNumbers = commandFactory.getCommandNummerArray(commandElements);
+    expect(commandNumbers.length).toBe(3);
+
+    expect(commandNumbers[0]).toBe(3);
+    expect(commandNumbers[1]).toBe(2);
+    expect(commandNumbers[2]).toBe(1);
   });
 
   it ('test findFleetAndWorld', () => {
     const commandFactory = new CommandFactory(worlds, allPlayerDict);
-    commandFactory.processCommand = 'F4W2';
-    commandFactory.fillCommandElements();
+    commandFactory.initMembers('F4W2', 'ZAPHOD');
 
     const fleetAndHomeWorldAndWorlds = commandFactory.findFleetAndWorld();
     expect(fleetAndHomeWorldAndWorlds.fleet.number).toBe(4);
@@ -58,18 +67,15 @@ describe('CommandFactory', () => {
 
   it ('test createMoveCommand', () => {
     const commandFactory = new CommandFactory(worlds, allPlayerDict);
-    commandFactory.processCommand = 'F4W2';
-    commandFactory.fillCommandElements();
-
+    commandFactory.initMembers('F4W2', 'ZAPHOD');
+    
     const aMoveCommand = commandFactory.createMoveCommand();
-
     expect(aMoveCommand instanceof MoveCommand).toBeTruthy();
   });
 
   it ('test getCommandInstance', () => {
     const commandFactory = new CommandFactory(worlds, allPlayerDict);
-    commandFactory.processCommand = 'F4W2';
-    commandFactory.fillCommandElements();
+    commandFactory.initMembers('F4W2', 'ZAPHOD');
 
     const commandInstance = commandFactory.getCommandInstance();
 
@@ -85,6 +91,6 @@ describe('CommandFactory', () => {
     commandFactory.setCommandStringsWithLongString('ZAPHOD', commandString);
     commandFactory.executeCommands();
 
-    //expect(aMoveCommand instanceof MoveCommand).toBeTruthy();
+    //TODO:expect(aMoveCommand instanceof MoveCommand).toBeTruthy();
   });
 });

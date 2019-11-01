@@ -1,4 +1,4 @@
-import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray } from "./utils";
+import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray, extractCharsFromString } from "./utils";
 
 describe('utils', () => {
     it('test createBracketAndCommarStringWithStringArray', () => {
@@ -23,5 +23,10 @@ describe('utils', () => {
     it('test extractNumberString', () => {
         expect(extractNumberString('Zb3')).toBe('3');
         expect(extractNumberString('F23W66')).toBe('2366');
+    });
+
+    it('test extractCharsFromString', () => {
+        expect(extractCharsFromString('Zb3')).toBe('Zb');
+        expect(extractCharsFromString('F23W66')).toBe('FW');
     });
 });

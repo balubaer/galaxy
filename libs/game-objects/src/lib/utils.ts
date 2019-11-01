@@ -33,3 +33,12 @@ export function extractNumberString(aString: string): string {
     }
     return result;
 }
+
+export function extractCharsFromString( aString: string):string {
+    let result = '';
+    for (const aCharacter of aString) {
+        if (isCharacterANumber(aCharacter) === false) {
+            result += aCharacter;
+        }
+    }
+    return result;}
