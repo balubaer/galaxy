@@ -29,6 +29,7 @@ export class World {
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
+    hitedShotsDShips = 0;
 
     constructor() {
         this.fleets = new Array<Fleet>();
