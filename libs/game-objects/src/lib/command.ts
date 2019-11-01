@@ -46,6 +46,14 @@ export class Command {
 }
 
 //FnnnWmmm FnnnWmmmWooo FnnnWmmmWoooWrrr
+export const enum MoveCommandEnum
+{
+    FLEED,
+    WORLD1,
+    WORLD2,
+    WORLD3
+}
+
 export class MoveCommand extends Command implements ExecuteCommand {
     fleet: Fleet
     worlds: Array<World>;
@@ -109,6 +117,7 @@ export class MoveCommand extends Command implements ExecuteCommand {
     }
 }
 
+//WnnnBqqqFmmm
 export const enum BuildFleetShipEnum
 {
     WORLD,
@@ -116,7 +125,6 @@ export const enum BuildFleetShipEnum
     FLEED
 }
 
-//WnnnBqqqFmmm
 export class BuildFleetShip extends Command implements ExecuteCommand {
     fleet: Fleet;
     homeWorld: World;
@@ -166,6 +174,13 @@ export class BuildFleetShip extends Command implements ExecuteCommand {
 }
 
 //FnnnTqqqFmmm
+export const enum TransferShipsFleetToFleetEnum
+{
+    FLEED1,
+    SHIPTRANSVER,
+    FLEED2
+}
+
 export class TransferShipsFleetToFleet extends Command implements ExecuteCommand {
     fromFleet: Fleet;
     toFleet: Fleet;
@@ -210,6 +225,100 @@ export class TransferShipsFleetToFleet extends Command implements ExecuteCommand
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
  
+        }
+    }
+}
+
+//FaaTxxD
+export const enum TransferShipsFleetToDShipsEnum
+{
+    FLEED,
+    SHIPTRANSVER
+}
+
+export class TransferShipsFleetToDShips extends Command implements ExecuteCommand {
+    fromFleet: Fleet;
+    fromHomeWorld: World;
+    shipsToTransfer: number;
+    
+    constructor(aFromFleet: Fleet, aFromHomeWorld: World, aShipsToTransfer: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.fromFleet = aFromFleet;
+        this.fromHomeWorld = aFromHomeWorld;
+        this.shipsToTransfer = aShipsToTransfer;
+    }
+    
+    executeCommand() {
+        if (this.player.playerName === this.fromFleet.player.playerName) {
+            let isError = false;
+            
+            if (isError === false) {
+                    if (this.fromFleet.ships < this.shipsToTransfer) {
+                        //TODO: Fehler art zufügen
+                        isError = true;
+                    }
+            }
+            
+            //TODO: Weiter Tests implementieren
+            
+            if (isError === false) {
+                this.fromFleet.ships -= this.shipsToTransfer;
+                this.fromHomeWorld.dShips += this.shipsToTransfer;
+            }
+        } else {
+            //TODO: Fehler Flotte ist nicht vom Spieler
+        }
+    }
+}
+
+//DaaTxxFbb
+export const enum TransferDShipsToFleetEnum
+{
+    WORLD,
+    SHIPTRANSVER,
+    FLEED
+}
+
+export class TransferDShipsToFleet extends Command implements ExecuteCommand {
+    toFleet: Fleet;
+    fromHomeWorld: World;
+    toHomeWorld: World;
+    shipsToTransfer: number;
+    
+    constructor(aToFleet: Fleet, aFromHomeWorld: World, aToHomeWorld: World, aShipsToTransfer: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.toFleet = aToFleet;
+        this.fromHomeWorld = aFromHomeWorld;
+        this.toHomeWorld = aToHomeWorld;
+        this.shipsToTransfer = aShipsToTransfer;
+    }
+    
+    executeCommand() {
+        if (this.fromHomeWorld.player.playerName === this.player.playerName) {
+            let isError = false;
+            
+            if (isError === false) {
+                if (this.fromHomeWorld !== this.toHomeWorld)  {
+                    //TODO: Fehler art zufügen
+                    isError = true;
+                }
+                if (isError === false) {
+                    if (this.fromHomeWorld.dShips < this.shipsToTransfer) {
+                        //TODO: Fehler art zufügen
+                        isError = true;
+                    }
+                }
+                //TODO: Check Owner Man kann einer Neutralen Flotte keine Schiffe Transverieren
+            }
+            
+            //TODO: Weiter Tests implementieren
+            
+            if (isError === false) {
+                this.fromHomeWorld.dShips -= this.shipsToTransfer;
+                this.toFleet.ships += this.shipsToTransfer;
+            }
+        } else {
+            //TODO: Fehler Welt ist nicht vom Spieler
         }
     }
 }

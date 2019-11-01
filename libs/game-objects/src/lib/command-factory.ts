@@ -2,7 +2,7 @@ import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
-import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum } from './command';
+import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips } from './command';
 
 export class CommandFactory {
     public static readonly FLEET_INDEX = 0;
@@ -91,21 +91,23 @@ export class CommandFactory {
         const worldArray: Array<World> = new Array<World>();
         let counter = 0;
 
-        for (const commantElement of this.commandElements) {
-            if (counter === 0) {
-                const fleetNumber: number = +extractNumberString(commantElement);
-                const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
-                if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
-                    fleet = aFleetAndHomeWorld.fleet;
-                    homeWorld = aFleetAndHomeWorld.homeWorld;
-                }
-            } else {
-                const worldNumber: number = +extractNumberString(commantElement);
-                const world = worldWithNumber(this.worlds, worldNumber);
-
-                if (world !== null) {
-                    worldArray.push(world)
-                }
+        for (const commantNumber of this.commandNumberArray) {
+            switch (counter) {
+                case MoveCommandEnum.FLEED:
+                    const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, commantNumber);
+                    if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
+                        fleet = aFleetAndHomeWorld.fleet;
+                        homeWorld = aFleetAndHomeWorld.homeWorld;
+                    }
+                    break;
+                case MoveCommandEnum.WORLD1:
+                case MoveCommandEnum.WORLD2:
+                case MoveCommandEnum.WORLD3:
+                    const world = worldWithNumber(this.worlds, commantNumber);
+                    if (world !== null) {
+                        worldArray.push(world)
+                    }
+                    break;
             }
             counter++
         }
@@ -120,268 +122,262 @@ export class CommandFactory {
         const fleetAndWorlds: { fleet: Fleet, homeWorld: World, worldArray: Array<World> } = this.findFleetAndWorld();
         return new MoveCommand(fleetAndWorlds.fleet, fleetAndWorlds.homeWorld, fleetAndWorlds.worldArray, this.processCommand, this.commandPlayer)
     }
-    /*
-        findFromFleetToFleetAndWorlds(): {fromFleet: Fleet, toFleet: Fleet, fromHomeWorld: World, toHomeWorld:World, shipsToTransfer: number} {
-            let counter = 0;
-            let shipsToTransfer = 0;
-            let fromFleet: Fleet = null;
-            let toFleet: Fleet = null;
-            let fromHomeWorld: World = null;
-            let toHomeWorld: World = null;
-            
-            for (const commantElement of this.commandElements) {
-                if (counter === 0) {
-                    const fleetNumber = +extractNumberString(commantElement);
-                    if (fleetNumber !== null) {
-                        const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
+
+    findFromFleetToFleetAndWorlds(): { fromFleet: Fleet, toFleet: Fleet, fromHomeWorld: World, toHomeWorld: World, shipsToTransfer: number } {
+        let counter = 0;
+        let shipsToTransfer = 0;
+        let fromFleet: Fleet = null;
+        let toFleet: Fleet = null;
+        let fromHomeWorld: World = null;
+        let toHomeWorld: World = null;
+       // let aFleetAndHomeWorld = null;
+
+        for (const commantNumber of this.commandNumberArray) {
+            switch (counter) {
+                case TransferShipsFleetToFleetEnum.FLEED1:
+                    const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, commantNumber);
+                    if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
+                        fromFleet = aFleetAndHomeWorld.fleet;
+                        fromHomeWorld = aFleetAndHomeWorld.homeWorld;
+                    }
+                    break;
+                case TransferShipsFleetToFleetEnum.SHIPTRANSVER:
+                    shipsToTransfer = commantNumber;
+
+                    break;
+                case TransferShipsFleetToFleetEnum.FLEED2:
+                    const aFleetAndHomeWorld2 = fleetAndHomeWorldWithNumber(this.worlds, commantNumber);
+                    if (aFleetAndHomeWorld2.fleet !== null && aFleetAndHomeWorld2.homeWorld != null) {
+                        toFleet = aFleetAndHomeWorld2.fleet;
+                        toHomeWorld = aFleetAndHomeWorld2.homeWorld;
+                    }
+                    break;
+            }
+            counter++;
+        }
+        return { fromFleet, toFleet, fromHomeWorld, toHomeWorld, shipsToTransfer }
+    }
+
+    createTransferShipsFleetToFleetCommand(): TransferShipsFleetToFleet {
+        const fromFleetToFleetAndWorls = this.findFromFleetToFleetAndWorlds();
+        return new TransferShipsFleetToFleet(fromFleetToFleetAndWorls.fromFleet, fromFleetToFleetAndWorls.toFleet, fromFleetToFleetAndWorls.fromHomeWorld, fromFleetToFleetAndWorls.toHomeWorld, fromFleetToFleetAndWorls.shipsToTransfer, this.processCommand, this.commandPlayer);
+    }
+
+    findFromFleetToDShipsAndWorld(): { fromFleet: Fleet, fromHomeWorld: World, shipsToTransfer: number } {
+        let counter = 0;
+        let fromFleet: Fleet = null;
+        let fromHomeWorld: World = null;
+        let shipsToTransfer = 0;
+
+        for (const commantNumber of this.commandNumberArray) {
+            switch (counter) {
+                case TransferShipsFleetToDShipsEnum.FLEED:
+                        const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, commantNumber);
                         if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld !== null) {
                             fromFleet = aFleetAndHomeWorld.fleet;
                             fromHomeWorld = aFleetAndHomeWorld.homeWorld;
                         }
-                    }
-                } else if (counter === 1) {
-                    const aShipsToTransfer = +extractNumberString(commantElement);
-                    if (aShipsToTransfer !== null) {
-                        shipsToTransfer = aShipsToTransfer;
-                    }
-                } else {
-                    const fleetNumber = +extractNumberString(commantElement);
-                    if (fleetNumber !== null) {
-                        const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, fleetNumber);
-                        if (aFleetAndHomeWorld.fleet !== null && aFleetAndHomeWorld.homeWorld != null) {
-                            toFleet = aFleetAndHomeWorld.fleet;
-                            toHomeWorld = aFleetAndHomeWorld.homeWorld;
-                        }
-                    }
-                }
-                counter++
-            }
-            return {fromFleet, toFleet, fromHomeWorld, toHomeWorld, shipsToTransfer}
-        }
-        
-        createTransferShipsFleetToFleetCommand(): TransferShipsFleetToFleet {
-            const fromFleetToFleetAndWorls = this.findFromFleetToFleetAndWorlds();
-            return new TransferShipsFleetToFleet(fromFleetToFleetAndWorls.fromFleet, fromFleetToFleetAndWorls.toFleet, fromFleetToFleetAndWorls.fromHomeWorld, fromFleetToFleetAndWorls.toHomeWorld, fromFleetToFleetAndWorls.shipsToTransfer, this.processCommand, this.commandPlayer);
-        }
-    
-        func findFromFleetToDShipsAndPlanet() -> (fromFleet: Fleet, fromHomePlanet:Planet, shipsToTransfer: Int) {
-            var counter = 0
-            var fromFleet: Fleet = Fleet()
-            var fromHomePlanet: Planet = Planet()
-            var shipsToTransfer = 0
-    
-            for commantElement in commandElements {
-                if counter == 0 {
-                    var fleetNumber = Int(extractNumberString(commantElement))
-                    if fleetNumber != nil {
-                        var aFleetAndHomePlanet = fleetAndHomePlanetWithNumber(planets, number: fleetNumber!)
-                        if aFleetAndHomePlanet.fleet != nil && aFleetAndHomePlanet.homePlanet != nil {
-                            fromFleet = aFleetAndHomePlanet.fleet!
-                            fromHomePlanet = aFleetAndHomePlanet.homePlanet!
-                        }
-                    }
-                } else if counter == 1 {
-                    var aShipsToTransfer = Int(extractNumberString(commantElement))
-                    if aShipsToTransfer != nil {
-                        shipsToTransfer = aShipsToTransfer!
-                    }
-                }
-                
-                counter++
-            }
-            return (fromFleet, fromHomePlanet, shipsToTransfer)
-        }
-    
-        func createTransferShipsFleetToDShipsCommand() -> TransferShipsFleetToDShips {
-            let fromFleetToDShipsAndPlanet = findFromFleetToDShipsAndPlanet()
-            return TransferShipsFleetToDShips(aFromFleet: fromFleetToDShipsAndPlanet.fromFleet, aFromHomePlanet: fromFleetToDShipsAndPlanet.fromHomePlanet, aShipsToTransfer: fromFleetToDShipsAndPlanet.shipsToTransfer, aString: processCommand!, aPlayer: commandPlayer!)
-        } */
-
-    getCommandNummerArray(withCommandElements: Array<string>): Array<number> {
-        const result = new Array<number>();
-        for (const commantElement of withCommandElements) {
-            const aNumber = +extractNumberString(commantElement);
-            result.push(aNumber);
-        } return result;
-    }
-
-    getCommandElements(withProcessCommand: string): Array<string> {
-        const result = new Array<string>();
-        const charCount = withProcessCommand.length;
-        let foundCommandElementEnd = false;
-        let commandElement = '';
-        let counter = 0;
-
-        for (const aCharacter of withProcessCommand) {
-            if (isCharacterANumber(aCharacter) === false) {
-                if (counter !== 0) {
-                    foundCommandElementEnd = true;
-                }
-                if (foundCommandElementEnd) {
-                    result.push(commandElement);
-                    commandElement = '';
-                    foundCommandElementEnd = false;
-                }
-                commandElement += aCharacter;
-            } else {
-                commandElement += aCharacter;
+                    break;
+            
+                case TransferShipsFleetToDShipsEnum.SHIPTRANSVER:
+                        shipsToTransfer = commantNumber;
+                    break;
             }
             counter++
-            if (counter === charCount) {
-                result.push(commandElement);
-            }
         }
-        return result;
+        return {fromFleet, fromHomeWorld, shipsToTransfer};
     }
+
+    createTransferShipsFleetToDShipsCommand(): TransferShipsFleetToDShips {
+    const fromFleetToDShipsAndWorld = this.findFromFleetToDShipsAndWorld()
+    return new TransferShipsFleetToDShips(fromFleetToDShipsAndWorld.fromFleet, fromFleetToDShipsAndWorld.fromHomeWorld, fromFleetToDShipsAndWorld.shipsToTransfer, this.processCommand, this.commandPlayer);
+}
+
+getCommandNummerArray(withCommandElements: Array<string>): Array < number > {
+    const result = new Array<number>();
+    for(const commantElement of withCommandElements) {
+        const aNumber = +extractNumberString(commantElement);
+        result.push(aNumber);
+    } return result;
+}
+
+    getCommandElements(withProcessCommand: string): Array < string > {
+    const result = new Array<string>();
+    const charCount = withProcessCommand.length;
+    let foundCommandElementEnd = false;
+    let commandElement = '';
+    let counter = 0;
+
+    for(const aCharacter of withProcessCommand) {
+        if (isCharacterANumber(aCharacter) === false) {
+            if (counter !== 0) {
+                foundCommandElementEnd = true;
+            }
+            if (foundCommandElementEnd) {
+                result.push(commandElement);
+                commandElement = '';
+                foundCommandElementEnd = false;
+            }
+            commandElement += aCharacter;
+        } else {
+            commandElement += aCharacter;
+        }
+        counter++
+        if (counter === charCount) {
+            result.push(commandElement);
+        }
+    }
+        return result;
+}
 
     executeCommands() {
-        const commandArray: Array<Command> = new Array<Command>();
+    const commandArray: Array<Command> = new Array<Command>();
 
-        for (const playerName of this.commandStringsDict.keys()) {
-            const commands: Array<string> = this.commandStringsDict.get(playerName);
+    for(const playerName of this.commandStringsDict.keys()) {
+    const commands: Array<string> = this.commandStringsDict.get(playerName);
 
-            for (const command of commands) {
-                console.log(`Command: ${command}`);
-                this.initMembers(command, playerName);
-               
-                const commandInstance = this.getCommandInstance();
-                if (commandInstance !== null) {
-                    if (commandInstance instanceof Command) {
-                        commandArray.push(commandInstance);
+    for (const command of commands) {
+        console.log(`Command: ${command}`);
+        this.initMembers(command, playerName);
+
+        const commandInstance = this.getCommandInstance();
+        if (commandInstance !== null) {
+            if (commandInstance instanceof Command) {
+                commandArray.push(commandInstance);
+            }
+        }
+    }
+
+    if (this.coreGame === true) {
+        for (const aPlayerName of this.allPlayerDict.keys()) {
+            const player = this.allPlayerDict.get(aPlayerName);
+            const buildDShips = new BuildDShips(this.worlds, player)
+            commandArray.push(buildDShips as Command);
+        }
+
+        commandArray.sort(compareCommand);
+
+        for (const command of commandArray) {
+            const executeCommand = command as unknown as ExecuteCommand;
+            executeCommand.executeCommand();
+        }
+    }
+}
+    }
+
+getCommandInstance(): Object {
+    let result: Object = null;
+    if (this.commandChars !== null) {
+        if (this.commandChars.length >= 2) {
+            switch (this.commandChars.charAt(0)) {
+                case 'F':
+                    switch (this.commandChars.charAt(1)) {
+                        case 'W':
+                            result = this.createMoveCommand();
+                            break;
+                        case 'U':
+                            result = null; //this.createUnloadingMetalCommand()
+                            break;
+                        case 'T':
+                            if (this.commandChars.length === 3) {
+                                switch (this.commandChars.charAt(2)) {
+                                    case 'F':
+                                        result = this.createTransferShipsFleetToFleetCommand();
+                                        break;
+                                    case 'D':
+                                        result = this.createTransferShipsFleetToDShipsCommand();
+                                        break;
+                                    default:
+                                        result = null;
+                                        break;
+                                }
+                            }
+                            break;
+                        case 'A':
+                            if (this.commandChars.length === 3) {
+                                switch (this.commandChars.charAt(2)) {
+                                    case 'F':
+                                        result = null; //this.createFireFleetToFleetCommand();
+                                        break;
+                                    case 'D':
+                                        result = null; //createFireFleetToDShipsCommand()
+                                        break;
+                                    default:
+                                        result = null;
+                                        break;
+                                }
+                            }
+                            break;
+                        default:
+                            result = null;
+                            break;
                     }
-                }
+                    break;
+                case 'W':
+                    switch (this.commandChars.charAt(1)) {
+                        case 'B':
+                            if (this.commandChars.length === 3) {
+                                if (this.commandChars.charAt(2) === 'F') {
+                                    result = this.createBuildFleetShipCommand();
+                                }
+                            }
+                            break;
+                        default:
+                            result = null;
+                            break;
+                    }
+                    break;
+                case 'D':
+                    switch (this.commandChars.charAt(1)) {
+                        case 'A':
+                            if (this.commandChars.length === 3) {
+                                if (this.commandChars.charAt(2) === 'F') {
+                                    result = null; //createFireDShipsToFleetCommand()
+                                }
+                            }
+                            break;
+                        case 'T':
+                            if (this.commandChars.length === 3) {
+                                if (this.commandChars.charAt(2) === 'F') {
+                                    result = null; //createTransferDShipsToFleetCommand()
+                                }
+                            }
+                            break;
+                        default:
+                            result = null;
+                            break;
+                    }
+                    break;
+                case 'Z':
+                    result = null //createAmbushOffForPlanet()
+                    break;
+                case 'A':
+                    if (this.commandChars.charAt(1) === '=') {
+                        result = null //createTeammateForPlayer();
+                    }
+                    break;
+                case 'N':
+                    if (this.commandChars.charAt(1) === '=') {
+                        result = null; //createRemoveTeammateForPlayer();
+                    }
+                    break;
+                default:
+                    result = null;
+                    break;
             }
-
-            if (this.coreGame === true) {
-                for (const aPlayerName of this.allPlayerDict.keys()) {
-                    const player = this.allPlayerDict.get(aPlayerName);
-                    const buildDShips = new BuildDShips(this.worlds, player)
-                    commandArray.push(buildDShips as Command);
-                }
-
-                commandArray.sort(compareCommand);
-
-                for (const command of commandArray) {
-                    const executeCommand = command as unknown as ExecuteCommand;
-                    executeCommand.executeCommand();
-                }
+        } else if (this.commandChars.length === 1) {
+            switch (this.commandChars.charAt(0)) {
+                case 'Z':
+                    result = null; //createAmbushOffForPlayer()
+                    break;
+                default:
+                    result = null;
+                    break;
             }
         }
     }
-
-    getCommandInstance(): Object {
-        let result: Object = null;
-        if (this.commandChars !== null) {
-            if (this.commandChars.length >= 2) {
-                switch (this.commandChars.charAt(0)) {
-                    case 'F':
-                        switch (this.commandChars.charAt(1)) {
-                            case 'W':
-                                result = this.createMoveCommand();
-                                break;
-                            case 'U':
-                                result = null; //createUnloadingMetalCommand()
-                                break;
-                            case 'T':
-                                if (this.commandChars.length === 3) {
-                                    switch (this.commandChars.charAt(2)) {
-                                        case 'F':
-                                            result = null; //createTransferShipsFleetToFleetCommand()
-                                            break;
-                                        case 'D':
-                                            result = null; //createTransferShipsFleetToDShipsCommand()
-                                            break;
-                                        default:
-                                            result = null;
-                                            break;
-                                    }
-                                }
-                                break;
-                            case 'A':
-                                if (this.commandChars.length === 3) {
-                                    switch (this.commandChars.charAt(2)) {
-                                        case 'F':
-                                            result = null; //createFireFleetToFleetCommand()
-                                            break;
-                                        case 'D':
-                                            result = null; //createFireFleetToDShipsCommand()
-                                            break;
-                                        default:
-                                            result = null;
-                                            break;
-                                    }
-                                }
-                                break;
-                            default:
-                                result = null;
-                                break;
-                        }
-                        break;
-                    case 'W':
-                        switch (this.commandChars.charAt(1)) {
-                            case 'B':
-                                if (this.commandChars.length === 3) {
-                                    if (this.commandChars.charAt(2) === 'F') {
-                                        result = null; //createBuildFleetShipCommand()
-                                    }
-                                }
-                                break;
-                            default:
-                                result = null;
-                                break;
-                        }
-                        break;
-                    case 'D':
-                        switch (this.commandChars.charAt(1)) {
-                            case 'A':
-                                if (this.commandChars.length === 3) {
-                                    if (this.commandChars.charAt(2) === 'F') {
-                                        result = null; //createFireDShipsToFleetCommand()
-                                    }
-                                }
-                                break;
-                            case 'T':
-                                if (this.commandChars.length === 3) {
-                                    if (this.commandChars.charAt(2) === 'F') {
-                                        result = null; //createTransferDShipsToFleetCommand()
-                                    }
-                                }
-                                break;
-                            default:
-                                result = null;
-                                break;
-                        }
-                        break;
-                    case 'Z':
-                        result = null //createAmbushOffForPlanet()
-                        break;
-                    case 'A':
-                        if (this.commandChars.charAt(1) === '=') {
-                            result = null //createTeammateForPlayer();
-                        }
-                        break;
-                    case 'N':
-                        if (this.commandChars.charAt(1) === '=') {
-                            result = null; //createRemoveTeammateForPlayer();
-                        }
-                        break;
-                    default:
-                        result = null;
-                        break;
-                }
-            } else if (this.commandChars.length === 1) {
-                switch (this.commandChars.charAt(0)) {
-                    case 'Z':
-                        result = null; //createAmbushOffForPlayer()
-                        break;
-                    default:
-                        result = null;
-                        break;
-                }
-            }
-        }
-        return result;
-    }
+    return result;
+}
 
 
 }
