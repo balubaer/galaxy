@@ -10,8 +10,11 @@ import { GameServiceService } from '../game-service.service';
 })
 export class CreateGameComponent implements OnInit {
   form: FormGroup;
+  players: Array<string> = new Array();
+  playerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private gameService: GameServiceService) { }
+  constructor(private fb: FormBuilder, private gameService: GameServiceService) {
+   }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -22,6 +25,13 @@ export class CreateGameComponent implements OnInit {
       PlayName: [''],
       StartShipCount: ['']
     });
+    this.playerForm = this.fb.group({
+      PlayerName: ['']
+    });
+  }
+
+  onSubmitPlayer() {
+    this.players.push(this.playerForm.value.PlayerName);
   }
 
   onSubmit() {
@@ -32,7 +42,7 @@ export class CreateGameComponent implements OnInit {
       fleetsOnHomeWorld: this.form.value.FleetsOnHomeWorld,
       worldCount: this.form.value.WorldsCount,
       playName: this.form.value.PlayName,
-      player: ['ZAPHOD'],
+      player: this.players,
       startShipCount: this.form.value.StartShipCount
     }
 

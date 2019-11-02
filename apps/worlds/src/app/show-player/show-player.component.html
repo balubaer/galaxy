@@ -1,2 +1,7 @@
 <h2>Show Player</h2>
-<div>Player: {{ player$ | async | json }}</div>
+<!--<div>Player: {{ player$ | async | json }}</div>-->
+<h4>Spieler-Liste</h4>
+
+<ol>
+    <li *ngFor="let player of players$| async">{{ player }}</li>
+</ol>

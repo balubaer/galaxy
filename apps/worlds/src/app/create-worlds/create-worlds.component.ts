@@ -12,6 +12,7 @@ export class CreateWorldsComponent implements OnInit {
 
   message: Message;
   ishidden:boolean;
+  
 
   constructor(private gameService: GameServiceService) { 
     this.ishidden = true;

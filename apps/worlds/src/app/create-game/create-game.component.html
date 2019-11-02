@@ -5,9 +5,17 @@
     Anzahl Flotten in Spiel: <input type="number" formControlName="FleetCount" /><br />
     Anzahl Flotten auf Heimatwelt am Anfang des Spiels: <input type="number"
         formControlName="FleetsOnHomeWorld" /><br />
-    Anzahl Schiffe für Flötte auf Heimatwelt am Anfang des Spiels: <input type="number"
+    Anzahl Schiffe für Flotten auf Heimatwelt am Anfang des Spiels: <input type="number"
         formControlName="StartShipCount" /><br />
     Anzahl Welten im Spiel: <input type="number" formControlName="WorldsCount" /><br />
-    <span [hidden]="!form.get('WorldsCount').hasError('required')">WorldsCount is required</span><br />
-    <button [disabled]="!form.valid">Save</button>
+    <h4>Spieler-Liste</h4>
+    <ol>
+        <li *ngFor="let player of players">{{ player }}</li>
+    </ol>
+    <form [formGroup]="playerForm" (ngSubmit)="onSubmitPlayer()">
+        Spieler-Name: <input type="string" formControlName="PlayerName" />
+        <button>Spieler zufügen</button>
+    </form>
+    <span [hidden]="!form.get('WorldsCount').hasError('required')"><font color="#FF0000">Anzahl Welten im Spiel ist erforderlich</font></span><br />
+    <button [disabled]="!form.valid">Speichern</button>
 </form>

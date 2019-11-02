@@ -14,14 +14,15 @@ export class GameServiceService {
 
   setGamePref(gamepref): Observable<GamePref> {
     console.log(`gamepref: ${gamepref}`)
-    return this.http.post<GamePref>('/api/create-world/SetGamePref', {
-      worldCount: gamepref.worldCount,
-      distanceLevelHomes: gamepref.distanceLevelHomes,
-      fleetCount: gamepref.fleetCount,
-      fleetsOnHomeWorld: gamepref.fleetsOnHomeWorld,
-      playName: gamepref.playName,
-      startShipCount: gamepref.startShipCount
-    })
+    return this.http.post<GamePref>('/api/create-world/SetGamePref', gamepref)
+  }
+
+  getGamePref(): Observable<GamePref> {
+    return this.http.get<GamePref>('/api/create-world/GetGamePref');
+  }
+
+  getPlayerList(): Observable<Array<string>> {
+    return this.http.get<Array<string>>('/api/create-world/GetPlayerList')
   }
 
   createWorlds(): Observable<Message> {
