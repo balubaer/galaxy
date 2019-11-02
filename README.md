@@ -34,7 +34,7 @@ Ist ein Spiel nach den
 - FleetFactory ist vollfunktionsfähig
 - FleetMovement ist vollfunktionsfähig
 - World ist vollfunktionsfähig
-- Fleet ist vollfunktionsfähig
+- Fleet ist vollfunktionsfähig mit Tests
 - DistanceLevel ist vollfunktionsfähig
 - Command ist vollfunktionsfähig
 - CommandFactory ist vollfunktionsfähig

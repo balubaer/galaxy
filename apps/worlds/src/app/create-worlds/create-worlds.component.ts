@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {Validators, FormBuilder, FormGroup} from '@angular/forms';
-import { GamePref } from '@galaxy/game-objects';
 import { GameServiceService } from '../game-service.service';
 import { Message } from '@galaxy/api-interfaces';
 
@@ -12,30 +10,14 @@ import { Message } from '@galaxy/api-interfaces';
 })
 export class CreateWorldsComponent implements OnInit {
 
-  form: FormGroup;
   message: Message;
   ishidden:boolean;
 
-  constructor(private fb: FormBuilder, private gameService: GameServiceService) { 
+  constructor(private gameService: GameServiceService) { 
     this.ishidden = true;
   }
 
   ngOnInit() {
-    this.form = this.fb.group({
-      WorldsCount: ['', Validators.required]
-    });
-  }
-
-  onSubmit() {
-
-    const gamepref: GamePref = {
-      worldCount: this.form.value.WorldsCount
-    }
-
-    console.log('Added new book', gamepref)
-
-    this.gameService.setGamePref(gamepref)
-      .subscribe((gamepref01: GamePref) => console.log('Added new book', gamepref01));
   }
 
   onSubmitCreateWorld() {

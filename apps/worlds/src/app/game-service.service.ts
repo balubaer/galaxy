@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { GamePref } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 
@@ -15,11 +15,16 @@ export class GameServiceService {
   setGamePref(gamepref): Observable<GamePref> {
     console.log(`gamepref: ${gamepref}`)
     return this.http.post<GamePref>('/api/create-world/SetGamePref', {
-      worldCount: gamepref.worldCount
+      worldCount: gamepref.worldCount,
+      distanceLevelHomes: gamepref.distanceLevelHomes,
+      fleetCount: gamepref.fleetCount,
+      fleetsOnHomeWorld: gamepref.fleetsOnHomeWorld,
+      playName: gamepref.playName,
+      startShipCount: gamepref.startShipCount
     })
   }
 
-  createWorlds():Observable<Message> {
+  createWorlds(): Observable<Message> {
     console.log('createWorlds')
     return this.http.get<Message>('/api/create-world/CreateWorld');
   }

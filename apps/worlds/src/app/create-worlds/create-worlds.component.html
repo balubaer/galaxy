@@ -1,10 +1,5 @@
-<h2>Create Worlds</h2>
+
+<h2>Create Game</h2>
 <div [hidden]="ishidden">CreateWorlds successful</div>
 <button (click)="onSubmitCreateWorld()">Create Worlds</button>
-<h3>Set Game Preferneces</h3>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  WorldCount: <input type="number" formControlName="WorldsCount" /><br />
-  <span [hidden]="!form.get('WorldsCount').hasError('required')">WorldsCount is required</span><br />
-
-  <button [disabled]="!form.valid">Save</button>
-</form>
+  

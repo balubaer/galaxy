@@ -1,0 +1,13 @@
+<h3>Spieleinstellungen</h3>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    Spielname: <input type="string" formControlName="PlayName" /><br />
+    Abstand zu den Spielern: <input type="number" formControlName="DistanceLevelHomes" /><br />
+    Anzahl Flotten in Spiel: <input type="number" formControlName="FleetCount" /><br />
+    Anzahl Flotten auf Heimatwelt am Anfang des Spiels: <input type="number"
+        formControlName="FleetsOnHomeWorld" /><br />
+    Anzahl Schiffe für Flötte auf Heimatwelt am Anfang des Spiels: <input type="number"
+        formControlName="StartShipCount" /><br />
+    Anzahl Welten im Spiel: <input type="number" formControlName="WorldsCount" /><br />
+    <span [hidden]="!form.get('WorldsCount').hasError('required')">WorldsCount is required</span><br />
+    <button [disabled]="!form.valid">Save</button>
+</form>

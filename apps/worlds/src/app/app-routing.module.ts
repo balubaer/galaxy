@@ -3,11 +3,16 @@ import { Routes, RouterModule } from '@angular/router';
 import { CreateWorldsComponent } from './create-worlds/create-worlds.component';
 import { ShowPlayerComponent } from './show-player/show-player.component';
 import { WorldListComponent } from './world-list/world-list.component';
+import { CreateGameComponent } from './create-game/create-game.component';
 
 const routes: Routes = [
   {
     path: 'create-worlds',
     component: CreateWorldsComponent
+  },
+  {
+    path: 'create-game',
+    component: CreateGameComponent
   },
   {
     path: 'show-player',

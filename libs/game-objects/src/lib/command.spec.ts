@@ -1,4 +1,4 @@
-import { Command, TurnPhase, MoveCommand, compareCommand } from "./command";
+import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFleet } from "./command";
 import { Player } from './player';
 import { World, TestWorldsArrayFactory } from '..';
 import { Fleet } from './fleet';
@@ -53,5 +53,52 @@ describe('MoveCommand', () => {
     const fleetMovement = fleet4.fleetMovements[0];
     expect(fleetMovement.fromWorld).toBe(world4);
     expect(fleetMovement.toWorld).toBe(world2);
+  });
+});
+
+function createATransferShipsFleetToFleet(): TransferShipsFleetToFleet {
+  const fleet42 = new Fleet();
+  const fleet43 = new Fleet();
+  const world42 = new World();
+
+  fleet42.number = 42;
+  fleet42.ships = 5;
+  fleet42.player = player;
+
+  fleet43.number = 43;
+  fleet43.ships = 0;
+  fleet43.player = player;
+
+  world42.fleets.push(fleet42, fleet43);
+
+  const transferShipsFleetToFleet: TransferShipsFleetToFleet = new TransferShipsFleetToFleet(fleet42, fleet43, world42, world42, 3, 'F42T3F43', player);
+  return transferShipsFleetToFleet;
+}
+
+describe('TransferShipsFleetToFleet', () => {
+  it('should create an instance', () => {
+    const fleet42 = new Fleet();
+    const fleet43 = new Fleet();
+    const world42 = new World();
+
+    fleet42.number = 42;
+    fleet42.ships = 5;
+    fleet42.player = player;
+
+    fleet43.number = 43;
+    fleet43.ships = 0;
+    fleet43.player = player;
+
+    world42.fleets.push(fleet42, fleet43);
+
+    const transferShipsFleetToFleet: TransferShipsFleetToFleet = createATransferShipsFleetToFleet();
+    expect(transferShipsFleetToFleet).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const transferShipsFleetToFleet: TransferShipsFleetToFleet = createATransferShipsFleetToFleet();
+
+    transferShipsFleetToFleet.executeCommand();
+    expect(transferShipsFleetToFleet.fromFleet.ships).toBe(2);
+    expect(transferShipsFleetToFleet.toFleet.ships).toBe(3);
   });
 });

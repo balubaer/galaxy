@@ -23,14 +23,15 @@ export class AppController {
   @Get('World')
   getWorld(): World {
     const world : World = this.appService.getWorld();
+    // tslint:disable-next-line: prefer-const
     let data = JSON.stringify(world);
-    const gamePref: GamePref = {
+   /* const gamePref: GamePref = {
       worldCount: 1
-    };
+    };*/
 
     writeFileSync('world.json', data);
-    data = JSON.stringify(gamePref);
-    writeFileSync('gamePref.json', data);
+   // data = JSON.stringify(gamePref);
+   // writeFileSync('gamePref.json', data);
 
     return world;
   } 
