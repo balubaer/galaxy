@@ -2,7 +2,7 @@ import { World } from './world';
 
 export class Port {
     worlds: World[];
-    private world: World;
+    world: World;
 
     description: string;
 

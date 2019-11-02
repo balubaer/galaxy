@@ -43,7 +43,7 @@ export class DistanceLevel {
                 newPassedWorlds.push(world)
             }
         }
-        this.nextLevelWorlds =[];
+        this.nextLevelWorlds = [];
         
         for (const world of oldNextLevelWorlds) {
             const port: Port = world.port;
