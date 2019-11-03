@@ -5,6 +5,8 @@ import { ShowPlayerComponent } from './show-player/show-player.component';
 import { WorldListComponent } from './world-list/world-list.component';
 import { CreateGameComponent } from './create-game/create-game.component';
 import { ShowGamePrefComponent } from './show-game-pref/show-game-pref.component';
+import { PlayerModule } from './player/player.module';
+import { PlayerComponent } from './player/player/player.component';
 
 const routes: Routes = [
   {
@@ -27,6 +29,11 @@ const routes: Routes = [
     component: WorldListComponent
   },
   {
+    path: 'player',
+    loadChildren: () => import('./player/player.module').then(m => m.PlayerModule)
+    //component: PlayerComponent
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: '/world-list'
@@ -34,7 +41,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), PlayerModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -1,0 +1,13 @@
+<h2>Show Player</h2>
+<!--<div>Player: {{ player$ | async | json }}</div>-->
+<h4>Spieler-Liste</h4>
+
+<ol>
+    <li *ngFor="let player of players$| async">{{ player }}</li>
+</ol>
+
+<table>
+    <tr *ngFor="let player of players$ | async">
+      <td><a [routerLink]="[player]">{{ player}}</a></td>
+    </tr>
+  </table>

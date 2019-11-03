@@ -13,8 +13,19 @@ import { CreateGameComponent } from './create-game/create-game.component';
 import { ShowGamePrefComponent } from './show-game-pref/show-game-pref.component';
 
 @NgModule({
-  declarations: [AppComponent, ShowPlayerComponent, CreateWorldsComponent, WorldListComponent, NavigationComponentComponent, CreateGameComponent, ShowGamePrefComponent],
-  imports: [BrowserModule, HttpClientModule, ReactiveFormsModule, AppRoutingModule],
+  declarations: [
+    AppComponent,
+    ShowPlayerComponent,
+    CreateWorldsComponent,
+    WorldListComponent,
+    NavigationComponentComponent,
+    CreateGameComponent,
+    ShowGamePrefComponent],
+  imports: [
+    BrowserModule,
+    HttpClientModule, 
+    ReactiveFormsModule,
+    AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],
   exports: [ShowPlayerComponent]
