@@ -1,0 +1,20 @@
+Infos zu Spieler: joniitaan Runde: 2 
+Punkte: 80 | Planeten: 4 | Flotten: 6 | Schiffe auf Flotten: 30 | D-Schiffe: 1
+Verbündete: ()
+
+
+W18(46,197,204) [joniitaan]
+   F131[joniitaan] = 6 (bewegt)
+   F158[joniitaan] = 6 (bewegt)
+
+W46(18,147,201) [joniitaan] (D-Schiffe=1)
+   (F131[joniitaan]-->W18 F56[joniitaan]-->W147 F76[joniitaan]-->W201 F158[joniitaan]-->W18 F72[joniitaan]-->W147)
+
+W147(46,154,204) [joniitaan]
+   F59[joniitaan] = 0
+   F56[joniitaan] = 6 (bewegt)
+   F72[joniitaan] = 6 (bewegt)
+
+W201(46,105,183) [joniitaan]
+   F76[joniitaan] = 6 (bewegt)
+

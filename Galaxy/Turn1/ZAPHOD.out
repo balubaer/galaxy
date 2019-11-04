@@ -1,0 +1,21 @@
+Infos zu Spieler: ZAPHOD Runde: 2 
+Punkte: 80 | Planeten: 4 | Flotten: 7 | Schiffe auf Flotten: 30 | D-Schiffe: 1
+Verbündete: ()
+
+
+W14(39,76,215) [ZAPHOD] (D-Schiffe=1)
+   (F139[ZAPHOD]-->W215 F175[ZAPHOD]-->W76 F174[ZAPHOD]-->W215 F169[ZAPHOD]-->W39 F160[ZAPHOD]-->W76)
+
+W39(11,14,155) [ZAPHOD]
+   F112[ZAPHOD] = 0
+   F169[ZAPHOD] = 6 (bewegt)
+
+W76(14,26,155) [ZAPHOD]
+   F175[ZAPHOD] = 6 (bewegt)
+   F160[ZAPHOD] = 6 (bewegt)
+
+W215(14,59,120) [ZAPHOD]
+   F151[ZAPHOD] = 0
+   F139[ZAPHOD] = 6 (bewegt)
+   F174[ZAPHOD] = 6 (bewegt)
+

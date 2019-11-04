@@ -1,0 +1,17 @@
+Infos zu Spieler: nimosalina Runde: 2 
+Punkte: 60 | Planeten: 3 | Flotten: 5 | Schiffe auf Flotten: 30 | D-Schiffe: 1
+Verbündete: ()
+
+
+W3(33,136) [nimosalina] (D-Schiffe=1)
+   (F119[nimosalina]-->W33 F193[nimosalina]-->W136 F3[nimosalina]-->W136 F18[nimosalina]-->W33 F11[nimosalina]-->W136)
+
+W33(3,8,116) [nimosalina]
+   F119[nimosalina] = 6 (bewegt)
+   F18[nimosalina] = 6 (bewegt)
+
+W136(3,123) [nimosalina]
+   F193[nimosalina] = 6 (bewegt)
+   F3[nimosalina] = 6 (bewegt)
+   F11[nimosalina] = 6 (bewegt)
+

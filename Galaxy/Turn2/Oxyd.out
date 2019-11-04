@@ -1,0 +1,38 @@
+Infos zu Spieler: Oxyd Runde: 3 
+Punkte: 260 | Planeten: 9 | Flotten: 8 | Schiffe auf Flotten: 30 | D-Schiffe: 6
+Verbündete: ()
+
+
+W5(104,141,143) [Oxyd] (D-Schiffe=1)
+   F125[---] = 0
+   F126[---] = 0
+   (F178[Oxyd]-->W141 F38[Oxyd]-->W104)
+
+W23(45,111,143) [Oxyd] (D-Schiffe=1)
+   F170[---] = 0
+   (F85[Oxyd]-->W45 F14[Oxyd]-->W111)
+
+W45(23,146,167) [Oxyd]
+   F44[Oxyd] = 0
+   F110[Oxyd] = 0
+   F85[Oxyd] = 6 (bewegt)
+
+W74(67,162,193) [Oxyd]
+   F149[Oxyd] = 0
+   F92[Oxyd] = 6 (bewegt)
+
+W104(5,7,36,188) [Oxyd]
+   F38[Oxyd] = 6 (bewegt)
+
+W111(23,145,157) [Oxyd]
+   F14[Oxyd] = 6 (bewegt)
+
+W141(5,95,164,200) [Oxyd]
+   F178[Oxyd] = 6 (bewegt)
+
+W143(5,23,162) [Oxyd] (D-Schiffe=3)
+   (F14[Oxyd]-->W23)
+
+W162(72,74,143) [Oxyd] (D-Schiffe=1)
+   (F92[Oxyd]-->W74)
+

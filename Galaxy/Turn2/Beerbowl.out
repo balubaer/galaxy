@@ -1,0 +1,33 @@
+Infos zu Spieler: Beerbowl Runde: 3 
+Punkte: 200 | Planeten: 7 | Flotten: 12 | Schiffe auf Flotten: 30 | D-Schiffe: 5
+Verbündete: ()
+
+
+W21(58,61,87,186) [Beerbowl]
+   F89[Beerbowl] = 3 (bewegt)
+   F168[Beerbowl] = 3 (bewegt)
+
+W34(35,106,218) [Beerbowl] (D-Schiffe=1)
+   F143[Beerbowl] = 3
+   (F62[Beerbowl]-->W106 F81[Beerbowl]-->W106 F209[Beerbowl]-->W35 F212[Beerbowl]-->W35)
+
+W35(34,95,108) [Beerbowl]
+   F58[Beerbowl] = 0
+   F209[Beerbowl] = 3 (bewegt)
+   F212[Beerbowl] = 3 (bewegt)
+
+W58(21,128,218) [Beerbowl] (D-Schiffe=1)
+   F31[Beerbowl] = 1
+   (F89[Beerbowl]-->W21 F23[Beerbowl]-->W128 F168[Beerbowl]-->W21)
+
+W106(28,34,98) [Beerbowl]
+   F95[Beerbowl] = 0
+   F105[Beerbowl] = 0
+   F62[Beerbowl] = 3 (bewegt)
+   F81[Beerbowl] = 6 (bewegt)
+
+W128(15,58,184) [Beerbowl]
+   F23[Beerbowl] = 5 (bewegt)
+
+W218(34,58) [Beerbowl] (D-Schiffe=3)
+

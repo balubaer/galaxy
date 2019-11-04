@@ -1,0 +1,21 @@
+Infos zu Spieler: mirkomcfly Runde: 2 
+Punkte: 80 | Planeten: 4 | Flotten: 7 | Schiffe auf Flotten: 30 | D-Schiffe: 1
+Verbündete: ()
+
+
+W102(42,166,175) [mirkomcfly]
+   F173[mirkomcfly] = 0
+   F61[mirkomcfly] = 6 (bewegt)
+   F188[mirkomcfly] = 6 (bewegt)
+
+W161(54,166,219) [mirkomcfly]
+   F100[mirkomcfly] = 6 (bewegt)
+   F103[mirkomcfly] = 6 (bewegt)
+
+W166(102,161,169) [mirkomcfly] (D-Schiffe=1)
+   (F61[mirkomcfly]-->W102 F100[mirkomcfly]-->W161 F188[mirkomcfly]-->W102 F103[mirkomcfly]-->W161 F107[mirkomcfly]-->W169)
+
+W169(60,149,166) [mirkomcfly]
+   F121[mirkomcfly] = 0
+   F107[mirkomcfly] = 6 (bewegt)
+

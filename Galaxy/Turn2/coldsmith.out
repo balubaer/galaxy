@@ -1,0 +1,29 @@
+Infos zu Spieler: coldsmith Runde: 3 
+Punkte: 180 | Planeten: 6 | Flotten: 7 | Schiffe auf Flotten: 30 | D-Schiffe: 5
+Verbündete: ()
+
+
+W73(31,121,153) [coldsmith]
+   F134[coldsmith] = 0
+   F13[coldsmith] = 6 (bewegt)
+   F102[coldsmith] = 6 (bewegt)
+
+W131(75,160,187) [coldsmith]
+   F82[coldsmith] = 6 (bewegt)
+   F111[coldsmith] = 6 (bewegt)
+
+W142(144,160) [coldsmith]
+   F198[coldsmith] = 0
+   F104[coldsmith] = 6 (bewegt)
+
+W153(73,207) [coldsmith] (D-Schiffe=1)
+   (F13[coldsmith]-->W73 F82[coldsmith]-->W207 F102[coldsmith]-->W73)
+
+W160(131,142,207) [coldsmith] (D-Schiffe=1)
+   F24[---] = 0
+   F142[---] = 0
+   (F82[coldsmith]-->W131 F104[coldsmith]-->W142 F111[coldsmith]-->W131)
+
+W207(153,160) [coldsmith] (D-Schiffe=3)
+   (F82[coldsmith]-->W160)
+
