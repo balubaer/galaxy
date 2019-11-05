@@ -1,10 +1,10 @@
-import { Controller, Get, Body, Query } from '@nestjs/common';
+import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync } from 'fs';
 import { RequestTurnData , RespondTurnData, GamePref} from '@galaxy/game-objects';
 
 @Controller('game-play')
 export class GamePlayController {
-    @Get('GetTurnData')
+    @Post('GetTurnData')
     getTurnData(@Body() request: RequestTurnData): RespondTurnData {
         const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);

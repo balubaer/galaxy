@@ -1,1 +1,6 @@
 <div>Spieler: {{ playerName }}</div>
+<div *ngIf="turnData$|async as turnData">
+    <pre>Punkte: {{ turnData.points }}</pre>
+    <pre>{{ turnData.turnDataTxt }}</pre>
+    <pre>{{ turnData.turnCommanTxt }}</pre>
+</div>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { GamePlayService } from '../game-play.service';
+import { RespondTurnData, RequestTurnData } from '@galaxy/game-objects';
 
 @Component({
   selector: 'galaxy-player-detail',
@@ -10,19 +12,20 @@ import { switchMap } from 'rxjs/operators';
 })
 export class PlayerDetailComponent implements OnInit {
   playerName: string;
+  turnData$: Observable<RespondTurnData>;
 
-  constructor(private route: ActivatedRoute) {
+
+  constructor(private route: ActivatedRoute, private gamePlayService: GamePlayService) {
     this.playerName = route.snapshot.params["player"];
   }
 
   ngOnInit() {
-    const test = this.route.snapshot.paramMap.get["test"];
-
-    console.log('test: ' + test);
-
-    for (const key of this.route.snapshot.paramMap.keys) {
-      console.log('key: ' + key);
+    const request: RequestTurnData = {
+      turn : 1,
+      playerName : this.playerName
     }
+    this.turnData$ = this.route.params =
+      this.gamePlayService.getTurnData(request);  
   }
 
 }
