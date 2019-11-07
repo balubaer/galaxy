@@ -111,7 +111,7 @@ export class PlayerFactory {
 
             let world: World = null;
             if (counter === 1) {
-                const world = this.findWorldWithDice(this.worldDice, worldArray);
+                world = this.findWorldWithDice(this.worldDice, worldArray);
             } else {
                 this.nextLevelWorlds = new Array();
                 const nextLevelWorldsSet = this.makeNextLevelWorlds();
@@ -121,7 +121,7 @@ export class PlayerFactory {
                 world = this.findWorldWithMinWorldArea(this.nextLevelWorlds);
             }
 
-            console.log(`#### ${counter} vor setPlayer World: ${world.number} Player: ${world.player}`;
+            console.log(`#### ${counter} vor setPlayer World: ${world.number} Player: ${world.player}`);
 
             world.player = player;
             this.homeWorldsDict.set(player.playerName, world);
@@ -149,36 +149,37 @@ export class PlayerFactory {
     }
 
     makeNextLevelWorlds(): Set<World> {
-        result = Set<World>()
-        allPassedWorlds = Set<World>()
-        allNextLevelWorlds = Set<World>()
-        finishCreate = false
-        startDistanceLevelHomes = distanceLevelHomes
+        const result = new Set<World>();
+        const allPassedWorlds = new Set<World>();
+        const allNextLevelWorlds = new Set<World>();
+        let finishCreate = false;
+        let startDistanceLevelHomes = this.distanceLevelHomes;
 
-        while finishCreate == false {
-            for world in homeWorldsDict.values {
-                let distLevel = DistanceLevel(aStartWorld: world, aDistanceLevel: startDistanceLevelHomes)
-                for worldFromPassedWorlds in distLevel.passedWorlds {
-                    allPassedWorlds.insert(worldFromPassedWorlds)
+        while (finishCreate === false) {
+            for (const key of this.homeWorldsDict.keys()) {
+                const world = this.homeWorldsDict.get(key);
+                const distLevel = new DistanceLevel(world, startDistanceLevelHomes);
+                for (const worldFromPassedWorlds of distLevel.passedWorlds) {
+                    allPassedWorlds.add(worldFromPassedWorlds);
                 }
-                for worldFromNextLevel in distLevel.nextLevelWorlds {
-                    allNextLevelWorlds.insert(worldFromNextLevel)
+                for (const worldFromNextLevel of distLevel.nextLevelWorlds) {
+                    allNextLevelWorlds.add(worldFromNextLevel);
                 }
-                for worldFromNextLevel in allNextLevelWorlds {
-                    if allPassedWorlds.contains(worldFromNextLevel) == false {
-                        result.insert(worldFromNextLevel)
+                for (const worldFromNextLevel of allNextLevelWorlds) {
+                    if (allPassedWorlds.has(worldFromNextLevel) === false) {
+                        result.add(worldFromNextLevel);
                     }
                 }
             }
-            if result.count > 0 {
-                finishCreate = true
+            if (result.size > 0) {
+                finishCreate = true;
             } else {
                 startDistanceLevelHomes--;
-                allPassedWorlds.removeAll()
-                allNextLevelWorlds.removeAll()
+                allPassedWorlds.clear();
+                allNextLevelWorlds.clear();
             }
         }
-        distanceLevelHomes = startDistanceLevelHomes;
+        this.distanceLevelHomes = startDistanceLevelHomes;
         return result;
     }
 

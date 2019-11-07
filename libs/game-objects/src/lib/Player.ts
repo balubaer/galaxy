@@ -13,6 +13,14 @@ export class Player {
         this.playerName = name;
     }
 
+    teanmatesNames(): Array <string> {
+        const result = new Array<string>()
+        for (const teammatePlayer of this.teammates) {
+            result.push(teammatePlayer.playerName);
+        }
+        return result;
+    }
+
     stringName(): string {
         return `[${this.playerName}]`;
     }
@@ -34,7 +42,7 @@ function isPlayerInFleetMovementWithPlayer(player: Player, fleetMovements: Array
     return result;
 }
 
-function isWorldOwnedByPlayer(player: Player, world: World): boolean {
+export function isWorldOwnedByPlayer(player: Player, world: World): boolean {
     let result = false;
 
     if (world.player !== null) {
@@ -46,7 +54,7 @@ function isWorldOwnedByPlayer(player: Player, world: World): boolean {
 }
 
 
-function isFleetOwnedByPlayer(player: Player, fleet: Fleet): boolean {
+export function isFleetOwnedByPlayer(player: Player, fleet: Fleet): boolean {
     let result = false;
     if (fleet.player != null) {
         if (fleet.player.playerName === player.playerName) {

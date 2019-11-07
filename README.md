@@ -20,13 +20,18 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-- PlayerFactory fertig implementieren
-- OutputPlyerStatisticCoreGame fertig implementieren
+- Service bauen für initiale World Generierung (siehe main.swift)
+- Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
+- Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
+
+
 - Command Tests
 - CommandFactory Tests
 - PortFactory Tests
 - FinalPhaseCoreGame Tests
 - Player Tests
+- PlayerFactory Tests
+- OutputPlyerStatisticCoreGame Tests
 
 
 ## Erledigte TODOs
@@ -42,6 +47,9 @@ Ist ein Spiel nach den
 - PortFactory ist implementiert
 - FinalPhaseCoreGame ist implementiert
 - Player ist implementiert
+- PlayerFactory ist implementiert
+- OutputPlyerStatisticCoreGame ist implementiert
+
 
 
 ## Projekt
