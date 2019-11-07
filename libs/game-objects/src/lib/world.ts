@@ -23,7 +23,7 @@ export class World {
     fleetMovements: Array<FleetMovement> = null;
     player: Player = null;
     dShips: number;
-    dShipsAmbush: number;
+    dShipsAmbush: boolean;
     dShipsFired: boolean;
     dShipsFiredFleet: Fleet = null;
 
@@ -50,7 +50,7 @@ export class World {
             resourceArray.push('Ambush "Aus" für diese Runde!!!');
         }
         if (this.dShips !== 0) {
-            if (this.dShipsAmbush === 0) {
+            if (this.dShipsAmbush === false) {
                 let desc = `D-Schiffe=${this.dShips} (Ambusch: {`;
                 if (this.hitAmbuschFleets.length > 0) {
                     let counter = 0;

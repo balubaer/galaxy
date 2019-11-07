@@ -20,13 +20,14 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-- FinalPhaseCoreGame fertig implementieren
-- Player fertig implementieren
 - PlayerFactory fertig implementieren
 - OutputPlyerStatisticCoreGame fertig implementieren
 - Command Tests
 - CommandFactory Tests
 - PortFactory Tests
+- FinalPhaseCoreGame Tests
+- Player Tests
+
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig
@@ -36,9 +37,12 @@ Ist ein Spiel nach den
 - World ist vollfunktionsfähig
 - Fleet ist vollfunktionsfähig mit Tests
 - DistanceLevel ist vollfunktionsfähig
-- Command ist vollfunktionsfähig
-- CommandFactory ist vollfunktionsfähig
-- PortFactory ist vollfunktionsfähig
+- Command ist implementiert
+- CommandFactory ist implementiert
+- PortFactory ist implementiert
+- FinalPhaseCoreGame ist implementiert
+- Player ist implementiert
+
 
 ## Projekt
 
