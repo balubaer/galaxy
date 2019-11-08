@@ -85,7 +85,7 @@ export class World {
     description(): string {
         let desc = this.name;
         if (this.port !== null) {
-            desc = this.port.description;
+            desc = this.port.description();
         }
         if (this.player !== null) {
             desc += ` ${this.player.stringName()}`;

@@ -5,7 +5,10 @@ import { World } from './world';
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 const twoWorlds = [worlds[1], worlds[2]];
 const world = worlds[0];
-const port = new Port(twoWorlds, world);
+const port = new Port();
+port.worlds = twoWorlds;
+port.world = world;
+
 const testString = 'W1(2,3)';
 const world2 = worlds[1];
 const world4 = worlds[3];
@@ -13,10 +16,10 @@ const world4 = worlds[3];
 describe('Port', () => {
   it('should create an instance', () => {
     expect(port).toBeTruthy();
-    expect(port.description).toBe(testString);
+    expect(port.description()).toBe(testString);
   });
-  it('test makeDiscription', () => {
-    expect(port.makeDiscription(twoWorlds, world)).toBe(testString);
+  it('test description', () => {
+    expect(port.description()).toBe(testString);
   })
   it('test has Connection to World', () => {
     expect(port.hasConnectionToWorld(world2)).toBe(true);

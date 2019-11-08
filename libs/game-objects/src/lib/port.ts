@@ -1,26 +1,21 @@
 import { World } from './world';
 
 export class Port {
-    worlds: World[];
+    worlds: Array<World>;
     world: World;
 
-    description: string;
-
-    constructor(worlds: World[], world: World) {
-        this.worlds = worlds;
-        this.world = world;
-        this.description = this.makeDiscription(this.worlds, this.world);
+    constructor() {
     }
 
-    makeDiscription(worlds: World[], world: World): string {
+    description(): string {
         let result: string;
-        const connectionCount = worlds.length;
+        const connectionCount = this.worlds.length;
 
-        result = `W${world.number}`;
+        result = `W${this.world.number}`;
 
         if (connectionCount > 0) {
             result += '(';
-            for (const aWorld of worlds){
+            for (const aWorld of this.worlds){
                 result += `${aWorld.number},`;
             }
             result = result.substring(0, result.length - 1);

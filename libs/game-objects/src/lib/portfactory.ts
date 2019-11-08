@@ -238,8 +238,10 @@ export class PortFactory {
         //All Worlds get Ports
         for (const world of worldArray) {
             this.workingWorlds.push(world);
-            const port = new Port(worldArray, world);
-            port.world.port = port;
+            const port = new Port();
+            world.port = port;
+            port.worlds = new Array <World>();
+            port.world = world;
         }
         this.generateWorldConnection()
         this.maxCount = 5
