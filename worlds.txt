@@ -1,20 +1,60 @@
-W18(20, 15, 3) [Bernd] (D-Schiffe=6)
-W14(17, 9, 14) [Bernd] (D-Schiffe=20)
-W2(8, 7, 18) [Bernd] (D-Schiffe=13)
-W1(14, 19, 14) [Bernd] (D-Schiffe=10)
-W1(13, 13, 17) [Bernd] (D-Schiffe=17)
-W8(18, 16, 20) [Bernd] (D-Schiffe=17)
-W8(3, 3, 6) [Bernd] (D-Schiffe=1)
-W9(10, 1, 14) [Bernd] (D-Schiffe=7)
-W4(13, 9, 18) [Bernd] (D-Schiffe=11)
-W19(15, 10, 8) [Bernd] (D-Schiffe=18)
-W13(17, 12, 2) [Bernd] (D-Schiffe=4)
-W10(13, 10, 11) [Bernd] (D-Schiffe=15)
-W2(15, 6, 18) [Bernd] (D-Schiffe=6)
-W4(2, 11, 1) [Bernd] (D-Schiffe=5)
-W7(19, 11, 3) [Bernd] (D-Schiffe=14)
-W2(17, 14, 19) [Bernd] (D-Schiffe=10)
-W17(5, 6, 11) [Bernd] (D-Schiffe=19)
-W4(15, 10, 20) [Bernd] (D-Schiffe=10)
-W13(6, 8, 8) [Bernd] (D-Schiffe=12)
-W4(16, 16, 5) [Bernd] (D-Schiffe=15)
+W1(19,18,15) [MARVIN]
+   F8[MARVIN] = 5
+   F11[MARVIN] = 5
+
+W2(7,8)
+
+W3(18,13,9)
+   F5[---] = 0
+
+W4(14,7,16)
+   F2[---] = 0
+   F12[---] = 0
+
+W5(9,14)
+
+W6(14,18)
+   F19[---] = 0
+
+W7(4,2,12)
+   F1[---] = 0
+
+W8(2,13)
+
+W9(20,5,3)
+   F10[---] = 0
+
+W10(13,19,11)
+   F16[---] = 0
+   F18[---] = 0
+
+W11(12,13,10)
+
+W12(17,11,7)
+   F17[---] = 0
+
+W13(10,11,3,8)
+
+W14(4,6,5)
+   F6[---] = 0
+   F9[---] = 0
+
+W15(1,19)
+   F4[---] = 0
+
+W16(20,4)
+   F14[---] = 0
+
+W17(20,12)
+   F7[---] = 0
+   F13[---] = 0
+
+W18(1,3,6) [ZAPHOD]
+   F20[ZAPHOD] = 5
+   F3[ZAPHOD] = 5
+
+W19(1,10,15)
+   F15[---] = 0
+
+W20(17,16,9)
+

@@ -1,6 +1,8 @@
 import { GamePref } from './game-pref';
 import { World } from './world';
 import { PortFactory } from './portfactory';
+import { FleetFactory } from './fleet-factory';
+import { PlayerFactory } from './player-factory';
 
 export class WorldGenerator {
     gamePref: GamePref;
@@ -27,27 +29,18 @@ export class WorldGenerator {
         portFactory.lessConectionWorld = this.gamePref.worldCount/10;
         portFactory.createWithWorldArray(this.worlds);
 
+        //Create Fleets with FleetFactory
+        const fleetFactory = new FleetFactory(this.gamePref.fleetCount);
 
+        fleetFactory.createWithWorldArray(this.worlds);
+
+        //Create Player with PlayerFactory
+        const playerFactory = new PlayerFactory(this.gamePref.player);
+        playerFactory.createWithWorldArray(this.worlds, this.gamePref.fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
+
+    }
 
         /*
-
-
-//Create Ports with PortFactory
-
-var portFactory = PortFactory()
-
-portFactory.moreConnectionPlanet = planetCount/10
-portFactory.lessConectionPlanet = planetCount/10
-portFactory.createWithPlanetArray(planets)
-
-
-var fleetFactory = FleetFactory(aFleetCount: fleetCount)
-
-fleetFactory.createWithPlanetArray(planets)
-
-var playerFactory = PlayerFactory(aPlayerNameArray: playerNames)
-
-playerFactory.createWithPlanetArray(planets, fleetCount: fleetCount, aFleetsOnHomePlanet: fleetsOnHomePlanet, startShipsCount: startShipsCount, distanceLevelHomes: distanceLevelHomes)
 
 var planetPlistFilePath = playPath.stringByAppendingPathComponent(playName)
 
@@ -80,5 +73,4 @@ persManager.writePlanetPListWithPlanetArray(planetPlistFilePath)
 
 */
 
-    }
 }

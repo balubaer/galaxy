@@ -43,6 +43,7 @@ export class Fleet {
         this.hitAmbuschFleets = new Array<Fleet>();
         this.moved = false;
         this.fired = false;
+        this.ships = 0;
     }
 
     name(): string {

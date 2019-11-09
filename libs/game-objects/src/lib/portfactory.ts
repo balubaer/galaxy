@@ -63,9 +63,9 @@ export class PortFactory {
 
             let logString = `World [${aWorld.number}] ist fertig.`;
             console.log(logString);
-            logString = `WorkingWorlden: Anzahl [${this.workingWorlds.length}]`;
+            logString = `Bearbeitete Welten: Anzahl [${this.workingWorlds.length}]`;
             console.log(logString);
-            logString = `Worlden mit ausreichend Verfindungen: Anzahl [${this.worldsWithEnoughConnections.length}]`;
+            logString = `Weld mit ausreichend Verfindungen: Anzahl [${this.worldsWithEnoughConnections.length}]`;
             console.log(logString);
         }
 

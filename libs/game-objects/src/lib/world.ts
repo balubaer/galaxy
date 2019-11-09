@@ -35,6 +35,7 @@ export class World {
         this.fleets = new Array<Fleet>();
         this.fleetMovements = new Array<FleetMovement>();
         this.hitAmbuschFleets = new Array<Fleet>();
+        this.dShips = 0;
     }
 
     setNumber(aNumber: number) {

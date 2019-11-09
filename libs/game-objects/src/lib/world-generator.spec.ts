@@ -11,9 +11,13 @@ describe('WorldGenerator', () => {
   });
   it('test generate', () => {
     const worldGen = new WorldGenerator(gamepref);
-   // worldGen.generate();
-   // console.log(worldGen.worlds);
-
-    //expect(new WorldGenerator(gamepref)).toBeTruthy();
+    worldGen.generate();
+    for (const world of worldGen.worlds) {
+      console.log(world.description());
+      expect(world).toBeTruthy();
+      expect(world.port).toBeTruthy();
+      //TODO: distanceLevelHomes testen
+      //TODO: HomeFleeds testen
+    }
   });
 });

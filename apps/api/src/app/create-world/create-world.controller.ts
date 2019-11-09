@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { Dice, GamePref, World } from '@galaxy/game-objects';
+import { GamePref, World, WorldGenerator } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { readFileSync, writeFileSync } from 'fs';
 
@@ -12,23 +12,15 @@ export class CreateWorldController {
   getData(): Message {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
-    const worldCount = gamepref.worldCount;
-    const dice: Dice = new Dice();
-    dice.setSites(worldCount);
-
-    const worlds: World[] = new Array;
-
+    const worldGen = new WorldGenerator(gamepref);
     let outString = '';
 
-    for (let i = 0; i < worldCount; i++) {
-      const world: World = new World;
-      world.setNumber(dice.roll());
-      worlds.push(world);
-
-      outString += `${world.name}(${dice.roll()}, ${dice.roll()}, ${dice.roll()}) [Bernd] (D-Schiffe=${dice.roll()})\n`;
+    worldGen.generate();
+    for (const world of worldGen.worlds) {
+      outString += `${world.description()}\n\n`;
     }
-    const data = JSON.stringify(worlds);
-    writeFileSync('worlds.json', data);
+    /*const data = JSON.stringify(worlds);
+    writeFileSync('worlds.json', data);*/
     writeFileSync('worlds.txt', outString);
     return { message: 'OK' };
   }

@@ -20,9 +20,11 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-- Service bauen für initiale World Generierung (siehe main.swift)
 - Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
 - Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
+
+- Anzhal HomeFleeds kontrollieren bei World Generierung
+- distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
 
 
 - Command Tests

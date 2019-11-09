@@ -14,7 +14,7 @@ export class PlayerFactory {
     nextLevelWorlds: Array<World> = new Array();
     homeWorldsDict: Map<string, World>;
 
-    init(aPlayerNameArray: Array<string>) {
+    constructor(aPlayerNameArray: Array<string>) {
         this.worldDice = new Dice();
         this.fleetDice = new Dice();
         this.playerDice = new Dice();
@@ -61,7 +61,7 @@ export class PlayerFactory {
             }
         }
         result = worldWithNumber(worldArray, foundWorldNumber);
-        console.log(`#### Gefundenen Worlden: ${foundWorldNumber}`);
+        console.log(`#### Gefundenen Welten: ${foundWorldNumber}`);
 
         if (result === null) {
             result = this.findWorldWithDice(this.worldDice, worldArray);
