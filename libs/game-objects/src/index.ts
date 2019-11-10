@@ -9,3 +9,4 @@ export * from './lib/test-worlds-array-factory';
 export * from './lib/request-turn-data';
 export * from './lib/respond-turn-data';
 export * from './lib/world-generator';
+export * from './lib/worlds-persist';

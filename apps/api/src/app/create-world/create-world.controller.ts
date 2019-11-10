@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { GamePref, World, WorldGenerator } from '@galaxy/game-objects';
+import { GamePref, World, WorldGenerator, WorldsPersist } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { readFileSync, writeFileSync } from 'fs';
 
@@ -14,14 +14,15 @@ export class CreateWorldController {
     const gamepref: GamePref = JSON.parse(stringData);
     const worldGen = new WorldGenerator(gamepref);
     let outString = '';
+    const outPath = `${gamepref.playName}/Turn${gamepref.round}/`
 
-    worldGen.generate();
+    const worldsPersist:WorldsPersist = worldGen.generate();
     for (const world of worldGen.worlds) {
       outString += `${world.description()}\n\n`;
     }
-    /*const data = JSON.stringify(worlds);
-    writeFileSync('worlds.json', data);*/
-    writeFileSync('worlds.txt', outString);
+    const data = JSON.stringify(worldsPersist);
+    writeFileSync(outPath + 'worlds.json', data);
+    writeFileSync(outPath + 'worlds.txt', outString);
     return { message: 'OK' };
   }
 

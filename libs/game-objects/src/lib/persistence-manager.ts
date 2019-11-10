@@ -1,6 +1,4 @@
-import { writeFileSync } from 'fs';
 import { World } from './world';
-import { GamePref } from './game-pref';
 import { NumberKey } from './number-key.interface';
 import { Player } from './player';
 import { Port } from './port';
@@ -13,22 +11,20 @@ import { FleetPersist } from './fleet-persist';
 
 export class PersistenceManager {
     worldArray: Array<World>;
-    gamePref: GamePref;
 
-    constructor(aWorldArray: Array<World>, aGamePref: GamePref) {
+    constructor(aWorldArray: Array<World>) {
         this.worldArray = aWorldArray;
     }
 
-    writeWorlds() {
+    createWorldsPersist(): WorldsPersist {
         const worlds: WorldsPersist = {
             worlds: this.getWorldPersistArray(),
             players: this.getPlayerPersistArray(),
             ports: this.getPortPersitArray(),
             fleets: this.getFleetPersistArray()
         }
-        const data = JSON.stringify(worlds);
-        //TODO: GamePref für Pfad berücksichtigen
-        writeFileSync('worlds.json', data);
+       
+        return worlds;
     }
 
     getNumberArrayWithNumberKeysArray(numberKeysArray: Array<NumberKey>): Array<number> {
@@ -75,8 +71,9 @@ export class PersistenceManager {
         const result: Array<PlayerPersist> = new Array<PlayerPersist>();
         const players: Set<Player> = new Set<Player>();
         for (const world of this.worldArray) {
-            if (world.player !== null) {
-                players.add(world.player);
+            const player = world.player;
+            if (player !== null) {
+                players.add(player);
             }
         }
 

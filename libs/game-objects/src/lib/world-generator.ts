@@ -3,6 +3,8 @@ import { World } from './world';
 import { PortFactory } from './portfactory';
 import { FleetFactory } from './fleet-factory';
 import { PlayerFactory } from './player-factory';
+import { PersistenceManager } from './persistence-manager';
+import { WorldsPersist } from './worlds-persist';
 
 export class WorldGenerator {
     gamePref: GamePref;
@@ -12,7 +14,7 @@ export class WorldGenerator {
         this.gamePref = gamePref;
     }
 
-    generate(): void {
+    generate(): WorldsPersist {
         //Create Worlds
         this.worlds = new Array <World> ();
         for (let index = 1; index <= this.gamePref.worldCount; index++) {
@@ -39,8 +41,8 @@ export class WorldGenerator {
         playerFactory.createWithWorldArray(this.worlds, this.gamePref.fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
 
         //Write to file
-      //  const pm = new PersistenceManager(this.worlds, this.gamePref);
-      //  pm.writeWorlds();
+        const pm = new PersistenceManager(this.worlds);
+        return pm.createWorldsPersist();
     }
 
         /*
