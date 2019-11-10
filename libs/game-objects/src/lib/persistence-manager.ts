@@ -115,6 +115,11 @@ export class PersistenceManager {
     getFleetPersistArray(): Array<FleetPersist> {
         const result: Array<FleetPersist> = new Array<FleetPersist>();
         for (const world of this.worldArray) {
+            if (world.fleets !== null) {
+                for (const fleet of world.fleets) {
+                    result.push(this.getFleetPersistWithFleet(fleet));
+                }
+            }
         }
         return result;
     }

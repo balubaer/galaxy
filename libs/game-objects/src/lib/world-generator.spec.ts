@@ -1,5 +1,5 @@
 import { WorldGenerator } from './world-generator';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, existsSync, mkdirSync } from 'fs';
 import { GamePref } from './game-pref';
 
 const stringData = readFileSync('gamePref.json', 'utf8');
@@ -25,6 +25,8 @@ describe('WorldGenerator', () => {
       console.log('outPath ' + outPath + ' nicht vorhanden ---');
 
     }
+
+    //mkdirSync(outPath+'test');
 
     for (const world of worldGen.worlds) {
       console.log(world.description());
