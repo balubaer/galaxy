@@ -241,7 +241,7 @@ export class PortFactory {
             const port = new Port();
             world.port = port;
             port.worlds = new Array <World>();
-            port.world = world;
+            port.setWorld(world);
         }
         this.generateWorldConnection()
         this.maxCount = 5

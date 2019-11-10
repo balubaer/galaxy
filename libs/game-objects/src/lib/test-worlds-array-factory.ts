@@ -49,24 +49,24 @@ export class TestWorldsArrayFactory {
         this.worlds.push(world);
 
         this.worlds[0].port = new Port();
-        this.worlds[0].port.world = this.worlds[0];
+        this.worlds[0].port.setWorld(this.worlds[0]);
         this.worlds[0].port.worlds = [this.worlds[1],this.worlds[2]];
         
         this.worlds[1].port = new Port();
-        this.worlds[1].port.world = this.worlds[1];
+        this.worlds[1].port.setWorld(this.worlds[1]);
         this.worlds[1].port.worlds = [this.worlds[0]];
 
         this.worlds[2].port = new Port();
-        this.worlds[2].port.world = this.worlds[2];
+        this.worlds[2].port.setWorld(this.worlds[2]);
         this.worlds[2].port.worlds = [this.worlds[0],this.worlds[1]];
 
 
         this.worlds[3].port = new Port();
-        this.worlds[3].port.world = this.worlds[3];
+        this.worlds[3].port.setWorld(this.worlds[3]);
         this.worlds[3].port.worlds = [this.worlds[0],this.worlds[1],this.worlds[2]];
 
         this.worlds[4].port = new Port();
-        this.worlds[4].port.world = this.worlds[4];
+        this.worlds[4].port.setWorld(this.worlds[4]);
         this.worlds[4].port.worlds = [this.worlds[0],this.worlds[1],this.worlds[2],this.worlds[3]];
     }
 }

@@ -7,7 +7,7 @@ const twoWorlds = [worlds[1], worlds[2]];
 const world = worlds[0];
 const port = new Port();
 port.worlds = twoWorlds;
-port.world = world;
+port.setWorld(world);
 
 const testString = 'W1(2,3)';
 const world2 = worlds[1];
@@ -18,6 +18,12 @@ describe('Port', () => {
     expect(port).toBeTruthy();
     expect(port.description()).toBe(testString);
   });
+  it('test setWorld', () => {
+    expect(port.number).toBe(1);
+  })
+  it('test getWorld', () => {
+    expect(port.getWorld()).toBe(worlds[0]);
+  })
   it('test description', () => {
     expect(port.description()).toBe(testString);
   })

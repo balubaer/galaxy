@@ -1,4 +1,4 @@
-import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFleet } from "./command";
+import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFleet } from './command';
 import { Player } from './player';
 import { World, TestWorldsArrayFactory } from '..';
 import { Fleet } from './fleet';

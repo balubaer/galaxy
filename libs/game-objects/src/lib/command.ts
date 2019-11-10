@@ -421,7 +421,7 @@ export class FireFleetToFleet extends Command implements ExecuteCommand {
                 this.toFleet.hitedShots += this.fromFleet.ships
                 this.fromFleet.fired = true;
                 this.fromFleet.firesTo = this.toFleet.name();
-                this.fromFleet.firesToCommand = "AF\(toFleet.number)"
+                this.fromFleet.firesToCommand = `AF${this.toFleet.number}`
             }
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
@@ -495,8 +495,8 @@ export class FireFleetToDShips extends Command implements ExecuteCommand {
             if (isError === false) {
                 this.fromHomeWorld.hitedShotsDShips += this.fromFleet.ships;
                 this.fromFleet.fired = true;
-                this.fromFleet.firesTo = "D-Schiffe";
-                this.fromFleet.firesToCommand = "AD";
+                this.fromFleet.firesTo = 'D-Schiffe';
+                this.fromFleet.firesToCommand = 'AD';
 
             }
         } else {

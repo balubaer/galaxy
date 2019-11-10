@@ -1,6 +1,8 @@
-import { Player, World } from "..";
 import { createBracketAndCommarStringWithStringArray } from './utils';
 import { FleetMovement } from './fleet-movement';
+import { World } from './world';
+import { Player } from './player';
+import { NumberKey } from './number-key.interface';
 
 export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number): { fleet: Fleet, homeWorld: World} {
     let fleet: Fleet = null;
@@ -18,7 +20,7 @@ export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number
     return {fleet, homeWorld};
 }
 
-export class Fleet {
+export class Fleet implements NumberKey {
     number: number;
     ships: number;
     ambush: boolean;
@@ -97,7 +99,7 @@ export class Fleet {
         const infoString = this.createInfoString();
 
         if (infoString.length !== 0) {
-            desc += " ";
+            desc += ' ';
             desc += infoString;
         }
 

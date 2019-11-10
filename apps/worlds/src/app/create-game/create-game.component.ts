@@ -43,7 +43,8 @@ export class CreateGameComponent implements OnInit {
       worldCount: this.form.value.WorldsCount,
       playName: this.form.value.PlayName,
       player: this.players,
-      startShipCount: this.form.value.StartShipCount
+      startShipCount: this.form.value.StartShipCount,
+      round: 0
     }
 
     console.log('Added new game', gamepref)

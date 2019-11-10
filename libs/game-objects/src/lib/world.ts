@@ -3,6 +3,7 @@ import { Fleet } from './fleet';
 import { Player } from './player';
 import { createBracketAndCommarStringWithStringArray } from './utils';
 import { FleetMovement } from './fleet-movement';
+import { NumberKey } from './number-key.interface';
 
 export function worldWithNumber(worlds: Array<World>, number: number): World {
     let aResult: World = null;
@@ -15,7 +16,7 @@ export function worldWithNumber(worlds: Array<World>, number: number): World {
     return aResult;
 }
 
-export class World {
+export class World implements NumberKey {
     number: number;
     name: string;
     port: Port = null;
@@ -60,12 +61,12 @@ export class World {
                         desc += fleet.name;
                         counter++;
                         if (counter < this.hitAmbuschFleets.length) {
-                            desc += ", "
+                            desc += ', ';
                         }
                     }
-                    desc += "}"
+                    desc += '}';
                 }
-                desc += ")"
+                desc += ')';
 
                 resourceArray.push(desc);
             } else if (this.dShipsFired === true) {

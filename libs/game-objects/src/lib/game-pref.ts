@@ -6,4 +6,5 @@ export interface GamePref {
     playName: string;
     player: Array<string>;
     startShipCount: number;
+    round: number;
 }

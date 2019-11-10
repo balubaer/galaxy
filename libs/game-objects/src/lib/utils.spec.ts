@@ -1,4 +1,4 @@
-import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray, extractCharsFromString } from "./utils";
+import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray, extractCharsFromString } from './utils';
 
 describe('utils', () => {
     it('test createBracketAndCommarStringWithStringArray', () => {

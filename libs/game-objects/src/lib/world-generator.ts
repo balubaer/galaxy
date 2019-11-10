@@ -38,6 +38,9 @@ export class WorldGenerator {
         const playerFactory = new PlayerFactory(this.gamePref.player);
         playerFactory.createWithWorldArray(this.worlds, this.gamePref.fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
 
+        //Write to file
+      //  const pm = new PersistenceManager(this.worlds, this.gamePref);
+      //  pm.writeWorlds();
     }
 
         /*

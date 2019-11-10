@@ -1,10 +1,21 @@
 import { World } from './world';
+import { NumberKey } from './number-key.interface';
 
-export class Port {
+export class Port implements NumberKey {
+    number: number;
     worlds: Array<World>;
-    world: World;
+    private world: World;
 
     constructor() {
+    }
+
+    setWorld(aWorld: World) {
+        this.world = aWorld;
+        this.number = aWorld.number;
+    }
+
+    getWorld(): World {
+        return this.world;
     }
 
     description(): string {

@@ -17,7 +17,8 @@
     "baseUrl": ".",
     "paths": {
       "@galaxy/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-      "@galaxy/game-objects": ["libs/game-objects/src/index.ts"]
+      "@galaxy/game-objects": ["libs/game-objects/src/index.ts"],
+      "@galaxy/persistence": ["libs/persistence/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
