@@ -11,6 +11,9 @@ import { FleetPersist } from './fleet-persist';
 
 export class PersistenceManager {
     worldArray: Array<World>;
+    worldDict: Map<number, World>;
+    allPlayerDict: Map<string, Player> = new Map<string, Player>();
+    fleetDict: Map<number, Fleet>;
 
     constructor(aWorldArray: Array<World>) {
         this.worldArray = aWorldArray;
@@ -23,7 +26,6 @@ export class PersistenceManager {
             ports: this.getPortPersitArray(),
             fleets: this.getFleetPersistArray()
         }
-       
         return worlds;
     }
 
@@ -122,5 +124,79 @@ export class PersistenceManager {
             }
         }
         return result;
+    }
+
+    createWorldsWithWorldsPersist(worldsPersist: WorldsPersist): Array<World> {
+        this.createPlayersWithPlayerPersistArray(worldsPersist.players);
+        this.createWorldsWithWorldPersistArray(worldsPersist.worlds);
+        this.createPortsWithPortPersistArray(worldsPersist.ports);
+        this.createFleetsWithFleetPersistArray(worldsPersist.fleets);
+        this.linkFleetAndWorldWithWorldPersistArray(worldsPersist.worlds);
+        return this.worldArray;
+    }
+
+    createPlayersWithPlayerPersistArray(playersPersist: Array<PlayerPersist>) {
+        const playerPersistDict = new Map<string, PlayerPersist>();
+        for (const playerPersist of playersPersist) {
+            const player = new Player(playerPersist.name);
+            player.points = playerPersist.points;
+            this.allPlayerDict.set(playerPersist.name, player);
+            playerPersistDict.set(playerPersist.name, playerPersist);
+        }
+        for (const aPlayerName of this.allPlayerDict.keys()) {
+            const player = this.allPlayerDict.get(aPlayerName);
+            const playerPersist = playerPersistDict.get(aPlayerName);
+            const teammates = playerPersist.teammates;
+            for (const teammateName of teammates) {
+                const teammatePlayer = this.allPlayerDict.get(teammateName);
+                player.teammates.add(teammatePlayer);
+            }
+        }
+    }
+
+    createWorldsWithWorldPersistArray(worldsPersist: Array<WorldPersist>) {
+        this.worldArray = new Array<World>();
+        this.worldDict = new Map<number, World>();
+        for (const worldPersist of worldsPersist) {
+            const world = new World();
+            world.setNumber(worldPersist.number)
+            world.player = this.allPlayerDict.get(worldPersist.player);
+            world.dShips = worldPersist.dShips;
+            this.worldArray.push(world);
+            this.worldDict.set(worldPersist.number, world);
+        }
+    }
+
+    createPortsWithPortPersistArray(portsPersist: Array<PortPersist>) {
+        for (const portPersist of portsPersist) {
+            const port = new Port();
+            port.setWorld(this.worldDict.get(portPersist.world));
+            port.worlds = new Array<World>();
+            for (const worldNumber of portPersist.worlds) {
+                port.worlds.push(this.worldDict.get(worldNumber));
+            }
+            port.getWorld().port = port;
+        }
+    }
+
+    createFleetsWithFleetPersistArray(fleetsPersist: Array<FleetPersist>) {
+        this.fleetDict = new Map<number, Fleet>();
+        for (const fleetPersist of fleetsPersist) {
+            const fleet = new Fleet();
+            fleet.number = fleetPersist.number;
+            fleet.ships = fleetPersist.ships;
+            fleet.player = this.allPlayerDict.get(fleetPersist.player);
+            fleet.moved = fleetPersist.moved;
+            this.fleetDict.set(fleetPersist.number, fleet);
+        }
+    }
+
+    linkFleetAndWorldWithWorldPersistArray(worldsPersist: Array<WorldPersist>) {
+        for (const worldPersist of worldsPersist) {
+            const world = this.worldDict.get(worldPersist.number);
+            for (const fleetNumber of worldPersist.fleets) {
+                world.fleets.push(this.fleetDict.get(fleetNumber));
+            }
+        }
     }
 }
