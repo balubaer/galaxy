@@ -21,8 +21,13 @@
             "polyfills": "apps/worlds/src/polyfills.ts",
             "tsConfig": "apps/worlds/tsconfig.app.json",
             "aot": false,
-            "assets": ["apps/worlds/src/favicon.ico", "apps/worlds/src/assets"],
-            "styles": ["apps/worlds/src/styles.scss"],
+            "assets": [
+              "apps/worlds/src/favicon.ico",
+              "apps/worlds/src/assets"
+            ],
+            "styles": [
+              "apps/worlds/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -82,7 +87,10 @@
               "apps/worlds/tsconfig.app.json",
               "apps/worlds/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/worlds/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/worlds/**"
+            ]
           }
         },
         "test": {
@@ -116,8 +124,13 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/worlds-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/worlds-e2e/**"]
+            "tsConfig": [
+              "apps/worlds-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/worlds-e2e/**"
+            ]
           }
         }
       }
@@ -135,7 +148,9 @@
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
             "tsConfig": "apps/api/tsconfig.app.json",
-            "assets": ["apps/api/src/assets"]
+            "assets": [
+              "apps/api/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -164,7 +179,10 @@
               "apps/api/tsconfig.app.json",
               "apps/api/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/api/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/api/**"
+            ]
           }
         },
         "test": {
@@ -189,7 +207,10 @@
               "libs/api-interfaces/tsconfig.lib.json",
               "libs/api-interfaces/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api-interfaces/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api-interfaces/**"
+            ]
           }
         },
         "test": {
@@ -214,7 +235,10 @@
               "libs/game-objects/tsconfig.lib.json",
               "libs/game-objects/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/game-objects/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/game-objects/**"
+            ]
           }
         },
         "test": {
@@ -223,62 +247,6 @@
             "jestConfig": "libs/game-objects/jest.config.js",
             "tsConfig": "libs/game-objects/tsconfig.spec.json"
           }
-        }
-      }
-    },
-    "persistence": {
-      "root": "libs/persistence",
-      "sourceRoot": "libs/persistence/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/persistence/tsconfig.lib.json",
-              "libs/persistence/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/persistence/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/persistence/jest.config.js",
-            "tsConfig": "libs/persistence/tsconfig.spec.json"
-          }
-        }
-      }
-    },
-    "test": {
-      "projectType": "library",
-      "root": "libs/test",
-      "sourceRoot": "libs/test/src",
-      "prefix": "galaxy",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/test/tsconfig.lib.json",
-              "libs/test/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/test/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/test/jest.config.js",
-            "tsConfig": "libs/test/tsconfig.spec.json",
-            "setupFile": "libs/test/src/test-setup.ts"
-          }
-        }
-      },
-      "schematics": {
-        "@nrwl/angular:component": {
-          "styleext": "less"
         }
       }
     }

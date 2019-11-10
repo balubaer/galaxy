@@ -1,12 +1,19 @@
 import { writeFileSync } from 'fs';
-import { World, GamePref } from '@galaxy/game-objects';
-import { Message } from '@galaxy/api-interfaces';
-
+import { World } from './world';
+import { GamePref } from './game-pref';
+import { NumberKey } from './number-key.interface';
+import { Player } from './player';
+import { Port } from './port';
+import { Fleet } from './fleet';
+import { WorldsPersist } from './worlds-persist';
+import { WorldPersist } from './world-persist';
+import { PlayerPersist } from './player-persist';
+import { PortPersist } from './port-persist';
+import { FleetPersist } from './fleet-persist';
 
 export class PersistenceManager {
     worldArray: Array<World>;
     gamePref: GamePref;
-    message: Message;
 
     constructor(aWorldArray: Array<World>, aGamePref: GamePref) {
         this.worldArray = aWorldArray;
@@ -20,7 +27,7 @@ export class PersistenceManager {
             fleets: this.getFleetPersistArray()
         }
         const data = JSON.stringify(worlds);
-//TODO: GamePref für Pfad berücksichtigen
+        //TODO: GamePref für Pfad berücksichtigen
         writeFileSync('worlds.json', data);
     }
 
