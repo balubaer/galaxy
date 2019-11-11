@@ -3,15 +3,24 @@ import { Fleet } from './fleet';
 import { Player } from './player';
 import { Port } from './port';
 import { FleetMovement } from './fleet-movement';
+import { platform } from 'os';
 
 export class TestWorldsArrayFactory {
     worlds: Array<World> = new Array();
 
     constructor() {
         const player = new Player('ZAPHOD');
+        const player2 = new Player('MARVIN');
+
+        player.teammates.add(player2);
+        player.points = 42;
+        
+        player2.points = 7;
+        
         let world: World = new World();
         world.setNumber(1);
         world.dShips = 1;
+        world.player = player2;
         this.worlds.push(world);
 
         world = new World();

@@ -160,7 +160,9 @@ export class PersistenceManager {
         for (const worldPersist of worldsPersist) {
             const world = new World();
             world.setNumber(worldPersist.number)
-            world.player = this.allPlayerDict.get(worldPersist.player);
+            if (worldPersist.player !== '') {
+                world.player = this.allPlayerDict.get(worldPersist.player);
+            }
             world.dShips = worldPersist.dShips;
             this.worldArray.push(world);
             this.worldDict.set(worldPersist.number, world);
@@ -185,7 +187,9 @@ export class PersistenceManager {
             const fleet = new Fleet();
             fleet.number = fleetPersist.number;
             fleet.ships = fleetPersist.ships;
-            fleet.player = this.allPlayerDict.get(fleetPersist.player);
+            if (fleetPersist.player !== '') {
+                fleet.player = this.allPlayerDict.get(fleetPersist.player);
+            }
             fleet.moved = fleetPersist.moved;
             this.fleetDict.set(fleetPersist.number, fleet);
         }
