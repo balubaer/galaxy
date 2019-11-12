@@ -75,7 +75,7 @@ function isPlayerInFleetsWithPlayer(player: Player, fleets: Array<Fleet>): boole
     return result;
 }
 
-function isWorldOutPutForPlayer(player: Player, world: World): boolean {
+export function isWorldOutPutForPlayer(player: Player, world: World): boolean {
     //Test World
     let result = isWorldOwnedByPlayer(player, world);
 

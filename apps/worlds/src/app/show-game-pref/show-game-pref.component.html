@@ -1,6 +1,7 @@
 <h2>Show Game</h2>
 
 <div *ngIf="gamePref$|async as gamePref">
+    <div>Runde: <b>"{{ gamePref.round }}"</b></div>
     <div>Der Name des Speils lautet <b>"{{ gamePref.playName }}"</b> mit <b>{{ gamePref.worldCount }} Welten</b> und
         <b>{{ gamePref.fleetCount}} Flotten</b>.</div>
     <div>Abstand zu den Spielern beträgt <b>{{ gamePref.distanceLevelHomes }} Welten</b>.</div>

@@ -15,6 +15,10 @@ export class GamePlayService {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnData', request)
   }
 
+  getTurnDataOnlyPlayer(request): Observable<RespondTurnData> {
+    console.log(`request: ${request}`)
+    return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayer', request)
+  }
   /* getGamePref(): Observable<GamePref> {
      return this.http.get<GamePref>('/api/create-world/GetGamePref');
    }*/

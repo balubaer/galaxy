@@ -44,38 +44,4 @@ export class WorldGenerator {
         const pm = new PersistenceManager(this.worlds);
         return pm.createWorldsPersist();
     }
-
-        /*
-
-var planetPlistFilePath = playPath.stringByAppendingPathComponent(playName)
-
-var fileManager = NSFileManager.defaultManager()
-
-var isDir : ObjCBool = false
-
-if fileManager.fileExistsAtPath(planetPlistFilePath, isDirectory: &isDir) == false {
-    do {
-        try fileManager.createDirectoryAtPath(planetPlistFilePath, withIntermediateDirectories: true, attributes: nil)
-    } catch {
-        NSLog("Fehler createDirectoryAtPath")
-    }
-}
-
-var planetPlistFilePathTurn = planetPlistFilePath as NSString
-
-planetPlistFilePath = planetPlistFilePathTurn.stringByAppendingPathComponent("Turn0")
-
-if fileManager.fileExistsAtPath(planetPlistFilePath, isDirectory: &isDir) == false {
-    try fileManager.createDirectoryAtPath(planetPlistFilePath, withIntermediateDirectories: true, attributes: nil)
-}
-
-planetPlistFilePathTurn = planetPlistFilePath as NSString
-
-planetPlistFilePath = planetPlistFilePathTurn.stringByAppendingPathComponent("Turn0.plist")
-
-var persManager = PersistenceManager(aPlanetArray:planets)
-persManager.writePlanetPListWithPlanetArray(planetPlistFilePath)
-
-*/
-
 }

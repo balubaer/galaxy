@@ -3,7 +3,6 @@ import { Fleet } from './fleet';
 import { Player } from './player';
 import { Port } from './port';
 import { FleetMovement } from './fleet-movement';
-import { platform } from 'os';
 
 export class TestWorldsArrayFactory {
     worlds: Array<World> = new Array();

@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync } from 'fs';
-import { RequestTurnData , RespondTurnData, GamePref} from '@galaxy/game-objects';
+import { RequestTurnData , RespondTurnData, GamePref, RequestTurnDataOnlyPlayer} from '@galaxy/game-objects';
 
 @Controller('game-play')
 export class GamePlayController {
@@ -26,6 +26,33 @@ export class GamePlayController {
     }
 
         console.log('request.turn:' + request.turn);
+        console.log('request.playerName:' + request.playerName);
+        
+        return respondTurnDate;
+    }
+
+    @Post('GetTurnDataOnlyPlayer')
+    getTurnDataOnlyPlayer(@Body() request: RequestTurnDataOnlyPlayer): RespondTurnData {
+        const stringData = readFileSync('gamePref.json', 'utf8');
+    const gamepref: GamePref = JSON.parse(stringData);
+    const playName = gamepref.playName;
+    const commandFile = `${playName}/Turn${gamepref.round + 1}/${request.playerName}.txt`;
+    let commandString = '';
+    if (existsSync(commandFile)) {
+        commandString = readFileSync(commandFile, 'utf8');
+    }
+    const turnDataTxTFile = `${playName}/Turn${gamepref.round}/${request.playerName}.out`;
+    let turnDataTxTstring = '';
+    if (existsSync(turnDataTxTFile)) {
+        turnDataTxTstring = readFileSync(turnDataTxTFile, 'utf8');
+    }
+    const respondTurnDate: RespondTurnData = {
+        'points': 0,
+        'turnCommanTxt': commandString,
+        'turnDataTxt': turnDataTxTstring
+    }
+
+        console.log('gamepref.round:' + gamepref.round);
         console.log('request.playerName:' + request.playerName);
         
         return respondTurnDate;
