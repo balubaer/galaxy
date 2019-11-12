@@ -21,7 +21,6 @@ Ist ein Spiel nach den
 
 ## TODOs
 - Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
-- Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
 
 - Anzhal HomeFleeds kontrollieren bei World Generierung
 - distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
@@ -51,7 +50,7 @@ Ist ein Spiel nach den
 - Player ist implementiert
 - PlayerFactory ist implementiert
 - OutputPlyerStatisticCoreGame ist implementiert
-
+- Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
 
 
 ## Projekt
