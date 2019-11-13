@@ -1,6 +1,6 @@
 import { WorldGenerator } from './world-generator';
 import { readFileSync, existsSync, mkdirSync } from 'fs';
-import { GamePref } from './game-pref';
+import { GamePref } from './game-pref.interface';
 
 const stringData = readFileSync('gamePref.json', 'utf8');
 const gamepref: GamePref = JSON.parse(stringData);

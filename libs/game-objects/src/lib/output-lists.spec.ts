@@ -1,8 +1,8 @@
 import { WorldGenerator } from './world-generator';
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
-import { GamePref } from './game-pref';
+import { GamePref } from './game-pref.interface';
 import { OutPutLists } from './output-lists';
-import { WorldsPersist } from './worlds-persist';
+import { WorldsPersist } from './worlds-persist.interface';
 import { TESTRESOUCESPATH } from './utils';
 
 const stringData = readFileSync('gamePref.json', 'utf8');

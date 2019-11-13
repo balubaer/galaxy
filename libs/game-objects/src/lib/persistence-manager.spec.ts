@@ -2,7 +2,7 @@ import { PersistenceManager } from './persistence-manager';
 import { World } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 import { writeFileSync, readFileSync } from 'fs';
-import { WorldsPersist } from './worlds-persist';
+import { WorldsPersist } from './worlds-persist.interface';
 import { TESTRESOUCESPATH } from './utils';
 
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;

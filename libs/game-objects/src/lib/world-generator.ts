@@ -1,10 +1,10 @@
-import { GamePref } from './game-pref';
+import { GamePref } from './game-pref.interface';
 import { World } from './world';
 import { PortFactory } from './portfactory';
 import { FleetFactory } from './fleet-factory';
 import { PlayerFactory } from './player-factory';
 import { PersistenceManager } from './persistence-manager';
-import { WorldsPersist } from './worlds-persist';
+import { WorldsPersist } from './worlds-persist.interface';
 
 export class WorldGenerator {
     gamePref: GamePref;

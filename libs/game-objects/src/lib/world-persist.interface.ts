@@ -1,4 +1,4 @@
-import { FleetPersist } from './fleet-persist';
+import { FleetPersist } from './fleet-persist.interface';
 
 export interface WorldPersist {
     number: number;

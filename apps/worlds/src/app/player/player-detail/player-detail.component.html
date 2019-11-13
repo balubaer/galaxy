@@ -5,6 +5,6 @@
     <pre>{{ turnData.turnCommanTxt }}</pre>
 </div>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5">{{ turnData.turnCommanTxt }}</textarea>
+        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5" formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
     <button>Speichern</button>
 </form>

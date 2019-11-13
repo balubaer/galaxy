@@ -3,11 +3,11 @@ import { NumberKey } from './number-key.interface';
 import { Player } from './player';
 import { Port } from './port';
 import { Fleet } from './fleet';
-import { WorldsPersist } from './worlds-persist';
-import { WorldPersist } from './world-persist';
-import { PlayerPersist } from './player-persist';
-import { PortPersist } from './port-persist';
-import { FleetPersist } from './fleet-persist';
+import { WorldsPersist } from './worlds-persist.interface';
+import { WorldPersist } from './world-persist.interface';
+import { PlayerPersist } from './player-persis.interfacet';
+import { PortPersist } from './port-persist.interface';
+import { FleetPersist } from './fleet-persist.interface';
 
 export class PersistenceManager {
     worldArray: Array<World>;
