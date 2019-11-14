@@ -13,3 +13,4 @@ export * from './lib/world-generator';
 export * from './lib/worlds-persist.interface';
 export * from './lib/output-lists';
 export * from './lib/player-commands.interface';
+export * from './lib/execute-command';

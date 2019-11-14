@@ -29,4 +29,8 @@ export class GameServiceService {
     console.log('createWorlds')
     return this.http.get<Message>('/api/create-world/CreateWorld');
   }
+
+  executeRound(): Observable<Message> {
+    return this.http.get<Message>('/api/game-play/ExecuteRound');
+  }
 }

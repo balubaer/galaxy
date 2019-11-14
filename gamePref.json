@@ -1,13 +1,1 @@
-{
-  "distanceLevelHomes" : 3,
-  "fleetCount" : 10,
-  "fleetsOnHomeWorld" : 2,
-  "worldCount" : 20,
-  "playName" : "Galaxy",
-  "player" : [
-    "ZAPHOD",
-    "MARVIN"
-  ],
-  "startShipCount" : 5,
-  "round" : 0
-}
+{"distanceLevelHomes":3,"fleetCount":10,"fleetsOnHomeWorld":2,"worldCount":20,"playName":"Galaxy","player":["ZAPHOD","MARVIN"],"startShipCount":5,"round":1}

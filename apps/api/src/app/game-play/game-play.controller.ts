@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync } from 'fs';
-import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands } from '@galaxy/game-objects';
+import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 
 @Controller('game-play')
@@ -78,5 +78,46 @@ export class GamePlayController {
         console.log('request.playerName:' + request.playerName);
 
         return ['Hallo1', 'Hallo2'];
+    }
+
+    @Get('ExecuteRound')
+    executeRound(): Message {
+        const stringData = readFileSync('gamePref.json', 'utf8');
+        const gamepref: GamePref = JSON.parse(stringData);
+        const executeCommand = new ExecuteCommand(gamepref);
+        const rawdata = readFileSync(`${gamepref.playName}/Turn${gamepref.round}/worlds.json`, 'utf8');
+
+        gamepref.round++;
+
+        const worldsPersistForExecuteRound: WorldsPersist = JSON.parse(rawdata);
+        executeCommand.createEnvironment(worldsPersistForExecuteRound);
+        const commandsDict = new Map();
+        for (const playerName of gamepref.player) {
+            const commandFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}.txt`;
+            const commandString = readFileSync(commandFile, 'utf8');
+
+            commandsDict.set(playerName, commandString);
+
+        }
+        executeCommand.start(commandsDict);
+
+        const outputDict = executeCommand.generateOutput();
+
+        for (const playerName of outputDict.keys()) {
+            const outputFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}.out`;
+            writeFileSync(outputFile, outputDict.get(playerName));
+        }
+        const resultWorldsPersist = executeCommand.generateResultWorlds();
+
+        const outPath = `${gamepref.playName}/Turn${gamepref.round}/`
+
+        const data = JSON.stringify(resultWorldsPersist);
+        writeFileSync(outPath + 'worlds.json', data);
+
+        const gameprefdata = JSON.stringify(gamepref);
+
+        writeFileSync('gamePref.json', gameprefdata);
+
+        return { message: 'OK' };
     }
 }
