@@ -5,7 +5,7 @@ import { OutPutLists } from './output-lists';
 import { WorldsPersist } from './worlds-persist.interface';
 import { TESTRESOUCESPATH } from './utils';
 
-const stringData = readFileSync('gamePref.json', 'utf8');
+const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
 const gamepref: GamePref = JSON.parse(stringData);
 
 describe('OutPutLists', () => {
@@ -14,7 +14,7 @@ describe('OutPutLists', () => {
   });
   it('test generate', () => {
     const outPutLists = new OutPutLists(gamepref);
-    const rawdata = readFileSync('worlds.json', 'utf8');
+    const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     const output = outPutLists.generate(worldsPersist);
 

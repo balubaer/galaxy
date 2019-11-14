@@ -16,7 +16,7 @@ describe('PersistenceManager', () => {
     const worldsPersist = pm.createWorldsPersist();
 
     const data = JSON.stringify(worldsPersist);
-    writeFileSync('worlds.json', data);
+    writeFileSync(`${TESTRESOUCESPATH}/worlds.json`, data);
     
     expect(worldsPersist.fleets).toBeTruthy();
     expect(worldsPersist.players).toBeTruthy();
@@ -24,7 +24,7 @@ describe('PersistenceManager', () => {
     expect(worldsPersist.worlds).toBeTruthy();
   });
   it('test createWorldsWithWorldsPersist', () => { 
-    const rawdata = readFileSync('worlds.json', 'utf8');
+    const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     const pm = new PersistenceManager(new Array<World>());
     const worldsFromPm = pm.createWorldsWithWorldsPersist(worldsPersist);

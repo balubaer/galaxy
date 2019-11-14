@@ -8,7 +8,7 @@ export class FinalPhaseCoreGame {
 
     constructor(aworldArray: Array<World>, aAllPlayerDict: Map<string, Player>) {
         this.worlds = aworldArray;
-        aAllPlayerDict = aAllPlayerDict;
+        this.allPlayerDict = aAllPlayerDict;
     }
 
     isSomeBodyOnworld(world: World): boolean {

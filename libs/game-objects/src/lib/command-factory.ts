@@ -413,20 +413,20 @@ export class CommandFactory {
                     }
                 }
             }
+        }
 
-            if (this.coreGame === true) {
-                for (const aPlayerName of this.allPlayerDict.keys()) {
-                    const player = this.allPlayerDict.get(aPlayerName);
-                    const buildDShips = new BuildDShips(this.worlds, player)
-                    commandArray.push(buildDShips as Command);
-                }
+        if (this.coreGame === true) {
+            for (const aPlayerName of this.allPlayerDict.keys()) {
+                const player = this.allPlayerDict.get(aPlayerName);
+                const buildDShips = new BuildDShips(this.worlds, player)
+                commandArray.push(buildDShips as Command);
+            }
 
-                commandArray.sort(compareCommand);
+            commandArray.sort(compareCommand);
 
-                for (const command of commandArray) {
-                    const executeCommand = command as unknown as ExecuteCommand;
-                    executeCommand.executeCommand();
-                }
+            for (const command of commandArray) {
+                const executeCommand = command as unknown as ExecuteCommand;
+                executeCommand.executeCommand();
             }
         }
     }

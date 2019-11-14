@@ -11,7 +11,7 @@ export class OutputPlyerStatisticCoreGame {
     
      description(): string {
          let desc = `Punkte: ${this.player.points} | `;
-        desc += `Worlden: ${this.worldsCount} | `;
+        desc += `Welten: ${this.worldsCount} | `;
         desc += `Flotten: ${this.fleetCount} | `;
         desc += `Schiffe auf Flotten: ${this.shipsOnFleetsCount} | `;
         desc += `D-Schiffe: ${this.dShipCount}\n`;

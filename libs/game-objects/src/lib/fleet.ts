@@ -46,6 +46,9 @@ export class Fleet implements NumberKey {
         this.moved = false;
         this.fired = false;
         this.ships = 0;
+        this.hitedShots = 0;
+        this.ambush = false;
+        this.firesTo = '';
     }
 
     name(): string {

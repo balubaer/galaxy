@@ -43,7 +43,7 @@ export class ExecuteCommand {
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1} \n`;
             const outPutStatistic = new OutputPlyerStatisticCoreGame(this.worlds, player);
             outPutStatistic.calculateStatistic();
-            outPutString += `${outPutStatistic.description}\n`;
+            outPutString += `${outPutStatistic.description()}\n`;
             for (const world of this.worlds) {
                 if (isWorldOutPutForPlayer(player, world)) {
                     outPutString += `${world.description()}\n\n`;

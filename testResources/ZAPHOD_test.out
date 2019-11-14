@@ -1,0 +1,12 @@
+Infos zu Spieler: ZAPHOD Runde: 1 
+Punkte: 102 | Welten: 3 | Flotten: 1 | Schiffe auf Flotten: 4 | D-Schiffe: 13
+Verbündete: (MARVIN)
+
+W2(1) [ZAPHOD] (D-Schiffe=2)
+   F4[ZAPHOD] = 4
+
+W4(1,2,3) [ZAPHOD] (D-Schiffe=5)
+   (F4[ZAPHOD]-->W2)
+
+W5(1,2,3,4) [ZAPHOD] (D-Schiffe=6)
+
