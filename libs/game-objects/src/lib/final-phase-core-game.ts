@@ -135,7 +135,11 @@ export class FinalPhaseCoreGame {
 
     //TODO: niklas  getFirePowerFor
     checkFleetMovement(world: World) {
+        const fleetArray = new Array();
         for (const fleet of world.fleets) {
+            fleetArray.push(fleet);
+        }
+        for (const fleet of fleetArray) {
             const fleetMovementCount = fleet.fleetMovements.length;
 
             if (fleetMovementCount > 0) {

@@ -463,10 +463,10 @@ export class CommandFactory {
                                 if (this.commandChars.length === 3) {
                                     switch (this.commandChars.charAt(2)) {
                                         case 'F':
-                                            result = null; //this.createFireFleetToFleetCommand();
+                                            result = this.createFireFleetToFleetCommand();
                                             break;
                                         case 'D':
-                                            result = null; //createFireFleetToDShipsCommand()
+                                            result = this.createFireFleetToDShipsCommand();
                                             break;
                                         default:
                                             result = null;
@@ -498,14 +498,14 @@ export class CommandFactory {
                             case 'A':
                                 if (this.commandChars.length === 3) {
                                     if (this.commandChars.charAt(2) === 'F') {
-                                        result = null; //createFireDShipsToFleetCommand()
+                                        result = this.createFireDShipsToFleetCommand();
                                     }
                                 }
                                 break;
                             case 'T':
                                 if (this.commandChars.length === 3) {
                                     if (this.commandChars.charAt(2) === 'F') {
-                                        result = null; //createTransferDShipsToFleetCommand()
+                                        result = this.createTransferDShipsToFleetCommand();
                                     }
                                 }
                                 break;
@@ -515,16 +515,16 @@ export class CommandFactory {
                         }
                         break;
                     case 'Z':
-                        result = null //createAmbushOffForWorld()
+                        result = this.createAmbushOffForWorld();
                         break;
                     case 'A':
                         if (this.commandChars.charAt(1) === '=') {
-                            result = null //createTeammateForPlayer();
+                            result = this.createTeammateForPlayer();
                         }
                         break;
                     case 'N':
                         if (this.commandChars.charAt(1) === '=') {
-                            result = null; //createRemoveTeammateForPlayer();
+                            result = this.createRemoveTeammateForPlayer();
                         }
                         break;
                     default:
@@ -534,7 +534,7 @@ export class CommandFactory {
             } else if (this.commandChars.length === 1) {
                 switch (this.commandChars.charAt(0)) {
                     case 'Z':
-                        result = null; //createAmbushOffForPlayer()
+                        result = this.createAmbushOffForPlayer();
                         break;
                     default:
                         result = null;

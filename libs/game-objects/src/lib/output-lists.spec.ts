@@ -20,7 +20,7 @@ describe('OutPutLists', () => {
 
     for (const playerName of output.keys()) {
       const outPutString = output.get(playerName);
-     // writeFileSync(`${TESTRESOUCESPATH}/${playerName}.out`, outPutString);
+     writeFileSync(`${TESTRESOUCESPATH}/${playerName}.out`, outPutString);
      const outPutStringFromFile = readFileSync(`${TESTRESOUCESPATH}/${playerName}.out`, 'utf8');
      expect(outPutString).toBe(outPutStringFromFile);
     }

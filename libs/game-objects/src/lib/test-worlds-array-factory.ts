@@ -45,6 +45,11 @@ export class TestWorldsArrayFactory {
         world.fleets[0].ships = 4;
         world.fleets[0].number = 4;
         world.fleets[0].player = world.player;
+        world.fleets.push(new Fleet());
+        world.fleets[1].ships = 5;
+        world.fleets[1].number = 5;
+        world.fleets[1].player = world.player;
+
         this.worlds.push(world);
 
         world = new World();

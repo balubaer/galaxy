@@ -15,6 +15,6 @@ describe('FleetMovement', () => {
 
     fleetMovement.fleet = worlds[3].fleets[0];
     fleetMovement.toWorld = worlds[2];
-    expect(fleetMovement.description()).toBe('F4[ZAPHOD]-->W3');
+    expect(fleetMovement.description()).toBe('F4[ZAPHOD]-->W3 ');
   });
 });

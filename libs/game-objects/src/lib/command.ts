@@ -67,51 +67,53 @@ export class MoveCommand extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
-        if (this.player.stringName() === this.fleet.player.stringName()) {
-            let fromWorld: World = this.homeWorld;
-            let toWorld: World;
-            let isError = false
-            for (const world of this.worlds) {
-                toWorld = world;
-                if (fromWorld.hasConnectionToWorld(toWorld)) {
-                    fromWorld = world;;
-                } else {
-                    //TODO: Fehler
-                    isError = true;
-                    break;
-                }
+        if (this.player !== null && this.fleet.player !== null) {
+            if (this.player.stringName() === this.fleet.player.stringName()) {
+                let fromWorld: World = this.homeWorld;
+                let toWorld: World;
+                let isError = false
+                for (const world of this.worlds) {
+                    toWorld = world;
+                    if (fromWorld.hasConnectionToWorld(toWorld)) {
+                        fromWorld = world;;
+                    } else {
+                        //TODO: Fehler
+                        isError = true;
+                        break;
+                    }
 
-                if (this.fleet.ships === 0) {
-                    isError = true;
+                    if (this.fleet.ships === 0) {
+                        isError = true;
+                    }
+
+                    if (isError === false) {
+                        if (this.fleet.fired) {
+                            isError = true;
+                        }
+                    }
                 }
 
                 if (isError === false) {
-                    if (this.fleet.fired) {
-                        isError = true;
+                    fromWorld = this.homeWorld;
+
+                    for (const toWorldFromWorlds of this.worlds) {
+                        toWorld = toWorldFromWorlds;
+                        const fleetMovement = new FleetMovement();
+                        const fleetCopy = new Fleet();
+                        fleetCopy.player = this.fleet.player;
+                        fleetCopy.number = this.fleet.number;
+                        fleetMovement.fleet = fleetCopy;
+                        fleetMovement.toWorld = toWorld;
+                        fleetMovement.fromWorld = fromWorld;
+
+                        this.fleet.fleetMovements.push(fleetMovement);
+
+                        fromWorld = toWorld;
                     }
                 }
+            } else {
+                //TODO: Fehler Flotte ist nicht vom Spieler
             }
-
-            if (isError === false) {
-                fromWorld = this.homeWorld;
-
-                for (const toWorldFromWorlds of this.worlds) {
-                    toWorld = toWorldFromWorlds;
-                    const fleetMovement = new FleetMovement();
-                    const fleetCopy = new Fleet();
-                    fleetCopy.player = this.fleet.player;
-                    fleetCopy.number = this.fleet.number;
-                    fleetMovement.fleet = fleetCopy;
-                    fleetMovement.toWorld = toWorld;
-                    fleetMovement.fromWorld = fromWorld;
-
-                    this.fleet.fleetMovements.push(fleetMovement);
-
-                    fromWorld = toWorld;
-                }
-            }
-        } else {
-            //TODO: Fehler Flotte ist nicht vom Spieler
         }
     }
 }

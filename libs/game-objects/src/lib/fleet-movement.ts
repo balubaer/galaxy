@@ -10,7 +10,7 @@ export class FleetMovement {
     description(): string {
         let desc = '(---)';
         if (this.fleet !== null && this.toWorld !== null) {
-            desc = `${this.fleet.name()}-->${this.toWorld.name}`;
+            desc = `${this.fleet.name()}-->${this.toWorld.name} `;
         }
         return desc;
     }

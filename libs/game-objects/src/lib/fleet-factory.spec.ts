@@ -22,7 +22,7 @@ describe('FleetFactory', () => {
         fleetNumberSet.add(aFleet);
       }
     }
-    // (fleetCount + 1) weil World 4 schon eine Flotte hat
-    expect(fleetNumberSet.size === (fleetCount + 1)).toBe(true);
+    // (fleetCount + 2) weil World 4 schon eine Flotte hat
+    expect(fleetNumberSet.size === (fleetCount + 2)).toBe(true);
   });
 });
