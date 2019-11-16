@@ -403,7 +403,6 @@ export class CommandFactory {
             const commands: Array<string> = this.commandStringsDict.get(playerName);
 
             for (const command of commands) {
-                console.log(`Command: ${command}`);
                 this.initMembers(command, playerName);
 
                 const commandInstance = this.getCommandInstance();

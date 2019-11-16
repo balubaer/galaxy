@@ -35,7 +35,6 @@ export class CreateGameComponent implements OnInit {
   }
 
   onSubmit() {
-
     const gamepref: GamePref = {
       distanceLevelHomes: this.form.value.DistanceLevelHomes,
       fleetCount: this.form.value.FleetCount,
@@ -47,10 +46,8 @@ export class CreateGameComponent implements OnInit {
       round: 0
     }
 
-    console.log('Added new game', gamepref)
-
     this.gameService.setGamePref(gamepref)
-      .subscribe((gamepref01: GamePref) => console.log('Added new game', gamepref01));
+      .subscribe();
   }
   
 }

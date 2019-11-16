@@ -53,8 +53,6 @@ export class CreateWorldController {
     const data = JSON.stringify(gamepref);
 
     writeFileSync('gamePref.json', data);
-
-    console.log(gamepref);
   }
 
 }

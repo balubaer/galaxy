@@ -29,7 +29,6 @@ describe('WorldGenerator', () => {
     //mkdirSync(outPath+'test');
 
     for (const world of worldGen.worlds) {
-      console.log(world.description());
       expect(world).toBeTruthy();
       expect(world.port).toBeTruthy();
       //TODO: distanceLevelHomes testen

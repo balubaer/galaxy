@@ -12,17 +12,14 @@ export class GamePlayService {
   constructor(private http: HttpClient) { }
 
   getTurnData(request): Observable<RespondTurnData> {
-    console.log(`request: ${request}`);
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnData', request);
   }
 
   getTurnDataOnlyPlayer(request): Observable<RespondTurnData> {
-    console.log(`request: ${request}`);
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayer', request);
   }
 
   setCommands(request): Observable<Message> {
-    console.log(`request: ${request}`);
     return this.http.post<Message>('/api/game-play/SetCommands', request);
   }
  

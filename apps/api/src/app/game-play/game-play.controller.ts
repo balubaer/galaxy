@@ -25,17 +25,11 @@ export class GamePlayController {
             'turnCommanTxt': commandString,
             'turnDataTxt': turnDataTxTstring
         }
-
-        console.log('request.turn:' + request.turn);
-        console.log('request.playerName:' + request.playerName);
-
         return respondTurnDate;
     }
 
     @Post('SetCommands')
     setCommands(@Body() request: PlayerCommands): Message {
-        console.log('request.commands:' + request.commands);
-        console.log('request.playe:' + request.player);
         const stringData = readFileSync('gamePref.json', 'utf8');
         const gamepref: GamePref = JSON.parse(stringData);
         const playName = gamepref.playName;
@@ -65,19 +59,8 @@ export class GamePlayController {
             'turnDataTxt': turnDataTxTstring
         }
 
-        console.log('gamepref.round:' + gamepref.round);
-        console.log('request.playerName:' + request.playerName);
 
         return respondTurnDate;
-    }
-
-    @Get('GetTurnData2')
-    getTurnData2(@Body() request: RequestTurnData): Array<string> {
-
-        console.log('request.turn:' + request.turn);
-        console.log('request.playerName:' + request.playerName);
-
-        return ['Hallo1', 'Hallo2'];
     }
 
     @Get('ExecuteRound')

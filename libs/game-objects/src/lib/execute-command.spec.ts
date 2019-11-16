@@ -22,28 +22,28 @@ describe('ExecuteCommand', () => {
      expect(player.playerName).toBe(playerName);
     }
     let testString = executeCommand.worlds[0].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
     let descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = executeCommand.worlds[1].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World2_Persist.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World2_Persist.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World2_Persist.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = executeCommand.worlds[2].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World3_Persist.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World3_Persist.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World3_Persist.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = executeCommand.worlds[3].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, 'utf8');
 
     expect(testString).toBe(descriptionString);
 
     testString = executeCommand.worlds[4].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World5_Persist.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World5_Persist.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World5_Persist.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
   });
@@ -75,7 +75,7 @@ describe('ExecuteCommand', () => {
     const outputDict = executeCommand.generateOutput();
 
     for (const playerName of outputDict.keys()) {
-          writeFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, outputDict.get(playerName));
+          //writeFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, outputDict.get(playerName));
           const descriptionString = readFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, 'utf8');
           expect(outputDict.get(playerName)).toBe(descriptionString);
     }

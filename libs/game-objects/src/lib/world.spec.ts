@@ -16,45 +16,45 @@ describe('World', () => {
   });
   it('test createResourceString', () => {
     let testString = worlds[0].createResourceString();
-    writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World1.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World1.txt`, testString);
     let resourceString = readFileSync(`${TESTRESOUCESPATH}/createResourceString_World1.txt`, 'utf8');
     expect(testString).toBe(resourceString);
 
     testString = worlds[1].createResourceString();
-    writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World2.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World2.txt`, testString);
     resourceString = readFileSync(`${TESTRESOUCESPATH}/createResourceString_World2.txt`, 'utf8');
     expect(testString).toBe(resourceString);
 
     testString = worlds[2].createResourceString();
-    writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World3.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/createResourceString_World3.txt`, testString);
     resourceString = readFileSync(`${TESTRESOUCESPATH}/createResourceString_World3.txt`, 'utf8');
     expect(testString).toBe(resourceString);
   });
   it('test description', () => {
     let testString = worlds[0].description();
-        writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
 
     let descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = worlds[1].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World2.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = worlds[2].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World3.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
     testString = worlds[3].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, 'utf8');
 
     expect(testString).toBe(descriptionString);
 
     testString = worlds[4].description();
-    writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
+    //writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 

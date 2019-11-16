@@ -30,8 +30,8 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       Commands: ['']
     });
-    this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
-    this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
+    this.subscriptions.add(this.form.valueChanges.subscribe());
+    this.subscriptions.add(this.form.statusChanges.subscribe());
   }
 
   onSubmit() {
@@ -41,7 +41,6 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
       commands: this.form.value.Commands
     }
 
-    console.log('Added commands', commands)
     this.subscriptions.add(this.gamePlayService.setCommands(commands).subscribe());
     const request: RequestTurnDataOnlyPlayer = {
       playerName: this.playerName
