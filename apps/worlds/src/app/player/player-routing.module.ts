@@ -3,19 +3,20 @@ import { Routes, RouterModule } from '@angular/router';
 import { PlayerDetailComponent } from './player-detail/player-detail.component';
 import { PlayerComponent } from './player/player.component';
 import { PlayerListComponent } from './player-list/player-list.component';
+import { HomeComponent } from '../home/home.component';
 
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'player',
     component: PlayerComponent,
     children: [
       {
-        path: 'player',
+        path: '',
         component: PlayerListComponent
       },
       {
-        path: 'player/:player',
+        path: ':player',
         component: PlayerDetailComponent,
       }
     ]

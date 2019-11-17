@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Message } from '@galaxy/api-interfaces';
-import { World } from '@galaxy/game-objects';
+import { Router } from '@angular/router';
+import { AuthenticationService } from './_services/authentication.service';
 
 @Component({
   selector: 'galaxy-root',
@@ -9,9 +8,17 @@ import { World } from '@galaxy/game-objects';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  hello$ = this.http.get<Message>('/api/hello');
-  worlds$ = this.http.get<World[]>('/api/Worlds');
+  currentUser: any;
+  
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+  }
 
-  constructor(private http: HttpClient) {}
-
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
+  }
 }

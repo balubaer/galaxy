@@ -1,9 +1,25 @@
 
-<galaxy-navigation-component></galaxy-navigation-component>
-<router-outlet></router-outlet>
+  <!-- bootstrap css -->
+  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- nav -->
+<nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
+    <div class="navbar-nav">
+        <a class="nav-item nav-link" routerLink="/">Home</a>
+        <a class="nav-item nav-link" (click)="logout()">Logout</a>
+    </div>
+    <!--<galaxy-navigation-component></galaxy-navigation-component>-->
+    <!--<galaxy-player-detail></galaxy-player-detail>-->
 
-<!--<div>Message: {{ hello$ | async | json }}</div>
-<BR/>
-<galaxy-show-player></galaxy-show-player>
-<galaxy-create-worlds></galaxy-create-worlds>
-<galaxy-world-list></galaxy-world-list>-->
+</nav>
+
+<!-- main content container -->
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2">
+                <galaxy-alert></galaxy-alert>
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

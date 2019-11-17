@@ -1,0 +1,11 @@
+﻿<h1>Hi {{currentUser.username}}!</h1>
+<div *ngIf="turnData$|async as turnData">
+    <pre>Punkte: {{ turnData.points }}</pre>
+    <pre>{{ turnData.turnDataTxt }}</pre>
+    <pre>{{ turnData.turnCommanTxt }}</pre>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5" formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
+    <button>Speichern</button>
+</form>
+    <!--<galaxy-player-detail></galaxy-player-detail>-->
