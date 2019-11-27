@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Login, User } from '@galaxy/api-interfaces';
 
-
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     public currentUser: Observable<User>;
@@ -20,7 +19,6 @@ export class AuthenticationService {
     }
 
     login(login: Login): Observable<User> {
-        console.log('vor Post');
         const result = this.http.post<User>('/api/users/authenticate', login);
         result.subscribe(aUser => {
             localStorage.setItem('currentUser', JSON.stringify(aUser));

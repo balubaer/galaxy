@@ -1,6 +1,8 @@
 import { Controller, Post, Body, Get, HttpException, HttpStatus, UnauthorizedException, Res } from '@nestjs/common';
 import { Login, User, Message } from '@galaxy/api-interfaces';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { compareSync, hashSync } from 'bcryptjs';
+
 //import {Response} from "express";
 
 @Controller('users')
@@ -26,6 +28,7 @@ export class UsersController {
         } else {
             userArray = new Array();
         }
+        user.password = hashSync(user.password, 10);
 
         userArray.push(user);
 
@@ -36,7 +39,7 @@ export class UsersController {
     }
 
     @Post('authenticate')
-    authenticate(@Res() res, @Body() login: Login ): User { //, @Res() res: Response @Body() login: Login
+    authenticate(@Res() res, @Body() login: Login): User { //, @Res() res: Response @Body() login: Login
         let user: User = null;
         if (existsSync('user.json')) {
             const stringData = readFileSync('user.json', 'utf8');
@@ -44,7 +47,7 @@ export class UsersController {
 
             for (const aUser of userArray) {
                 if (aUser.username === login.username
-                    && aUser.password === login.password) {
+                    && (compareSync(login.password, aUser.password) === true)) {
                     user = aUser;
                     break;
                 }
