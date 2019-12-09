@@ -14,3 +14,4 @@ export * from './lib/worlds-persist.interface';
 export * from './lib/output-lists';
 export * from './lib/player-commands.interface';
 export * from './lib/execute-command';
+export * from './lib/persistence-manager';

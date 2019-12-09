@@ -17,6 +17,7 @@ import { HttpErrorInterceptor } from './_helpers/error.interceptor';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register';
 import { AlertComponent } from './_components';
+import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AlertComponent } from './_components';
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    AppRoutingModule],
+    AppRoutingModule,
+    NgxGraphModule],
   providers: [
     // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }

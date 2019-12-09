@@ -6,3 +6,55 @@
 </tr>
 <br/>
 <pre *ngFor="let world of worlds$ | async">{{ world }}</pre>
+<ngx-graph
+  class="chart-container"
+  [view]="[500, 200]"
+  [links]="[
+    {
+      id: 'a',
+      source: 'first',
+    target: 'second',
+      label: 'is parent of'
+    }, {
+      id: 'b',
+      source: 'first',
+      target: 'third',
+      label: 'custom label'
+    }
+  ]"
+  [nodes]="[
+    {
+      id: 'first',
+      label: 'A'
+    }, {
+      id: 'second',
+      label: 'B'
+    }, {
+      id: 'third',
+      label: 'C'
+    }
+  ]"
+>
+</ngx-graph>
+<ngx-graph
+class="chart-container"
+  [view]="[500, 300]"
+  [links]= "links"
+  [nodes]="nodes"
+  [layout]="layout">
+</ngx-graph>
+<!--<ngx-graph
+class="chart-container"
+  [view]="[500, 300]"
+  [links]= "links"
+  [nodes]="nodes"
+  [layout]="layout"
+  [curve]="curve">
+</ngx-graph>-->
+
+<svg class="bubbles">
+    <g *ngFor="let d of data" [attr.transform]="'translate('+d.x+','+d.y+')'" 
+        (click)="onBubbleSelected(d)">
+        <circle [attr.r]="d.r" [attr.fill]="'red'"></circle>
+    </g>
+</svg>
