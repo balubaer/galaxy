@@ -42,6 +42,24 @@ class="chart-container"
   [links]= "links"
   [nodes]="nodes"
   [layout]="layout">
+  <ng-template #nodeTemplate let-node>
+      <svg:g class="node">
+          <circle [attr.r]="node.dimension.width/2" [attr.fill]="'rgb(178, 39, 147)'" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
+
+          <!--<svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height" [attr.fill]="node.data.color" />-->
+          <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">{{node.label}}</svg:text>
+        </svg:g>
+    <!--<svg:g class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.label">
+      <svg:rect
+        [attr.width]="node.dimension.width"
+        [attr.height]="node.dimension.height"
+        [attr.fill]="node.data.color"
+      />
+      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
+        {{node.label}}
+      </svg:text>
+    </svg:g>-->
+  </ng-template>
 </ngx-graph>
 <!--<ngx-graph
 class="chart-container"
