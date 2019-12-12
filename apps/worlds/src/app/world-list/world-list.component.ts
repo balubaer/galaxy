@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
 import * as d3 from 'd3';
-import { Layout, Edge, NodePosition, NodeDimension } from '@swimlane/ngx-graph';
+import { Layout, Edge, Node } from '@swimlane/ngx-graph';
 import { DagreNodesOnlyLayout } from './customDagreNodesOnly';
 
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Message, Node } from '@galaxy/api-interfaces';
+import { Message } from '@galaxy/api-interfaces';
 import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager } from '@galaxy/game-objects';
 import { readFileSync, writeFileSync } from 'fs';
-import { Edge } from '@swimlane/ngx-graph';
+import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Injectable()
 export class AppService {
@@ -53,6 +53,7 @@ export class AppService {
         {
           id: world.name,
           label: world.name
+          //TODO: in data Color und Flotten und d-Schiffe packen 
         }
       )
     }
