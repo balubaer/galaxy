@@ -1,11 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 
-import { Message, Node } from '@galaxy/api-interfaces';
+import { Message } from '@galaxy/api-interfaces';
 import { Player, World, GamePref } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
 import { readFileSync, writeFileSync } from 'fs';
-import { Edge } from '@swimlane/ngx-graph';
+import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Controller()
 export class AppController {

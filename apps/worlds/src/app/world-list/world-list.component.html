@@ -44,7 +44,7 @@ class="chart-container"
   [layout]="layout">
   <ng-template #nodeTemplate let-node>
       <svg:g class="node">
-          <circle [attr.r]="node.dimension.width/2" [attr.fill]="'rgb(178, 39, 147)'" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
+          <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
           <!--TODO: in data Color und Flotten und d-Schiffe packen -->
 
           <!--<svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height" [attr.fill]="node.data.color" />-->

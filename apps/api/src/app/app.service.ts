@@ -6,6 +6,14 @@ import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Injectable()
 export class AppService {
+  colorMap: Map<string, string>;
+
+  constructor() {
+    this.colorMap = new Map();
+    this.colorMap.set('MARVIN', 'rgb(255, 164, 43)');
+    this.colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+  }
+
   getData(): Message {
     return { message: 'Welcome to api!' };
   }
@@ -44,6 +52,15 @@ export class AppService {
     return worldStringList;
   }
 
+  getColorWithPlayer(player: Player): string {
+   // let result = '\'rgb(193, 193, 193)\'';
+    let result = 'lightgray';
+    if (player !== null) {
+      result = this.colorMap.get(player.playerName);
+    }
+    return result;
+  }
+
   getWorldsNode(): Node[] {
     const worlds: World[] = this.getWorlds();
     const nodeArray: Array<Node> = new Array<Node>();
@@ -52,7 +69,11 @@ export class AppService {
       nodeArray.push(
         {
           id: world.name,
-          label: world.name
+          label: world.name,
+          data: {
+            backgroundColor: this.getColorWithPlayer(world.player),
+
+          }
           //TODO: in data Color und Flotten und d-Schiffe packen 
         }
       )
