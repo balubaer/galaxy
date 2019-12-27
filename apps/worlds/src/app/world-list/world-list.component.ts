@@ -106,15 +106,20 @@ export class WorldListComponent implements OnInit, OnDestroy {
     }
   ]
 
-  //public curve: any = stepRound;
-  public layout: Layout = new DagreNodesOnlyLayout();
+ // public layout: Layout = new DagreNodesOnlyLayout();
   public links$: Observable<Edge[]>;
   public links: Edge[];
   public nodes: Node[];
   public nodes$: Observable<Node[]>;
+
+  public node: Node;
+
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {
+    this.node = null;
+    this.nodes = new Array();
+    this.links = new Array();
   }
 
   ngOnInit() {
@@ -140,10 +145,19 @@ export class WorldListComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  onNodeSelected(aNode) {
+    this.node = aNode;
+    console.log(aNode);
+  }
+
   onBubbleSelected(d) {
-    d.r = d.r * 2
+    for (const node of this.nodes) {
+      console.log(node);
+    }
+   // d.r = d.r * 2
 
   }
+
   getBubbles(): any {
 
     return {

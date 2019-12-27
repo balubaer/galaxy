@@ -18,6 +18,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register';
 import { AlertComponent } from './_components';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    NgxGraphModule],
+    NgxGraphModule,
+    BrowserAnimationsModule],
   providers: [
     // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }

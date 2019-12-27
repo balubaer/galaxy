@@ -53,14 +53,14 @@ export class GamePlayController {
         if (existsSync(turnDataTxTFile)) {
             turnDataTxTstring = readFileSync(turnDataTxTFile, 'utf8');
         }
-        const respondTurnDate: RespondTurnData = {
+        const respondTurnData: RespondTurnData = {
             'points': 0,
             'turnCommanTxt': commandString,
             'turnDataTxt': turnDataTxTstring
         }
 
 
-        return respondTurnDate;
+        return respondTurnData;
     }
 
     @Get('ExecuteRound')

@@ -4,9 +4,13 @@ import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManage
 import { readFileSync, writeFileSync } from 'fs';
 import { Edge, Node } from '@swimlane/ngx-graph';
 
+const piVirtel: number = Math.PI/4;
+const radiusForFleet = 70;
+
 @Injectable()
 export class AppService {
   colorMap: Map<string, string>;
+  pos: number;
 
   constructor() {
     this.colorMap = new Map();
@@ -28,7 +32,8 @@ export class AppService {
   }
 
   getWorlds(): World[] {
-    const rawdata = readFileSync('worlds.json', 'utf8');
+    const rawdata = readFileSync('Galaxy/Turn1/worlds.json', 'utf8');
+    //const rawdata = readFileSync('worlds.json', 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     const pm = new PersistenceManager(new Array<World>());
     const worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
@@ -61,6 +66,63 @@ export class AppService {
     return result;
   }
 
+  startPosForFleet() {
+    this.pos = 0;
+  }
+
+  nextPosForFleet() {
+    this.pos += 1;
+  }
+
+  getCircleX(radians: number, radius: number) {
+    return Math.cos(radians) * radius;
+  }
+
+  getCircleY(radians: number, radius: number) {
+    return Math.sin(radians) * radius;
+  }
+  
+  getXForFleet(): number {
+    return this.getCircleX(piVirtel * this.pos, radiusForFleet);
+  }
+
+  getYForFleet(): number {
+    return this.getCircleY(piVirtel * this.pos, radiusForFleet)
+  }
+
+  /*getFleetsWithWorld(world: World): string {
+    let fleets: string = '';
+
+    this.startPosForFleet();
+    console.log(`fleets.length: ${world.fleets.length}`)
+
+    for (const fleet of world.fleets) {
+      fleets += `<ellipse stroke="none" fill="${this.getColorWithPlayer(fleet.player)}" cx="${this.getXForFleet()}" cy="${this.getYForFleet()}" rx="10" ry="20"/>\r\n`
+      this.nextPosForFleet();
+    }
+    return fleets;
+  }*/
+
+  getFleetsWithWorld(world: World): any {
+    const fleets = new Array();
+
+    this.startPosForFleet();
+    console.log(`fleets.length: ${world.fleets.length}`)
+
+    for (const fleet of world.fleets) {
+      fleets.push(
+        {
+          x: this.getXForFleet(),
+          y: this.getYForFleet(),
+          backgroundColor: this.getColorWithPlayer(fleet.player),
+          label: `F${fleet.number}=${fleet.ships}`
+        }
+      )
+      this.nextPosForFleet();
+    }
+    return fleets;
+  }
+
   getWorldsNode(): Node[] {
     const worlds: World[] = this.getWorlds();
     const nodeArray: Array<Node> = new Array<Node>();
@@ -71,10 +133,10 @@ export class AppService {
           id: world.name,
           label: world.name,
           data: {
+            dships: world.dShips,
             backgroundColor: this.getColorWithPlayer(world.player),
-
+            fleets: this.getFleetsWithWorld(world)
           }
-          //TODO: in data Color und Flotten und d-Schiffe packen 
         }
       )
     }
