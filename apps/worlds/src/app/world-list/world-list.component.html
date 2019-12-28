@@ -36,11 +36,16 @@
   ]"
 >
 </ngx-graph-->
+<!-- 
+  layout="d3ForceDirected"
+-->
 <ngx-graph
 class="chart-container"
   [view]="[500, 500]"
   [links]= "links"
-  [nodes]="nodes">
+  [nodes]="nodes"
+  layout="d3ForceDirected"
+  >
   <ng-template #nodeTemplate let-node>
       <svg:g class="node" (click)="onNodeSelected(node)" [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
         <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
