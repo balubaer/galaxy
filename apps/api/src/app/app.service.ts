@@ -107,7 +107,6 @@ export class AppService {
     const fleets = new Array();
 
     this.startPosForFleet();
-    console.log(`fleets.length: ${world.fleets.length}`)
 
     for (const fleet of world.fleets) {
       fleets.push(

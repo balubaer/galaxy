@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, Subject } from 'rxjs';
 import * as d3 from 'd3';
-import { Layout, Edge, Node } from '@swimlane/ngx-graph';
+import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Component({
   selector: 'galaxy-world-list',
@@ -34,7 +34,12 @@ export class WorldListComponent implements OnInit, OnDestroy {
   public nodes$: Observable<Node[]>;
   
   public node: Node;
+  autoZoom = true;
+  autoCenter = true; 
 
+  center$: Subject<boolean> = new Subject();
+  zoomToFit$: Subject<boolean> = new Subject();
+  
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {

@@ -39,12 +39,17 @@
 <!-- 
   layout="d3ForceDirected"
 -->
+
 <ngx-graph
 class="chart-container"
   [view]="[500, 500]"
   [links]= "links"
   [nodes]="nodes"
   layout="d3ForceDirected"
+  [autoZoom]="autoZoom"
+  [autoCenter]="autoCenter"
+  [center$]="center$"
+  [zoomToFit$]="zoomToFit$"
   >
   <ng-template #nodeTemplate let-node>
       <svg:g class="node" (click)="onNodeSelected(node)" [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
@@ -76,6 +81,8 @@ class="chart-container"
     </svg:g>-->
  </ng-template>
 </ngx-graph>
+<button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
+<button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
 <!--<ngx-graph
 class="chart-container"
   [view]="[500, 300]"
