@@ -27,6 +27,7 @@ export class World implements NumberKey {
     dShipsAmbush: boolean;
     dShipsFired: boolean;
     dShipsFiredFleet: Fleet = null;
+    metal: number;
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
@@ -37,6 +38,7 @@ export class World implements NumberKey {
         this.fleetMovements = new Array<FleetMovement>();
         this.hitAmbuschFleets = new Array<Fleet>();
         this.dShips = 0;
+        this.metal = 0;
     }
 
     setNumber(aNumber: number) {

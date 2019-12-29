@@ -31,7 +31,7 @@ export class Fleet implements NumberKey {
     firesToCommand: string;
     moved: boolean;
     hitAmbuschFleets: Array<Fleet> = null;
-
+    metal: number;
 
 
     //TODO: niklas Kunstwerke ... V70:Plastik Mondstein
@@ -49,6 +49,7 @@ export class Fleet implements NumberKey {
         this.hitedShots = 0;
         this.ambush = false;
         this.firesTo = '';
+        this.metal = 0;
     }
 
     name(): string {

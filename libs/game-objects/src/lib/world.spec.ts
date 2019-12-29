@@ -87,4 +87,9 @@ describe('World', () => {
     foundWorld = worldWithNumber(worlds, 3);
     expect(foundWorld).toBe(worlds[2]);
   });
+  it('test metal', () => {
+    const world: World = worlds[0];
+    world.metal = 10;
+    expect(world.metal === 10).toBe(true);
+  });
 });
