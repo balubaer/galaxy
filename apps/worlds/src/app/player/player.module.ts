@@ -7,6 +7,7 @@ import { PlayerComponent } from './player/player.component';
 import { PlayerListComponent } from './player-list/player-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     PlayerRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxGraphModule
   ],
   exports: [PlayerComponent, PlayerListComponent]
 })

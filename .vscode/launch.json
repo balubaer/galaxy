@@ -105,6 +105,19 @@
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",
         "port": 9229
+      },
+      {
+        "name": "Debug Jest persistence-graf-manager.spec",
+        "type": "node",
+        "request": "launch",
+        "runtimeArgs": [
+          "--inspect-brk",
+          "${workspaceRoot}/node_modules/.bin/jest",
+          "--testPathPattern=persistence-graf-manager.spec"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "port": 9229
       }
     ]
   }

@@ -15,3 +15,5 @@ export * from './lib/output-lists';
 export * from './lib/player-commands.interface';
 export * from './lib/execute-command';
 export * from './lib/persistence-manager';
+export * from './lib/persistence-graf-manager';
+export * from './lib/nodes-and-links.interface';
