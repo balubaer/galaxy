@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { GamePlayService } from '../game-play.service';
 import { RespondTurnData, RequestTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands } from '@galaxy/game-objects';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Edge, Node } from '@swimlane/ngx-graph';
+import { Node } from '@swimlane/ngx-graph';
 
 @Component({
   selector: 'galaxy-player-detail',
