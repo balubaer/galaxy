@@ -23,9 +23,6 @@ Ist ein Spiel nach den
 
 
 - Anzhal HomeFleeds kontrollieren bei World Generierung
-- distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
-
-
 - Command Tests
 - CommandFactory Tests
 - PortFactory Tests
@@ -33,6 +30,14 @@ Ist ein Spiel nach den
 - Player Tests
 - PlayerFactory Tests
 - OutputPlyerStatisticCoreGame Tests
+- Timer für Layout Grafik laden
+- Login für Admin-Bereich
+- Back-Links für Seiten im Admin-Bereich
+- Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
+- Farbe Wählen für Spieler
+	- Legende Farben Spieler
+- Legende für Symbole (Flotten, D-Schiffe usw.)
+- Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
 
 
 ## Erledigte TODOs
@@ -52,6 +57,8 @@ Ist ein Spiel nach den
 - OutputPlyerStatisticCoreGame ist implementiert
 - Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
 - Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
+- distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
+
 
 ## Projekt
 

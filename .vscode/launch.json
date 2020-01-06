@@ -35,7 +35,7 @@
         "runtimeArgs": [
           "--inspect-brk",
           "${workspaceRoot}/node_modules/.bin/jest",
-          "--testPathPattern=command.spec"
+          "${workspaceRoot}/libs/game-objects/src/lib/command.spec.ts"
         ],
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",
@@ -114,6 +114,19 @@
           "--inspect-brk",
           "${workspaceRoot}/node_modules/.bin/jest",
           "--testPathPattern=persistence-graf-manager.spec"
+        ],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "port": 9229
+      },
+      {
+        "name": "Debug Jest distance-level.spec",
+        "type": "node",
+        "request": "launch",
+        "runtimeArgs": [
+          "--inspect-brk",
+          "${workspaceRoot}/node_modules/.bin/jest",
+          "--testPathPattern=distance-level.spec"
         ],
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen",

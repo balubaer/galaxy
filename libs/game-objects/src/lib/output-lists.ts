@@ -6,6 +6,8 @@ import { PlayerFactory } from './player-factory';
 import { PersistenceManager } from './persistence-manager';
 import { WorldsPersist } from './worlds-persist.interface';
 import { Player, isWorldOutPutForPlayer } from './player';
+import { OutPutStringWithNodesAndLinksInterface } from './out-put-string-with-nodes-and-links.interface';
+import { PersistenceGrafManager } from './persistence-graf-manager';
 
 export class OutPutLists {
     gamePref: GamePref;
@@ -16,15 +18,18 @@ export class OutPutLists {
         this.gamePref = gamePref;
     }
 
-    generate(worldsPersist: WorldsPersist): Map<string, string> {
-        const result: Map<string, string> = new Map<string, string>();
+    generate(worldsPersist: WorldsPersist): Map<string, OutPutStringWithNodesAndLinksInterface> {
+        const result: Map<string, OutPutStringWithNodesAndLinksInterface> = new Map<string, OutPutStringWithNodesAndLinksInterface>();
         const pm = new PersistenceManager(new Array<World>());
         this.worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
         this.allPlayerDict = pm.allPlayerDict;
 
-        for (const key of this.allPlayerDict.keys()) {
-            let outPutString = `Infos zu Spieler: ${key} Runde: ${this.gamePref.round + 1}\n\n`;
-            const player = this.allPlayerDict.get(key);
+        for (const playerName of this.allPlayerDict.keys()) {
+            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict);
+            const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
+
+            let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1}\n\n`;
+            const player = this.allPlayerDict.get(playerName);
 
             for (const world of this.worlds) {
                 if (isWorldOutPutForPlayer(player, world)) {
@@ -32,7 +37,10 @@ export class OutPutLists {
                 }
                 
             }
-            result.set(key, outPutString);
+            result.set(playerName, {
+                outPutString: outPutString,
+                nodesAndLinks: nodesAndLinks
+            });
         }
         return result;
     }

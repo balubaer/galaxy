@@ -54,7 +54,7 @@ export class DistanceLevel {
                 for (const worldFromPort of worldsFromPort) {
                     if (newPassedWorlds.indexOf(worldFromPort) === -1) {
                         if (this.nextLevelWorlds.indexOf(worldFromPort) === -1) {
-                            newPassedWorlds.push(worldFromPort);
+                            this.nextLevelWorlds.push(worldFromPort);
                         }
                     }
                 }

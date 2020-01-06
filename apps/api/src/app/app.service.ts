@@ -32,7 +32,7 @@ export class AppService {
   }
 
   getWorlds(): World[] {
-    const rawdata = readFileSync('Galaxy/Turn1/worlds.json', 'utf8');
+    const rawdata = readFileSync('TestGame/Turn0/worlds.json', 'utf8');
     //const rawdata = readFileSync('worlds.json', 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     const pm = new PersistenceManager(new Array<World>());
