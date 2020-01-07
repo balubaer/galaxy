@@ -13,6 +13,7 @@ export class PlayerFactory {
     passedWorlds: Array<World> = new Array();
     nextLevelWorlds: Array<World> = new Array();
     homeWorldsDict: Map<string, World>;
+    inTest = false;
 
     constructor(aPlayerNameArray: Array<string>) {
         this.worldDice = new Dice();
@@ -27,13 +28,17 @@ export class PlayerFactory {
         let result: World = null;
         let found = false;
 
-        while (!found) {
-            result = worldWithNumber(worldArray, dice.roll())
-            if (result !== null) {
-                if (result.player === null) {
-                    found = true;
+        if (this.inTest === false) {
+            while (!found) {
+                result = worldWithNumber(worldArray, dice.roll())
+                if (result !== null) {
+                    if (result.player === null) {
+                        found = true;
+                    }
                 }
             }
+        } else {
+            result = worldArray[0];
         }
         return result;
     }
@@ -92,7 +97,7 @@ export class PlayerFactory {
         this.playerDice.setSites(this.playerNameArray.length);
         const index = this.playerDice.roll() - 1;
         const playerName = this.playerNameArray[index];
-        this.playerNameArray.splice(index,1);
+        this.playerNameArray.splice(index, 1);
         const result = new Player(playerName);
 
         return result;
@@ -126,15 +131,40 @@ export class PlayerFactory {
             world.player = player;
             this.homeWorldsDict.set(player.playerName, world);
         }
+        const cloneWorlds = [...worldArray];
+
+        for (const key of this.homeWorldsDict.keys()) {
+            const world = this.homeWorldsDict.get(key);
+            const index = cloneWorlds.indexOf(world);
+            cloneWorlds.splice(index, 1);
+        }
+
+        this.worldDice.setSites(cloneWorlds.length);
 
         for (const key of this.homeWorldsDict.keys()) {
             const world = this.homeWorldsDict.get(key);
             let fleetsOnHomeWorld = aFleetsOnHomeWorld;
 
-            fleetsOnHomeWorld -= world.fleets.length;
-            for (const fleet of world.fleets) {
-                fleet.player = world.player;
-                fleet.ships = startShipsCount;
+            if (fleetsOnHomeWorld >= world.fleets.length) {
+                fleetsOnHomeWorld -= world.fleets.length;
+                for (const fleet of world.fleets) {
+                    fleet.player = world.player;
+                    fleet.ships = startShipsCount;
+                }
+            } else {
+                const fleetsOnHome = [...world.fleets];
+                for (const fleet of fleetsOnHome) {
+                    if (fleetsOnHomeWorld > 0) {
+                        fleet.player = world.player;
+                        fleet.ships = startShipsCount;
+                        fleetsOnHomeWorld = fleetsOnHomeWorld - 1;
+                    } else {
+                        const foundWorld = this.findWorldWithDice(this.worldDice, cloneWorlds);
+                        const index = world.fleets.indexOf(fleet);
+                        world.fleets.splice(index, 1);
+                        foundWorld.fleets.push(fleet);
+                    }
+                }
             }
 
             for (let i = 1; i <= fleetsOnHomeWorld; i++) {

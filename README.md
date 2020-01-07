@@ -21,14 +21,11 @@ Ist ein Spiel nach den
 
 ## TODOs
 
-
-- Anzhal HomeFleeds kontrollieren bei World Generierung
 - Command Tests
 - CommandFactory Tests
 - PortFactory Tests
 - FinalPhaseCoreGame Tests
 - Player Tests
-- PlayerFactory Tests
 - OutputPlyerStatisticCoreGame Tests
 - Timer für Layout Grafik laden
 - Login für Admin-Bereich
@@ -58,6 +55,8 @@ Ist ein Spiel nach den
 - Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
 - Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
 - distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
+- Anzhal HomeFleeds kontrollieren bei World Generierung
+- PlayerFactory Tests
 
 
 ## Projekt

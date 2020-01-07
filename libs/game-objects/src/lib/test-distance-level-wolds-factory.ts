@@ -1,5 +1,6 @@
 import { World } from './world';
 import { Port } from './port';
+import { Fleet } from './fleet';
 
 export class TestDistanceLevelWoldsFactory {
     worlds: Array<World> = new Array();
@@ -9,6 +10,22 @@ export class TestDistanceLevelWoldsFactory {
         world.setNumber(11);
         world.dShips = 1;
         this.worlds.push(world);
+
+        let fleet = new Fleet();
+        fleet.number = 1;
+        world.fleets.push(fleet);
+
+        fleet = new Fleet();
+        fleet.number = 2;
+        world.fleets.push(fleet);
+
+        fleet = new Fleet();
+        fleet.number = 3;
+        world.fleets.push(fleet);
+
+        fleet = new Fleet();
+        fleet.number = 4;
+        world.fleets.push(fleet);
 
         world = new World();
         world.setNumber(12);
