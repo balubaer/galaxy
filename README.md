@@ -21,7 +21,6 @@ Ist ein Spiel nach den
 
 ## TODOs
 
-- Command Tests
 - CommandFactory Tests
 - PortFactory Tests
 - FinalPhaseCoreGame Tests
@@ -57,7 +56,7 @@ Ist ein Spiel nach den
 - distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
 - Anzhal HomeFleeds kontrollieren bei World Generierung
 - PlayerFactory Tests
-
+- Command Tests
 
 ## Projekt
 
