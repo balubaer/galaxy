@@ -21,11 +21,7 @@ Ist ein Spiel nach den
 
 ## TODOs
 
-- CommandFactory Tests
-- PortFactory Tests
 - FinalPhaseCoreGame Tests
-- Player Tests
-- OutputPlyerStatisticCoreGame Tests
 - Timer für Layout Grafik laden
 - Login für Admin-Bereich
 - Back-Links für Seiten im Admin-Bereich
@@ -57,6 +53,10 @@ Ist ein Spiel nach den
 - Anzhal HomeFleeds kontrollieren bei World Generierung
 - PlayerFactory Tests
 - Command Tests
+- CommandFactory Tests
+- PortFactory Tests
+- Player Tests
+- OutputPlyerStatisticCoreGame Tests
 
 ## Projekt
 

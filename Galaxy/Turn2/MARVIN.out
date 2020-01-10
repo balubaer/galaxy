@@ -1,14 +1,26 @@
 Infos zu Spieler: MARVIN Runde: 3 
-Punkte: 40 | Welten: 2 | Flotten: 3 | Schiffe auf Flotten: 10 | D-Schiffe: 3
+Punkte: 100 | Welten: 5 | Flotten: 5 | Schiffe auf Flotten: 10 | D-Schiffe: 4
 Verbündete: ()
 
-W9(10,19,4) [MARVIN] (D-Schiffe=2)
-   (F5[ZAPHOD]-->W4 )
+W1(7,8,6) [ZAPHOD] (D-Schiffe=1)
+   F5[MARVIN] = 3
+   (F1[ZAPHOD]-->W8 F9[ZAPHOD]-->W7 )
 
-W10(9,13,7,16) [ZAPHOD] (D-Schiffe=2)
-   F16[MARVIN] = 5
+W3(4,10,6) [MARVIN]
+   F2[MARVIN] = 0
+   F8[MARVIN] = 5
 
-W19(12,9,4) [MARVIN] (D-Schiffe=1)
-   F12[MARVIN] = 0
-   F4[MARVIN] = 5
+W4(10,6,3) [MARVIN] (D-Schiffe=1)
+   F3[ZAPHOD] = 5
+   (F8[MARVIN]-->W3 )
+
+W8(9,1,10) [MARVIN] (D-Schiffe=1)
+   F1[ZAPHOD] = 2
+   (F4[MARVIN]-->W9 F5[MARVIN]-->W1 )
+
+W9(2,8) [MARVIN]
+   F7[MARVIN] = 0
+   F4[MARVIN] = 2
+
+W10(4,8,3) [MARVIN] (D-Schiffe=2)
 
