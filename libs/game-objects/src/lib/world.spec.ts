@@ -48,13 +48,13 @@ describe('World', () => {
     expect(testString).toBe(descriptionString);
 
     testString = worlds[3].description();
-    //writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
+   // writeFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World4.txt`, 'utf8');
 
     expect(testString).toBe(descriptionString);
 
     testString = worlds[4].description();
-    //writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
+   // writeFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, testString);
     descriptionString = readFileSync(`${TESTRESOUCESPATH}/description_World5.txt`, 'utf8');
     expect(testString).toBe(descriptionString);
 
@@ -90,6 +90,7 @@ describe('World', () => {
   it('test metal', () => {
     const world: World = worlds[0];
     world.metal = 10;
+    console.log('Hallo'+ world.metal);
     expect(world.metal === 10).toBe(true);
   });
 });

@@ -227,6 +227,99 @@ export class TransferShipsFleetToFleet extends Command implements ExecuteCommand
         }
     }
 }
+//FaaU
+export const enum UnloadAllMetalEnum {
+    FLEED1,
+    UNLOADMETAL,
+    WORLD
+}
+//für was Enum
+export class UnloadAllMetal extends Command implements ExecuteCommand {
+    fromFleet: Fleet;
+    toHomeWorld: World;
+    metal: number;
+
+    constructor(aFromFleet: Fleet, aToHomeWorld: World, aMetal: number, aString: string, aPlayer: Player) {
+       //wozu diese Zeile/n
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.fromFleet = aFromFleet;
+        this.toHomeWorld = aToHomeWorld;
+        this.metal = aMetal;
+        //wieso groß nach =
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.fromFleet.player.playerName) {
+            let isError = false;
+
+            if (isError === false) {
+                this.fromFleet.metal -= this.metal
+                this.toHomeWorld.metal += this.fromFleet.metal;
+            }
+        } else {
+
+        }
+    }
+}
+//FaaJ
+export const enum JettisonAllMetalEnum {
+    FLEED1,
+    UNLOADMETAL
+}
+
+export class JettisonAllMetal extends Command implements ExecuteCommand {
+    fromFleet: Fleet;
+    metal: number;
+
+    constructor(aFromFleet: Fleet, aMetal: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.fromFleet = aFromFleet;
+        this.metal = aMetal;
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.fromFleet.player.playerName) {
+            let isError = false;
+
+            if (isError === false) {
+                this.fromFleet.metal -= this.metal
+            }
+        } else {
+
+        }
+    }
+}
+//FaaL
+export const enum LoadAllMetalEnum {
+    FLEED1,
+    LOADMETAL,
+    WORLD
+}
+export class LoadAllMetal extends Command implements ExecuteCommand {
+    toFleet: Fleet;
+    fromHomeWorld: World;
+    metal: number;
+
+    constructor(aToFleet: Fleet, aFromHomeWorld: World, aMetal: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.toFleet = aToFleet;
+        this.fromHomeWorld = aFromHomeWorld;
+        this.metal = aMetal;
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.toFleet.player.playerName) {
+            let isError = false;
+
+            if (isError === false) {
+                this.fromHomeWorld.metal -= this.metal
+                this.toFleet.metal += this.fromHomeWorld.metal;
+            }
+        } else {
+
+        }
+    }
+}
 
 //FaaTxxD
 export const enum TransferShipsFleetToDShipsEnum {

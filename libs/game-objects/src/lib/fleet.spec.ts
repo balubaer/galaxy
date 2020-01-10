@@ -51,6 +51,9 @@ describe('Fleet', () => {
         aFleetHomeWorld = fleetAndHomeWorldWithNumber(worlds, 1);
         expect(aFleetHomeWorld.fleet).toBe(null);
         expect(aFleetHomeWorld.homeWorld).toBe(null);
-    });
-
+    });  it('test metal', () => {
+    fleet.metal = 10;
+    console.log('Hallo '+ fleet.metal);
+    expect(fleet.metal === 10).toBe(true);
+  });
 });
