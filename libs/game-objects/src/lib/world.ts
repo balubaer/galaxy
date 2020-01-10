@@ -37,6 +37,8 @@ export class World implements NumberKey {
         this.fleetMovements = new Array<FleetMovement>();
         this.hitAmbuschFleets = new Array<Fleet>();
         this.dShips = 0;
+        this.ambushOff = false;
+        this.dShipsFired = false;
     }
 
     setNumber(aNumber: number) {
@@ -52,13 +54,13 @@ export class World implements NumberKey {
             resourceArray.push('Ambush "Aus" für diese Runde!!!');
         }
         if (this.dShips !== 0) {
-            if (this.dShipsAmbush === false) {
+            if (this.dShipsAmbush === true) {
                 let desc = `D-Schiffe=${this.dShips} (Ambusch: {`;
                 if (this.hitAmbuschFleets.length > 0) {
                     let counter = 0;
 
                     for (const fleet of this.hitAmbuschFleets) {
-                        desc += fleet.name;
+                        desc += fleet.name();
                         counter++;
                         if (counter < this.hitAmbuschFleets.length) {
                             desc += ', ';

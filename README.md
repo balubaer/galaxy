@@ -21,7 +21,6 @@ Ist ein Spiel nach den
 
 ## TODOs
 
-- FinalPhaseCoreGame Tests
 - Timer für Layout Grafik laden
 - Login für Admin-Bereich
 - Back-Links für Seiten im Admin-Bereich
@@ -57,6 +56,7 @@ Ist ein Spiel nach den
 - PortFactory Tests
 - Player Tests
 - OutputPlyerStatisticCoreGame Tests
+- FinalPhaseCoreGame Tests
 
 ## Projekt
 
