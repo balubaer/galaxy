@@ -19,7 +19,7 @@ describe('ExecuteCommand', () => {
 
     for (const playerName of executeCommand.allPlayerDict.keys()) {
       const player = executeCommand.allPlayerDict.get(playerName);
-     expect(player.playerName).toBe(playerName);
+      expect(player.playerName).toBe(playerName);
     }
     let testString = executeCommand.worlds[0].description();
     //writeFileSync(`${TESTRESOUCESPATH}/description_World1.txt`, testString);
@@ -75,9 +75,9 @@ describe('ExecuteCommand', () => {
     const outputDict = executeCommand.generateOutput();
 
     for (const playerName of outputDict.keys()) {
-          //writeFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, outputDict.get(playerName));
-          const descriptionString = readFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, 'utf8');
-          expect(outputDict.get(playerName)).toBe(descriptionString);
+      //writeFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, outputDict.get(playerName));
+      const descriptionString = readFileSync(`${TESTRESOUCESPATH}/${playerName}_test.out`, 'utf8');
+      expect(outputDict.get(playerName)).toBe(descriptionString);
     }
   });
 

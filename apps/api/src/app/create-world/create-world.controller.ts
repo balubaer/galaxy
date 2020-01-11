@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { GamePref, World, WorldGenerator, WorldsPersist, OutPutLists } from '@galaxy/game-objects';
+import { GamePref, World, WorldGenerator, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { readFileSync, writeFileSync } from 'fs';
 
@@ -24,8 +24,10 @@ export class CreateWorldController {
     const output = outPutLists.generate(worldsPersist);
 
     for (const playerName of output.keys()) {
-      const outPutString = output.get(playerName);
-      writeFileSync(`${outPath}${playerName}.out`, outPutString);
+      const outPutStringWithNodesAndLinks: OutPutStringWithNodesAndLinksInterface = output.get(playerName);
+      writeFileSync(`${outPath}${playerName}.out`, outPutStringWithNodesAndLinks.outPutString);
+      const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
+      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);
     }
 
     const data = JSON.stringify(worldsPersist);

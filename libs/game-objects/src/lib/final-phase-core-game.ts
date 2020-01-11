@@ -1,6 +1,6 @@
 import { Player, isPlayOnWorldWithPlayer } from './player'
 import { World, worldWithNumber } from './world';
-import { Fleet } from './fleet';
+import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 
 export class FinalPhaseCoreGame {
     worlds: Array<World>;
@@ -85,7 +85,6 @@ export class FinalPhaseCoreGame {
                 if (world !== null) {
                     const worldPlayer = world.player;
                     const fleetPlayer = passingFleet.player;
-
                     if ((worldPlayer != null) && (fleetPlayer != null)) {
                         if ((worldPlayer.playerName === fleetPlayer.playerName) === false) {
                             if (worldPlayer.teammates.has(fleetPlayer) === false) {
@@ -107,10 +106,14 @@ export class FinalPhaseCoreGame {
                     if (ambushFleet.moved === false) {
                         const ambushPlayer = ambushFleet.player;
                         const passingFleetPlayer = passingFleet.player;
-                        if ((ambushPlayer !== null) && (passingFleetPlayer !== null)) {
-                            if ((ambushPlayer.playerName === passingFleetPlayer.playerName) === false) {
-                                if (ambushPlayer.teammates.has(passingFleetPlayer) === false) {
-                                    result = true;
+                        const fleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, ambushFleet.number);
+
+                        if (fleetAndHomeWorld.homeWorld.player === fleetAndHomeWorld.fleet.player) {
+                            if ((ambushPlayer !== null) && (passingFleetPlayer !== null)) {
+                                if ((ambushPlayer.playerName === passingFleetPlayer.playerName) === false) {
+                                    if (ambushPlayer.teammates.has(passingFleetPlayer) === false) {
+                                        result = true;
+                                    }
                                 }
                             }
                         }

@@ -1,16 +1,14 @@
 Infos zu Spieler: ZAPHOD Runde: 2 
-Punkte: NaN | Welten: 2 | Flotten: 3 | Schiffe auf Flotten: 10 | D-Schiffe: 1
+Punkte: NaN | Welten: 3 | Flotten: 3 | Schiffe auf Flotten: 10 | D-Schiffe: 1
 Verbündete: ()
 
-W9(10,19,4) [MARVIN] (D-Schiffe=1)
-   F5[ZAPHOD] = 5
-   (F16[MARVIN]-->W10 F4[MARVIN]-->W19 )
+W1(7,8,6) [ZAPHOD]
+   F1[ZAPHOD] = 0
+   F9[ZAPHOD] = 5
 
-W10(9,13,7,16) [ZAPHOD] (D-Schiffe=1)
-   F16[MARVIN] = 5
-   (F5[ZAPHOD]-->W9 F17[ZAPHOD]-->W13 )
+W6(7,1,4,3) [ZAPHOD]
+   F3[ZAPHOD] = 5
 
-W13(8,2,10) [ZAPHOD]
-   F19[ZAPHOD] = 0
-   F17[ZAPHOD] = 5
+W7(6,1,2) [ZAPHOD] (D-Schiffe=1)
+   (F3[ZAPHOD]-->W6 F9[ZAPHOD]-->W1 )
 

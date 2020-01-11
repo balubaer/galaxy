@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, Subscription, Subject } from 'rxjs';
 import { GamePlayService } from '../game-play.service';
 import { RespondTurnData, RequestTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands } from '@galaxy/game-objects';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { Node } from '@swimlane/ngx-graph';
 
 @Component({
   selector: 'galaxy-player-detail',
@@ -15,6 +15,13 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
   form: FormGroup;
   playerName: string;
   turnData$: Observable<RespondTurnData>;
+  
+  public node: Node;
+  autoZoom = true;
+  autoCenter = false; 
+
+  center$: Subject<boolean> = new Subject();
+  zoomToFit$: Subject<boolean> = new Subject();
   private readonly subscriptions = new Subscription();
 
   constructor(private route: ActivatedRoute,
@@ -47,6 +54,10 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
     }
     this.turnData$ = this.route.params = this.gamePlayService.getTurnDataOnlyPlayer(request);
     
+  }
+
+  onNodeSelected(aNode) {
+    this.node = aNode;
   }
 
   ngOnDestroy(): void {

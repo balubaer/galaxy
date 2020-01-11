@@ -533,7 +533,11 @@ export class CommandFactory {
             } else if (this.commandChars.length === 1) {
                 switch (this.commandChars.charAt(0)) {
                     case 'Z':
-                        result = this.createAmbushOffForPlayer();
+                        if (this.processCommand.length === 1) {
+                            result = this.createAmbushOffForPlayer();
+                        } else {
+                            result = this.createAmbushOffForWorld();
+                        }
                         break;
                     default:
                         result = null;
@@ -543,6 +547,4 @@ export class CommandFactory {
         }
         return result;
     }
-
-
 }

@@ -39,13 +39,20 @@ Ist ein Spiel nach den
 - distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
 
 
-- Command Tests
-- CommandFactory Tests
-- PortFactory Tests
 - FinalPhaseCoreGame Tests
-- Player Tests
-- PlayerFactory Tests
-- OutputPlyerStatisticCoreGame Tests
+	- checkFireResults
+	- isAmbushFromMovementCount
+	- isAmbushFleet
+	- checkOwnership
+	- ambush teammates
+- Timer für Layout Grafik laden
+- Login für Admin-Bereich
+- Back-Links für Seiten im Admin-Bereich
+- Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
+- Farbe Wählen für Spieler
+	- Legende Farben Spieler
+- Legende für Symbole (Flotten, D-Schiffe usw.)
+- Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
 
 
 ## Erledigte TODOs
@@ -65,6 +72,15 @@ Ist ein Spiel nach den
 - OutputPlyerStatisticCoreGame ist implementiert
 - Service bauen Ausgaben der Ergebnisse eines Zuges (siehe main.swift OutPutLists)
 - Service bauen für das Ausführen eines Zuges (siehe main.swift ExecuteCommands)
+- distanceLevelHomes funktioniert auch nicht richtig bei World Generierung
+- Anzhal HomeFleeds kontrollieren bei World Generierung
+- PlayerFactory Tests
+- Command Tests
+- CommandFactory Tests
+- PortFactory Tests
+- Player Tests
+- OutputPlyerStatisticCoreGame Tests
+- FinalPhaseCoreGame Tests
 
 ## Projekt
 

@@ -34,8 +34,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
   public nodes$: Observable<Node[]>;
   
   public node: Node;
-  autoZoom = true;
-  autoCenter = true; 
+  autoZoom = false;
+  autoCenter = false; 
 
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();

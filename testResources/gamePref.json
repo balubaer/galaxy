@@ -3,7 +3,7 @@
   "fleetCount" : 10,
   "fleetsOnHomeWorld" : 2,
   "worldCount" : 20,
-  "playName" : "Galaxy",
+  "playName" : "TestGame",
   "player" : [
     "ZAPHOD",
     "MARVIN"

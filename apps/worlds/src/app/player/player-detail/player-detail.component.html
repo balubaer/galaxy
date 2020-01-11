@@ -1,10 +1,87 @@
 <div>Spieler: {{ playerName }}</div>
+
 <div *ngIf="turnData$|async as turnData">
     <pre>Punkte: {{ turnData.points }}</pre>
+    <ngx-graph class="chart-container" [view]="[500, 500]" [links]=turnData.links [nodes]=turnData.nodes
+        layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
+        [zoomToFit$]="zoomToFit$">
+        <ng-template #nodeTemplate let-node>
+            <svg:g class="node" (click)="onNodeSelected(node)"
+                [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
+                <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
+                <!--circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></!--circle-->
+                <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
+
+                <!--circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width-3" [attr.cy]="node.dimension.width-3"></!--circle-->
+                <circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width/2"
+                    [attr.cy]="node.dimension.width/2"></circle>
+                <svg:text alignment-baseline="central" text-anchor="middle" [attr.x]="node.dimension.width/2"
+                    [attr.y]="node.dimension.width/2" fill="white">{{node.data.dships}}</svg:text>>
+                <!--node.data.fleets-->
+                <svg:g *ngFor="let fleet of node.data.fleets">
+                    <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y"
+                        rx="20" ry="10" />
+                    <text fill="rgb(0, 0, 0)"
+                        font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
+                        [attr.y]="fleet.y">{{fleet.label}}</text>
+                </svg:g>
+
+                <!--TODO: in data Color und Flotten und d-Schiffe packen -->
+
+            </svg:g>
+            <!--<svg:g class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.label">
+      <svg:rect
+        [attr.width]="node.dimension.width"
+        [attr.height]="node.dimension.height"
+        [attr.fill]="node.data.color"
+      />
+      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
+        {{node.label}}
+      </svg:text>
+    </svg:g>-->
+        </ng-template>
+    </ngx-graph>
+    <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
+    <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
+    <!--<ngx-graph
+class="chart-container"
+  [view]="[500, 300]"
+  [links]= "links"
+  [nodes]="nodes"
+  [layout]="layout"
+  [curve]="curve">
+</ngx-graph>-->
+
+    <svg class="world" width="500" height="500">
+        <g *ngIf="node" [attr.transform]="'translate(250,250)'">
+            <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
+            <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
+            <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
+                fill="white">{{node.data.dships}}</text>>
+
+            <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
+
+            <!--node.data.fleets-->
+            <g *ngFor="let fleet of node.data.fleets">
+                <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y"
+                    rx="30" ry="10" />
+                <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                    alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
+                    [attr.y]="fleet.y">{{fleet.label}}</text>
+            </g>
+            <!--{{node.data.fleets}}-->
+            <!--g *ngFor="let d of data" [attr.transform]="'translate('+d.x+','+d.y+')'" 
+        (click)="onBubbleSelected(d)">
+        <circle [attr.r]="d.r" [attr.fill]="'red'"></circle-->
+        </g>
+    </svg>
     <pre>{{ turnData.turnDataTxt }}</pre>
     <pre>{{ turnData.turnCommanTxt }}</pre>
 </div>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5" formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
+    <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
+        formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
     <button>Speichern</button>
 </form>
