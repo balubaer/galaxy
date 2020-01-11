@@ -20,7 +20,12 @@ Ist ein Spiel nach den
 </a>
 
 ## TODOs
-
+- FinalPhaseCoreGame Tests
+	- checkFireResults
+	- isAmbushFromMovementCount
+	- isAmbushFleet
+	- checkOwnership
+	- ambush teammates
 - Timer für Layout Grafik laden
 - Login für Admin-Bereich
 - Back-Links für Seiten im Admin-Bereich
