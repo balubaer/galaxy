@@ -26,7 +26,6 @@ Ist ein Spiel nach den
 	- isAmbushFleet
 	- checkOwnership
 	- ambush teammates
-- Timer für Layout Grafik laden
 - Login für Admin-Bereich
 - Back-Links für Seiten im Admin-Bereich
 - Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
@@ -62,6 +61,7 @@ Ist ein Spiel nach den
 - Player Tests
 - OutputPlyerStatisticCoreGame Tests
 - FinalPhaseCoreGame Tests
+- Timer für Layout Grafik laden
 
 ## Projekt
 
