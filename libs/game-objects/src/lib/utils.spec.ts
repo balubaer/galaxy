@@ -1,4 +1,5 @@
-import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray, extractCharsFromString } from './utils';
+import { isCharacterANumber, extractNumberString, createBracketAndCommarStringWithStringArray, extractCharsFromString, mapToObj, objToMap } from './utils';
+import { writeFileSync } from 'fs';
 
 describe('utils', () => {
     it('test createBracketAndCommarStringWithStringArray', () => {
@@ -21,6 +22,7 @@ describe('utils', () => {
         expect(isCharacterANumber('9')).toBeTruthy();
     });
     it('test extractNumberString', () => {
+       
         expect(extractNumberString('Zb3')).toBe('3');
         expect(extractNumberString('F23W66')).toBe('2366');
     });
@@ -28,5 +30,31 @@ describe('utils', () => {
     it('test extractCharsFromString', () => {
         expect(extractCharsFromString('Zb3')).toBe('Zb');
         expect(extractCharsFromString('F23W66')).toBe('FW');
+    });
+
+    it('test mapToObj', () => {
+        const colorMap = new Map();
+        colorMap.set('#277553', 'rgba( 39,117, 83,1)');
+        colorMap.set('#23D186', 'rgba( 35,209,134,1)');
+        colorMap.set('#289E6B', 'rgba( 40,158,107,1)');
+        colorMap.set('#1F4B38', 'rgba( 31, 75, 56,1)');
+        colorMap.set('#11221B', 'rgba( 17, 34, 27,1)');
+        const obj = mapToObj(colorMap);
+        
+        const gameprefdata = JSON.stringify(obj);
+        writeFileSync('color.json', gameprefdata);
+        expect(obj['#277553']).toBe('rgba( 39,117, 83,1)');
+    });
+
+    it('test objToMap', () => {
+        const ob = {
+            "#277553": "rgba( 39,117, 83,1)",
+            "#23D186": "rgba( 35,209,134,1)",
+            "#289E6B": "rgba( 40,158,107,1)",
+            "#1F4B38": "rgba( 31, 75, 56,1)",
+            "#11221B": "rgba( 17, 34, 27,1)"
+        }
+        const colorMap = objToMap(ob);
+        expect(colorMap.get('#277553')).toBe('rgba( 39,117, 83,1)');
     });
 });

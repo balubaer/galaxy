@@ -1,1 +1,29 @@
-[{"id":1,"username":"ZAPHOD","password":"$2a$10$Ti2uyiPPoyTVI4KdVMdZYuG39SZ8mGKUJYLk6Z.mwJF.4pwp22.oa","firstName":"Bernd","lastName":"Niklas","token":""},{"id":1,"username":"MARVIN","password":"$2a$10$YvMK9THKSypy6LoqSmyQV.MK/lQ.KXXTWg3WARsS7dOqMaWQa6PVG","firstName":"Bernd","lastName":"Niklas","token":""}]
+[
+    {
+        "id": 1,
+        "username": "ZAPHOD",
+        "password": "$2a$10$Ti2uyiPPoyTVI4KdVMdZYuG39SZ8mGKUJYLk6Z.mwJF.4pwp22.oa",
+        "firstName": "Bernd",
+        "lastName": "Niklas",
+        "token": "",
+        "color": "#11221B"
+    },
+    {
+        "id": 1,
+        "username": "MARVIN",
+        "password": "$2a$10$YvMK9THKSypy6LoqSmyQV.MK/lQ.KXXTWg3WARsS7dOqMaWQa6PVG",
+        "firstName": "Bernd",
+        "lastName": "Niklas",
+        "token": "",
+        "color": "#289E6B"
+    },
+    {
+        "id": 1,
+        "username": "a",
+        "password": "$2a$10$T7LovWWgKEFjSEST.DooZeII8N6/qUZ8XQdLIAEoO3UMvFovGYnTO",
+        "firstName": "a",
+        "lastName": "a",
+        "token": "",
+        "color": "#277553"
+    }
+]

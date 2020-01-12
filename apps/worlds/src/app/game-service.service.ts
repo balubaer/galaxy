@@ -24,6 +24,10 @@ export class GameServiceService {
     return this.http.get<Array<string>>('/api/create-world/GetPlayerList')
   }
 
+  getColors(): Observable<Array<string>> {
+    return this.http.get<Array<string>>('/api/GetColors')
+  }
+
   createWorlds(): Observable<Message> {
     return this.http.get<Message>('/api/create-world/CreateWorld');
   }

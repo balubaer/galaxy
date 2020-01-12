@@ -1,3 +1,4 @@
+export * from './lib/utils';
 export * from './lib/world';
 export * from './lib/dice';
 export * from './lib/fleet';

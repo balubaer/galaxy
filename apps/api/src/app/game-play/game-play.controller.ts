@@ -58,11 +58,9 @@ export class GamePlayController {
             turnDataTxTstring = readFileSync(turnDataTxTFile, 'utf8');
         }
         const turnDataGrafFile = `${playName}/Turn${gamepref.round}/${request.playerName}_graf.json`;
-        console.log(turnDataGrafFile);
         const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
 
         const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
-        console.log(turnDataGraf);
         const respondTurnData: RespondTurnData = {
             points: 0,
             turnCommanTxt: commandString,

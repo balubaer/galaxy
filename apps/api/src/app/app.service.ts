@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from '@galaxy/api-interfaces';
-import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager } from '@galaxy/game-objects';
+import { Message, User } from '@galaxy/api-interfaces';
+import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager, objToMap, GamePref} from '@galaxy/game-objects';
 import { readFileSync, writeFileSync } from 'fs';
 import { Edge, Node } from '@swimlane/ngx-graph';
 
@@ -9,14 +9,40 @@ const radiusForFleet = 70;
 
 @Injectable()
 export class AppService {
-  colorMap: Map<string, string>;
+  colorPlayerMap: Map<string, string>;
   pos: number;
 
   constructor() {
-    this.colorMap = new Map();
-    this.colorMap.set('MARVIN', 'rgb(255, 164, 43)');
-    this.colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+    const stringData = readFileSync('gamePref.json', 'utf8');
+    const gamepref: GamePref = JSON.parse(stringData);
+    const playerNameArray = gamepref.player;
+    const colorData = readFileSync('color.json', 'utf8');
+    const colors = JSON.parse(colorData);
+    const colorMap = objToMap(colors);
+    const usersData = readFileSync('user.json', 'utf8');
+    const users = JSON.parse(usersData);
+
+    this.colorPlayerMap = new Map();
+
+    for (const playerName of playerNameArray) {
+      const foundColor = this.findeUserColorWithUserName(playerName, users);
+      this.colorPlayerMap.set(playerName, colorMap.get(foundColor));
+    }
+    //this.colorMap.set('MARVIN', 'rgb(255, 164, 43)');
+    //this.colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
   }
+
+  findeUserColorWithUserName(userName: string, users: Array<User>): string {
+    let result = '';
+    for (const user of users) {
+      if (user.username === userName) {
+        result = user.color;
+        break;
+      }
+    }
+    return result;
+  }
+
 
   getData(): Message {
     return { message: 'Welcome to api!' };
@@ -47,6 +73,19 @@ export class AppService {
     return stringArray;
   }
 
+  getColors(): Map<string, string> {
+    //TODO: Color from File 'color.json
+    const ob = {
+      "#277553": "rgba( 39,117, 83,1)",
+      "#23D186": "rgba( 35,209,134,1)",
+      "#289E6B": "rgba( 40,158,107,1)",
+      "#1F4B38": "rgba( 31, 75, 56,1)",
+      "#11221B": "rgba( 17, 34, 27,1)"
+    }
+    const colorMap: Map<string, string> = objToMap(ob);
+    return colorMap;
+  }
+
   getWorldStringList(): string[] {
     const worlds = new TestWorldsArrayFactory().worlds;
     const worldStringList = new Array();
@@ -61,7 +100,7 @@ export class AppService {
    // let result = '\'rgb(193, 193, 193)\'';
     let result = 'lightgray';
     if (player !== null) {
-      result = this.colorMap.get(player.playerName);
+      result = this.colorPlayerMap.get(player.playerName);
     }
     return result;
   }

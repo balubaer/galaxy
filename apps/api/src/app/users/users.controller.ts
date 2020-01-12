@@ -60,7 +60,8 @@ export class UsersController {
                 lastName: '',
                 password: '',
                 token: '',
-                username: ''
+                username: '',
+                color: ''
             }
 
             return res.status(HttpStatus.UNAUTHORIZED).json(leerUser);
