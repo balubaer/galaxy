@@ -168,6 +168,7 @@
         "--inspect-brk",
         "${workspaceRoot}/node_modules/jest/bin/jest.js",
         "--testPathPattern=command.spec"
+
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",

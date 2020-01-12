@@ -38,6 +38,7 @@ export class Fleet implements NumberKey {
     //TODO: niklas schenken
 
     player: Player = null;
+    fleets: number;
 
 
     constructor() {

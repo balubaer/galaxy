@@ -22,18 +22,18 @@ Ist ein Spiel nach den
 ## TODOs
 
 - joe: Metalle laden (Flotten) 
-- Flotteneigenschaft (Laderaum) 
-- Metallager (Welt) 
+-  d Flotteneigenschaft (Laderaum) 
+-  d Metallager (Welt) 
 - Befehle Be-und Entladen 
 - Load and unload metal
-- FaaU Unload all metal from fleet aa
-- FaaUxx 	Unload xx metal from fleet aa
-- FaaJ 	Jettison all metal from fleet aa
-- FaaJxx 	Jettison xx metal from fleet aa
+-  d FaaU Unload all metal from fleet aa
+-  d FaaUxx 	Unload xx metal from fleet aa
+-  d FaaJ 	Jettison all metal from fleet aa
+-  d FaaJxx 	Jettison xx metal from fleet aa
 - FaaN 	Unload all metal from fleet aa as consumer goods
 - FaaNxx 	Unload xx metal from fleet aa as consumer goods
-- FaaL 	Load all possible metal onto fleet aa
-- FaaLxx 	Load xx metal onto fleet aa
+-  d FaaL 	Load all possible metal onto fleet aa
+-  d FaaLxx 	Load xx metal onto fleet aa 
 
 - Anzhal HomeFleeds kontrollieren bei World Generierung
 - distanceLevelHomes funktioniert auch nicht richtig bei World Generierung

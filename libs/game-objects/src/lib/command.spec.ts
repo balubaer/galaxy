@@ -1,4 +1,4 @@
-import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFleet, TransferShipsFleetToDShips, TransferDShipsToFleet, FireFleetToFleet, FireDShipsToFleet, FireFleetToDShips, AmbushOffForWorld, AmbushOffForPlayer, AddTeammate, RemoveTeammate } from './command';
+import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFleet, TransferShipsFleetToDShips, TransferDShipsToFleet, FireFleetToFleet, FireDShipsToFleet, FireFleetToDShips, AmbushOffForWorld, AmbushOffForPlayer, AddTeammate, RemoveTeammate, UnloadAllMetal, UnloadMetal, JettisonMetal, LoadMetal, LoadAllMetal, JettisonAllMetal } from './command';
 import { Player } from './player';
 import { World, TestWorldsArrayFactory, GamePref, ExecuteCommand, WorldsPersist } from '..';
 import { Fleet } from './fleet';
@@ -92,6 +92,186 @@ describe('TransferShipsFleetToFleet', () => {
   });
 });
 
+function createAUnloadAllMetal(): UnloadAllMetal {
+  const fleet14 = new Fleet();
+  const world87 = new World();
+
+  fleet14.number = 14;
+  fleet14.metal = 5;
+  fleet14.player = new Player('Joe');
+
+  world87.number = 87;
+  world87.metal = 3;
+  world87.player = fleet14.player;
+  world87.fleets.push(fleet14);
+
+  const unloadAllMetal: UnloadAllMetal = new UnloadAllMetal (fleet14, world87, 'F14U',fleet14.player);
+  return unloadAllMetal;
+} 
+
+describe('UnloadAllMetal', () => {
+  it('should create an instance', () => {
+
+    const unloadAllMetal: UnloadAllMetal = createAUnloadAllMetal();
+    expect(unloadAllMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const unloadAllMetal: UnloadAllMetal = createAUnloadAllMetal();
+
+    unloadAllMetal.executeCommand();
+    expect(unloadAllMetal.fromFleet.metal).toBe(0);
+    expect(unloadAllMetal.toHomeWorld.metal).toBe(8);
+  });
+});
+
+function createALoadAllMetal(): LoadAllMetal {
+  const fleet14:Fleet = new Fleet();
+  const world87 = new World();
+
+  fleet14.number = 14;
+  fleet14.ships = 6
+  fleet14.metal = 5;
+  fleet14.player = new Player('Joe');
+
+  world87.number = 87;
+  world87.metal = 3;
+  world87.player = fleet14.player;
+  world87.fleets.push(fleet14);
+
+  const loadAllMetal: LoadAllMetal = new LoadAllMetal(fleet14, world87, 'F14L', world87.player);
+  return loadAllMetal;
+} 
+
+describe('LoadAllMetal', () => {
+  it('should create an instance', () => {
+
+    const loadAllMetal: LoadAllMetal = createALoadAllMetal();
+    expect(loadAllMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const loadAllMetal: LoadAllMetal = createALoadAllMetal();
+
+    loadAllMetal.executeCommand();
+    expect(loadAllMetal.toFleet.metal).toBe(6);
+    expect(loadAllMetal.fromHomeWorld.metal).toBe(2);
+  });
+});
+
+function createAJettisonAllMetal(): JettisonAllMetal {
+  const fleet14 = new Fleet();
+
+  fleet14.number = 14;
+  fleet14.metal = 5;
+  fleet14.player = new Player('Joe');
+
+  const jettisonAllMetal: JettisonAllMetal = new JettisonAllMetal(fleet14, 'F14J', fleet14.player);
+  return jettisonAllMetal;
+} 
+
+describe('JettisonAllMetal', () => {
+  it('should create an instance', () => {
+
+    const jettisonAllMetal: JettisonAllMetal = createAJettisonAllMetal();
+    expect(jettisonAllMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const jettisonAllMetal: JettisonAllMetal = createAJettisonAllMetal();
+
+    jettisonAllMetal.executeCommand();
+    expect(jettisonAllMetal.fromFleet.metal).toBe(0);
+  });
+});
+
+function createAUnloadMetal(): UnloadMetal {
+  const fleet13 = new Fleet();
+  const world85 = new World();
+
+  fleet13.number = 14;
+  fleet13.metal = 5;
+  fleet13.player = new Player('Joe');
+  
+  world85.number = 87;
+  world85.metal = 3;
+  world85.player = fleet13.player;
+  world85.fleets.push(fleet13);
+  
+  const unloadMetal: UnloadMetal = new UnloadMetal(fleet13, world85, 2, 'F13U2', fleet13.player);
+  return unloadMetal;
+} 
+
+describe('UnloadMetal', () => {
+  it('should create an instance', () => {
+
+    const unloadMetal: UnloadMetal = createAUnloadMetal();
+    expect(unloadMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const unloadMetal: UnloadMetal = createAUnloadMetal();
+
+    unloadMetal.executeCommand();
+    expect(unloadMetal.fromFleet.metal).toBe(3);
+    expect(unloadMetal.toHomeWorld.metal).toBe(5);
+  });
+});
+
+function createAJettisonMetal(): JettisonMetal {
+  const fleet13 = new Fleet();
+
+  fleet13.number = 14;
+  fleet13.metal = 5;
+  fleet13.player = new Player('Joe');
+  
+  const jettisonMetal: JettisonMetal = new JettisonMetal(fleet13, 3, 'F13J3', fleet13.player);
+  return jettisonMetal;
+} 
+
+describe('JettisonMetal', () => {
+  it('should create an instance', () => {
+
+    const jettisonMetal: JettisonMetal = createAJettisonMetal();
+    expect(jettisonMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const jettisonMetal: JettisonMetal = createAJettisonMetal();
+
+    jettisonMetal.executeCommand();
+    expect(jettisonMetal.fromFleet.metal).toBe(2);
+  });
+});
+
+function createALoadMetal(): LoadMetal {
+  const fleet13 = new Fleet();
+  const world85 = new World();
+
+  fleet13.number = 14;
+  fleet13.ships = 7
+  fleet13.metal = 5;
+  fleet13.player = new Player('Joe');
+  
+  world85.number = 87;
+  world85.metal = 3;
+  world85.player = fleet13.player;
+  world85.fleets.push(fleet13);
+  
+  const loadMetal: LoadMetal = new LoadMetal(fleet13, world85, 3, 'F13J3', fleet13.player);
+  return loadMetal;
+} 
+
+describe('LoadMetal', () => {
+  it('should create an instance', () => {
+
+    const loadMetal: LoadMetal = createALoadMetal();
+    expect(loadMetal).toBeTruthy();
+  });
+  it('test executeCommand', () => {
+    const loadMetal: LoadMetal = createALoadMetal();
+
+    loadMetal.executeCommand();
+    expect(loadMetal.toFleet.metal).toBe(7);
+    expect(loadMetal.fromHomeWorld.metal).toBe(1);
+  });
+});
+
 function createATransferShipsFleetToDShips(): TransferShipsFleetToDShips {
   const fleet42 = new Fleet();
   const world42 = new World();
@@ -105,6 +285,7 @@ function createATransferShipsFleetToDShips(): TransferShipsFleetToDShips {
   const transferShipsFleetToDShips: TransferShipsFleetToDShips = new TransferShipsFleetToDShips(fleet42, world42, 3, 'F42T3D', player);
   return transferShipsFleetToDShips;
 }
+
 
 describe('TransferShipsFleetToDShips', () => {
   it('should create an instance', () => {

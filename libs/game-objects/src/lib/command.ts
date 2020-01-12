@@ -4,6 +4,7 @@ import { World } from './world';
 import { FleetMovement } from './fleet-movement';
 import { DistanceLevel } from './distance-level';
 import { FleetNotOnWorld_Error } from './error';
+import { isError } from 'util';
 
 export interface ExecuteCommand {
     executeCommand(): void;
@@ -242,8 +243,13 @@ export class UnloadAllMetal extends Command implements ExecuteCommand {
         let isError = false;
 
         if (this.player.playerName === this.fromFleet.player.playerName) {
+            if (this.toHomeWorld.fleets.indexOf(this.fromFleet) === -1) {
+                isError = true;
+            }
+            if (isError === false) {
             this.toHomeWorld.metal += this.fromFleet.metal;
             this.fromFleet.metal = 0;
+            }
         } else {
             isError = true;
             //TODO: Fehler Flotte ist nicht vom Spieler
@@ -262,6 +268,7 @@ export class JettisonAllMetal extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.player.playerName === this.fromFleet.player.playerName) {
             this.fromFleet.metal = 0;
+    
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
 
@@ -272,23 +279,141 @@ export class JettisonAllMetal extends Command implements ExecuteCommand {
 export class LoadAllMetal extends Command implements ExecuteCommand {
     toFleet: Fleet;
     fromHomeWorld: World;
+    freeStorage : number;
 
     constructor(aToFleet: Fleet, aFromHomeWorld: World, aString: string, aPlayer: Player) {
         super(aString, aPlayer, TurnPhase.Transfer);
         this.toFleet = aToFleet;
         this.fromHomeWorld = aFromHomeWorld;
+        this.freeStorage = this.toFleet.ships - this.toFleet.metal;
     }
 
     executeCommand() {
+        let isError = false
         if (this.player.playerName === this.toFleet.player.playerName) {
-            this.toFleet.metal += this.fromHomeWorld.metal;
-            this.fromHomeWorld.metal = 0;
+            if (this.fromHomeWorld.fleets.indexOf(this.toFleet) === -1) {
+                isError = true;
+            }
+            if (this.freeStorage > this.fromHomeWorld.metal) {
+                this.freeStorage = this.fromHomeWorld.metal;
+            }
+            if (isError === false) {
+                this.toFleet.metal += this.freeStorage;
+                this.fromHomeWorld.metal -= this.freeStorage;
+            }
+        
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
         }
     }
 }
+//FaaUxx
+export const enum UnloadMetalEnum {
+    FlEED,
+    UNLOADMETAL,
+}
 
+export class UnloadMetal extends Command implements ExecuteCommand {
+    fromFleet: Fleet;
+    toHomeWorld: World;
+    metalToUnload: number;
+
+    constructor(aFromFleet: Fleet, aToHomeWorld: World, aMetalToUnload: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.fromFleet = aFromFleet;
+        this.toHomeWorld = aToHomeWorld;
+        this.metalToUnload = aMetalToUnload;
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.fromFleet.player.playerName) {
+            let isError = false;
+            if (this.toHomeWorld.fleets.indexOf(this.fromFleet) === -1) {
+                isError = true;
+            }
+            if (this.fromFleet.metal < this.metalToUnload) {
+                this.metalToUnload = this.fromFleet.metal;
+            }
+            if (isError === false) {
+                this.fromFleet.metal -= this.metalToUnload;
+                this.toHomeWorld.metal += this.metalToUnload;
+            }
+
+        }
+    }
+
+}
+//FaaJxx
+export const enum JettisonMetalEnum {
+    FlEED,
+    JETTISONMETAL,
+}
+
+export class JettisonMetal extends Command implements ExecuteCommand {
+    fromFleet: Fleet;
+    metalToJettison: number;
+
+    constructor(aFromFleet: Fleet, aMetalToJettison: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.fromFleet = aFromFleet;
+        this.metalToJettison = aMetalToJettison;
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.fromFleet.player.playerName) {
+            const isError = false;
+            if (this.fromFleet.metal < this.metalToJettison) {
+                this.metalToJettison = this.fromFleet.metal;
+            }
+            if (isError === false) {
+                this.fromFleet.metal -= this.metalToJettison;
+            }
+
+        }
+    }
+
+}
+//FaaLxx
+export const enum LoadMetalEnum {
+    FlEED,
+    LOADMETAL,
+}
+
+export class LoadMetal extends Command implements ExecuteCommand {
+    toFleet: Fleet;
+    fromHomeWorld: World;
+    metalToLoad: number;
+    freeStorage: number;
+
+    constructor(aToFleet: Fleet, aFromHomeWorld: World, aMetalToLoad: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+        this.toFleet = aToFleet;
+        this.fromHomeWorld = aFromHomeWorld;
+        this.metalToLoad = aMetalToLoad;
+        this.freeStorage = this.toFleet.ships - this.toFleet.metal;
+    }
+
+    executeCommand() {
+        if (this.player.playerName === this.toFleet.player.playerName) {
+            let isError = false;
+            if (this.fromHomeWorld.fleets.indexOf(this.toFleet) === -1) {
+                isError = true;
+            }
+            if (this.fromHomeWorld.metal < this.metalToLoad) {
+                this.metalToLoad = this.fromHomeWorld.metal;
+            }
+            if (this.freeStorage < this.metalToLoad) {
+                this.metalToLoad = this.freeStorage;
+            }
+            if (isError === false) {
+                this.fromHomeWorld.metal -= this.metalToLoad;
+                this.toFleet.metal += this.metalToLoad;
+            }
+
+        }
+    }
+
+}
 //FaaTxxD
 export const enum TransferShipsFleetToDShipsEnum {
     FLEED,
