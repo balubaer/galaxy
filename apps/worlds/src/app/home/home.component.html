@@ -28,10 +28,11 @@
             </svg:g>
         </ng-template>
     </ngx-graph>
-    <br/>
+    <br />
     <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
     <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
-    <br/>
+    <br />
+    <br />
     <svg class="world" width="200" height="200">
         <g *ngIf="node" [attr.transform]="'translate(100,100)'">
             <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
@@ -51,11 +52,13 @@
             </g>
         </g>
     </svg>
+    <br />
     <pre>{{ turnData.turnDataTxt }}</pre>
     <pre>{{ turnData.turnCommanTxt }}</pre>
 </div>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5" formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
+    <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
+        formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
     <button>Speichern</button>
 </form>
-    <!--<galaxy-player-detail></galaxy-player-detail>-->
+<!--<galaxy-player-detail></galaxy-player-detail>-->

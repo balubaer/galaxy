@@ -10,7 +10,8 @@ import { Node } from '@swimlane/ngx-graph';
 
 @Component({
   selector: 'galaxy-home',
-  templateUrl: 'home.component.html'
+  templateUrl: 'home.component.html',
+  styleUrls: ['home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   currentUser: User;

@@ -33,7 +33,6 @@ Ist ein Spiel nach den
 - Farbe Wählen für Spieler
 	- Legende Farben Spieler
 - Legende für Symbole (Flotten, D-Schiffe usw.)
-- Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
 
 
 ## Erledigte TODOs
@@ -63,6 +62,7 @@ Ist ein Spiel nach den
 - OutputPlyerStatisticCoreGame Tests
 - FinalPhaseCoreGame Tests
 - Timer für Layout Grafik laden
+- Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
 
 ## Projekt
 
