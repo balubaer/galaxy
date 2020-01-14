@@ -96,6 +96,10 @@ export class AppService {
     return worldStringList;
   }
 
+  getColorPlayerMap(): Map<string, string> {
+    return this.colorPlayerMap;
+  }
+
   getColorWithPlayer(player: Player): string {
    // let result = '\'rgb(193, 193, 193)\'';
     let result = 'lightgray';

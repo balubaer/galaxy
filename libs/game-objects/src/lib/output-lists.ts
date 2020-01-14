@@ -13,6 +13,7 @@ export class OutPutLists {
     gamePref: GamePref;
     worlds: Array<World>;
     allPlayerDict: Map<string, Player>;
+    colorMap: Map<string, string>;
 
     constructor(gamePref: GamePref) {
         this.gamePref = gamePref;
@@ -25,7 +26,7 @@ export class OutPutLists {
         this.allPlayerDict = pm.allPlayerDict;
 
         for (const playerName of this.allPlayerDict.keys()) {
-            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict);
+            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict, this. colorMap);
             const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
 
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1}\n\n`;

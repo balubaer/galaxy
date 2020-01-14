@@ -21,6 +21,11 @@ const command_d = new Command('', player, TurnPhase.Final);
 const command_e = new Command('', player, TurnPhase.Combat);
 const command_f = new Command('', player, TurnPhase.Transfer);
 
+const colorMap = new Map();
+
+colorMap.set('MARVIN', 'rgb(255, 164, 43)');
+colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+
 describe('Command', () => {
   it('should create an instance', () => {
     expect(command).toBeTruthy();
@@ -312,7 +317,7 @@ describe('AmbushOffForPlayer', () => {
 function createAnAddTeammateAndRemoveTeammate() {
   const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
   const gamepref: GamePref = JSON.parse(stringData);
-  const executeCommand = new ExecuteCommand(gamepref);
+  const executeCommand = new ExecuteCommand(gamepref, colorMap);
   const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
   const worldsPersist: WorldsPersist = JSON.parse(rawdata);
   executeCommand.createEnvironment(worldsPersist);

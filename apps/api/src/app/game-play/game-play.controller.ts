@@ -2,9 +2,12 @@ import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync } from 'fs';
 import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
+import { AppService } from '../app.service';
 
 @Controller('game-play')
 export class GamePlayController {
+    constructor(private readonly appService: AppService) { }
+
     @Post('GetTurnData')
     getTurnData(@Body() request: RequestTurnData): RespondTurnData {
         const stringData = readFileSync('gamePref.json', 'utf8');
@@ -77,7 +80,7 @@ export class GamePlayController {
     executeRound(): Message {
         const stringData = readFileSync('gamePref.json', 'utf8');
         const gamepref: GamePref = JSON.parse(stringData);
-        const executeCommand = new ExecuteCommand(gamepref);
+        const executeCommand = new ExecuteCommand(gamepref, this.appService.getColorPlayerMap());
         const rawdata = readFileSync(`${gamepref.playName}/Turn${gamepref.round}/worlds.json`, 'utf8');
 
         gamepref.round++;

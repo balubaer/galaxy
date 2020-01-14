@@ -12,16 +12,10 @@ export class PersistenceGrafManager {
     colorMap: Map<string, string>;
     pos: number;
 
-    //TODO: colorMap einführen 
-    //constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>, colorMap: Map<string, string>) {
-        constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>) {
+        constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>, colorMap: Map<string, string>) {
             this.worlds = worlds;
         this.allPlayerDict = allPlayerDict;
-        //this.colorMap = colorMap;
-        this.colorMap = new Map();
-
-        this.colorMap.set('MARVIN', 'rgb(255, 164, 43)');
-        this.colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+        this.colorMap = colorMap;
     }
 
     getColorWithPlayer(player: Player): string {

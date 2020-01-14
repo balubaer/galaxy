@@ -13,9 +13,11 @@ export class ExecuteCommand {
     gamePref: GamePref;
     worlds: Array<World>;
     allPlayerDict: Map<string, Player>;
+    colorMap: Map<string, string>;
 
-    constructor(gamePref: GamePref) {
+    constructor(gamePref: GamePref, colorMap: Map<string, string>) {
         this.gamePref = gamePref;
+        this.colorMap = colorMap; 
     }
 
     createEnvironment(worldsPersist: WorldsPersist) {
@@ -42,7 +44,7 @@ export class ExecuteCommand {
         const outputDict: Map<string, NodesAndLinks> = new Map<string, NodesAndLinks>();
 
         for (const playerName of this.allPlayerDict.keys()) {
-            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict);
+            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict, this.colorMap);
             const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
             outputDict.set(playerName, nodesAndLinks);
         }
