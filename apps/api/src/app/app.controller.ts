@@ -69,18 +69,9 @@ export class AppController {
 
   @Get('GetColors')
   getColors(): Array<string> {
-    //TODO: Color from Service
-    const ob = {
-      "#277553": "rgba( 39,117, 83,1)",
-      "#23D186": "rgba( 35,209,134,1)",
-      "#289E6B": "rgba( 40,158,107,1)",
-      "#1F4B38": "rgba( 31, 75, 56,1)",
-      "#11221B": "rgba( 17, 34, 27,1)"
-    }
-    const colorMap: Map<string, string> = objToMap(ob);
+    const colorMap: Map<string, string> = this.appService.getColors();
     const colors: Array<string> = new Array();
     for (const key of colorMap.keys()) {
-      //colors.push(`background-color: ${key}`);
       colors.push(key);
     }
     return colors;

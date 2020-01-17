@@ -74,14 +74,8 @@ export class AppService {
   }
 
   getColors(): Map<string, string> {
-    //TODO: Color from File 'color.json
-    const ob = {
-      "#277553": "rgba( 39,117, 83,1)",
-      "#23D186": "rgba( 35,209,134,1)",
-      "#289E6B": "rgba( 40,158,107,1)",
-      "#1F4B38": "rgba( 31, 75, 56,1)",
-      "#11221B": "rgba( 17, 34, 27,1)"
-    }
+    const rawdata = readFileSync(`color.json`, 'utf8');
+    const ob = JSON.parse(rawdata);
     const colorMap: Map<string, string> = objToMap(ob);
     return colorMap;
   }
