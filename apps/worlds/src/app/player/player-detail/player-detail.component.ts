@@ -18,7 +18,7 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
   
   public node: Node;
   autoZoom = true;
-  autoCenter = false; 
+  autoCenter = true; 
 
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
@@ -39,6 +39,7 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(this.form.valueChanges.subscribe());
     this.subscriptions.add(this.form.statusChanges.subscribe());
+    setTimeout(()=> this.autoCenter = false, 500);
   }
 
   onSubmit() {

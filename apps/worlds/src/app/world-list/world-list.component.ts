@@ -14,18 +14,6 @@ export class WorldListComponent implements OnInit, OnDestroy {
   worldList$: Observable<string[]>;
   width: number;
   height: number;
-  data = [
-    {
-      x: 2,
-      y: 2,
-      r: 4
-    },
-    {
-      x: 10,
-      y: 10,
-      r: 6
-    }
-  ]
 
  // public layout: Layout = new DagreNodesOnlyLayout();
   public links$: Observable<Edge[]>;
@@ -34,8 +22,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
   public nodes$: Observable<Node[]>;
   
   public node: Node;
-  autoZoom = false;
-  autoCenter = false; 
+  autoZoom = true;
+  autoCenter = true; 
 
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
@@ -55,16 +43,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.links$.subscribe(aLinks => this.links = aLinks));
     this.nodes$ = this.http.get<Node[]>('/api/GetWorldsNode');
     this.subscriptions.add(this.nodes$.subscribe(aNodes => this.nodes = aNodes));
-
-
-    /*const pack = d3.pack()
-      .size([this.width, this.height])
-      .padding(1.5);
-    const root = d3.hierarchy({ children: this.getBubbles() })
-      .sum(function (d) {
-        return d.value;
-      });
-    this.data = pack(root).leaves();*/
+    setTimeout(()=> this.autoCenter = false, 500);
   }
 
   ngOnDestroy() {

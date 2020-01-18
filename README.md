@@ -1,10 +1,18 @@
 # Galaxy
 
+
 Ist ein Spiel nach den
 <a href="http://rswgame.com/de/help/core_game_type.htm" 
    title="mehr Informationen">
     Regeln
 </a>
+
+## Hilfe
+Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
+<a href="http://localhost:4200/admin/set-admin" 
+   title="http://localhost:4200/admin/set-admin">
+   http://localhost:4200/admin/set-admin
+   </a>
 
 ## Implementierungen in anderen Sprachen
 
@@ -26,7 +34,6 @@ Ist ein Spiel nach den
 	- isAmbushFleet
 	- checkOwnership
 	- ambush teammates
-- Login für Admin-Bereich
 - Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
 	- Mit Pfeil-Bottons [<-] und [->]
 - Legende Farben Spieler
@@ -63,6 +70,7 @@ Ist ein Spiel nach den
 - Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
 - Farbe Wählen für Spieler
 - Back-Links für Seiten im Admin-Bereich
+- Login für Admin-Bereich
 
 ## Projekt
 

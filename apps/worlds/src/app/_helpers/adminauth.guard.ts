@@ -11,7 +11,6 @@ export class AdminAuthGuard implements CanActivate {
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        console.log('AdminAuthGuard canActivate');
         const currentAdminUser = this.authenticationService.currentAdminLoginValue;
         if (currentAdminUser) {
             // authorised so return true

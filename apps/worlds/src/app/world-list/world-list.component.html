@@ -1,117 +1,59 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h2>World List</h2>
-<!--pre *ngFor="let world of worldList$ | async">{{ world }}</pre-->
-<br/>
-<!--tr *ngFor="let world of worlds$ | async">
-    <td>{{ world }}</td>
-</tr-->
-<br/>
-<!--pre *ngFor="let world of worlds$ | async">{{ world }}</pre-->
-<!--ngx-graph
-  class="chart-container"
-  [view]="[500, 200]"
-  [links]="[
-    {
-      id: 'a',
-      source: 'first',
-    target: 'second',
-      label: 'is parent of'
-    }, {
-      id: 'b',
-      source: 'first',
-      target: 'third',
-      label: 'custom label'
-    }
-  ]"
-  [nodes]="[
-    {
-      id: 'first',
-      label: 'A'
-    }, {
-      id: 'second',
-      label: 'B'
-    }, {
-      id: 'third',
-      label: 'C'
-    }
-  ]"
->
-</ngx-graph-->
-<!-- 
-  layout="d3ForceDirected"
--->
-
-<ngx-graph
-class="chart-container"
-  [view]="[500, 500]"
-  [links]= "links"
-  [nodes]="nodes"
-  layout="d3ForceDirected"
-  [autoZoom]="autoZoom"
-  [autoCenter]="autoCenter"
-  [center$]="center$"
-  [zoomToFit$]="zoomToFit$"
-  >
+<ngx-graph class="chart-container" [view]="[500, 500]" [links]="links" [nodes]="nodes" layout="d3ForceDirected"
+  [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$" [zoomToFit$]="zoomToFit$">
   <ng-template #nodeTemplate let-node>
-      <svg:g class="node" (click)="onNodeSelected(node)" [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
-        <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
-        <!--circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></!--circle-->
-        <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
+    <svg:g class="node" (click)="onNodeSelected(node)"
+      [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
+      <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
+      <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
 
-        <!--circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width-3" [attr.cy]="node.dimension.width-3"></!--circle-->
-        <circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
-        <svg:text alignment-baseline="central" text-anchor="middle" [attr.x]="node.dimension.width/2" [attr.y]="node.dimension.width/2" fill="white">{{node.data.dships}}</svg:text>>
-        <!--node.data.fleets-->
-        <svg:g *ngFor="let fleet of node.data.fleets">
-          <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="20" ry="10"/>
-          <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"  alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
-        </svg:g>
+      <circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width/2"
+        [attr.cy]="node.dimension.width/2"></circle>
+      <svg:text alignment-baseline="central" text-anchor="middle" [attr.x]="node.dimension.width/2"
+        [attr.y]="node.dimension.width/2" fill="white">{{node.data.dships}}</svg:text>>
+      <svg:g *ngFor="let fleet of node.data.fleets">
+        <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="20"
+          ry="10" />
+        <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+          alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
+      </svg:g>
 
-        <!--TODO: in data Color und Flotten und d-Schiffe packen -->
+      <!--TODO: in data Color und Flotten und d-Schiffe packen -->
 
-       </svg:g>
-    <!--<svg:g class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.label">
-      <svg:rect
-        [attr.width]="node.dimension.width"
-        [attr.height]="node.dimension.height"
-        [attr.fill]="node.data.color"
-      />
-      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
-        {{node.label}}
-      </svg:text>
-    </svg:g>-->
- </ng-template>
+    </svg:g>
+
+  </ng-template>
 </ngx-graph>
 
-<br/>
+<br />
 <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
-<br/>
-<!--<ngx-graph
-class="chart-container"
-  [view]="[500, 300]"
-  [links]= "links"
-  [nodes]="nodes"
-  [layout]="layout"
-  [curve]="curve">
-</ngx-graph>-->
+<br />
 
-<svg class="world" width="500" height="500">
-  <g *ngIf="node" [attr.transform]="'translate(250,250)'">
+<svg class="world" width="200" height="200">
+  <g *ngIf="node" [attr.transform]="'translate(100,100)'">
     <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
     <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
-    <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30" fill="white">{{node.data.dships}}</text>>
+    <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
+      fill="white">{{node.data.dships}}</text>>
 
-    <text  fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"  alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
+    <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+      alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
 
-     <!--node.data.fleets-->
-        <g *ngFor="let fleet of node.data.fleets">
-          <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="30" ry="10"/>
-          <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"  alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
-        </g>
-    <!--{{node.data.fleets}}-->
-    <!--g *ngFor="let d of data" [attr.transform]="'translate('+d.x+','+d.y+')'" 
-        (click)="onBubbleSelected(d)">
-        <circle [attr.r]="d.r" [attr.fill]="'red'"></circle-->
+    <g *ngFor="let fleet of node.data.fleets">
+      <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="30"
+        ry="10" />
+      <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
     </g>
+  </g>
 </svg>
+
+<pre *ngFor="let world of worldList$ | async">{{ world }}</pre>
+<br />
+<pre>
+  <tr *ngFor="let world of worlds$ | async">
+  <td>{{ world }}</td>
+</tr></pre>
+<br />
