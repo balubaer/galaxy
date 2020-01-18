@@ -1,4 +1,4 @@
-
 svg.ngx-charts {
-    background-color: rgb(243, 6, 6);
-  }
+  display: block;
+  background-color: rgb(243, 6, 6);
+}
