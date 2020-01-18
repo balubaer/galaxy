@@ -11,7 +11,11 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 
 @NgModule({
-  declarations: [PlayerDetailComponent, PlayerComponent, PlayerListComponent],
+  declarations: [
+    PlayerDetailComponent,
+    PlayerComponent,
+    PlayerListComponent
+  ],
   imports: [
     CommonModule,
     PlayerRoutingModule,
@@ -19,6 +23,9 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     ReactiveFormsModule,
     NgxGraphModule
   ],
-  exports: [PlayerComponent, PlayerListComponent]
+  exports: [
+    PlayerComponent,
+    PlayerListComponent
+  ]
 })
 export class PlayerModule { }

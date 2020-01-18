@@ -4,13 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ShowPlayerComponent } from './show-player/show-player.component';
-import { CreateWorldsComponent } from './create-worlds/create-worlds.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { WorldListComponent } from './world-list/world-list.component';
 import { NavigationComponentComponent } from './NavigationComponent/navigation-component/navigation-component.component';
-import { CreateGameComponent } from './create-game/create-game.component';
-import { ShowGamePrefComponent } from './show-game-pref/show-game-pref.component';
 import { LoginComponent } from './login/login.component';
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { HttpErrorInterceptor } from './_helpers/error.interceptor';
@@ -24,12 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   declarations: [
     HomeComponent,
     AppComponent,
-    ShowPlayerComponent,
-    CreateWorldsComponent,
-    WorldListComponent,
     NavigationComponentComponent,
-    CreateGameComponent,
-    ShowGamePrefComponent,
     LoginComponent,
     RegisterComponent,
     AlertComponent
@@ -50,6 +40,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       multi: true,
     }
   ], bootstrap: [AppComponent],
-  exports: [ShowPlayerComponent]
+  exports: [
+  ]
 })
 export class AppModule { }
