@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync } from 'fs';
-import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks } from '@galaxy/game-objects';
+import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks, PersistenceManager, World, RequestTurnDataOnlyPlayerAndRound } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
 
@@ -64,15 +64,56 @@ export class GamePlayController {
         const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
 
         const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
+
+        const rawdata = readFileSync(`${playName}/Turn${gamepref.round}/worlds.json`, 'utf8');
+        const worldsPersist: WorldsPersist = JSON.parse(rawdata);
+        const pm = new PersistenceManager(new Array<World>());
+        pm.createWorldsWithWorldsPersist(worldsPersist);
+        const player = pm.allPlayerDict.get(request.playerName);
+
         const respondTurnData: RespondTurnData = {
-            points: 0,
+            points: player.points,
             turnCommanTxt: commandString,
             turnDataTxt: turnDataTxTstring,
             links: turnDataGraf.links,
             nodes: turnDataGraf.nodes
         }
+        return respondTurnData;
+    }
 
+    @Post('GetTurnDataOnlyPlayerAndRound')
+    getTurnDataOnlyPlayerAndRound(@Body() request: RequestTurnDataOnlyPlayerAndRound): RespondTurnData {
+        const stringData = readFileSync('gamePref.json', 'utf8');
+        const gamepref: GamePref = JSON.parse(stringData);
+        const playName = gamepref.playName;
+        const commandFile = `${playName}/Turn${request.round + 1}/${request.playerName}.txt`;
+        let commandString = '';
+        if (existsSync(commandFile)) {
+            commandString = readFileSync(commandFile, 'utf8');
+        }
+        const turnDataTxTFile = `${playName}/Turn${request.round}/${request.playerName}.out`;
+        let turnDataTxTstring = '';
+        if (existsSync(turnDataTxTFile)) {
+            turnDataTxTstring = readFileSync(turnDataTxTFile, 'utf8');
+        }
+        const turnDataGrafFile = `${playName}/Turn${request.round}/${request.playerName}_graf.json`;
+        const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
 
+        const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
+
+        const rawdata = readFileSync(`${playName}/Turn${request.round}/worlds.json`, 'utf8');
+        const worldsPersist: WorldsPersist = JSON.parse(rawdata);
+        const pm = new PersistenceManager(new Array<World>());
+        pm.createWorldsWithWorldsPersist(worldsPersist);
+        const player = pm.allPlayerDict.get(request.playerName);
+
+        const respondTurnData: RespondTurnData = {
+            points: player.points,
+            turnCommanTxt: commandString,
+            turnDataTxt: turnDataTxTstring,
+            links: turnDataGraf.links,
+            nodes: turnDataGraf.nodes
+        }
         return respondTurnData;
     }
 

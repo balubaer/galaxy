@@ -1,4 +1,9 @@
 ﻿<h1>Hi {{currentUser.username}}!</h1>
+<h2>Runde: {{changeround + 1}}</h2>
+<h3>Runden ändern</h3>
+<button mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
+<button mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
+
 <div *ngIf="turnData$|async as turnData">
     <pre>Punkte: {{ turnData.points }}</pre>
     <ngx-graph class="chart-container" [view]="[500, 500]" [links]=turnData.links [nodes]=turnData.nodes

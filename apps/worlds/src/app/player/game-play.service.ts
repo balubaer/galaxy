@@ -19,6 +19,10 @@ export class GamePlayService {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayer', request);
   }
 
+  getTurnDataOnlyPlayerAndRound(request): Observable<RespondTurnData> {
+    return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayerAndRound', request);
+  }
+
   setCommands(request): Observable<Message> {
     return this.http.post<Message>('/api/game-play/SetCommands', request);
   }
