@@ -23,8 +23,8 @@ export class SetAdminComponent implements OnInit {
     private alertService: AlertService,
   ) {
     // redirect to home if already logged in
-    if (this.authenticationService.currentUserValue) {
-      //this.router.navigate(['/admin']);
+    if (this.authenticationService.currentAdminLoginValue) {
+      this.router.navigate(['/login']);
     }
   }
 
