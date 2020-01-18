@@ -13,6 +13,7 @@ import { CreateGameComponent } from '../create-game/create-game.component';
 import { AdminComponent } from './admin.component';
 import { NavigationComponentComponent } from './navigation-component/navigation-component.component';
 import { SetAdminComponent } from '../set-admin/set-admin.component';
+import { AdminLoginComponent } from '../adminLogin/admin-login.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SetAdminComponent } from '../set-admin/set-admin.component';
     CreateGameComponent,
     ShowGamePrefComponent,
     NavigationComponentComponent,
-    SetAdminComponent
+    SetAdminComponent,
+    AdminLoginComponent
   ],
   imports: [
     CommonModule,

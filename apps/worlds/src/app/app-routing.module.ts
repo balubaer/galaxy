@@ -5,6 +5,7 @@ import { AuthGuard } from './_helpers/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { NavigationModule } from './NavigationComponent/navigation.module';
+import { AdminAuthGuard } from './_helpers/adminauth.guard';
 
 const routes: Routes = [
   {
