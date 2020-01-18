@@ -12,6 +12,7 @@ import { WorldListComponent } from '../world-list/world-list.component';
 import { CreateGameComponent } from '../create-game/create-game.component';
 import { AdminComponent } from './admin.component';
 import { NavigationComponentComponent } from './navigation-component/navigation-component.component';
+import { SetAdminComponent } from '../set-admin/set-admin.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { NavigationComponentComponent } from './navigation-component/navigation-
     WorldListComponent,
     CreateGameComponent,
     ShowGamePrefComponent,
-    NavigationComponentComponent
+    NavigationComponentComponent,
+    SetAdminComponent
   ],
   imports: [
     CommonModule,

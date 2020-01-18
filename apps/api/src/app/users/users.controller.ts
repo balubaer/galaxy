@@ -68,4 +68,44 @@ export class UsersController {
         }
         return res.status(HttpStatus.CREATED).json(user);
     }
+
+    @Post('setAdminUser')
+    setAdminUser(@Body() login: Login): Message {
+        if (existsSync('adminLogin.json') === false) {
+            const data = JSON.stringify(login);
+            writeFileSync('adminLogin.json', data);
+            return  {message: 'OK' };
+        } else {
+            return {message: 'Error' };
+        }
+    }
+
+    @Post('authenticateAdmin')
+    authenticateAdmin(@Res() res, @Body() login: Login): Login { 
+        let adminLogin: Login = null;
+        if (existsSync('adminLogin.json')) {
+            const stringData = readFileSync('adminLogin.json', 'utf8');
+            adminLogin = JSON.parse(stringData);
+
+            if (adminLogin !== null) {
+                if ((adminLogin.username === login.username)
+                && (compareSync(login.password, adminLogin.password) === true)) {
+                    adminLogin.password = '';
+                } else {
+                    adminLogin = null;
+                }
+
+            }
+        }
+        if (adminLogin === null) {
+            const leerLogin: Login = {
+                username: '',
+                password: ''
+            }
+
+            return res.status(HttpStatus.UNAUTHORIZED).json(leerLogin);
+        }
+        return res.status(HttpStatus.CREATED).json(adminLogin);
+    }
+
 }

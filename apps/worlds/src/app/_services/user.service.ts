@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { User, Message } from '@galaxy/api-interfaces';
+import { User, Message, Login } from '@galaxy/api-interfaces';
 import { Observable } from 'rxjs';
 
 
@@ -14,6 +14,10 @@ export class UserService {
 
     register(user: User): Observable<Message> {
         return this.http.post<Message>('api/users/register', user);
+    }
+
+    setAdminUser(login: Login): Observable<Message>  {
+        return this.http.post<Message>('api/users/setAdminUser', login);
     }
 
    /* delete(id: number) {

@@ -27,11 +27,9 @@ Ist ein Spiel nach den
 	- checkOwnership
 	- ambush teammates
 - Login für Admin-Bereich
-- Back-Links für Seiten im Admin-Bereich
 - Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
 	- Mit Pfeil-Bottons [<-] und [->]
-- Farbe Wählen für Spieler
-	- Legende Farben Spieler
+- Legende Farben Spieler
 - Legende für Symbole (Flotten, D-Schiffe usw.)
 
 
@@ -63,6 +61,8 @@ Ist ein Spiel nach den
 - FinalPhaseCoreGame Tests
 - Timer für Layout Grafik laden
 - Farben für Hintergrund ändern damit man die Fläche der Grafik sieht 
+- Farbe Wählen für Spieler
+- Back-Links für Seiten im Admin-Bereich
 
 ## Projekt
 

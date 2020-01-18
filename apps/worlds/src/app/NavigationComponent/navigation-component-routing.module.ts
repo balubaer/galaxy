@@ -10,6 +10,7 @@ import { ShowPlayerComponent } from '../show-player/show-player.component';
 import { WorldListComponent } from '../world-list/world-list.component';
 import { PlayerModule } from '../player/player.module';
 import { AdminComponent } from './admin.component';
+import { SetAdminComponent } from '../set-admin/set-admin.component';
 
 
 const routes: Routes = [
@@ -32,6 +33,10 @@ const routes: Routes = [
   {
     path: 'admin/world-list',
     component: WorldListComponent
+  },
+  {
+    path: 'admin/set-admin',
+    component: SetAdminComponent
   },
   {
     path: 'admin',
