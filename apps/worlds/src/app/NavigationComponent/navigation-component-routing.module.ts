@@ -35,13 +35,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    component: AdminComponent,
-    children: [
-      {
-        path: 'player',
-        loadChildren: () => import('../player/player.module').then(m => m.PlayerModule)
-      }
-    ]
+    pathMatch: 'full',
+    redirectTo: 'create-worlds'
+  },
+  {
+    path: 'player',
+    loadChildren: () => import('../player/player.module').then(m => m.PlayerModule)
   }
 ];
 
