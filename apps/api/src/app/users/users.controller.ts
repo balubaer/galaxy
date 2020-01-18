@@ -72,6 +72,8 @@ export class UsersController {
     @Post('setAdminUser')
     setAdminUser(@Body() login: Login): Message {
         if (existsSync('adminLogin.json') === false) {
+            login.password = hashSync(login.password, 10);
+
             const data = JSON.stringify(login);
             writeFileSync('adminLogin.json', data);
             return  {message: 'OK' };
