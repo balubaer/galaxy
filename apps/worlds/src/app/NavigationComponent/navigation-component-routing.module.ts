@@ -14,29 +14,29 @@ import { AdminComponent } from './admin.component';
 
 const routes: Routes = [
   {
-    path: 'create-worlds',
+    path: 'admin/create-worlds',
     component: CreateWorldsComponent
   },
   {
-    path: 'create-game',
+    path: 'admin/create-game',
     component: CreateGameComponent
   },
   {
-    path: 'show-game',
+    path: 'admin/show-game',
     component: ShowGamePrefComponent
   },
   {
-    path: 'show-player',
+    path: 'admin/show-player',
     component: ShowPlayerComponent
   },
   {
-    path: 'world-list',
+    path: 'admin/world-list',
     component: WorldListComponent
   },
   {
-    path: '',
+    path: 'admin',
     pathMatch: 'full',
-    redirectTo: 'create-worlds'
+    redirectTo: 'admin/create-worlds'
   },
   {
     path: 'player',
