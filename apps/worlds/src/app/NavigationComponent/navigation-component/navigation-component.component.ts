@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthenticationService } from '../../_services/authentication.service';
 
 @Component({
   selector: 'galaxy-navigation-component',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavigationComponentComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
 
   ngOnInit() {
+  }
+
+  logout() {
+    this.authenticationService.logoutAdmin();
+    this.router.navigate(['admin/admin-login']);
   }
 
 }
