@@ -40,9 +40,6 @@ describe('utils', () => {
         colorMap.set('#1F4B38', 'rgba( 31, 75, 56,1)');
         colorMap.set('#11221B', 'rgba( 17, 34, 27,1)');
         const obj = mapToObj(colorMap);
-        
-        const gameprefdata = JSON.stringify(obj);
-        writeFileSync('color.json', gameprefdata);
         expect(obj['#277553']).toBe('rgba( 39,117, 83,1)');
     });
 

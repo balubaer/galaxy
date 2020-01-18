@@ -16,13 +16,13 @@ export class CreateWorldsComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   message: Message;
-  ishidden:boolean;
-  ishidden2:boolean;
+  ishidden: boolean;
+  ishidden2: boolean;
   gamepref: GamePref;
   private readonly subscriptions = new Subscription();
 
 
-  constructor(private fb: FormBuilder, private gameService: GameServiceService) { 
+  constructor(private fb: FormBuilder, private gameService: GameServiceService) {
     this.ishidden = true;
     this.ishidden2 = true;
   }
@@ -37,22 +37,23 @@ export class CreateWorldsComponent implements OnInit, OnDestroy {
 
   onSubmitCreateWorld() {
     //subscribe(books => this.books = books);
-    this.gameService.createWorlds().subscribe( aMessage => {
+    this.gameService.createWorlds().subscribe(aMessage => {
       this.message = aMessage;
       if (aMessage !== undefined && aMessage !== null) {
         if (this.message.message === 'OK') {
-        this.ishidden = false;
+          this.ishidden = false;
         }
       }
     });
   }
 
   onSubmitExecuteRound() {
-    this.gameService.executeRound().subscribe( aMessage => {
+    this.gameService.executeRound().subscribe(aMessage => {
       this.message = aMessage;
       if (aMessage !== undefined && aMessage !== null) {
         if (this.message.message === 'OK') {
-        this.ishidden2 = false;
+          this.ishidden2 = false;
+          this.ngOnInit();
         }
       }
     });

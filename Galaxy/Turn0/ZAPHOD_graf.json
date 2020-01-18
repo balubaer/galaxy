@@ -1,1 +1,67 @@
-{"nodes":[{"id":"W7","label":"W7","data":{"dships":0,"backgroundColor":"rgb(45, 134, 202)","fleets":[{"x":70,"y":0,"backgroundColor":"rgb(45, 134, 202)","label":"F3=5"},{"x":49.49747468305833,"y":49.49747468305832,"backgroundColor":"rgb(45, 134, 202)","label":"F9=5"}]}},{"id":"W6","label":"W6","data":{"backgroundColor":"whitesmoke"}},{"id":"W1","label":"W1","data":{"backgroundColor":"whitesmoke"}},{"id":"W2","label":"W2","data":{"backgroundColor":"whitesmoke"}}],"links":[{"id":"W6W7","source":"W7","target":"W6","label":"W7->W6"},{"id":"W1W7","source":"W7","target":"W1","label":"W7->W1"},{"id":"W2W7","source":"W7","target":"W2","label":"W7->W2"}]}
+{
+    "nodes": [
+        {
+            "id": "W7",
+            "label": "W7",
+            "data": {
+                "dships": 0,
+                "backgroundColor": "rgb(255,103, 43,1)",
+                "fleets": [
+                    {
+                        "x": 70,
+                        "y": 0,
+                        "backgroundColor": "rgb(255,103, 43,1)",
+                        "label": "F3=5"
+                    },
+                    {
+                        "x": 49.49747468305833,
+                        "y": 49.49747468305832,
+                        "backgroundColor": "rgb(255,103, 43,1)",
+                        "label": "F9=5"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "W6",
+            "label": "W6",
+            "data": {
+                "backgroundColor": "whitesmoke"
+            }
+        },
+        {
+            "id": "W1",
+            "label": "W1",
+            "data": {
+                "backgroundColor": "whitesmoke"
+            }
+        },
+        {
+            "id": "W2",
+            "label": "W2",
+            "data": {
+                "backgroundColor": "whitesmoke"
+            }
+        }
+    ],
+    "links": [
+        {
+            "id": "W6W7",
+            "source": "W7",
+            "target": "W6",
+            "label": "W7->W6"
+        },
+        {
+            "id": "W1W7",
+            "source": "W7",
+            "target": "W1",
+            "label": "W7->W1"
+        },
+        {
+            "id": "W2W7",
+            "source": "W7",
+            "target": "W2",
+            "label": "W7->W2"
+        }
+    ]
+}
