@@ -34,7 +34,7 @@ const routes: Routes = [
     component: WorldListComponent
   },
   {
-    path: 'admin',
+    path: '',
     component: AdminComponent,
     children: [
       {
