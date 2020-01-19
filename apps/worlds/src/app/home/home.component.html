@@ -1,6 +1,6 @@
-﻿<h1>Hi {{currentUser.username}}!</h1>
-<h2>Runde: {{changeround + 1}}</h2>
-<h3>Runden ändern</h3>
+﻿<h1>Hi {{currentUser.username}},</h1>
+<h1>du bist in Runde "{{round + 1}}"</h1>
+<h3>Runden ändern und es wird Runde: {{changeround + 1}} angezeigt</h3>
 <button mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
 <button mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
 
