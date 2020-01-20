@@ -1,8 +1,24 @@
-.chart-container{
-    display: block;
-    background-color:rgb(164, 164, 164);
+.chart-container {
+  display: block;
+  background-color: rgb(164, 164, 164);
 }
-.world{
-    display: block;
-    background-color:rgb(164, 164, 164);
+.world {
+  display: block;
+  background-color: rgb(164, 164, 164);
+}
+
+div.container {
+  width: 98%;
+  margin: 1%;
+}
+table#table1 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+}
+tr,
+td {
+  text-align: center;
+  width: 150px;
 }

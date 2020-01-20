@@ -26,6 +26,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   autoZoom = true;
   autoCenter = true;
 
+  draggingEnabled = false;
+  panningEnabled = false;
+  zoomEnabled = false;
+
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
   round: number;
@@ -109,5 +113,27 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.readNewTurnDataWithRound(this.changeround);
     }
   }
+  clickdragging() {
+    if (this.draggingEnabled === true) {
+      this.draggingEnabled = false;
+    } else {
+      this.draggingEnabled = true;
+    }
+  }
 
+  clickpanning() {
+    if (this.panningEnabled === true) {
+      this.panningEnabled = false;
+    } else {
+      this.panningEnabled = true;
+    }
+  }
+
+  clickzoom() {
+    if (this.zoomEnabled === true) {
+      this.zoomEnabled = false;
+    } else {
+      this.zoomEnabled = true;
+    }
+  }
 }
