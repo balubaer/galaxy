@@ -1,5 +1,5 @@
 import { Controller, Get, Body, Query, Post } from '@nestjs/common';
-import { readFileSync, existsSync, writeFileSync } from 'fs';
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks, PersistenceManager, World, RequestTurnDataOnlyPlayerAndRound } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
@@ -40,7 +40,12 @@ export class GamePlayController {
         const stringData = readFileSync('gamePref.json', 'utf8');
         const gamepref: GamePref = JSON.parse(stringData);
         const playName = gamepref.playName;
-        const commandFile = `${playName}/Turn${gamepref.round + 1}/${request.player}.txt`;
+        const turnPath = `${playName}/Turn${gamepref.round + 1}`;
+        if (existsSync(turnPath) === false) {
+            mkdirSync(turnPath);
+        }
+
+        const commandFile = `${turnPath}/${request.player}.txt`;
         writeFileSync(commandFile, request.commands);
         return { message: 'OK' };
     }
