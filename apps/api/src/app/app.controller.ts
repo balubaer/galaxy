@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 
 import { Message } from '@galaxy/api-interfaces';
-import { Player, World, GamePref, objToMap } from '@galaxy/game-objects';
+import { Player, World, GamePref, objToMap, PlayerColor } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
 import { readFileSync, writeFileSync } from 'fs';
@@ -75,5 +75,20 @@ export class AppController {
       colors.push(key);
     }
     return colors;
+  }
+
+  @Get('GetPlayerColor')
+  getPlayerColor(): Array<PlayerColor> {
+    const colorPlayerMap: Map<string, string> = this.appService.getColorPlayerMap();
+    const playercolors: Array<PlayerColor> = new Array();
+    for (const key of colorPlayerMap.keys()) {
+      playercolors.push({
+        playername: key,
+        color: colorPlayerMap.get(key)
+      });
+    }
+    console.log(playercolors);
+    return playercolors;
+
   }
 }

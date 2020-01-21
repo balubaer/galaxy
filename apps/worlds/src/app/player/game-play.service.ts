@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RespondTurnData } from '@galaxy/game-objects';
+import { RespondTurnData, PlayerColor } from '@galaxy/game-objects';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Message } from '@galaxy/api-interfaces';
@@ -21,6 +21,10 @@ export class GamePlayService {
 
   getTurnDataOnlyPlayerAndRound(request): Observable<RespondTurnData> {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayerAndRound', request);
+  }
+
+  getPlayerColor(): Observable<PlayerColor> {
+    return this.http.get<PlayerColor>('/api/GetPlayerColor');
   }
 
   setCommands(request): Observable<Message> {

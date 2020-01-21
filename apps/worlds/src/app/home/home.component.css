@@ -7,18 +7,36 @@
   background-color: rgb(164, 164, 164);
 }
 
+div.container-chart {
+  width: 500px;
+  height: 500px;
+}
+
 div.container {
-  width: 98%;
-  margin: 1%;
+  width: 500px;
 }
 table#table1 {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
   width: 500px;
 }
 tr,
 td {
   text-align: center;
   width: 150px;
+}
+div.container2 {
+  width: 98%;
+  margin: 1%;
+}
+
+table#table2 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+}
+
+tr#tr2,
+td#td2 {
+  text-align: center;
+  width: auto;
 }

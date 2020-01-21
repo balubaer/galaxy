@@ -1,38 +1,72 @@
-﻿<h1>Hi {{currentUser.username}},</h1>
-<h1>du bist in Runde "{{round + 1}}"</h1>
-<h3>Runden ändern und es wird Runde: {{changeround + 1}} angezeigt</h3>
-<button mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
-<button mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
+﻿<div class="container">
+    <table id="table1">
+        <tr>
+            <h1>Hi {{currentUser.username}}, </h1>
+        </tr>
+    </table>
+</div>
+<div class="container">
+    <table id="table1">
+        <tr>
+            <h2>du bist in Runde "{{round + 1}}"</h2>
+            <h3>Runden ändern und es wird Runde: {{changeround + 1}} angezeigt</h3>
+        </tr>
+    </table>
+</div>
+<div class="container">
+    <table id="table1">
+        <tr>
+            <button mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
+            <button mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
+        </tr>
+    </table>
+</div>
 
 <div *ngIf="turnData$|async as turnData">
-    <pre>Punkte: {{ turnData.points }}</pre>
-    <ngx-graph class="chart-container" [view]="[500, 500]" [links]=turnData.links [nodes]=turnData.nodes
-        layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
-        [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]="zoomEnabled"
-        [zoomToFit$]="zoomToFit$">
-        <ng-template #nodeTemplate let-node>
-            <svg:g class="node" (click)="onNodeSelected(node)"
-                [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
-                <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
-                <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
+    <div class="container">
+        <table id="table1">
+            <tr>
+                <pre>Punkte: {{ turnData.points }}</pre>
+            </tr>
+        </table>
+    </div>
+    <div class="container">
+        <table id="table1">
+            <tr>
+                <div class="container-chart">
+                    <ngx-graph class="chart-container" [view]="[500, 500]" [links]=turnData.links [nodes]=turnData.nodes
+                        layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
+                        [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]="zoomEnabled"
+                        [zoomToFit$]="zoomToFit$">
+                        <ng-template #nodeTemplate let-node>
+                            <svg:g class="node" (click)="onNodeSelected(node)"
+                                [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
+                                <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor">
+                                </circle>
+                                <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
 
-                <circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width/2"
-                    [attr.cy]="node.dimension.width/2"></circle>
-                <svg:text alignment-baseline="central" text-anchor="middle" [attr.x]="node.dimension.width/2"
-                    [attr.y]="node.dimension.width/2" fill="white">{{node.data.dships}}</svg:text>>
-                <!--node.data.fleets-->
-                <svg:g *ngFor="let fleet of node.data.fleets">
-                    <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y"
-                        rx="20" ry="10" />
-                    <text fill="rgb(0, 0, 0)"
-                        font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
-                        [attr.y]="fleet.y">{{fleet.label}}</text>
-                </svg:g>
-            </svg:g>
-        </ng-template>
-    </ngx-graph>
-    <br />
+                                <circle [attr.r]="node.dimension.width/4" fill="black"
+                                    [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
+                                <svg:text alignment-baseline="central" text-anchor="middle"
+                                    [attr.x]="node.dimension.width/2" [attr.y]="node.dimension.width/2" fill="white">
+                                    {{node.data.dships}}</svg:text>>
+                                <!--node.data.fleets-->
+                                <svg:g *ngFor="let fleet of node.data.fleets">
+                                    <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
+                                        [attr.cy]="fleet.y" rx="20" ry="10" />
+                                    <text fill="rgb(0, 0, 0)"
+                                        font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
+                                        [attr.y]="fleet.y">{{fleet.label}}</text>
+                                </svg:g>
+                            </svg:g>
+                        </ng-template>
+                    </ngx-graph>
+                </div>
+            </tr>
+        </table>
+    </div>
+
     <div class="container">
         <table id="table1">
             <tr>
@@ -53,39 +87,117 @@
             </tr>
         </table>
     </div>
-    <table>
-
-    </table>
     <br />
-    <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
-    <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
+    <div class="container">
+        <table id="table1">
+            <tr>
+                <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
+                <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to
+                    fit</button>
+            </tr>
+        </table>
+    </div>
     <br />
     <br />
-    <svg class="world" width="200" height="200">
-        <g *ngIf="node" [attr.transform]="'translate(100,100)'">
-            <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
-            <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
-            <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
-                fill="white">{{node.data.dships}}</text>>
+    <div class="container">
+        <table id="table1">
+            <tr>
+                <td>
+                    <svg class="world" width="200" height="200">
+                        <g *ngIf="node" [attr.transform]="'translate(100,100)'">
+                            <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
+                            <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
+                            <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
+                                fill="white">{{node.data.dships}}</text>>
 
-            <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
 
-            <g *ngFor="let fleet of node.data.fleets">
-                <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y"
-                    rx="30" ry="10" />
-                <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                    alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
-                    [attr.y]="fleet.y">{{fleet.label}}</text>
-            </g>
-        </g>
-    </svg>
+                            <g *ngFor="let fleet of node.data.fleets">
+                                <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
+                                    [attr.cy]="fleet.y" rx="30" ry="10" />
+                                <text fill="rgb(0, 0, 0)"
+                                    font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                    alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
+                                    [attr.y]="fleet.y">{{fleet.label}}</text>
+                            </g>
+                        </g>
+                    </svg>
+                </td>
+                <td>
+                    <svg class="world" width="200" height="200">
+                        <g transform="translate(0,20)">
+                            <circle id="canvas1-oval" stroke="none" fill="rgb(146, 146, 146)" cx="40" cy="39" r="25" />
+
+                            <text fill="rgb(255, 255, 255)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="14" x="28.89" y="13.5" text-anchor="middle">
+                                <tspan x="39" y="42.5">Wx</tspan>
+                            </text>
+
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="14" x="77" y="14">
+                                <tspan x="77" y="43">Welt x</tspan>
+                            </text>
+                            <circle id="canvas1-oval2" stroke="none" fill="rgb(0, 0, 0)" cx="39" cy="87" r="10" />
+
+                            <text fill="rgb(255, 255, 255)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="13" x="35.63" y="77" text-anchor="middle">
+                                <tspan x="39" y="91">x</tspan>
+                            </text>
+
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="14" x="77" y="62">
+                                <tspan x="77" y="91">Anzahl D Schiffe x</tspan>
+                            </text>
+                            <ellipse id="canvas1-oval3" stroke="none" fill="rgb(146, 146, 146)" cx="39.5" cy="129"
+                                rx="17.5" ry="11" />
+
+                            <text fill="rgb(255, 255, 255)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="10" x="29.04" y="104" text-anchor="middle">
+                                <tspan x="40" y="132">Fx=y</tspan>
+                            </text>
+
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                font-size="14" x="77" y="104">
+                                <tspan x="77" y="125">Flotte x mit
+                                </tspan>
+                                <tspan x="77" y="141.39">Anzahl Schiffen y </tspan>
+                            </text>
+                        </g>
+                    </svg>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="container2">
+        <table id="table2">
+            <tr id="tr2">
+                <td id="td2" *ngFor="let aPlayerColor of playercolor$| async">
+                    <svg class="world" width="80" height="80">
+                        <g transform="translate(40,40)">
+                            <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
+                        </g>
+                    </svg>
+                </td>
+            </tr>
+        </table>
+    </div>
     <br />
     <pre>{{ turnData.turnDataTxt }}</pre>
     <pre>{{ turnData.turnCommanTxt }}</pre>
-</div>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
-        formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
-    <button>Speichern</button>
-</form>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
+            formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
+        <button>Speichern</button>
+    </form>

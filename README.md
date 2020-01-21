@@ -34,8 +34,7 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 	- isAmbushFleet
 	- checkOwnership
 	- ambush teammates
-- Legende Farben Spieler
-- Legende für Symbole (Flotten, D-Schiffe usw.)
+
 
 
 ## Erledigte TODOs
@@ -71,6 +70,8 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 - Login für Admin-Bereich
 - Im Home Auswahl der Runde um alte Runden-Stände abrufen zu können
 	- Mit Pfeil-Bottons [<-] und [->]
+- Legende Farben Spieler
+- Legende für Symbole (Flotten, D-Schiffe usw.)
 
 	
 ## Projekt

@@ -3,7 +3,7 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound } from '@galaxy/game-objects';
+import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound, PlayerColor } from '@galaxy/game-objects';
 import { GamePlayService } from '../player/game-play.service';
 import { Node } from '@swimlane/ngx-graph';
 import { GameServiceService } from '../game-service.service';
@@ -34,6 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   zoomToFit$: Subject<boolean> = new Subject();
   round: number;
   changeround: number;
+  playercolor$: Observable<PlayerColor>;
 
 
   constructor(
@@ -51,6 +52,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.gamePref$ = this.gamePrefService.getGamePref();
+    this.playercolor$ = this.gamePlayService.getPlayerColor();
     this.form = this.fb.group({
       Commands: ['']
     });

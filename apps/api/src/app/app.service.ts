@@ -95,7 +95,6 @@ export class AppService {
   }
 
   getColorWithPlayer(player: Player): string {
-   // let result = '\'rgb(193, 193, 193)\'';
     let result = 'lightgray';
     if (player !== null) {
       result = this.colorPlayerMap.get(player.playerName);
@@ -126,19 +125,6 @@ export class AppService {
   getYForFleet(): number {
     return this.getCircleY(piVirtel * this.pos, radiusForFleet)
   }
-
-  /*getFleetsWithWorld(world: World): string {
-    let fleets: string = '';
-
-    this.startPosForFleet();
-    console.log(`fleets.length: ${world.fleets.length}`)
-
-    for (const fleet of world.fleets) {
-      fleets += `<ellipse stroke="none" fill="${this.getColorWithPlayer(fleet.player)}" cx="${this.getXForFleet()}" cy="${this.getYForFleet()}" rx="10" ry="20"/>\r\n`
-      this.nextPosForFleet();
-    }
-    return fleets;
-  }*/
 
   getFleetsWithWorld(world: World): any {
     const fleets = new Array();
