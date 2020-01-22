@@ -87,7 +87,6 @@ export class AppController {
         color: colorPlayerMap.get(key)
       });
     }
-    console.log(playercolors);
     return playercolors;
 
   }

@@ -194,8 +194,10 @@
         </table>
     </div>
     <br />
+    <div *ngIf="turnData$|async as turnData">
     <pre>{{ turnData.turnDataTxt }}</pre>
     <pre>{{ turnData.turnCommanTxt }}</pre>
+    </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
             formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
