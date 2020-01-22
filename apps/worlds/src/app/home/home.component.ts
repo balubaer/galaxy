@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   changeround: number;
   playercolor$: Observable<PlayerColor>;
 
+  turnCommandTxt = '';
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -50,9 +51,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     const request: RequestTurnDataOnlyPlayer = {
       playerName: this.currentUser.username
     }
+    const playerCommands$: Observable<PlayerCommands> = this.gamePlayService.getCommand(request);
+    playerCommands$.subscribe(aPlayerCommands => {
+      this.turnCommandTxt = aPlayerCommands.commands;
+      console.log(`this.turnCommandTxt: ${this.turnCommandTxt}`);
+    })
+   /* this.subscriptions.add(aTurnCommanTxt$.subscribe(aTurnCommandTxt => {
+      this.turnCommandTxt = aTurnCommandTxt;
+      console.log(`this.turnCommandTxt: ${this.turnCommandTxt}`)
+    }));*/
+
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.gamePref$ = this.gamePrefService.getGamePref();
     this.playercolor$ = this.gamePlayService.getPlayerColor();
+
     this.form = this.fb.group({
       Commands: ['']
     });
@@ -72,10 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         commands: this.form.value.Commands
       }
       this.subscriptions.add(this.gamePlayService.setCommands(commands).subscribe());
-      const request: RequestTurnDataOnlyPlayer = {
-        playerName: this.currentUser.username
-      }
-      this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
+      this.turnCommandTxt = this.form.value.Commands;
     }
   }
 

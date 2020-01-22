@@ -195,11 +195,12 @@
     </div>
     <br />
     <div *ngIf="turnData$|async as turnData">
-    <pre>{{ turnData.turnDataTxt }}</pre>
-    <pre>{{ turnData.turnCommanTxt }}</pre>
+        <pre>{{ turnData.turnDataTxt }}</pre>
+    </div>
+    <div *ngIf="turnCommandTxt">
+        <pre>{{ turnCommandTxt }}</pre>
     </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <textarea *ngIf="turnData$|async as turnData" name="Text1" cols="40" rows="5"
-            formControlName="Commands">{{ turnData.turnCommanTxt }}</textarea>
+        <textarea name="Text1" cols="40" rows="5" formControlName="Commands"></textarea>
         <button>Speichern</button>
     </form>

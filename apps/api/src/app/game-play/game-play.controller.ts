@@ -50,6 +50,23 @@ export class GamePlayController {
         return { message: 'OK' };
     }
 
+    @Post('GetCommands')
+    getCommands(@Body() request: RequestTurnDataOnlyPlayer): PlayerCommands {
+        let commands = '';
+        const stringData = readFileSync('gamePref.json', 'utf8');
+        const gamepref: GamePref = JSON.parse(stringData);
+        const playName = gamepref.playName;
+        const turnPath = `${playName}/Turn${gamepref.round + 1}`;
+        if (existsSync(turnPath) === true) {
+            const commandFile = `${turnPath}/${request.playerName}.txt`;
+            commands = readFileSync(commandFile, 'utf8');
+        }
+        return {
+            player: request.playerName,
+            commands: commands
+        }
+    }
+
     @Post('GetTurnDataOnlyPlayer')
     getTurnDataOnlyPlayer(@Body() request: RequestTurnDataOnlyPlayer): RespondTurnData {
         const stringData = readFileSync('gamePref.json', 'utf8');
