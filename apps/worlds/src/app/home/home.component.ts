@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   form: FormGroup;
   turnData$: Observable<RespondTurnData>;
   private readonly subscriptions = new Subscription();
+  subscriptionsTurnData: Subscription = null;
   gamePref$: Observable<GamePref>;
   gamePrefSubsription: Subscription = null;
 
@@ -37,6 +38,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   playercolor$: Observable<PlayerColor>;
 
   turnCommandTxt = '';
+
+  ishidden = false;
+  ishiddenNextButton = true;
+  ishiddenPrevButton = false;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -63,7 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.gamePref$ = this.gamePrefService.getGamePref();
     this.playercolor$ = this.gamePlayService.getPlayerColor();
-    
+
     this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
     this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
     setTimeout(() => this.autoCenter = false, 500);
@@ -103,7 +108,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       round: this.changeround
     }
     this.autoCenter = true;
+
+    if (this.subscriptionsTurnData !== null) {
+        this.subscriptionsTurnData.unsubscribe();
+        this.subscriptionsTurnData = null;
+    }
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
+    this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
+      this.turnCommandTxt = aTurnData.turnCommanTxt;
+      if (this.changeround === this.round) {
+        this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
+      }
+    });
     setTimeout(() => this.autoCenter = false, 500);
   }
 
@@ -111,6 +127,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.changeround > 0) {
       this.changeround -= 1;
       this.readNewTurnDataWithRound(this.changeround);
+      this.ishidden = true;
+      this.ishiddenNextButton = false;
+      if (this.changeround === 0) {
+        this.ishiddenPrevButton = true;
+      }
     }
   }
 
@@ -118,8 +139,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.changeround < this.round) {
       this.changeround += 1;
       this.readNewTurnDataWithRound(this.changeround);
+      if (this.changeround === this.round) {
+        this.ishidden = false;
+        this.ishiddenNextButton = true;
+      }
+      if (this.changeround > 0) {
+        this.ishiddenPrevButton = false;
+      }
     }
   }
+
   clickdragging() {
     if (this.draggingEnabled === true) {
       this.draggingEnabled = false;

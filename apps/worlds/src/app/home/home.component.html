@@ -16,8 +16,8 @@
 <div class="container">
     <table id="table1">
         <tr>
-            <button mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
-            <button mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
+            <button [hidden] = "ishiddenPrevButton" mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
+            <button [hidden] = "ishiddenNextButton" mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
         </tr>
     </table>
 </div>
@@ -200,7 +200,7 @@
     <div *ngIf="turnCommandTxt">
         <pre>{{ turnCommandTxt }}</pre>
     </div>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
         <textarea name="Text1" cols="40" rows="5" formControlName="Commands"></textarea>
         <button>Speichern</button>
     </form>
