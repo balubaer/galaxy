@@ -59,7 +59,10 @@ export class GamePlayController {
         const turnPath = `${playName}/Turn${gamepref.round + 1}`;
         if (existsSync(turnPath) === true) {
             const commandFile = `${turnPath}/${request.playerName}.txt`;
-            commands = readFileSync(commandFile, 'utf8');
+
+            if (existsSync(commandFile) === true) {
+                commands = readFileSync(commandFile, 'utf8');                
+            }
         }
         return {
             player: request.playerName,
@@ -84,7 +87,6 @@ export class GamePlayController {
         }
         const turnDataGrafFile = `${playName}/Turn${gamepref.round}/${request.playerName}_graf.json`;
         const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
-
         const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
 
         const rawdata = readFileSync(`${playName}/Turn${gamepref.round}/worlds.json`, 'utf8');

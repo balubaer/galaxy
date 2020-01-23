@@ -45,6 +45,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder
   ) {
     this.currentUser = this.authenticationService.currentUserValue;
+    this.form = this.fb.group({
+      Commands: ['']
+    });
   }
 
   ngOnInit() {
@@ -54,22 +57,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     const playerCommands$: Observable<PlayerCommands> = this.gamePlayService.getCommand(request);
     playerCommands$.subscribe(aPlayerCommands => {
       this.turnCommandTxt = aPlayerCommands.commands;
-      console.log(`this.turnCommandTxt: ${this.turnCommandTxt}`);
+      this.form.get('Commands').setValue(aPlayerCommands.commands);
     })
-   /* this.subscriptions.add(aTurnCommanTxt$.subscribe(aTurnCommandTxt => {
-      this.turnCommandTxt = aTurnCommandTxt;
-      console.log(`this.turnCommandTxt: ${this.turnCommandTxt}`)
-    }));*/
 
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.gamePref$ = this.gamePrefService.getGamePref();
     this.playercolor$ = this.gamePlayService.getPlayerColor();
-
-    this.form = this.fb.group({
-      Commands: ['']
-    });
-    this.subscriptions.add(this.form.valueChanges.subscribe());
-    this.subscriptions.add(this.form.statusChanges.subscribe());
+    
+    this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
+    this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
     setTimeout(() => this.autoCenter = false, 500);
     this.gamePrefSubsription = this.gamePref$.subscribe(aGamePref => {
       this.round = aGamePref.round;
