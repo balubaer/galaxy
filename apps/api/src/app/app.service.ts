@@ -1,35 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { Message, User } from '@galaxy/api-interfaces';
-import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager, objToMap, GamePref} from '@galaxy/game-objects';
+import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager, objToMap, GamePref } from '@galaxy/game-objects';
 import { readFileSync, writeFileSync } from 'fs';
 import { Edge, Node } from '@swimlane/ngx-graph';
 
-const piVirtel: number = Math.PI/4;
+const piVirtel: number = Math.PI / 4;
 const radiusForFleet = 70;
 
 @Injectable()
 export class AppService {
-  colorPlayerMap: Map<string, string>;
   pos: number;
+  colorMap: Map<any, any>;
 
   constructor() {
-    const stringData = readFileSync('gamePref.json', 'utf8');
-    const gamepref: GamePref = JSON.parse(stringData);
-    const playerNameArray = gamepref.player;
     const colorData = readFileSync('color.json', 'utf8');
     const colors = JSON.parse(colorData);
-    const colorMap = objToMap(colors);
-    const usersData = readFileSync('user.json', 'utf8');
-    const users = JSON.parse(usersData);
-
-    this.colorPlayerMap = new Map();
-
-    for (const playerName of playerNameArray) {
-      const foundColor = this.findeUserColorWithUserName(playerName, users);
-      this.colorPlayerMap.set(playerName, colorMap.get(foundColor));
-    }
-    //this.colorMap.set('MARVIN', 'rgb(255, 164, 43)');
-    //this.colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+    this.colorMap = objToMap(colors);
   }
 
   findeUserColorWithUserName(userName: string, users: Array<User>): string {
@@ -91,13 +77,27 @@ export class AppService {
   }
 
   getColorPlayerMap(): Map<string, string> {
-    return this.colorPlayerMap;
+    const colorPlayerMap: Map<string, string> = new Map();
+    const usersData = readFileSync('user.json', 'utf8');
+    const users: Array<User> = JSON.parse(usersData);
+    const playerNameArray: Array<string> = new Array();
+
+    for (const user of users) {
+      playerNameArray.push(user.username);
+    }
+
+    for (const playerName of playerNameArray) {
+      const foundColor = this.findeUserColorWithUserName(playerName, users);
+      colorPlayerMap.set(playerName, this.colorMap.get(foundColor));
+    }
+    return colorPlayerMap;
   }
 
   getColorWithPlayer(player: Player): string {
     let result = 'lightgray';
+    const colorPlayerMap = this.getColorPlayerMap();
     if (player !== null) {
-      result = this.colorPlayerMap.get(player.playerName);
+      result = colorPlayerMap.get(player.playerName);
     }
     return result;
   }
@@ -117,7 +117,7 @@ export class AppService {
   getCircleY(radians: number, radius: number) {
     return Math.sin(radians) * radius;
   }
-  
+
   getXForFleet(): number {
     return this.getCircleX(piVirtel * this.pos, radiusForFleet);
   }

@@ -8,6 +8,8 @@ import { AlertService } from '../_services/alert.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable } from 'rxjs';
 import { GameServiceService } from '../game-service.service';
+import { PlayerColor } from '@galaxy/game-objects';
+import { GamePlayService } from '../player/game-play.service';
 
 @Component({
     selector: 'galaxy-register',
@@ -23,6 +25,7 @@ export class RegisterComponent implements OnInit {
     color = '';
     isColorHidden = true;
     isButtonHidden = true;
+    playercolor$: Observable<PlayerColor>;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -30,7 +33,8 @@ export class RegisterComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private userService: UserService,
         private alertService: AlertService,
-        private gameService: GameServiceService
+        private gameService: GameServiceService,
+        private gamePlayService: GamePlayService
     ) {
         // redirect to home if already logged in
         if (this.authenticationService.currentUserValue) {
@@ -46,6 +50,8 @@ export class RegisterComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(6)]]
         });
         this.colors$ = this.gameService.getColors();
+        this.playercolor$ = this.gamePlayService.getPlayerColor();
+
     }
 
     // convenience getter for easy access to form fields

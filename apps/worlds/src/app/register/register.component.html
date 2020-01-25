@@ -52,4 +52,20 @@
         </button>
         <a routerLink="/login" class="btn btn-link">Cancel</a>
     </div>
+    <div class="container2">
+        <table id="table2">
+            <tr id="tr2">
+                <td id="td2" *ngFor="let aPlayerColor of playercolor$| async">
+                    <svg class="world" width="80" height="80">
+                        <g transform="translate(40,40)">
+                            <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
+                            <text fill="rgb(0, 0, 0)"
+                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                                alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
+                        </g>
+                    </svg>
+                </td>
+            </tr>
+        </table>
+    </div>
 </form>

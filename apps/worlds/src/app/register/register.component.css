@@ -76,3 +76,21 @@ footer a:hover {
 .color-picker > div:hover {
     opacity: 1;
 }
+
+div.container2 {
+    width: 98%;
+    margin: 1%;
+  }
+  
+  table#table2 {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 500px;
+  }
+  
+  tr#tr2,
+  td#td2 {
+    text-align: center;
+    width: auto;
+  }
