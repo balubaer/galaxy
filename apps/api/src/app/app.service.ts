@@ -59,11 +59,29 @@ export class AppService {
     return stringArray;
   }
 
+  isColorInUsers(users: Array<User>, color: string): boolean {
+    let result = false;
+    for (const user of users) {
+      if (user.color === color) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  }
+
   getColors(): Map<string, string> {
-    const rawdata = readFileSync(`color.json`, 'utf8');
-    const ob = JSON.parse(rawdata);
-    const colorMap: Map<string, string> = objToMap(ob);
-    return colorMap;
+    const resultColorMap = new Map<string, string>();
+    const usersData = readFileSync('user.json', 'utf8');
+    const users: Array<User> = JSON.parse(usersData);
+
+    for (const key of this.colorMap.keys()) {
+      if (this.isColorInUsers(users, key) === false) {
+        resultColorMap.set(key, this.colorMap.get(key));
+      }
+    }
+
+    return resultColorMap;
   }
 
   getWorldStringList(): string[] {
