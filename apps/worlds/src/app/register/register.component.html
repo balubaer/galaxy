@@ -34,12 +34,14 @@
             <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
         </div>
     </div>
+    <h4 [hidden]="isPickerHidden">Bitte Farbe auswählen</h4>
     <button class="btn btn-default" (click)="showHideColorPicker()" [hidden]="isButtonHidden">Select color </button>
     <div class="color-picker" [hidden]="isPickerHidden">
         <div *ngFor="let color of colors$| async" [ngStyle]="{'background-color': color}" (click)="pickColor(color)">
         </div>
     </div>
-    <div class="color-picker" [hidden]="isColorHidden">
+    <h4 [hidden]="isColorHidden">Ausgewählte Farbe</h4>
+    <div class="color-picker2" [hidden]="isColorHidden">
         <div *ngIf="color" [ngStyle]="{'background-color': color}">
         </div>
     </div>
