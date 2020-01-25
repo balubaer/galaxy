@@ -23,8 +23,8 @@ export class GamePlayService {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayerAndRound', request);
   }
 
-  getPlayerColor(): Observable<PlayerColor> {
-    return this.http.get<PlayerColor>('/api/GetPlayerColor');
+  getPlayerColor(): Observable<Array<PlayerColor>> {
+    return this.http.get<Array<PlayerColor>>('/api/GetPlayerColor');
   }
 
   setCommands(request): Observable<Message> {

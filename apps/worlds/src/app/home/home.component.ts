@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   zoomToFit$: Subject<boolean> = new Subject();
   round: number;
   changeround: number;
-  playercolor$: Observable<PlayerColor>;
+  playercolor$: Observable<Array<PlayerColor>>;
 
   turnCommandTxt = '';
 

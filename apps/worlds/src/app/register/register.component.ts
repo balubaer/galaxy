@@ -25,7 +25,7 @@ export class RegisterComponent implements OnInit {
     color = '';
     isColorHidden = true;
     isButtonHidden = true;
-    playercolor$: Observable<PlayerColor>;
+    playercolor$: Observable<Array<PlayerColor>>;
 
     constructor(
         private formBuilder: FormBuilder,
