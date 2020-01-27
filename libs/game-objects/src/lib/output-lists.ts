@@ -13,8 +13,10 @@ export class OutPutLists {
     colorMap: Map<string, string>;
     fontColorMap: Map<string, string>;
 
-    constructor(gamePref: GamePref) {
+    constructor(gamePref: GamePref, colorMap: Map<string, string>, fontColorMap: Map<string, string>) {
         this.gamePref = gamePref;
+        this.colorMap = colorMap;
+        this.fontColorMap = fontColorMap;
     }
 
     generate(worldsPersist: WorldsPersist): Map<string, OutPutStringWithNodesAndLinksInterface> {

@@ -43,7 +43,7 @@
                                 [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
                                 <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor">
                                 </circle>
-                                <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
+                                <svg:text [attr.fill]="node.data?.fontColor" alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
 
                                 <circle [attr.r]="node.dimension.width/4" fill="black"
                                     [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
@@ -54,7 +54,7 @@
                                 <svg:g *ngFor="let fleet of node.data.fleets">
                                     <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
                                         [attr.cy]="fleet.y" rx="20" ry="10" />
-                                    <text fill="rgb(0, 0, 0)"
+                                    <text [attr.fill]="fleet.fontColor"
                                         font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
                                         alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
                                         [attr.y]="fleet.y">{{fleet.label}}</text>
@@ -110,14 +110,14 @@
                             <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
                                 fill="white">{{node.data.dships}}</text>>
 
-                            <text fill="rgb(0, 0, 0)"
+                            <text [attr.fill]="node.data?.fontColor"
                                 font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
                                 alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
 
                             <g *ngFor="let fleet of node.data.fleets">
                                 <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
                                     [attr.cy]="fleet.y" rx="30" ry="10" />
-                                <text fill="rgb(0, 0, 0)"
+                                <text [attr.fill]="fleet.fontColor"
                                     font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
                                     alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
                                     [attr.y]="fleet.y">{{fleet.label}}</text>
@@ -184,7 +184,7 @@
                     <svg class="world" width="80" height="80">
                         <g transform="translate(40,40)">
                             <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
-                            <text fill="rgb(0, 0, 0)"
+                            <text [attr.fill]="aPlayerColor.fontColor"
                                 font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
                                 alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
                         </g>

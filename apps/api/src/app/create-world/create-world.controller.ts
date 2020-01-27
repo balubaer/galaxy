@@ -20,7 +20,7 @@ export class CreateWorldController {
     for (const world of worldGen.worlds) {
       outString += `${world.description()}\n\n`;
     }
-    const outPutLists = new OutPutLists(gamepref);
+    const outPutLists = new OutPutLists(gamepref, this.appService.getColorPlayerMap(), this.appService.getFontColorPlayerMap());
     const output = outPutLists.generate(worldsPersist);
 
     for (const playerName of output.keys()) {
