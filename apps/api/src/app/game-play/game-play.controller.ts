@@ -145,7 +145,7 @@ export class GamePlayController {
     executeRound(): Message {
         const stringData = readFileSync('gamePref.json', 'utf8');
         const gamepref: GamePref = JSON.parse(stringData);
-        const executeCommand = new ExecuteCommand(gamepref, this.appService.getColorPlayerMap());
+        const executeCommand = new ExecuteCommand(gamepref, this.appService.getColorPlayerMap(), this.appService.getFontColorPlayerMap());
         const rawdata = readFileSync(`${gamepref.playName}/Turn${gamepref.round}/worlds.json`, 'utf8');
 
         gamepref.round++;

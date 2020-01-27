@@ -62,7 +62,7 @@
                     <svg class="world" width="80" height="80">
                         <g transform="translate(40,40)">
                             <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
-                            <text fill="rgb(0, 0, 0)"
+                            <text [attr.fill]="aPlayerColor.fontColor"
                                 font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
                                 alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
                         </g>

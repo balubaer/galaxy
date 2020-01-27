@@ -11,11 +11,16 @@ const radiusForFleet = 70;
 export class AppService {
   pos: number;
   colorMap: Map<any, any>;
+  fontColorMap: Map<any, any>;
 
   constructor() {
-    const colorData = readFileSync('color.json', 'utf8');
-    const colors = JSON.parse(colorData);
+    let colorData = readFileSync('color.json', 'utf8');
+    let colors = JSON.parse(colorData);
     this.colorMap = objToMap(colors);
+
+    colorData = readFileSync('fontColor.json', 'utf8');
+    colors = JSON.parse(colorData);
+    this.fontColorMap = objToMap(colors);
   }
 
   findeUserColorWithUserName(userName: string, users: Array<User>): string {
@@ -116,6 +121,32 @@ export class AppService {
     const colorPlayerMap = this.getColorPlayerMap();
     if (player !== null) {
       result = colorPlayerMap.get(player.playerName);
+    }
+    return result;
+  }
+
+  getFontColorPlayerMap(): Map<string, string> {
+    const fontColorPlayerMap: Map<string, string> = new Map();
+    const usersData = readFileSync('user.json', 'utf8');
+    const users: Array<User> = JSON.parse(usersData);
+    const playerNameArray: Array<string> = new Array();
+
+    for (const user of users) {
+      playerNameArray.push(user.username);
+    }
+
+    for (const playerName of playerNameArray) {
+      const foundColor = this.findeUserColorWithUserName(playerName, users);
+      fontColorPlayerMap.set(playerName, this.fontColorMap.get(foundColor));
+    }
+    return fontColorPlayerMap;
+  }
+
+  getFontColorWithPlayer(player: Player): string {
+    let result = 'rgba( 0, 0, 0, 1)';
+    const colorFontPlayerMap = this.getFontColorPlayerMap();
+    if (player !== null) {
+      result = colorFontPlayerMap.get(player.playerName);
     }
     return result;
   }

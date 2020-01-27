@@ -1,8 +1,5 @@
 import { GamePref } from './game-pref.interface';
 import { World } from './world';
-import { PortFactory } from './portfactory';
-import { FleetFactory } from './fleet-factory';
-import { PlayerFactory } from './player-factory';
 import { PersistenceManager } from './persistence-manager';
 import { WorldsPersist } from './worlds-persist.interface';
 import { Player, isWorldOutPutForPlayer } from './player';
@@ -14,6 +11,7 @@ export class OutPutLists {
     worlds: Array<World>;
     allPlayerDict: Map<string, Player>;
     colorMap: Map<string, string>;
+    fontColorMap: Map<string, string>;
 
     constructor(gamePref: GamePref) {
         this.gamePref = gamePref;
@@ -26,7 +24,7 @@ export class OutPutLists {
         this.allPlayerDict = pm.allPlayerDict;
 
         for (const playerName of this.allPlayerDict.keys()) {
-            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict, this. colorMap);
+            const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict, this.colorMap, this.fontColorMap);
             const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
 
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1}\n\n`;

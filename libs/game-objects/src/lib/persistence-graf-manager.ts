@@ -10,12 +10,14 @@ export class PersistenceGrafManager {
     worlds: Array<World>;
     allPlayerDict: Map<string, Player>;
     colorMap: Map<string, string>;
+    fontColorMap: Map<string, string>;
     pos: number;
 
-        constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>, colorMap: Map<string, string>) {
+        constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>, colorMap: Map<string, string>, fontColorMap: Map<string, string>) {
             this.worlds = worlds;
         this.allPlayerDict = allPlayerDict;
         this.colorMap = colorMap;
+        this.fontColorMap = fontColorMap;
     }
 
     getColorWithPlayer(player: Player): string {
@@ -23,6 +25,14 @@ export class PersistenceGrafManager {
         let result = 'lightgray';
         if (player !== null) {
             result = this.colorMap.get(player.playerName);
+        }
+        return result;
+    }
+
+    getFontColorWithPlayer(player: Player): string {
+        let result = 'rgb( 0, 0, 0, 1)';
+        if (player !== null) {
+            result = this.fontColorMap.get(player.playerName);
         }
         return result;
     }
@@ -61,7 +71,8 @@ export class PersistenceGrafManager {
                     x: this.getXForFleet(),
                     y: this.getYForFleet(),
                     backgroundColor: this.getColorWithPlayer(fleet.player),
-                    label: `F${fleet.number}=${fleet.ships}`
+                    label: `F${fleet.number}=${fleet.ships}`,
+                    fontColor: this.getFontColorWithPlayer(fleet.player)
                 }
             )
             this.nextPosForFleet();
@@ -84,7 +95,8 @@ export class PersistenceGrafManager {
                         data: {
                             dships: world.dShips,
                             backgroundColor: this.getColorWithPlayer(world.player),
-                            fleets: this.getFleetsWithWorld(world)
+                            fleets: this.getFleetsWithWorld(world),
+                            fontColor: this.getFontColorWithPlayer(world.player)
                         }
                     }
                 )

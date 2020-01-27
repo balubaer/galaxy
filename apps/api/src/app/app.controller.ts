@@ -80,11 +80,13 @@ export class AppController {
   @Get('GetPlayerColor')
   getPlayerColor(): Array<PlayerColor> {
     const colorPlayerMap: Map<string, string> = this.appService.getColorPlayerMap();
+    const fontColorMap: Map<string, string> = this.appService.getFontColorPlayerMap();
     const playercolors: Array<PlayerColor> = new Array();
     for (const key of colorPlayerMap.keys()) {
       playercolors.push({
         playername: key,
-        color: colorPlayerMap.get(key)
+        color: colorPlayerMap.get(key),
+        fontColor: fontColorMap.get(key)
       });
     }
     return playercolors;
