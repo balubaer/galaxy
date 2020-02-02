@@ -247,8 +247,8 @@ export class UnloadAllMetal extends Command implements ExecuteCommand {
                 isError = true;
             }
             if (isError === false) {
-            this.toHomeWorld.metal += this.fromFleet.metal;
-            this.fromFleet.metal = 0;
+                this.toHomeWorld.metal += this.fromFleet.metal;
+                this.fromFleet.metal = 0;
             }
         } else {
             isError = true;
@@ -268,7 +268,7 @@ export class JettisonAllMetal extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.player.playerName === this.fromFleet.player.playerName) {
             this.fromFleet.metal = 0;
-    
+
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
 
@@ -279,7 +279,7 @@ export class JettisonAllMetal extends Command implements ExecuteCommand {
 export class LoadAllMetal extends Command implements ExecuteCommand {
     toFleet: Fleet;
     fromHomeWorld: World;
-    freeStorage : number;
+    freeStorage: number;
 
     constructor(aToFleet: Fleet, aFromHomeWorld: World, aString: string, aPlayer: Player) {
         super(aString, aPlayer, TurnPhase.Transfer);
@@ -301,7 +301,7 @@ export class LoadAllMetal extends Command implements ExecuteCommand {
                 this.toFleet.metal += this.freeStorage;
                 this.fromHomeWorld.metal -= this.freeStorage;
             }
-        
+
         } else {
             //TODO: Fehler Flotte ist nicht vom Spieler
         }

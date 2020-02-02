@@ -199,6 +199,19 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "port": 9229
+    },
+    {
+      "name": "Debug Jest industry.spec Win",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/jest/bin/jest.js",
+        "--testPathPattern=industry.spec"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "port": 9229
     }
   ]
 }

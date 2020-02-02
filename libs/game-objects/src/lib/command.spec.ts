@@ -117,6 +117,14 @@ describe('UnloadAllMetal', () => {
   });
   it('test executeCommand', () => {
     const unloadAllMetal: UnloadAllMetal = createAUnloadAllMetal();
+    for (const world of worlds) {console.log ('world:' + world.name)
+      
+    }
+    for (let index = 0; index < worlds.length; index++) {
+      const element = worlds[index];
+      console.log ('worldMitIndex:' + element.name)
+      
+    }
 
     unloadAllMetal.executeCommand();
     expect(unloadAllMetal.fromFleet.metal).toBe(0);
