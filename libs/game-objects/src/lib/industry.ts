@@ -4,16 +4,29 @@ export const enum WhatsBuildEnum {
     SHIP,
     INDUSTRY
 }
+const NEEDEDMETALFORSHIP = 1;
+const NEEDEDMETALFORINDUSTRY = 5;
 export class Industry {
-    metal: number;
     fleet: Fleet;
     world: World;
     whatsBuild: WhatsBuildEnum;
-constructor(aMetal: number, aFleet: Fleet, aWorld: World, aWhatsBuildEnum: WhatsBuildEnum){
-    this.metal = aMetal;
-    this.fleet = aFleet
+constructor(aWorld: World){
     this.world = aWorld
-    this.whatsBuild = aWhatsBuildEnum
 }
-
+build(){
+if (this.whatsBuild === WhatsBuildEnum.SHIP) {
+    if (this.world.metal >= NEEDEDMETALFORSHIP) {
+        this.fleet.ships += NEEDEDMETALFORSHIP;
+        this.world.metal -= NEEDEDMETALFORSHIP;
+    }
+    
+}
+else if (this.whatsBuild === WhatsBuildEnum.INDUSTRY) {
+    if (this.world.metal >= NEEDEDMETALFORINDUSTRY) {
+        this.world.industry.push(new Industry(this.world));
+        this.world.metal -= NEEDEDMETALFORINDUSTRY;
+        
+    }
+  
+}}
 }

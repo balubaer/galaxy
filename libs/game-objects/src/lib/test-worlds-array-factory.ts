@@ -3,6 +3,7 @@ import { Fleet } from './fleet';
 import { Player } from './player';
 import { Port } from './port';
 import { FleetMovement } from './fleet-movement';
+import { Industry } from './industry';
 
 export class TestWorldsArrayFactory {
     worlds: Array<World> = new Array();
@@ -36,6 +37,7 @@ export class TestWorldsArrayFactory {
         world.dShipsFiredFleet.player = player;
         world.dShipsFiredFleet.number = 3;
         this.worlds.push(world);
+        
 
         world = new World();
         world.setNumber(4);
@@ -49,6 +51,8 @@ export class TestWorldsArrayFactory {
         world.fleets[1].ships = 5;
         world.fleets[1].number = 5;
         world.fleets[1].player = world.player;
+        world.metal = 6;
+        world.industry.push(new Industry(world));
 
         this.worlds.push(world);
 

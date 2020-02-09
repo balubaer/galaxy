@@ -9,6 +9,16 @@ const world: World = worlds[3];
 
 describe('Industry', () => {
   it('should create an instance', () => {
-    expect(new Industry(1, fleet, world, WhatsBuildEnum.SHIP)).toBeTruthy();
+    expect(new Industry(world)).toBeTruthy();
+  });
+  it('test buildship', () => {
+    const industry = world.industry[0];
+    industry.whatsBuild = WhatsBuildEnum.SHIP;
+    industry.fleet = fleet;
+    industry.build();
+    expect(world.metal).toBe(5);
+    expect(fleet.ships).toBe(5);
+    expect(world.industry.length).toBe(1);
   });
 });
+

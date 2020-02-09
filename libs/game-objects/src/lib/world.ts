@@ -4,6 +4,7 @@ import { Player } from './player';
 import { createBracketAndCommarStringWithStringArray } from './utils';
 import { FleetMovement } from './fleet-movement';
 import { NumberKey } from './number-key.interface';
+import { Industry } from './industry';
 
 export function worldWithNumber(worlds: Array<World>, number: number): World {
     let aResult: World = null;
@@ -28,6 +29,8 @@ export class World implements NumberKey {
     dShipsFired: boolean;
     dShipsFiredFleet: Fleet = null;
     metal: number;
+    industry: Array<Industry> = null;
+
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
@@ -41,6 +44,7 @@ export class World implements NumberKey {
         this.metal = 0;
         this.ambushOff = false;
         this.dShipsFired = false;
+        this.industry = new Array<Industry>();
     }
 
     setNumber(aNumber: number) {
