@@ -25,6 +25,10 @@ export class WorldListComponent implements OnInit, OnDestroy {
   autoZoom = true;
   autoCenter = true; 
 
+  draggingEnabled = false;
+  panningEnabled = false;
+  zoomEnabled = false;
+
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
   
@@ -88,5 +92,29 @@ export class WorldListComponent implements OnInit, OnDestroy {
       { "Name": "Roquefort", "Count": 1273 },
       { "Name": "Stewed Prunes", "Count": 1268 }]
     };
+  }
+
+  clickdragging() {
+    if (this.draggingEnabled === true) {
+      this.draggingEnabled = false;
+    } else {
+      this.draggingEnabled = true;
+    }
+  }
+
+  clickpanning() {
+    if (this.panningEnabled === true) {
+      this.panningEnabled = false;
+    } else {
+      this.panningEnabled = true;
+    }
+  }
+
+  clickzoom() {
+    if (this.zoomEnabled === true) {
+      this.zoomEnabled = false;
+    } else {
+      this.zoomEnabled = true;
+    }
   }
 }

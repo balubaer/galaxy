@@ -34,6 +34,18 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 	- isAmbushFleet
 	- checkOwnership
 	- ambush teammates
+* Game Verzeichnis erstellen bein Generieren der Welten
+	* Eventuell auch Turn 0 Verzeichnis erstellen
+
+* Es kommt zu einem Fehler wenn keine Befehlsdatei vorhanden ist
+
+Sternen Karten nur noch 3 Level anzeigen
+- Initial Heimatplanet aus Turn0
+- Eingabe felder für Planet und Level
+- Oder auf Klick
+
+Validierung der Befehle beim senden an Server
+
 
 
 

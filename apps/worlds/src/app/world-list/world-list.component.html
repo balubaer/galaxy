@@ -1,7 +1,7 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h2>World List</h2>
-<ngx-graph class="chart-container" [view]="[500, 500]" [links]="links" [nodes]="nodes" layout="d3ForceDirected"
-  [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$" [zoomToFit$]="zoomToFit$">
+<ngx-graph class="chart-container" [view]="[1000, 1000]" [links]="links" [nodes]="nodes" layout="d3ForceDirected"
+  [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$" [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]="zoomEnabled" [zoomToFit$]="zoomToFit$">
   <ng-template #nodeTemplate let-node>
     <svg:g class="node" (click)="onNodeSelected(node)"
       [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
@@ -25,7 +25,26 @@
 
   </ng-template>
 </ngx-graph>
-
+<div class="container">
+  <table id="table1">
+      <tr>
+          <td> Enable Dragging </td>
+          <td> Enable Panning </td>
+          <td> Enable Zoom </td>
+      </tr>
+      <tr>
+          <td>
+              <input type="checkbox" ng-model="draggingEnabled" (click)="clickdragging()">
+          </td>
+          <td>
+              <input type="checkbox" ng-model="panningEnabled" (click)="clickpanning()">
+          </td>
+          <td>
+              <input type="checkbox" ng-model="zoomEnabled" (click)="clickzoom()">
+          </td>
+      </tr>
+  </table>
+</div>
 <br />
 <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
