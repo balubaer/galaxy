@@ -16,6 +16,17 @@ export function worldWithNumber(worlds: Array<World>, number: number): World {
     return aResult;
 }
 
+export function worldWithName(worlds: Array<World>, name: string): World {
+    let aResult: World = null;
+    for (const aWorld of worlds) {
+        if (aWorld.name === name) {
+            aResult = aWorld;
+            break;
+        }
+    }
+    return aResult;
+}
+
 export class World implements NumberKey {
     number: number;
     name: string;

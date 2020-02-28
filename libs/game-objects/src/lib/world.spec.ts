@@ -1,4 +1,4 @@
-import { World, worldWithNumber } from './world';
+import { World, worldWithNumber, worldWithName } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 import { TESTRESOUCESPATH } from './utils';
 import { readFileSync, writeFileSync } from 'fs';
@@ -86,5 +86,15 @@ describe('World', () => {
 
     foundWorld = worldWithNumber(worlds, 3);
     expect(foundWorld).toBe(worlds[2]);
+  });
+  it('test funktion worldWithName', () => {
+    let foundWorld = null;
+
+    foundWorld = worldWithName(worlds, 'W100');
+    expect(foundWorld).toBe(null);
+
+    foundWorld = worldWithName(worlds, 'W1');
+    expect(foundWorld).toBe(worlds[0]);
+
   });
 });
