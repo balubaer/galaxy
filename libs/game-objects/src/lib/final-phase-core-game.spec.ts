@@ -16,11 +16,16 @@ const player = new Player(playerName);
 const playerDict = new Map();
 
 playerDict.set(playerName, player);
+const colorMap = new Map();
+const fontColorMap = new Map();
+
+colorMap.set('MARVIN', 'rgb(255, 164, 43)');
+colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
 
 function createWorldsForAmbush(): World[] {
   const stringData = readFileSync(`${TESTRESOUCESPATH}/TestAmbush/gamePref.json`, 'utf8');
   const gamepref: GamePref = JSON.parse(stringData);
-  const executeCommand = new ExecuteCommand(gamepref);
+  const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
   const rawdata = readFileSync(`${TESTRESOUCESPATH}/TestAmbush/worlds.json`, 'utf8');
   const worldsPersist: WorldsPersist = JSON.parse(rawdata);
   const commands = readFileSync(`${TESTRESOUCESPATH}/TestAmbush/MARVIN.txt`, 'utf8');

@@ -3,30 +3,32 @@ import { Player } from './player';
 import { World, TestWorldsArrayFactory, GamePref, ExecuteCommand, WorldsPersist } from '..';
 import { Fleet } from './fleet';
 import { readFileSync } from 'fs';
-import { TESTRESOUCESPATH } from './utils';
-
-const command = new Command('F1W2', new Player('ZAPHOD'), TurnPhase.Movement);
-const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
-const world4 = worlds[3];
-const world2 = worlds[1];
-const fleet4: Fleet = world4.fleets[0];
-const player = world4.player;
-const moveWorldArray = new Array();
-moveWorldArray.push(world2);
-const moveCommand: MoveCommand = new MoveCommand(fleet4, world4, moveWorldArray, 'F4W2', player);
-const command_a = new Command('', player, TurnPhase.Movement);
-const command_b = new Command('', player, TurnPhase.Movement);
-const command_c = new Command('', player, TurnPhase.Initial);
-const command_d = new Command('', player, TurnPhase.Final);
-const command_e = new Command('', player, TurnPhase.Combat);
-const command_f = new Command('', player, TurnPhase.Transfer);
-
-const colorMap = new Map();
-
-colorMap.set('MARVIN', 'rgb(255, 164, 43)');
-colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
+import { TESTRESOUCESPATH, objToMap } from './utils';
 
 describe('Command', () => {
+  let command: Command;
+
+  let command_a: Command;
+  let command_b: Command;
+  let command_c: Command;
+  let command_d: Command;
+  let command_e: Command;
+  let command_f: Command;
+
+  beforeAll(async () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    const player = worlds[3].player;
+
+    command = new Command('F1W2', new Player('ZAPHOD'), TurnPhase.Movement);
+
+    command_a = new Command('', player, TurnPhase.Movement);
+    command_b = new Command('', player, TurnPhase.Movement);
+    command_c = new Command('', player, TurnPhase.Initial);
+    command_d = new Command('', player, TurnPhase.Final);
+    command_e = new Command('', player, TurnPhase.Combat);
+    command_f = new Command('', player, TurnPhase.Transfer);
+  });
+
   it('should create an instance', () => {
     expect(command).toBeTruthy();
   });
@@ -52,6 +54,25 @@ describe('Command', () => {
 });
 
 describe('MoveCommand', () => {
+  let worlds: Array<World>;
+  let world4: World;
+  let world2: World;
+  let fleet4: Fleet;
+  let player: Player;
+  let moveWorldArray: Array<World>;
+  let moveCommand: MoveCommand;
+
+  beforeAll(async () => {
+    worlds = new TestWorldsArrayFactory().worlds;
+
+    world4 = worlds[3];
+    world2 = worlds[1];
+    fleet4 = world4.fleets[0];
+    player = world4.player;
+    moveWorldArray = new Array();
+    moveWorldArray.push(world2);
+    moveCommand = new MoveCommand(fleet4, world4, moveWorldArray, 'F4W2', player);
+  });
   it('should create an instance', () => {
     expect(moveCommand).toBeTruthy();
   });
@@ -63,99 +84,110 @@ describe('MoveCommand', () => {
   });
 });
 
-function createATransferShipsFleetToFleet(): TransferShipsFleetToFleet {
-  const fleet42 = new Fleet();
-  const fleet43 = new Fleet();
-  const world42 = new World();
-
-  fleet42.number = 42;
-  fleet42.ships = 5;
-  fleet42.player = player;
-
-  fleet43.number = 43;
-  fleet43.ships = 0;
-  fleet43.player = player;
-
-  world42.fleets.push(fleet42, fleet43);
-
-  const transferShipsFleetToFleet: TransferShipsFleetToFleet = new TransferShipsFleetToFleet(fleet42, fleet43, world42, world42, 3, 'F42T3F43', player);
-  return transferShipsFleetToFleet;
-}
-
 describe('TransferShipsFleetToFleet', () => {
-  it('should create an instance', () => {
+  let transferShipsFleetToFleet: TransferShipsFleetToFleet;
+  let player: Player;
 
-    const transferShipsFleetToFleet: TransferShipsFleetToFleet = createATransferShipsFleetToFleet();
+  beforeAll(async () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    player = worlds[3].player;
+  });
+
+  beforeEach(async () => {
+    const fleet42 = new Fleet();
+    const fleet43 = new Fleet();
+    const world42 = new World();
+
+    fleet42.number = 42;
+    fleet42.ships = 5;
+    fleet42.player = player;
+
+    fleet43.number = 43;
+    fleet43.ships = 0;
+    fleet43.player = player;
+
+    world42.fleets.push(fleet42, fleet43);
+
+    transferShipsFleetToFleet = new TransferShipsFleetToFleet(fleet42, fleet43, world42, world42, 3, 'F42T3F43', player);
+  });
+
+  it('should create an instance', () => {
     expect(transferShipsFleetToFleet).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const transferShipsFleetToFleet: TransferShipsFleetToFleet = createATransferShipsFleetToFleet();
-
     transferShipsFleetToFleet.executeCommand();
     expect(transferShipsFleetToFleet.fromFleet.ships).toBe(2);
     expect(transferShipsFleetToFleet.toFleet.ships).toBe(3);
   });
 });
 
-function createATransferShipsFleetToDShips(): TransferShipsFleetToDShips {
-  const fleet42 = new Fleet();
-  const world42 = new World();
-
-  fleet42.number = 42;
-  fleet42.ships = 5;
-  fleet42.player = player;
-
-  world42.fleets.push(fleet42);
-
-  const transferShipsFleetToDShips: TransferShipsFleetToDShips = new TransferShipsFleetToDShips(fleet42, world42, 3, 'F42T3D', player);
-  return transferShipsFleetToDShips;
-}
-
 describe('TransferShipsFleetToDShips', () => {
+  let transferShipsFleetToDShips: TransferShipsFleetToDShips;
+  let player: Player;
+
+  beforeAll(async () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    player = worlds[3].player;
+  });
+
+  beforeEach(async () => {
+    const fleet42 = new Fleet();
+    const world42 = new World();
+
+    fleet42.number = 42;
+    fleet42.ships = 5;
+    fleet42.player = player;
+
+    world42.fleets.push(fleet42);
+
+    transferShipsFleetToDShips = new TransferShipsFleetToDShips(fleet42, world42, 3, 'F42T3D', player);
+  });
+
   it('should create an instance', () => {
-    const transferShipsFleetToDShips: TransferShipsFleetToDShips = createATransferShipsFleetToDShips();
     expect(transferShipsFleetToDShips).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const transferShipsFleetToDShips: TransferShipsFleetToDShips = createATransferShipsFleetToDShips();
-
     transferShipsFleetToDShips.executeCommand();
     expect(transferShipsFleetToDShips.fromFleet.ships).toBe(2);
     expect(transferShipsFleetToDShips.fromHomeWorld.dShips).toBe(3);
   });
 });
 
-function createATransferDShipsToFleet(): TransferDShipsToFleet {
-  const fleet42 = new Fleet();
-  const world42 = new World();
-
-  fleet42.number = 42;
-  fleet42.ships = 1;
-  fleet42.player = player;
-
-  world42.fleets.push(fleet42);
-  world42.dShips = 4;
-  world42.player = player;
-
-  const transferDShipsToFleet: TransferDShipsToFleet = new TransferDShipsToFleet(fleet42, world42, world42, 2, 'D42T2F42', player);
-  return transferDShipsToFleet;
-}
-
 describe('TransferDShipsToFleet', () => {
+  let transferDShipsToFleet: TransferDShipsToFleet
+  let player: Player;
+
+  beforeAll(async () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    player = worlds[3].player;
+  });
+
+  beforeEach(async () => {
+    const fleet42 = new Fleet();
+    const world42 = new World();
+
+    fleet42.number = 42;
+    fleet42.ships = 1;
+    fleet42.player = player;
+
+    world42.fleets.push(fleet42);
+    world42.dShips = 4;
+    world42.player = player;
+
+    transferDShipsToFleet = new TransferDShipsToFleet(fleet42, world42, world42, 2, 'D42T2F42', player);
+  });
+
   it('should create an instance', () => {
-    const transferDShipsToFleet: TransferDShipsToFleet = createATransferDShipsToFleet();
     expect(transferDShipsToFleet).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const transferDShipsToFleet: TransferDShipsToFleet = createATransferDShipsToFleet();
-
     transferDShipsToFleet.executeCommand();
     expect(transferDShipsToFleet.toFleet.ships).toBe(3);
     expect(transferDShipsToFleet.fromHomeWorld.dShips).toBe(2);
   });
 });
 
-function createAFireFleetToFleet(): FireFleetToFleet {
+function createFleet42Fleet43World42PlayerZaphod(): any {
   const playerZaphod = new Player('ZAPHOD');
   const playerMarvin = new Player('MARVIN');
 
@@ -175,19 +207,26 @@ function createAFireFleetToFleet(): FireFleetToFleet {
   world42.fleets.push(fleet43);
   world42.dShips = 4;
   world42.player = playerZaphod;
-
-  const fireFleetToFleet: FireFleetToFleet = new FireFleetToFleet(fleet42, fleet43, world42, world42, 'F42AF43', playerZaphod);
-  return fireFleetToFleet;
+  return {
+    fleet42: fleet42,
+    fleet43: fleet43,
+    world42: world42,
+    playerZaphod: playerZaphod
+  }
 }
 
 describe('FireFleetToFleet', () => {
+  let fireFleetToFleet: FireFleetToFleet;
+
+  beforeEach(async () => {
+    const testObject = createFleet42Fleet43World42PlayerZaphod();
+    fireFleetToFleet = new FireFleetToFleet(testObject.fleet42, testObject.fleet43, testObject.world42, testObject.world42, 'F42AF43', testObject.playerZaphod);
+  });
+
   it('should create an instance', () => {
-    const fireFleetToFleet: FireFleetToFleet = createAFireFleetToFleet();
     expect(fireFleetToFleet).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const fireFleetToFleet: FireFleetToFleet = createAFireFleetToFleet();
-
     fireFleetToFleet.executeCommand();
     expect(fireFleetToFleet.toFleet.hitedShots).toBe(4);
     expect(fireFleetToFleet.fromFleet.fired).toBeTruthy();
@@ -196,39 +235,17 @@ describe('FireFleetToFleet', () => {
   });
 });
 
-function createAfireDShipsToFleet(): FireDShipsToFleet {
-  const playerZaphod = new Player('ZAPHOD');
-  const playerMarvin = new Player('MARVIN');
-
-  const fleet42 = new Fleet();
-  const fleet43 = new Fleet();
-  const world42 = new World();
-
-  fleet42.number = 42;
-  fleet42.ships = 4;
-  fleet42.player = playerZaphod;
-
-  fleet43.number = 43;
-  fleet43.ships = 1;
-  fleet43.player = playerMarvin;
-
-  world42.fleets.push(fleet42);
-  world42.fleets.push(fleet43);
-  world42.dShips = 4;
-  world42.player = playerZaphod;
-
-  const fireDShipsToFleet: FireDShipsToFleet = new FireDShipsToFleet(fleet43, world42, world42, 'D42AF43', playerZaphod);
-  return fireDShipsToFleet;
-}
-
 describe('FireDShipsToFleet', () => {
+  let fireDShipsToFleet: FireDShipsToFleet;
+  beforeEach(async () => {
+    const testObject = createFleet42Fleet43World42PlayerZaphod();
+    fireDShipsToFleet = new FireDShipsToFleet(testObject.fleet43, testObject.world42, testObject.world42, 'D42AF43', testObject.playerZaphod);
+  });
+
   it('should create an instance', () => {
-    const fireDShipsToFleet: FireDShipsToFleet = createAfireDShipsToFleet();
     expect(fireDShipsToFleet).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const fireDShipsToFleet: FireDShipsToFleet = createAfireDShipsToFleet();
-
     fireDShipsToFleet.executeCommand();
     expect(fireDShipsToFleet.toFleet.hitedShots).toBe(4);
     expect(fireDShipsToFleet.fromHomeWorld.dShipsFired).toBeTruthy();
@@ -256,13 +273,29 @@ function createAFireFleetToDShips(): FireFleetToDShips {
 }
 
 describe('FireFleetToDShips', () => {
+  let fireFleetToDShips: FireFleetToDShips
+  beforeEach(async () => {
+    const playerZaphod = new Player('ZAPHOD');
+    const playerMarvin = new Player('MARVIN');
+
+    const fleet43 = new Fleet();
+    const world42 = new World();
+
+    fleet43.number = 43;
+    fleet43.ships = 5;
+    fleet43.player = playerMarvin;
+
+    world42.fleets.push(fleet43);
+    world42.dShips = 4;
+    world42.player = playerZaphod;
+
+    fireFleetToDShips = new FireFleetToDShips(fleet43, world42, 'F43AD', playerMarvin);
+  });
+
   it('should create an instance', () => {
-    const fireFleetToDShips: FireFleetToDShips = createAFireFleetToDShips();
     expect(fireFleetToDShips).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const fireFleetToDShips: FireFleetToDShips = createAFireFleetToDShips();
-
     fireFleetToDShips.executeCommand();
     expect(fireFleetToDShips.fromHomeWorld.hitedShotsDShips).toBe(5);
     expect(fireFleetToDShips.fromFleet.fired).toBeTruthy();
@@ -271,77 +304,88 @@ describe('FireFleetToDShips', () => {
   });
 });
 
-function createAnAmbushOffForWorld(): AmbushOffForWorld {
-  const playerZaphod = new Player('ZAPHOD');
-
-  const world42 = new World();
-
-  world42.dShips = 4;
-  world42.player = playerZaphod;
-
-  const ambushOffForWorld: AmbushOffForWorld = new AmbushOffForWorld(world42, 'F43AD', playerZaphod);
-  return ambushOffForWorld;
-}
-
 describe('AmbushOffForWorld', () => {
+  let ambushOffForWorld: AmbushOffForWorld
+  beforeEach(async () => {
+    const playerZaphod = new Player('ZAPHOD');
+    const playerMarvin = new Player('MARVIN');
+
+    const fleet43 = new Fleet();
+    const world42 = new World();
+
+    fleet43.number = 43;
+    fleet43.ships = 5;
+    fleet43.player = playerMarvin;
+
+    world42.fleets.push(fleet43);
+    world42.dShips = 4;
+    world42.player = playerZaphod;
+
+    ambushOffForWorld = new AmbushOffForWorld(world42, 'F43AD', playerZaphod);
+  });
   it('should create an instance', () => {
-    const ambushOffForWorld: AmbushOffForWorld = createAnAmbushOffForWorld();
     expect(ambushOffForWorld).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const ambushOffForWorld: AmbushOffForWorld = createAnAmbushOffForWorld();
 
     ambushOffForWorld.executeCommand();
     expect(ambushOffForWorld.world.ambushOff).toBeTruthy();
   });
 });
 
-function createAnAmbushOffForPlayer(): AmbushOffForPlayer {
-  const ambushOffForWorld: AmbushOffForPlayer = new AmbushOffForPlayer(worlds, 'Z', worlds[3].player);
-  return ambushOffForWorld;
-}
-
 describe('AmbushOffForPlayer', () => {
+  let ambushOffForPlayer: AmbushOffForPlayer;
+  let worlds: Array<World>;
+
+  beforeAll(async () => {
+    worlds = new TestWorldsArrayFactory().worlds;
+  });
+
+  beforeEach(async () => {
+    ambushOffForPlayer = new AmbushOffForPlayer(worlds, 'Z', worlds[3].player);
+  });
   it('should create an instance', () => {
-    const ambushOffForPlayer: AmbushOffForPlayer = createAnAmbushOffForPlayer();
     expect(ambushOffForPlayer).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const ambushOffForPlayer: AmbushOffForPlayer = createAnAmbushOffForPlayer();
-
     ambushOffForPlayer.executeCommand();
     expect(ambushOffForPlayer.worlds[3].ambushOff).toBeTruthy();
   });
 });
 
-function createAnAddTeammateAndRemoveTeammate() {
-  const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
-  const gamepref: GamePref = JSON.parse(stringData);
-  const executeCommand = new ExecuteCommand(gamepref, colorMap);
-  const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
-  const worldsPersist: WorldsPersist = JSON.parse(rawdata);
-  executeCommand.createEnvironment(worldsPersist);
-  const addTeammate: AddTeammate = new AddTeammate(executeCommand.allPlayerDict, 'A=MARVIN', executeCommand.allPlayerDict.get('ZAPHOD'));
-  const removeTeammate: RemoveTeammate = new RemoveTeammate(executeCommand.allPlayerDict, 'N=MARVIN', executeCommand.allPlayerDict.get('ZAPHOD'));
-  return {
-    addTeammate: addTeammate,
-    removeTeammate: removeTeammate
-  };
-}
-
 describe('AddTeammate and RemoveTeammate', () => {
+  let addTeammateAndRemoveTeammate: any;
+  beforeEach(async () => {
+    let colorData = readFileSync(`${TESTRESOUCESPATH}/color.json`, 'utf8');
+    let colors = JSON.parse(colorData);
+    const colorMap = objToMap(colors);
+
+    colorData = readFileSync(`${TESTRESOUCESPATH}/fontColor.json`, 'utf8');
+    colors = JSON.parse(colorData);
+    const fontColorMap = objToMap(colors);
+    const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
+    const gamepref: GamePref = JSON.parse(stringData);
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
+
+    const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
+    const worldsPersist: WorldsPersist = JSON.parse(rawdata);
+    executeCommand.createEnvironment(worldsPersist);
+    const addTeammate: AddTeammate = new AddTeammate(executeCommand.allPlayerDict, 'A=MARVIN', executeCommand.allPlayerDict.get('ZAPHOD'));
+    const removeTeammate: RemoveTeammate = new RemoveTeammate(executeCommand.allPlayerDict, 'N=MARVIN', executeCommand.allPlayerDict.get('ZAPHOD'));
+    addTeammateAndRemoveTeammate = {
+      addTeammate: addTeammate,
+      removeTeammate: removeTeammate
+    };
+  });
   it('should create an instance AddTeammate', () => {
-    const addTeammateAndRemoveTeammate = createAnAddTeammateAndRemoveTeammate();
     const addTeammate: AddTeammate = addTeammateAndRemoveTeammate.addTeammate;
     expect(addTeammate).toBeTruthy();
   });
   it('should create an instance RemoveTeammate', () => {
-    const addTeammateAndRemoveTeammate = createAnAddTeammateAndRemoveTeammate();
     const removeTeammate: RemoveTeammate = addTeammateAndRemoveTeammate.removeTeammate;
     expect(removeTeammate).toBeTruthy();
   });
   it('test executeCommand', () => {
-    const addTeammateAndRemoveTeammate = createAnAddTeammateAndRemoveTeammate();
     const addTeammate: AddTeammate = addTeammateAndRemoveTeammate.addTeammate;
     const removeTeammate: RemoveTeammate = addTeammateAndRemoveTeammate.removeTeammate;
 

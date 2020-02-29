@@ -7,16 +7,17 @@ import { WorldsPersist } from './worlds-persist.interface';
 const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
 const gamepref: GamePref = JSON.parse(stringData);
 const colorMap = new Map();
+const fontColorMap = new Map();
 
 colorMap.set('MARVIN', 'rgb(255, 164, 43)');
 colorMap.set('ZAPHOD', 'rgb(45, 134, 202)');
 
 describe('ExecuteCommand', () => {
   it('should create an instance', () => {
-    expect(new ExecuteCommand(gamepref, colorMap)).toBeTruthy();
+    expect(new ExecuteCommand(gamepref, colorMap, fontColorMap)).toBeTruthy();
   });
   it('test createEnvironment', () => {
-    const executeCommand = new ExecuteCommand(gamepref, colorMap);
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
     const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     executeCommand.createEnvironment(worldsPersist);
@@ -56,7 +57,7 @@ describe('ExecuteCommand', () => {
     const commandsDict = new Map();
     commandsDict.set('ZAPHOD', 'F4W2');
     commandsDict.set('MARVIN', '');
-    const executeCommand = new ExecuteCommand(gamepref, colorMap);
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
     const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     executeCommand.createEnvironment(worldsPersist);
@@ -71,7 +72,7 @@ describe('ExecuteCommand', () => {
     const commandsDict = new Map();
     commandsDict.set('ZAPHOD', 'F4W2 D4T2F2 F5W3');
     commandsDict.set('MARVIN', '');
-    const executeCommand = new ExecuteCommand(gamepref, colorMap);
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
     const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     executeCommand.createEnvironment(worldsPersist);
@@ -89,7 +90,7 @@ describe('ExecuteCommand', () => {
     const commandsDict = new Map();
     commandsDict.set('ZAPHOD', 'F4W2 D4T2F2 F5W3');
     commandsDict.set('MARVIN', '');
-    const executeCommand = new ExecuteCommand(gamepref, colorMap);
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
     const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
     const worldsPersist: WorldsPersist = JSON.parse(rawdata);
     executeCommand.createEnvironment(worldsPersist);
