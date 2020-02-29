@@ -1,0 +1,14 @@
+Infos zu Spieler: ZAPHOD Runde: 2 
+Punkte: NaN | Welten: 3 | Flotten: 3 | Schiffe auf Flotten: 10 | D-Schiffe: 1
+Verbündete: ()
+
+W1(7,8,6) [ZAPHOD]
+   F1[ZAPHOD] = 0
+   F9[ZAPHOD] = 5
+
+W6(7,1,4,3) [ZAPHOD]
+   F3[ZAPHOD] = 5
+
+W7(6,1,2) [ZAPHOD] (D-Schiffe=1)
+   (F3[ZAPHOD]-->W6 F9[ZAPHOD]-->W1 )
+

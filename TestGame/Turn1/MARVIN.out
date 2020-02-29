@@ -1,0 +1,14 @@
+Infos zu Spieler: MARVIN Runde: 2 
+Punkte: NaN | Welten: 3 | Flotten: 3 | Schiffe auf Flotten: 10 | D-Schiffe: 1
+Verbündete: ()
+
+W4(10,6,3) [MARVIN]
+   F8[MARVIN] = 5
+
+W8(9,1,10) [MARVIN]
+   F4[MARVIN] = 0
+   F5[MARVIN] = 5
+
+W10(4,8,3) [MARVIN] (D-Schiffe=1)
+   (F8[MARVIN]-->W4 F5[MARVIN]-->W8 )
+

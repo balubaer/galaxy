@@ -1,15 +1,35 @@
 import { WorldGenerator } from './world-generator';
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
 import { GamePref } from './game-pref.interface';
-import { TESTRESOUCESPATH } from './utils';
+import { TESTRESOUCESPATH, objToMap } from './utils';
 import { WorldsPersist } from './worlds-persist.interface';
 import { OutPutLists } from './output-lists';
 import { OutPutStringWithNodesAndLinksInterface } from './out-put-string-with-nodes-and-links.interface';
 
-const stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
-const gamepref: GamePref = JSON.parse(stringData);
 
 describe('WorldGenerator', () => {
+  let stringData: string;
+  let gamepref: GamePref;
+  let colorMap: Map<any, any>;
+  let fontColorMap: Map<any, any>;
+
+
+  // declare var beforeAll: jest.Lifecycle;
+  //declare var beforeEach: jest.Lifecycle;
+
+  beforeAll(async () => {
+    stringData = readFileSync(`${TESTRESOUCESPATH}/gamePref.json`, 'utf8');
+    gamepref = JSON.parse(stringData);
+
+    let colorData = readFileSync(`${TESTRESOUCESPATH}/color.json`, 'utf8');
+    let colors = JSON.parse(colorData);
+    colorMap = objToMap(colors);
+
+    colorData = readFileSync(`${TESTRESOUCESPATH}/fontColor.json`, 'utf8');
+    colors = JSON.parse(colorData);
+    fontColorMap = objToMap(colors);
+  });
+
   it('should create an instance', () => {
     expect(new WorldGenerator(gamepref)).toBeTruthy();
   });
@@ -22,9 +42,9 @@ describe('WorldGenerator', () => {
       outString += `${world.description()}\n\n`;
     }
 
-    const outPutLists = new OutPutLists(gamepref);
+    const outPutLists = new OutPutLists(gamepref, colorMap, fontColorMap);
     const output = outPutLists.generate(worldsPersist);
-   
+
     if (existsSync(gamepref.playName)) {
       console.log('gamepref.playName: ' + gamepref.playName + 'vorhanden');
     } else {
