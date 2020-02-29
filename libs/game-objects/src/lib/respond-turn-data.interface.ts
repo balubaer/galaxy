@@ -6,4 +6,5 @@ export interface RespondTurnData {
     turnCommanTxt: string;
     links: Edge[];
     nodes: Node[];
+    homeWorldName: string;
 }

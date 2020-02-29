@@ -8,15 +8,18 @@
 }
 
 div.container-chart {
-  width: 500px;
-  height: 500px;
+  width: 750px;
+  height: 750px;
 }
 
 div.container {
-  width: 500px;
+  width: 750px;
 }
 table#table1 {
-  width: 500px;
+  width: 750px;
+  text-align:center; 
+    margin-left:auto; 
+    margin-right:auto;
 }
 tr,
 td {
@@ -32,7 +35,7 @@ table#table2 {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
-  width: 500px;
+  width: 750px;
 }
 
 tr#tr2,

@@ -1,14 +1,6 @@
 ﻿<div class="container">
     <table id="table1">
         <tr>
-            <h1>Hi {{currentUser.username}}, </h1>
-        </tr>
-    </table>
-</div>
-<div class="container">
-    <table id="table1">
-        <tr>
-            <h2>du bist in Runde "{{round + 1}}"</h2>
             <h3>Runden ändern und es wird Runde: {{changeround + 1}} angezeigt</h3>
         </tr>
     </table>
@@ -16,8 +8,10 @@
 <div class="container">
     <table id="table1">
         <tr>
-            <button [hidden] = "ishiddenPrevButton" mat-stroked-button color="primary" class="button" (click)="pressPrevRound()">&lt;--</button>
-            <button [hidden] = "ishiddenNextButton" mat-stroked-button color="primary" class="button" (click)="pressNextRound()">--&gt;</button>
+            <button [hidden]="ishiddenPrevButton" mat-stroked-button color="primary" class="button"
+                (click)="pressPrevRound()">&lt;--</button>
+            <button [hidden]="ishiddenNextButton" mat-stroked-button color="primary" class="button"
+                (click)="pressNextRound()">--&gt;</button>
         </tr>
     </table>
 </div>
@@ -34,16 +28,17 @@
         <table id="table1">
             <tr>
                 <div class="container-chart">
-                    <ngx-graph class="chart-container" [view]="[500, 500]" [links]=turnData.links [nodes]=turnData.nodes
+                    <ngx-graph class="chart-container" [view]="[750, 750]" [links]=turnData.links [nodes]=turnData.nodes
                         layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
-                        [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]="zoomEnabled"
+                        [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]=false
                         [zoomToFit$]="zoomToFit$">
                         <ng-template #nodeTemplate let-node>
                             <svg:g class="node" (click)="onNodeSelected(node)"
                                 [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
                                 <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor">
                                 </circle>
-                                <svg:text [attr.fill]="node.data?.fontColor" alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
+                                <svg:text [attr.fill]="node.data?.fontColor" alignment-baseline="central"
+                                    text-anchor="middle">{{node.label}}</svg:text>
 
                                 <circle [attr.r]="node.dimension.width/4" fill="black"
                                     [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
@@ -72,17 +67,13 @@
             <tr>
                 <td> Enable Dragging </td>
                 <td> Enable Panning </td>
-                <td> Enable Zoom </td>
             </tr>
             <tr>
                 <td>
-                    <input type="checkbox" ng-model="draggingEnabled" (click)="clickdragging()">
+                    <input type="checkbox" [checked]="draggingEnabled" (change)="draggingEnabled = !draggingEnabled" />
                 </td>
                 <td>
-                    <input type="checkbox" ng-model="panningEnabled" (click)="clickpanning()">
-                </td>
-                <td>
-                    <input type="checkbox" ng-model="zoomEnabled" (click)="clickzoom()">
+                    <input type="checkbox" [checked]="panningEnabled" (change)="panningEnabled = !panningEnabled" />
                 </td>
             </tr>
         </table>
@@ -91,6 +82,7 @@
     <div class="container">
         <table id="table1">
             <tr>
+                <button mat-stroked-button color="primary" class="button" (click)="pressViewHomeWorld()">View Homeworld</button>
                 <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
                 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to
                     fit</button>
@@ -177,6 +169,13 @@
         </table>
     </div>
     <br />
+    <div class="container">
+        <table id="table1">
+            <tr>
+                <h2>Hi {{currentUser.username}},du bist in Runde "{{round + 1}}"</h2>
+            </tr>
+        </table>
+    </div>
     <div class="container2">
         <table id="table2">
             <tr id="tr2">

@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   subscriptionsTurnData: Subscription = null;
   gamePref$: Observable<GamePref>;
   gamePrefSubsription: Subscription = null;
+  homeWorldName: string;
 
   public node: Node;
   autoZoom = true;
@@ -29,7 +30,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   draggingEnabled = false;
   panningEnabled = false;
-  zoomEnabled = false;
 
   center$: Subject<boolean> = new Subject();
   zoomToFit$: Subject<boolean> = new Subject();
@@ -66,6 +66,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
 
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
+    this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
+      this.homeWorldName = aTurnData.homeWorldName;
+    });
+
     this.gamePref$ = this.gamePrefService.getGamePref();
     this.playercolor$ = this.gamePlayService.getPlayerColor();
 
@@ -92,6 +96,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   onNodeSelected(aNode) {
     this.node = aNode;
+    if (this.draggingEnabled === false && this.panningEnabled === false) {
+      this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
+    }
   }
 
   ngOnDestroy(): void {
@@ -105,13 +112,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     const request: RequestTurnDataOnlyPlayerAndRound = {
       playerName: this.currentUser.username,
-      round: this.changeround
+      round: this.changeround,
+      worldName: this.homeWorldName
     }
     this.autoCenter = true;
 
     if (this.subscriptionsTurnData !== null) {
-        this.subscriptionsTurnData.unsubscribe();
-        this.subscriptionsTurnData = null;
+      this.subscriptionsTurnData.unsubscribe();
+      this.subscriptionsTurnData = null;
     }
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
     this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
@@ -120,6 +128,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
       }
     });
+    setTimeout(() => this.autoCenter = false, 500);
+  }
+
+  readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string) {
+    if (this.gamePrefSubsription !== null) {
+      this.gamePrefSubsription.unsubscribe();
+      this.gamePrefSubsription = null;
+    }
+    const request: RequestTurnDataOnlyPlayerAndRound = {
+      playerName: this.currentUser.username,
+      round: this.changeround,
+      worldName: aWorldName
+    }
+    this.autoCenter = true;
+
+    this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
     setTimeout(() => this.autoCenter = false, 500);
   }
 
@@ -149,27 +173,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  clickdragging() {
-    if (this.draggingEnabled === true) {
-      this.draggingEnabled = false;
-    } else {
-      this.draggingEnabled = true;
-    }
-  }
-
-  clickpanning() {
-    if (this.panningEnabled === true) {
-      this.panningEnabled = false;
-    } else {
-      this.panningEnabled = true;
-    }
-  }
-
-  clickzoom() {
-    if (this.zoomEnabled === true) {
-      this.zoomEnabled = false;
-    } else {
-      this.zoomEnabled = true;
-    }
+  pressViewHomeWorld() {
+    this.readNewTurnDataWithRound(this.changeround);
   }
 }

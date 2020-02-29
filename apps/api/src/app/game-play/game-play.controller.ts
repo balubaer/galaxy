@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Query, Post } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
-import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks, PersistenceManager, World, RequestTurnDataOnlyPlayerAndRound } from '@galaxy/game-objects';
+import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks, PersistenceManager, World, RequestTurnDataOnlyPlayerAndRound, StripGraphFactory } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
 
@@ -30,7 +30,8 @@ export class GamePlayController {
             turnCommanTxt: commandString,
             turnDataTxt: turnDataTxTstring,
             links: turnDataGraf.links,
-            nodes: turnDataGraf.nodes
+            nodes: turnDataGraf.nodes,
+            homeWorldName: ''
         }
         return respondTurnDate;
     }
@@ -61,13 +62,20 @@ export class GamePlayController {
             const commandFile = `${turnPath}/${request.playerName}.txt`;
 
             if (existsSync(commandFile) === true) {
-                commands = readFileSync(commandFile, 'utf8');                
+                commands = readFileSync(commandFile, 'utf8');
             }
         }
         return {
             player: request.playerName,
             commands: commands
         }
+    }
+
+    getHomeWorldName(playerName: string, playName: string): string {
+        const turnDataGrafFile = `${playName}/Turn0/${playerName}_graf.json`;
+        const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
+        const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
+        return turnDataGraf.nodes[0].id;
     }
 
     @Post('GetTurnDataOnlyPlayer')
@@ -88,19 +96,24 @@ export class GamePlayController {
         const turnDataGrafFile = `${playName}/Turn${gamepref.round}/${request.playerName}_graf.json`;
         const turnDataGrafData = readFileSync(turnDataGrafFile, 'utf8');
         const turnDataGraf: NodesAndLinks = JSON.parse(turnDataGrafData);
-
         const rawdata = readFileSync(`${playName}/Turn${gamepref.round}/worlds.json`, 'utf8');
         const worldsPersist: WorldsPersist = JSON.parse(rawdata);
         const pm = new PersistenceManager(new Array<World>());
-        pm.createWorldsWithWorldsPersist(worldsPersist);
+        const worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
+
+        const homeWorldName = this.getHomeWorldName(request.playerName, playName);
+        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, 3);
+        const dataGraf: NodesAndLinks = stripGraphFactory.getResult();
+
         const player = pm.allPlayerDict.get(request.playerName);
 
         const respondTurnData: RespondTurnData = {
             points: player.points,
             turnCommanTxt: commandString,
             turnDataTxt: turnDataTxTstring,
-            links: turnDataGraf.links,
-            nodes: turnDataGraf.nodes
+            links: dataGraf.links,
+            nodes: dataGraf.nodes,
+            homeWorldName: homeWorldName
         }
         return respondTurnData;
     }
@@ -128,15 +141,20 @@ export class GamePlayController {
         const rawdata = readFileSync(`${playName}/Turn${request.round}/worlds.json`, 'utf8');
         const worldsPersist: WorldsPersist = JSON.parse(rawdata);
         const pm = new PersistenceManager(new Array<World>());
-        pm.createWorldsWithWorldsPersist(worldsPersist);
+        const worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
+        const homeWorldName = request.worldName;
+        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, 3);
+        const dataGraf: NodesAndLinks = stripGraphFactory.getResult();
+
         const player = pm.allPlayerDict.get(request.playerName);
 
         const respondTurnData: RespondTurnData = {
             points: player.points,
             turnCommanTxt: commandString,
             turnDataTxt: turnDataTxTstring,
-            links: turnDataGraf.links,
-            nodes: turnDataGraf.nodes
+            links: dataGraf.links,
+            nodes: dataGraf.nodes,
+            homeWorldName: homeWorldName
         }
         return respondTurnData;
     }
