@@ -14,11 +14,18 @@
                 <button [hidden]="ishiddenNextButton" mat-stroked-button color="primary" class="button"
                     (click)="pressNextRound()">--&gt;</button>
             </td>
-        <td>
-            Distnacelevel: <input type="number" [value]="distanceLevelHomes"
-                (input)="distanceLevelHomes = $event.target.value" />
-        </td>
-    </tr>
+            <td>
+                Distnacelevel: <input type="number" [value]="distanceLevelHomes"
+                    (input)="distanceLevelHomes = $event.target.value" size="4" maxlength="4"/>
+            </td>
+            <td>
+                Select W<input type="number" [value]="selectWorld" (input)="selectWorld = $event.target.value" size="4" maxlength="4"/>
+            </td>
+            <td>
+                <button mat-stroked-button color="primary" class="button" (click)="pressViewWorld()"> show
+                </button>
+            </td>
+        </tr>
     </table>
 </div>
 

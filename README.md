@@ -37,16 +37,7 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 * Game Verzeichnis erstellen bein Generieren der Welten
 	* Eventuell auch Turn 0 Verzeichnis erstellen
 
-* Es kommt zu einem Fehler wenn keine Befehlsdatei vorhanden ist
-
-Sternen Karten nur noch 3 Level anzeigen
-- Initial Heimatplanet aus Turn0
-- Eingabe felder für Planet und Level
-- Oder auf Klick
-
-Validierung der Befehle beim senden an Server
-
-
+* Validierung der Befehle beim senden an Server
 
 
 ## Erledigte TODOs
@@ -84,6 +75,11 @@ Validierung der Befehle beim senden an Server
 	- Mit Pfeil-Bottons [<-] und [->]
 - Legende Farben Spieler
 - Legende für Symbole (Flotten, D-Schiffe usw.)
+Sternen Karten nur noch 3 Level anzeigen
+- Initial Heimatplanet aus Turn0
+- Eingabe felder für Planet und Level
+- Oder auf Klick
+* Es kommt zu einem Fehler wenn keine Befehlsdatei vorhanden ist
 
 	
 ## Projekt

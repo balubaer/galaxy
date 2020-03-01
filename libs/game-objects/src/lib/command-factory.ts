@@ -32,19 +32,21 @@ export class CommandFactory {
     }
 
     setCommandStringsWithLongString(playerName: string, commandString: string) {
-        const stringArray = commandString.split(/ |\r\n|\n|\r/);
-        const aSet = new Set();
-        const array = new Array();
+        if (commandString !== undefined && commandString !== null) {
+            const stringArray = commandString.split(/ |\r\n|\n|\r/);
+            const aSet = new Set();
+            const array = new Array();
 
-        for (const aString of stringArray) {
-            aSet.add(aString);
+            for (const aString of stringArray) {
+                aSet.add(aString);
+            }
+
+            for (const aString of aSet) {
+                array.push(aString);
+            }
+
+            this.commandStringsDict.set(playerName, array);
         }
-
-        for (const aString of aSet) {
-            array.push(aString);
-        }
-
-        this.commandStringsDict.set(playerName, array);
     }
 
     //WnnnBqqqFmmm

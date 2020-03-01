@@ -3,7 +3,7 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound, PlayerColor } from '@galaxy/game-objects';
+import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound, PlayerColor, extractNumberString } from '@galaxy/game-objects';
 import { GamePlayService } from '../player/game-play.service';
 import { Node } from '@swimlane/ngx-graph';
 import { GameServiceService } from '../game-service.service';
@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   gamePrefSubsription: Subscription = null;
   homeWorldName: string;
   distanceLevelHomes: number;
+  selectWorld: number;
 
   public node: Node;
   autoZoom = true;
@@ -72,6 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
       this.homeWorldName = aTurnData.homeWorldName;
+      this.selectWorld = +extractNumberString(aTurnData.homeWorldName);
     });
 
     this.gamePref$ = this.gamePrefService.getGamePref();
@@ -181,5 +183,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   pressViewHomeWorld() {
     this.readNewTurnDataWithRound(this.changeround);
+  }
+
+  pressViewWorld() {
+    this.readNewTurnDataWithRoundAndWorldName(this.changeround, `W${this.selectWorld}`);
   }
 }

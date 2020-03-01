@@ -173,10 +173,10 @@ export class GamePlayController {
         const commandsDict = new Map();
         for (const playerName of gamepref.player) {
             const commandFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}.txt`;
-            const commandString = readFileSync(commandFile, 'utf8');
-
-            commandsDict.set(playerName, commandString);
-
+            if (existsSync(commandFile)) {
+                const commandString = readFileSync(commandFile, 'utf8');
+                commandsDict.set(playerName, commandString);
+            }
         }
         executeCommand.start(commandsDict);
 

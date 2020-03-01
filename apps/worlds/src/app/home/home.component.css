@@ -43,3 +43,7 @@ td#td2 {
   text-align: center;
   width: auto;
 }
+
+input[type="number"] {
+  width:50px;
+}
