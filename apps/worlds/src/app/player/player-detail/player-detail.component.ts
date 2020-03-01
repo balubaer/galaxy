@@ -31,7 +31,8 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const request: RequestTurnDataOnlyPlayer = {
-      playerName: this.playerName
+      playerName: this.playerName,
+      distanceLevelHomes: 3
     }
     this.turnData$ = this.route.params = this.gamePlayService.getTurnDataOnlyPlayer(request);
     this.form = this.fb.group({
@@ -51,7 +52,8 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(this.gamePlayService.setCommands(commands).subscribe());
     const request: RequestTurnDataOnlyPlayer = {
-      playerName: this.playerName
+      playerName: this.playerName,
+      distanceLevelHomes: 3
     }
     this.turnData$ = this.route.params = this.gamePlayService.getTurnDataOnlyPlayer(request);
     

@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   gamePref$: Observable<GamePref>;
   gamePrefSubsription: Subscription = null;
   homeWorldName: string;
+  distanceLevelHomes: number;
 
   public node: Node;
   autoZoom = true;
@@ -56,8 +57,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.distanceLevelHomes = 3;
+
     const request: RequestTurnDataOnlyPlayer = {
-      playerName: this.currentUser.username
+      playerName: this.currentUser.username,
+      distanceLevelHomes: this.distanceLevelHomes
     }
     const playerCommands$: Observable<PlayerCommands> = this.gamePlayService.getCommand(request);
     playerCommands$.subscribe(aPlayerCommands => {
@@ -113,7 +117,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     const request: RequestTurnDataOnlyPlayerAndRound = {
       playerName: this.currentUser.username,
       round: this.changeround,
-      worldName: this.homeWorldName
+      worldName: this.homeWorldName,
+      distanceLevelHomes: this.distanceLevelHomes
     }
     this.autoCenter = true;
 
@@ -139,7 +144,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     const request: RequestTurnDataOnlyPlayerAndRound = {
       playerName: this.currentUser.username,
       round: this.changeround,
-      worldName: aWorldName
+      worldName: aWorldName,
+      distanceLevelHomes: this.distanceLevelHomes
     }
     this.autoCenter = true;
 

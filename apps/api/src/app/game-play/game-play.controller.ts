@@ -102,7 +102,7 @@ export class GamePlayController {
         const worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
 
         const homeWorldName = this.getHomeWorldName(request.playerName, playName);
-        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, 3);
+        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, request.distanceLevelHomes);
         const dataGraf: NodesAndLinks = stripGraphFactory.getResult();
 
         const player = pm.allPlayerDict.get(request.playerName);
@@ -143,7 +143,7 @@ export class GamePlayController {
         const pm = new PersistenceManager(new Array<World>());
         const worlds = pm.createWorldsWithWorldsPersist(worldsPersist);
         const homeWorldName = request.worldName;
-        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, 3);
+        const stripGraphFactory: StripGraphFactory = new StripGraphFactory(homeWorldName, worlds, turnDataGraf, request.distanceLevelHomes);
         const dataGraf: NodesAndLinks = stripGraphFactory.getResult();
 
         const player = pm.allPlayerDict.get(request.playerName);

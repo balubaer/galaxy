@@ -8,11 +8,17 @@
 <div class="container">
     <table id="table1">
         <tr>
-            <button [hidden]="ishiddenPrevButton" mat-stroked-button color="primary" class="button"
-                (click)="pressPrevRound()">&lt;--</button>
-            <button [hidden]="ishiddenNextButton" mat-stroked-button color="primary" class="button"
-                (click)="pressNextRound()">--&gt;</button>
-        </tr>
+            <td>
+                <button [hidden]="ishiddenPrevButton" mat-stroked-button color="primary" class="button"
+                    (click)="pressPrevRound()">&lt;--</button>
+                <button [hidden]="ishiddenNextButton" mat-stroked-button color="primary" class="button"
+                    (click)="pressNextRound()">--&gt;</button>
+            </td>
+        <td>
+            Distnacelevel: <input type="number" [value]="distanceLevelHomes"
+                (input)="distanceLevelHomes = $event.target.value" />
+        </td>
+    </tr>
     </table>
 </div>
 
@@ -82,7 +88,8 @@
     <div class="container">
         <table id="table1">
             <tr>
-                <button mat-stroked-button color="primary" class="button" (click)="pressViewHomeWorld()">View Homeworld</button>
+                <button mat-stroked-button color="primary" class="button" (click)="pressViewHomeWorld()">View
+                    Homeworld</button>
                 <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
                 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to
                     fit</button>
