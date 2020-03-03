@@ -81,11 +81,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
     this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
-    setTimeout(() => this.autoCenter = false, 500);
     this.gamePrefSubsription = this.gamePref$.subscribe(aGamePref => {
       this.round = aGamePref.round;
       this.changeround = aGamePref.round
     });
+    setTimeout(() => this.autoCenter = false, 500);
   }
 
   onSubmit() {
@@ -99,11 +99,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-
   onNodeSelected(aNode) {
     this.node = aNode;
     if (this.draggingEnabled === false && this.panningEnabled === false) {
       this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
+      this.selectWorld = +extractNumberString(this.node.id);
     }
   }
 
@@ -119,7 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const request: RequestTurnDataOnlyPlayerAndRound = {
       playerName: this.currentUser.username,
       round: this.changeround,
-      worldName: this.homeWorldName,
+      worldName: `W${this.selectWorld}`,
       distanceLevelHomes: this.distanceLevelHomes
     }
     this.autoCenter = true;
@@ -182,6 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   pressViewHomeWorld() {
+    this.selectWorld = +extractNumberString(this.homeWorldName);
     this.readNewTurnDataWithRound(this.changeround);
   }
 

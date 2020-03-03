@@ -6,3 +6,43 @@
     display: block;
     background-color:rgb(164, 164, 164);
 }
+div.container-chart {
+  width: 750px;
+  height: 750px;
+}
+
+div.container {
+  width: 750px;
+}
+table#table1 {
+  width: 750px;
+  text-align:center; 
+    margin-left:auto; 
+    margin-right:auto;
+}
+tr,
+td {
+  text-align: center;
+  width: 150px;
+}
+div.container2 {
+  width: 98%;
+  margin: 1%;
+}
+
+table#table2 {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 750px;
+}
+
+tr#tr2,
+td#td2 {
+  text-align: center;
+  width: auto;
+}
+
+input[type="number"] {
+  width:50px;
+}

@@ -38,7 +38,8 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 	* Eventuell auch Turn 0 Verzeichnis erstellen
 
 * Validierung der Befehle beim senden an Server
-
+* Nachladen der Welten die man in vorherigen Runden gesehen hat per Option
+  * Quadrat mit Rundennummer als Marke
 
 ## Erledigte TODOs
 - Dice ist vollfunktionsfähig
@@ -80,6 +81,7 @@ Sternen Karten nur noch 3 Level anzeigen
 - Eingabe felder für Planet und Level
 - Oder auf Klick
 * Es kommt zu einem Fehler wenn keine Befehlsdatei vorhanden ist
+* wenn man Welt über kilick setzt auch Welt Eingabefeld setzen
 
 	
 ## Projekt
