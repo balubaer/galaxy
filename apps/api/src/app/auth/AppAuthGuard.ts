@@ -9,13 +9,15 @@ export class AppAuthGuard implements CanActivate {
             httpContext.getRequest(),
             httpContext.getResponse()
         ];
+        console.log('AppAuthGuard.canActivate 01');
+
         const passportFn = createPassportContext(request, response);
 
         const user = await passportFn(
             'bearer',
             options
         );
-        console.log('user ' + user);
+        console.log('AppAuthGuard.canActivate user:' + user);
         if (user) {
             request.login(user, (res) => {});
         }

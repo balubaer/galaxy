@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import {HttpStrategy} from './http.strategy';
 import {AppAuthGuard} from './AppAuthGuard';
-import { AuthService } from './auth.service';
+import { CookieSerializer } from './cookie-serializer';
 
 @Module({
-  providers: [AuthService, HttpStrategy, AppAuthGuard]
+  providers: [AppAuthGuard, CookieSerializer]
 })
 export class AuthModule {}

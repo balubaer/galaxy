@@ -12,7 +12,6 @@ import * as session from 'express-session'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new DispatchError());
   app.use(session({
     secret: 'secret-key',
     name: 'sess-tutorial',
@@ -21,6 +20,7 @@ async function bootstrap() {
   }))
   app.use(passport.initialize());
   app.use(passport.session());
+  app.useGlobalFilters(new DispatchError());
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.port || 3333;

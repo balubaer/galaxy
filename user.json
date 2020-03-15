@@ -16,5 +16,14 @@
         "lastName": "Niklas",
         "token": "",
         "color": "#289E6B"
+    },
+    {
+        "id": 1,
+        "username": "balu",
+        "password": "test",
+        "firstName": "Bernd",
+        "lastName": "Niklas",
+        "token": "",
+        "color": "#289E6B"
     }
 ]
