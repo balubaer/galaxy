@@ -1,8 +1,10 @@
-import { Controller, Get, Body, Query, Post } from '@nestjs/common';
+import { Controller, Get, Body, Query, Post, UseGuards } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { RequestTurnData, RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, ExecuteCommand, WorldsPersist, NodesAndLinks, PersistenceManager, World, RequestTurnDataOnlyPlayerAndRound, StripGraphFactory } from '@galaxy/game-objects';
-import { Message } from '@galaxy/api-interfaces';
+import { Message, LoginInterface } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
+import { SessionGuard } from '../auth/SessionGuard';
+import { SessionUser } from '../users/user.decorator';
 
 @Controller('game-play')
 export class GamePlayController {
@@ -79,7 +81,8 @@ export class GamePlayController {
     }
 
     @Post('GetTurnDataOnlyPlayer')
-    getTurnDataOnlyPlayer(@Body() request: RequestTurnDataOnlyPlayer): RespondTurnData {
+    @UseGuards(SessionGuard)
+    getTurnDataOnlyPlayer(@Body() request: RequestTurnDataOnlyPlayer, @SessionUser() user: LoginInterface): RespondTurnData {
         const stringData = readFileSync('gamePref.json', 'utf8');
         const gamepref: GamePref = JSON.parse(stringData);
         const playName = gamepref.playName;

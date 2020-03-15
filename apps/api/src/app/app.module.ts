@@ -7,10 +7,11 @@ import { GamePlayController } from './game-play/game-play.controller';
 import { UsersController } from './users/users.controller';
 import { HttpStrategy } from './auth/http.strategy';
 import { AuthService } from './auth/auth.service';
+import { CookieSerializer } from './auth/cookie-serializer';
 
 @Module({
   imports: [],
   controllers: [AppController, CreateWorldController, GamePlayController, UsersController],
-  providers: [AppService, HttpStrategy, AuthService]
+  providers: [AppService, HttpStrategy, AuthService, CookieSerializer]
 })
 export class AppModule {}
