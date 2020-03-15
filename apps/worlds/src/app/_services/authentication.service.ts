@@ -2,29 +2,29 @@
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Login, User } from '@galaxy/api-interfaces';
+import { LoginInterface, User } from '@galaxy/api-interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     public currentUser: Observable<User>;
     private currentUserSubject: BehaviorSubject<User>;
-    private currentAdminLoginSubject: BehaviorSubject<Login>;
+    private currentAdminLoginSubject: BehaviorSubject<LoginInterface>;
 
     constructor(private http: HttpClient) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
-        this.currentAdminLoginSubject = new BehaviorSubject<Login>(JSON.parse(localStorage.getItem('currentAdminUser')));
+        this.currentAdminLoginSubject = new BehaviorSubject<LoginInterface>(JSON.parse(localStorage.getItem('currentAdminUser')));
     }
 
     public get currentUserValue(): User {
         return this.currentUserSubject.value;
     }
 
-    public get currentAdminLoginValue(): Login {
+    public get currentAdminLoginValue(): LoginInterface {
         return this.currentAdminLoginSubject.value;
     }
 
-    login(login: Login): Observable<User> {
+    login(login: LoginInterface): Observable<User> {
         const result = this.http.post<User>('/api/users/authenticate', login);
         result.subscribe(aUser => {
             localStorage.setItem('currentUser', JSON.stringify(aUser));
@@ -33,8 +33,8 @@ export class AuthenticationService {
         return result;
     }
 
-    loginAdmin(login: Login): Observable<Login> {
-        const result = this.http.post<Login>('/api/users/authenticateAdmin', login);
+    loginAdmin(login: LoginInterface): Observable<LoginInterface> {
+        const result = this.http.post<LoginInterface>('/api/users/authenticateAdmin', login);
         result.subscribe(aUser => {
             localStorage.setItem('currentAdminUser', JSON.stringify(aUser));
             this.currentAdminLoginSubject.next(aUser);

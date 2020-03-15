@@ -1,7 +1,10 @@
-import { Controller, Post, Body, Get, HttpException, HttpStatus, UnauthorizedException, Res } from '@nestjs/common';
-import { Login, User, Message } from '@galaxy/api-interfaces';
+import { Controller, Post, Body, Get, HttpException, HttpStatus, UnauthorizedException, Res, UseGuards, Req, Session } from '@nestjs/common';
+import { LoginInterface, User, Message } from '@galaxy/api-interfaces';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { compareSync, hashSync } from 'bcryptjs';
+import { AppAuthGuard } from '../auth/AppAuthGuard';
+import {Request, Response} from 'express';
+
 
 //import {Response} from "express";
 
@@ -39,38 +42,14 @@ export class UsersController {
     }
 
     @Post('authenticate')
-    authenticate(@Res() res, @Body() login: Login): User { //, @Res() res: Response @Body() login: Login
-        let user: User = null;
-        if (existsSync('user.json')) {
-            const stringData = readFileSync('user.json', 'utf8');
-            const userArray: Array<User> = JSON.parse(stringData);
-
-            for (const aUser of userArray) {
-                if (aUser.username === login.username
-                    && (compareSync(login.password, aUser.password) === true)) {
-                    user = aUser;
-                    break;
-                }
-            }
-        }
-        if (user === null) {
-            const leerUser: User = {
-                firstName: '',
-                id: 0,
-                lastName: '',
-                password: '',
-                token: '',
-                username: '',
-                color: ''
-            }
-
-            return res.status(HttpStatus.UNAUTHORIZED).json(leerUser);
-        }
-        return res.status(HttpStatus.CREATED).json(user);
+    @UseGuards(AppAuthGuard)
+     authenticate(@Req() req: Request, @Res() res: Response, @Session() session) {
+        const ses = session;
+        return res.status(HttpStatus.OK).send();
     }
 
     @Post('setAdminUser')
-    setAdminUser(@Body() login: Login): Message {
+    setAdminUser(@Body() login: LoginInterface): Message {
         if (existsSync('adminLogin.json') === false) {
             login.password = hashSync(login.password, 10);
 
@@ -83,8 +62,8 @@ export class UsersController {
     }
 
     @Post('authenticateAdmin')
-    authenticateAdmin(@Res() res, @Body() login: Login): Login { 
-        let adminLogin: Login = null;
+    authenticateAdmin(@Res() res, @Body() login: LoginInterface): LoginInterface { 
+        let adminLogin: LoginInterface = null;
         if (existsSync('adminLogin.json')) {
             const stringData = readFileSync('adminLogin.json', 'utf8');
             adminLogin = JSON.parse(stringData);
@@ -100,7 +79,7 @@ export class UsersController {
             }
         }
         if (adminLogin === null) {
-            const leerLogin: Login = {
+            const leerLogin: LoginInterface = {
                 username: '',
                 password: ''
             }

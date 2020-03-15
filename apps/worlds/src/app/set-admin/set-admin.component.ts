@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../_services/authentication.service';
-import { Login } from '@galaxy/api-interfaces';
+import { LoginInterface } from '@galaxy/api-interfaces';
 import { UserService, AlertService } from '../_services';
 
 @Component({
@@ -49,7 +49,7 @@ export class SetAdminComponent implements OnInit {
       return;
     }
 
-    const login: Login = {
+    const login: LoginInterface = {
       username: this.registerForm.value.username,
       password: this.registerForm.value.password
     }
