@@ -450,25 +450,27 @@ export class FireDShipsToFleet extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
-        if (this.fromHomeWorld.player.playerName === this.player.playerName) {
-            let isError = false;
+        if (this.fromHomeWorld !== null && this.player !== null) {
+            if (this.fromHomeWorld.player.playerName === this.player.playerName) {
+                let isError = false;
 
-            if (isError === false) {
-                if (this.fromHomeWorld !== this.toHomeWorld) {
-                    //TODO: Fehler art zufügen
-                    isError = true;
+                if (isError === false) {
+                    if (this.fromHomeWorld !== this.toHomeWorld) {
+                        //TODO: Fehler art zufügen
+                        isError = true;
+                    }
                 }
-            }
 
-            //TODO: Weiter Tests implementieren
+                //TODO: Weiter Tests implementieren
 
-            if (isError === false) {
-                this.toFleet.hitedShots += this.fromHomeWorld.dShips;
-                this.fromHomeWorld.dShipsFired = true;
-                this.fromHomeWorld.dShipsFiredFleet = this.toFleet;
+                if (isError === false) {
+                    this.toFleet.hitedShots += this.fromHomeWorld.dShips;
+                    this.fromHomeWorld.dShipsFired = true;
+                    this.fromHomeWorld.dShipsFiredFleet = this.toFleet;
+                }
+            } else {
+                //TODO: Fehler Welt ist nicht vom Spieler
             }
-        } else {
-            //TODO: Fehler Welt ist nicht vom Spieler
         }
     }
 }
