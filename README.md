@@ -27,6 +27,10 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
     PlanetGeneratorSwift
 </a>
 
+## Bugs
+- Flotten dürfen nur einmal fliege
+  - Doppelter Flugbefehl Copiert Flotte
+
 ## TODOs
 - FinalPhaseCoreGame Tests
 	- checkFireResults
