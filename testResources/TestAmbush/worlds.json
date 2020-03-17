@@ -1,1 +1,245 @@
-{"worlds":[{"number":1,"name":"W1","player":"ZAPHOD","fleets":[5],"dShips":1},{"number":2,"name":"W2","player":"ZAPHOD","fleets":[10,9],"dShips":0},{"number":3,"name":"W3","player":"MARVIN","fleets":[2,8],"dShips":0},{"number":4,"name":"W4","player":"MARVIN","fleets":[3],"dShips":1},{"number":5,"name":"W5","player":"","fleets":[6],"dShips":0},{"number":6,"name":"W6","player":"ZAPHOD","fleets":[],"dShips":1},{"number":7,"name":"W7","player":"ZAPHOD","fleets":[],"dShips":2},{"number":8,"name":"W8","player":"MARVIN","fleets":[1],"dShips":1},{"number":9,"name":"W9","player":"MARVIN","fleets":[7,4],"dShips":0},{"number":10,"name":"W10","player":"MARVIN","fleets":[],"dShips":2}],"players":[{"name":"ZAPHOD","points":80,"teammates":[]},{"name":"MARVIN","points":100,"teammates":[]}],"ports":[{"world":1,"worlds":[7,8,6]},{"world":2,"worlds":[9,7,5]},{"world":3,"worlds":[4,10,6]},{"world":4,"worlds":[10,6,3]},{"world":5,"worlds":[2]},{"world":6,"worlds":[7,1,4,3]},{"world":7,"worlds":[6,1,2]},{"world":8,"worlds":[9,1,10]},{"world":9,"worlds":[2,8]},{"world":10,"worlds":[4,8,3]}],"fleets":[{"number":5,"ships":3,"player":"MARVIN","moved":false},{"number":10,"ships":0,"player":"ZAPHOD","moved":false},{"number":9,"ships":3,"player":"ZAPHOD","moved":false},{"number":2,"ships":0,"player":"MARVIN","moved":false},{"number":8,"ships":5,"player":"MARVIN","moved":false},{"number":3,"ships":5,"player":"ZAPHOD","moved":false},{"number":6,"ships":0,"player":"","moved":false},{"number":1,"ships":2,"player":"ZAPHOD","moved":false},{"number":7,"ships":0,"player":"MARVIN","moved":false},{"number":4,"ships":2,"player":"MARVIN","moved":false}]}
+{
+    "worlds": [
+        {
+            "number": 1,
+            "name": "W1",
+            "player": "ZAPHOD",
+            "fleets": [
+                5
+            ],
+            "dShips": 1
+        },
+        {
+            "number": 2,
+            "name": "W2",
+            "player": "ZAPHOD",
+            "fleets": [
+                10,
+                9
+            ],
+            "dShips": 0
+        },
+        {
+            "number": 3,
+            "name": "W3",
+            "player": "MARVIN",
+            "fleets": [
+                2,
+                8
+            ],
+            "dShips": 0
+        },
+        {
+            "number": 4,
+            "name": "W4",
+            "player": "MARVIN",
+            "fleets": [
+                3
+            ],
+            "dShips": 1
+        },
+        {
+            "number": 5,
+            "name": "W5",
+            "player": "",
+            "fleets": [
+                6
+            ],
+            "dShips": 0
+        },
+        {
+            "number": 6,
+            "name": "W6",
+            "player": "ZAPHOD",
+            "fleets": [],
+            "dShips": 1
+        },
+        {
+            "number": 7,
+            "name": "W7",
+            "player": "ZAPHOD",
+            "fleets": [],
+            "dShips": 2
+        },
+        {
+            "number": 8,
+            "name": "W8",
+            "player": "MARVIN",
+            "fleets": [
+                1
+            ],
+            "dShips": 1
+        },
+        {
+            "number": 9,
+            "name": "W9",
+            "player": "MARVIN",
+            "fleets": [
+                7,
+                4
+            ],
+            "dShips": 0
+        },
+        {
+            "number": 10,
+            "name": "W10",
+            "player": "MARVIN",
+            "fleets": [],
+            "dShips": 2
+        }
+    ],
+    "players": [
+        {
+            "name": "ZAPHOD",
+            "points": 80,
+            "teammates": []
+        },
+        {
+            "name": "MARVIN",
+            "points": 100,
+            "teammates": []
+        }
+    ],
+    "ports": [
+        {
+            "world": 1,
+            "worlds": [
+                7,
+                8,
+                6
+            ]
+        },
+        {
+            "world": 2,
+            "worlds": [
+                9,
+                7,
+                5
+            ]
+        },
+        {
+            "world": 3,
+            "worlds": [
+                4,
+                10,
+                6
+            ]
+        },
+        {
+            "world": 4,
+            "worlds": [
+                10,
+                6,
+                3
+            ]
+        },
+        {
+            "world": 5,
+            "worlds": [
+                2
+            ]
+        },
+        {
+            "world": 6,
+            "worlds": [
+                7,
+                1,
+                4,
+                3
+            ]
+        },
+        {
+            "world": 7,
+            "worlds": [
+                6,
+                1,
+                2
+            ]
+        },
+        {
+            "world": 8,
+            "worlds": [
+                9,
+                1,
+                10
+            ]
+        },
+        {
+            "world": 9,
+            "worlds": [
+                2,
+                8
+            ]
+        },
+        {
+            "world": 10,
+            "worlds": [
+                4,
+                8,
+                3
+            ]
+        }
+    ],
+    "fleets": [
+        {
+            "number": 5,
+            "ships": 3,
+            "player": "MARVIN",
+            "moved": false
+        },
+        {
+            "number": 10,
+            "ships": 0,
+            "player": "ZAPHOD",
+            "moved": false
+        },
+        {
+            "number": 9,
+            "ships": 3,
+            "player": "ZAPHOD",
+            "moved": false
+        },
+        {
+            "number": 2,
+            "ships": 2,
+            "player": "ZAPHOD",
+            "moved": false
+        },
+        {
+            "number": 8,
+            "ships": 5,
+            "player": "MARVIN",
+            "moved": false
+        },
+        {
+            "number": 3,
+            "ships": 5,
+            "player": "ZAPHOD",
+            "moved": false
+        },
+        {
+            "number": 6,
+            "ships": 0,
+            "player": "",
+            "moved": false
+        },
+        {
+            "number": 1,
+            "ships": 2,
+            "player": "ZAPHOD",
+            "moved": false
+        },
+        {
+            "number": 7,
+            "ships": 0,
+            "player": "MARVIN",
+            "moved": false
+        },
+        {
+            "number": 4,
+            "ships": 2,
+            "player": "MARVIN",
+            "moved": false
+        }
+    ]
+}

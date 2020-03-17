@@ -393,8 +393,11 @@ export class CommandFactory {
     getCommandNummerArray(withCommandElements: Array<string>): Array<number> {
         const result = new Array<number>();
         for (const commantElement of withCommandElements) {
-            const aNumber = +extractNumberString(commantElement);
-            result.push(aNumber);
+            const numberString = extractNumberString(commantElement);
+            if (numberString.length > 0) {
+                const aNumber = +numberString;
+                result.push(aNumber);
+            }
         } return result;
     }
 

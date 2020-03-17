@@ -50,6 +50,12 @@ describe('FinalPhaseCoreGame', () => {
   it('Test doFinal', () => {
     const worldsForAmbush = createWorldsForAmbush();
     const fleetAndHomeWorld = fleetAndHomeWorldWithNumber(worldsForAmbush, 7);
+    const attackFleetsWorld = fleetAndHomeWorldWithNumber(worldsForAmbush, 8);
+    const hitFleetsWorld = fleetAndHomeWorldWithNumber(worldsForAmbush, 2);
+
+    expect(attackFleetsWorld.fleet.fired).toBeTruthy();
+    expect(attackFleetsWorld.fleet.firesTo).toBe('F2[ZAPHOD]');
+    expect(hitFleetsWorld.fleet.ships).toBe(0);
     expect(fleetAndHomeWorld.fleet.player).toBeNull();
     expect(fleetAndHomeWorld.fleet.ships).toBe(0);
     expect(fleetAndHomeWorld.homeWorld.number).toBe(1);
