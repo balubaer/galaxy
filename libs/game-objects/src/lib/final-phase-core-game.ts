@@ -27,7 +27,8 @@ export class FinalPhaseCoreGame {
 
     checkFireResults(world: World) {
         //DShips
-        world.dShips -= world.hitedShotsDShips / 2
+        world.dShips -= world.hitedShotsDShips / 2;
+        world.dShips = Math.floor(world.dShips);
         if (world.dShips < 0) {
             world.dShips = 0;
         }
@@ -40,6 +41,7 @@ export class FinalPhaseCoreGame {
                 fleet.ships -= fleet.hitedShots / 2;
             }
             fleet.hitedShots = 0;
+            fleet.ships = Math.floor(fleet.ships);
             if (fleet.ships < 0) {
                 fleet.ships = 0;
             }

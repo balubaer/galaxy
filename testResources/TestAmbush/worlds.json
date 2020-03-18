@@ -17,7 +17,7 @@
                 10,
                 9
             ],
-            "dShips": 0
+            "dShips": 2
         },
         {
             "number": 3,
@@ -196,7 +196,7 @@
         {
             "number": 9,
             "ships": 3,
-            "player": "ZAPHOD",
+            "player": "MARVIN",
             "moved": false
         },
         {
