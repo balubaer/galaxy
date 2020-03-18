@@ -1,4 +1,4 @@
-import {CanActivate, ExecutionContext, UnauthorizedException} from '@nestjs/common';
+import { CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import * as passport from 'passport';
 
 export class AppAuthGuard implements CanActivate {
@@ -16,7 +16,7 @@ export class AppAuthGuard implements CanActivate {
             options
         );
         if (user) {
-            request.login(user, (res) => {});
+            request.login(user, (res) => { });
         }
 
         return true;

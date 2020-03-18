@@ -7,7 +7,7 @@ import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, R
 import { GamePlayService } from '../player/game-play.service';
 import { Node } from '@swimlane/ngx-graph';
 import { GameServiceService } from '../game-service.service';
-
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'galaxy-home',
@@ -45,13 +45,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   ishiddenNextButton = true;
   ishiddenPrevButton = false;
 
+  cookieValue = 'UNKNOWN';
+
   constructor(
     private authenticationService: AuthenticationService,
     private gamePlayService: GamePlayService,
     private gamePrefService: GameServiceService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cookieService: CookieService
   ) {
-    this.currentUser = this.authenticationService.currentUserValue;
+    //this.currentUser = this.authenticationService.currentUserValue;
     this.form = this.fb.group({
       Commands: ['']
     });
@@ -59,6 +62,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.distanceLevelHomes = 3;
+    this.cookieService.set( 'Test', 'Hello World' );
+        this.cookieValue = this.cookieService.get('Test');
+        console.log(`Home this.cookieValue: ${this.cookieValue}`);
+        console.log(`Home this.cookieService.get: ${this.cookieService.get('sess-tutorial')}`);
+        console.log(`Home this.cookieService.getAll: ${this.cookieService.getAll()}`);
+
 
     const request: RequestTurnDataOnlyPlayer = {
       playerName: this.currentUser.username,

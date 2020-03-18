@@ -19,11 +19,11 @@
     },
     {
         "id": 1,
-        "username": "balu",
-        "password": "test",
-        "firstName": "Bernd",
-        "lastName": "Niklas",
+        "username": "test",
+        "password": "$2a$10$nYgtUdkoS/1Cgdld/pR1X.pTddIWib5JO.BqWSTEtvjHZoBPUw/na",
+        "firstName": "t",
+        "lastName": "t",
         "token": "",
-        "color": "#289E6B"
+        "color": "#277553"
     }
 ]

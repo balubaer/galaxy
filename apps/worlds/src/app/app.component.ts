@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from './_services/authentication.service';
+import { CookieService } from 'ngx-cookie-service';
+import { Cookie } from 'ng2-cookies';
 
 @Component({
   selector: 'galaxy-root',
@@ -9,12 +11,27 @@ import { AuthenticationService } from './_services/authentication.service';
 })
 export class AppComponent {
   currentUser: any;
+  cookies: Object;
+  keys: Array<string>;
+
   
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private cookieService: CookieService
   ) {
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    this.update();
+    console.log(`App this.cookies.keys: ${this.keys}`);
+
+
+    console.log(`App this.cookieService.get: ${this.cookieService.get('sess-tutorial')}`);
+
+   // this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+  }
+
+  update() {
+    this.cookies = Cookie.getAll();
+    this.keys = Object.keys(this.cookies);
   }
 
   logout() {

@@ -41,7 +41,7 @@ export class UsersController {
 
     }
 
-    @Post('authenticate')
+    @Get('authenticate')
     @UseGuards(AppAuthGuard)
      authenticate(@Req() req: Request, @Res() res: Response, @Session() session) {
         const ses = session;
@@ -69,6 +69,9 @@ export class UsersController {
             adminLogin = JSON.parse(stringData);
 
             if (adminLogin !== null) {
+                console.log(`login.password: ${login.password}`);
+                console.log(`aUser.password: ${adminLogin.password}`);
+                console.log(`compareSync: ${compareSync(login.password, adminLogin.password)}`)
                 if ((adminLogin.username === login.username)
                 && (compareSync(login.password, adminLogin.password) === true)) {
                     adminLogin.password = '';

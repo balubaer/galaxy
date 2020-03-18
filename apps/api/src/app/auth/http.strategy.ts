@@ -14,6 +14,8 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
         let authObject: {username: string, password: string} = null;
         const decoded = Buffer.from(token, 'base64').toString();
 
+        console.log(`decoded 1: ${decoded}`);
+
         try {
             authObject = JSON.parse(decoded);
             const user = await this.authService.validateUser(authObject);

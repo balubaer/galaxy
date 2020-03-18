@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { existsSync, readFileSync } from 'fs';
 import { LoginInterface, User } from '@galaxy/api-interfaces';
+import { compareSync } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +18,12 @@ export class AuthService {
 
                 for (const aUser of userArray) {
                     if (aUser.username === user.username
-                        && (user.password === aUser.password) === true) {
-                        u = aUser;
+                        && (compareSync(user.password, aUser.password) === true)) {
+                        u = {
+                            username: user.username,
+                            password: aUser.password
+                        };
+                        console.log('Alles Gut #############')
                         userFound = true;
                         break;
                     }
