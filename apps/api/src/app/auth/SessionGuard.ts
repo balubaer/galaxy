@@ -19,34 +19,35 @@ export class SessionGuard implements CanActivate {
         const httpContext = context.switchToHttp();
         const request = httpContext.getRequest();
         let playerName: string
-
-        console.log("SessionGuard canActivate user");
-        //request.
-
         try {
-            if (request.body) {
-                const body = request.body;
-                if (this.testBody(body)) {
-                    playerName = body.playerName;
-                    console.log("SessionGuard canActivate playerName " + playerName);
-
+            if (request.path === '/api/game-play/GetTurnDataOnlyPlayer') {
+                if (request.body) {
+                    const body = request.body;
+                    if (this.testBody(body)) {
+                        playerName = body.playerName;
+                    }
                 }
             }
-
         } catch (e) {
             throw new AppError(AppErrorTypeEnum.NOT_IN_SESSION);
         }
 
         try {
             if (request.session.passport.user) {
-                if (this.testUser(request.session.passport.user)) {
-                    const login: LoginInterface = request.session.passport.user;
-                    const result = (playerName === login.username);
-                    console.log("SessionGuard canActivate result " + result);
+                if (request.path === '/api/game-play/GetTurnDataOnlyPlayer') {
 
-                    return result;
-                } else {
-                    throw new AppError(AppErrorTypeEnum.NOT_IN_SESSION);
+                    if (this.testUser(request.session.passport.user)) {
+                        const login: LoginInterface = request.session.passport.user;
+                        const result = (playerName === login.username);
+
+                        return result;
+                    } else {
+                        throw new AppError(AppErrorTypeEnum.NOT_IN_SESSION);
+                    }
+                } else if (request.path === '/api/users') {
+                    return true;
+                } else if (request.path === '/api/users/user') {
+                    return true;
                 }
             }
         } catch (e) {
@@ -54,13 +55,10 @@ export class SessionGuard implements CanActivate {
         }
     }
 
-    testUser(user:any): boolean {
+    testUser(user: any): boolean {
         try {
-            //if (user.username && user.password) {
-                if (user.username) {
-                    const login: LoginInterface = user;
-              //  const promissUuser = this.authService.validateUser(login);
-
+            if (user.username) {
+                const login: LoginInterface = user;
                 return true;
             } else {
                 return false;
@@ -75,8 +73,6 @@ export class SessionGuard implements CanActivate {
             if (instanceOfRequestTurnDataOnlyPlayer(body)) {
                 return true;
             }
-//            if (body instanceof RequestTurnDataOnlyPlayer) {
-  //          }
         } catch (e) {
             throw new AppError(AppErrorTypeEnum.NOT_IN_SESSION);
         }

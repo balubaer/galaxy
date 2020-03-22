@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
-import { User } from '@galaxy/api-interfaces';
+import { User, LoginInterface } from '@galaxy/api-interfaces';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound, PlayerColor, extractNumberString } from '@galaxy/game-objects';
@@ -15,7 +15,7 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  currentUser: User;
+  currentUser: LoginInterface;
   form: FormGroup;
   turnData$: Observable<RespondTurnData>;
   private readonly subscriptions = new Subscription();
@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private cookieService: CookieService
   ) {
-    //this.currentUser = this.authenticationService.currentUserValue;
+    this.currentUser = this.authenticationService.currentUserValue;
     this.form = this.fb.group({
       Commands: ['']
     });

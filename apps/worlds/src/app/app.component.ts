@@ -14,19 +14,13 @@ export class AppComponent {
   cookies: Object;
   keys: Array<string>;
 
-  
+
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
     private cookieService: CookieService
   ) {
-    this.update();
-    console.log(`App this.cookies.keys: ${this.keys}`);
-
-
-    console.log(`App this.cookieService.get: ${this.cookieService.get('sess-tutorial')}`);
-
-   // this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
 
   update() {

@@ -2,54 +2,40 @@
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoginInterface, User } from '@galaxy/api-interfaces';
-//import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-    public currentUser: Observable<User>;
-    private currentUserSubject: BehaviorSubject<User>;
+    public currentUser: Observable<LoginInterface>;
+    private currentUserSubject: BehaviorSubject<LoginInterface>;
     private currentAdminLoginSubject: BehaviorSubject<LoginInterface>;
     private loginUser: LoginInterface;
-    cookieValue = 'UNKNOWN';
 
 
     constructor(private http: HttpClient) {
-    //    constructor(private http: HttpClient, private cookieService: CookieService) {
-            this.currentAdminLoginSubject = new BehaviorSubject<LoginInterface>(JSON.parse(localStorage.getItem('currentAdminUser')));
-       // this.cookieValue = this.cookieService.get('sess-tutorial');
-       // console.log(`this.cookieValue: ${this.cookieValue}`);
-
-       // this.currentUserSubject = new BehaviorSubject<User>(this.makeUser());
-       // this.currentUser = this.currentUserSubject.asObservable();
+        this.currentUserSubject = new BehaviorSubject<LoginInterface>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUser = this.currentUserSubject.asObservable();
+        this.currentAdminLoginSubject = new BehaviorSubject<LoginInterface>(JSON.parse(localStorage.getItem('currentAdminUser')));
     }
 
-    private makeUser(): User {
-        const decoded = atob(this.cookieValue);
-        const authObject = JSON.parse(decoded);
 
-        return {
-            color: '',
-            firstName: '',
-            id: 0,
-            lastName: '',
-            password: authObject.password,
-            token: '',
-            username: authObject.username
+    public get currentUserValue(): LoginInterface {
+        return this.currentUserSubject.value;
         }
-    }
-
-    public get currentUserValue(): User {
-        return this.makeUser();
-    }
 
     public get currentAdminLoginValue(): LoginInterface {
         return this.currentAdminLoginSubject.value;
     }
 
-    login(login: LoginInterface): Observable<User> {
-        this.loginUser = login;
-        const result = this.http.get<User>('/api/users/authenticate');  result.subscribe(aUser => {
-            this.currentUserSubject.next(aUser);
+    createAccessToken(login: LoginInterface): string {
+        return btoa(JSON.stringify(login));
+    }
+
+    login(login: LoginInterface): Observable<LoginInterface> {
+        localStorage.setItem('AccessToken', this.createAccessToken(login));
+        const result = this.http.get<LoginInterface>('/api/users/authenticate');
+        result.subscribe(aLogin => {
+            localStorage.setItem('currentUser', JSON.stringify(aLogin));
+            this.currentUserSubject.next(aLogin);
         });
         return result;
     }
@@ -65,7 +51,7 @@ export class AuthenticationService {
 
     logout() {
         // remove user from local storage and set current user to null
-       // this.cookieService.delete('sess-tutorial');
+        localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
 
@@ -76,15 +62,8 @@ export class AuthenticationService {
     }
 
     getAccessToken(): string {
-        let result = '';
-        if (typeof this.loginUser !== 'undefined') {
-            const loginUser: LoginInterface = {
-                username: this.loginUser.username,
-                password: this.loginUser.password
-            }
-            result = btoa(JSON.stringify(loginUser));
-        }
-        console.log(`getAccessToken: ${result}`);
+        const result = localStorage.getItem('AccessToken');
+
         return result;
     }
 }
