@@ -30,6 +30,7 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 ## Bugs
 - Flotten dürfen nur einmal fliege
   - Doppelter Flugbefehl Copiert Flotte
+- Command kommt nicht mit Weltennummern zurecht die es nicht gibt
 
 ## TODOs
 - FinalPhaseCoreGame Tests
