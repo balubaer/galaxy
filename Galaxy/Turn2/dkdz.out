@@ -1,0 +1,31 @@
+Infos zu Spieler: dkdz Runde: 3 
+Punkte: 80 | Welten: 4 | Flotten: 7 | Schiffe auf Flotten: 25 | D-Schiffe: 5
+Verbündete: ()
+
+W25(46,70,139) [dkdz] (D-Schiffe=1)
+   F13[dkdz] = 5
+   (F80[dkdz]-->W139 F16[dkdz]-->W70 )
+
+W41(46,8,127) [dkdz] (D-Schiffe=1)
+   F96[---] = 0
+   (F6[dkdz]-->W127 )
+
+W46(25,41) [dkdz] (D-Schiffe=3)
+   F66[dkdz] = 5
+   (F80[dkdz]-->W25 F16[dkdz]-->W25 )
+
+W70(19,55,25) [dkdz]
+   F23[dkdz] = 0
+   F112[dkdz] = 0
+   F16[dkdz] = 5
+
+W127(123,41)
+   F54[---] = 0
+   F6[dkdz] = 5
+   F21[Toaster] = 3
+
+W139(23,25,120)
+   F77[---] = 0
+   F76[Beerbowl] = 5
+   F80[dkdz] = 5
+

@@ -1,0 +1,35 @@
+Infos zu Spieler: Beerbowl Runde: 9 
+Punkte: 500 | Welten: 4 | Flotten: 12 | Schiffe auf Flotten: 38 | D-Schiffe: 15
+Verbündete: ()
+
+W7(88,110) [masal] (D-Schiffe=1)
+   F87[Beerbowl] = 10 (feuert auf D-Schiffe)
+   (F99[Beerbowl]-->W88 F145[Beerbowl]-->W88 F92[Beerbowl]-->W88 F51[Beerbowl]-->W88 F71[Beerbowl]-->W88 F138[Beerbowl]-->W88 F76[Beerbowl]-->W110 F125[Beerbowl]-->W88 F38[Beerbowl]-->W110 F100[Beerbowl]-->W88 )
+
+W23(88,139) [Beerbowl] (D-Schiffe=6)
+   F66[dkdz] = 5
+   F99[Beerbowl] = 1
+   F71[Beerbowl] = 1
+   F125[Beerbowl] = 1
+   (F51[Beerbowl]-->W139 F138[Beerbowl]-->W139 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=3)
+   F92[Beerbowl] = 1
+   F100[Beerbowl] = 1
+   F42[eragon] = 15
+   F137[dernils] = 9
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=3)
+   F77[Beerbowl] = 1
+   F145[Beerbowl] = 1
+   (F99[Beerbowl]-->W23 F92[Beerbowl]-->W61 F51[Beerbowl]-->W23 F71[Beerbowl]-->W23 F138[Beerbowl]-->W23 F125[Beerbowl]-->W23 F100[Beerbowl]-->W61 )
+
+W110(35,122,7) [masal] (D-Schiffe=12)
+   F76[Beerbowl] = 9
+   F38[Beerbowl] = 10
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=3)
+   F13[dkdz] = 5
+   F51[Beerbowl] = 1
+   F138[Beerbowl] = 1
+

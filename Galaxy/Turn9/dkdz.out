@@ -1,0 +1,45 @@
+Infos zu Spieler: dkdz Runde: 10 
+Punkte: 780 | Welten: 5 | Flotten: 8 | Schiffe auf Flotten: 25 | D-Schiffe: 46
+Verbündete: ()
+
+W23(88,139) [Beerbowl] (D-Schiffe=2)
+   F66[dkdz] = 5
+   F71[Beerbowl] = 1
+   (F99[Beerbowl]-->W88 F125[Beerbowl]-->W88 F138[Beerbowl]-->W88 )
+
+W25(46,70,139) [dkdz] (D-Schiffe=8)
+
+W41(46,8,127) [dkdz] (D-Schiffe=8)
+   F96[---] = 0
+
+W46(25,41) [dkdz] (D-Schiffe=17)
+
+W55(30,70,135) [Red-Ex] (D-Schiffe=8)
+   F3[dkdz] = 0
+   F40[dkdz] = 0
+   F139[dkdz] = 0
+   F16[dkdz] = 5
+   (F135[Red-Ex]-->W135 F144[Red-Ex]-->W70 )
+
+W70(19,55,25) [dkdz] (D-Schiffe=7)
+   F23[Red-Ex] = 0
+   F112[Red-Ex] = 0
+   F144[Red-Ex] = 9
+   (F135[Red-Ex]-->W55 )
+
+W120(124,9,114,139) [eragon] (D-Schiffe=7)
+   F80[dkdz] = 5
+
+W123(53,83,127) [Toaster] (D-Schiffe=6)
+   F6[dkdz] = 5
+   F19[Toaster] = 5
+   F35[Drake] = 1
+
+W127(123,41) [dkdz] (D-Schiffe=6)
+   F54[---] = 0
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=1)
+   F13[dkdz] = 5
+   F51[Beerbowl] = 1
+   (F138[Beerbowl]-->W23 )
+

@@ -1,0 +1,48 @@
+Infos zu Spieler: eragon Runde: 4 
+Punkte: 240 | Welten: 7 | Flotten: 9 | Schiffe auf Flotten: 26 | D-Schiffe: 11
+Verbündete: ()
+
+W9(79,57,120) [eragon] (D-Schiffe=3)
+
+W29(61,57,65) [eragon] (D-Schiffe=2)
+   F89[eragon] = 6
+   (F38[Beerbowl]-->W61 F93[ZAPHOD]-->W65 F82[ZAPHOD]-->W65 )
+
+W57(9,29) [eragon] (D-Schiffe=4)
+   (F89[eragon]-->W29 )
+
+W60(6,83,79,42) [eragon]
+   F36[eragon] = 0
+   F116[eragon] = 0
+   F32[eragon] = 5
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=2)
+   F84[dernils] = 4
+   F138[Beerbowl] = 1
+   (F38[Beerbowl]-->W88 F104[eragon]-->W88 F87[Beerbowl]-->W88 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=2)
+   F63[ZAPHOD] = 2
+   (F93[ZAPHOD]-->W100 F82[ZAPHOD]-->W100 F42[eragon]-->W100 F70[ZAPHOD]-->W73 F78[ZAPHOD]-->W73 )
+
+W79(9,60,54) [eragon] (D-Schiffe=1)
+   (F32[eragon]-->W60 )
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=1)
+   F104[eragon] = 5
+   F87[Beerbowl] = 4
+   (F38[Beerbowl]-->W23 F100[Beerbowl]-->W23 F125[Beerbowl]-->W23 F138[Beerbowl]-->W61 )
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=1)
+   F42[eragon] = 5
+   (F93[ZAPHOD]-->W14 F82[ZAPHOD]-->W47 F70[ZAPHOD]-->W65 F78[ZAPHOD]-->W65 F63[ZAPHOD]-->W65 )
+
+W120(124,9,114,139) [eragon] (D-Schiffe=1)
+   F76[Beerbowl] = 5
+   (F128[eragon]-->W124 )
+
+W124(39,36,120) [eragon]
+   F25[eragon] = 0
+   F90[eragon] = 0
+   F128[eragon] = 5
+

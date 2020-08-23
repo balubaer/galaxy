@@ -1,0 +1,32 @@
+Infos zu Spieler: eragon Runde: 3 
+Punkte: 100 | Welten: 5 | Flotten: 5 | Schiffe auf Flotten: 26 | D-Schiffe: 4
+Verbündete: ()
+
+W9(79,57,120) [eragon] (D-Schiffe=1)
+   (F32[eragon]-->W79 F128[eragon]-->W120 )
+
+W29(61,57,65) [eragon] (D-Schiffe=1)
+   F38[Beerbowl] = 5
+   F93[ZAPHOD] = 3
+   F82[ZAPHOD] = 3
+   (F104[eragon]-->W61 F42[eragon]-->W65 )
+
+W57(9,29) [eragon] (D-Schiffe=2)
+   F89[eragon] = 6
+   (F42[eragon]-->W29 F128[eragon]-->W9 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1)
+   F104[eragon] = 5
+   F84[dernils] = 4
+   (F138[Beerbowl]-->W88 F87[Beerbowl]-->W87 F38[Beerbowl]-->W29 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=1)
+   F42[eragon] = 5
+   (F93[ZAPHOD]-->W29 F82[ZAPHOD]-->W29 F63[ZAPHOD]-->W100 )
+
+W79(9,60,54) [eragon]
+   F32[eragon] = 5
+
+W120(124,9,114,139) [eragon]
+   F128[eragon] = 5
+

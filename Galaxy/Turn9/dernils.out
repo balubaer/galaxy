@@ -1,0 +1,113 @@
+Infos zu Spieler: dernils Runde: 10 
+Punkte: 2480 | Welten: 23 | Flotten: 20 | Schiffe auf Flotten: 103 | D-Schiffe: 63
+Verbündete: ()
+
+W13(40,85,38,108) [ZAPHOD] (D-Schiffe=3)
+   F84[dernils] = 5
+   F74[dernils] = 10
+   F59[ZAPHOD] = 3
+   F86[ZAPHOD] = 11
+   (F121[Drake]-->W38 F70[ZAPHOD]-->W85 )
+
+W14(115,100,92) [dernils] (D-Schiffe=2)
+
+W19(70,134,112) [dernils] (D-Schiffe=4)
+
+W26(133,149,28) [dernils] (D-Schiffe=2)
+   F26[dernils] = 1
+   F101[ZAPHOD] = 5
+   F52[Drake] = 1
+   (F133[dernils]-->W133 )
+
+W34(149,137,126) [dernils] (D-Schiffe=1)
+   F85[dernils] = 1
+   F24[dernils] = 1
+   F32[dernils] = 1
+   (F26[dernils]-->W149 F117[dernils]-->W126 F133[dernils]-->W149 F130[dernils]-->W137 )
+
+W36(115,138,124) [dernils] (D-Schiffe=1)
+   F2[dernils] = 5
+   F119[dernils] = 8
+   (F104[eragon]-->W124 )
+
+W38(74,13,72) [Drake] (D-Schiffe=2)
+   F146[Drake] = 1
+   F121[Drake] = 6
+   (F59[ZAPHOD]-->W13 F122[dernils]-->W74 )
+
+W40(13,134) [dernils] (D-Schiffe=2)
+   (F70[ZAPHOD]-->W13 )
+
+W48(144,145,133) [dernils] (D-Schiffe=1)
+   (F48[dernils]-->W145 F116[eragon]-->W133 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1)
+   F92[Beerbowl] = 2
+   F100[Beerbowl] = 3
+   F99[Beerbowl] = 7
+   F125[Beerbowl] = 1
+   F77[Beerbowl] = 4
+   F138[Beerbowl] = 4
+   (F42[eragon]-->W29 F137[dernils]-->W87 )
+
+W68(136,112,84,91) [dernils] (D-Schiffe=1)
+   F148[dernils] = 20
+   (F132[dernils]-->W112 )
+
+W74(112,38) [dernils] (D-Schiffe=2)
+   F122[dernils] = 7
+
+W75(92,84,87) [dernils] (D-Schiffe=8)
+
+W84(87,68,75) [dernils] (D-Schiffe=2)
+   (F148[dernils]-->W68 )
+
+W87(61,84,75) [dernils] (D-Schiffe=5)
+   F137[dernils] = 9
+
+W92(129,75,14) [dernils] (D-Schiffe=4)
+
+W94(130,136,138) [dernils] (D-Schiffe=1)
+   (F58[dernils]-->W136 )
+
+W112(74,68,19) [dernils] (D-Schiffe=5)
+   F132[dernils] = 7
+
+W115(14,36,52,11) [dernils] (D-Schiffe=2)
+   (F82[ZAPHOD]-->W11 )
+
+W126(35,118,34) [Drake] (D-Schiffe=3)
+   F117[dernils] = 4
+   F131[Drake] = 6
+
+W129(92,83,144) [dernils] (D-Schiffe=5)
+   (F21[Toaster]-->W83 )
+
+W133(26,58,48)
+   F133[dernils] = 1
+   F128[eragon] = 4
+   F116[eragon] = 2
+
+W134(136,40,19) [dernils] (D-Schiffe=5)
+
+W136(134,68,94) [dernils] (D-Schiffe=4)
+   F58[dernils] = 10
+
+W137(67,78,34) [dernils]
+   F130[dernils] = 3
+
+W138(94,36) [dernils] (D-Schiffe=2)
+   (F119[dernils]-->W36 )
+
+W144(48,129,149) [dernils] (D-Schiffe=2)
+   (F83[dernils]-->W149 )
+
+W145(6,48,35) [eragon] (D-Schiffe=4)
+   F4[dernils] = 0
+   F48[dernils] = 2
+
+W149(34,144,26) [dernils] (D-Schiffe=2)
+   F41[dernils] = 3
+   F83[dernils] = 5
+   (F26[dernils]-->W26 F133[dernils]-->W26 F52[Drake]-->W26 )
+

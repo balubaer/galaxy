@@ -1,0 +1,24 @@
+Infos zu Spieler: Red-Ex Runde: 2 
+Punkte: NaN | Welten: 5 | Flotten: 9 | Schiffe auf Flotten: 23 | D-Schiffe: 3
+Verbündete: ()
+
+W17(135,101,22,122) [Red-Ex]
+   F94[Red-Ex] = 5
+
+W37(135,101) [Red-Ex]
+   F39[Red-Ex] = 5
+
+W55(30,70,135) [Red-Ex]
+   F3[Red-Ex] = 0
+   F40[Red-Ex] = 0
+   F139[Red-Ex] = 0
+   F135[Red-Ex] = 5
+
+W90(150,27,135) [Red-Ex]
+   F56[Red-Ex] = 0
+   F107[Red-Ex] = 5
+
+W135(17,37,90,55) [Red-Ex] (D-Schiffe=3)
+   F144[Red-Ex] = 3
+   (F39[Red-Ex]-->W37 F107[Red-Ex]-->W90 F94[Red-Ex]-->W17 F135[Red-Ex]-->W55 )
+

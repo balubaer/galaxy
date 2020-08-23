@@ -1,0 +1,40 @@
+Infos zu Spieler: Red-Ex Runde: 3 
+Punkte: 160 | Welten: 8 | Flotten: 6 | Schiffe auf Flotten: 23 | D-Schiffe: 9
+Verbündete: ()
+
+W17(135,101,22,122) [Red-Ex] (D-Schiffe=1)
+   (F94[Red-Ex]-->W122 )
+
+W27(146,90) [Red-Ex]
+   F43[Red-Ex] = 0
+   F107[Red-Ex] = 5
+
+W30(55,147) [Red-Ex]
+   F135[Red-Ex] = 5
+
+W37(135,101) [Red-Ex] (D-Schiffe=1)
+   (F39[Red-Ex]-->W101 )
+
+W55(30,70,135) [Red-Ex] (D-Schiffe=1)
+   F3[---] = 0
+   F40[---] = 0
+   F139[---] = 0
+   (F135[Red-Ex]-->W30 )
+
+W90(150,27,135) [Red-Ex] (D-Schiffe=1)
+   F56[---] = 0
+   (F107[Red-Ex]-->W27 )
+
+W101(49,17,37) [Red-Ex]
+   F39[Red-Ex] = 5
+
+W122(110,96,51,17)
+   F20[---] = 0
+   F127[---] = 0
+   F94[Red-Ex] = 5
+   F37[Drake] = 5
+   F22[masal] = 4
+
+W135(17,37,90,55) [Red-Ex] (D-Schiffe=5)
+   F144[Red-Ex] = 3
+

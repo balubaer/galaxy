@@ -1,0 +1,33 @@
+Infos zu Spieler: Beerbowl Runde: 5 
+Punkte: 180 | Welten: 3 | Flotten: 6 | Schiffe auf Flotten: 32 | D-Schiffe: 3
+Verbündete: ()
+
+W23(88,139) [Beerbowl] (D-Schiffe=1)
+   (F38[Beerbowl]-->W139 F138[Beerbowl]-->W139 F87[Beerbowl]-->W139 )
+
+W25(46,70,139) [dkdz] (D-Schiffe=3)
+   F13[dkdz] = 5
+   F66[dkdz] = 5
+   (F100[Beerbowl]-->W139 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1 (Ambusch: {F89[eragon], F104[eragon]}))
+   (F89[eragon]-->W87 F84[dernils]-->W87 F138[Beerbowl]-->W88 F104[eragon]-->W87 )
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=1)
+   (F138[Beerbowl]-->W23 F104[eragon]-->W61 F87[Beerbowl]-->W23 )
+
+W120(124,9,114,139) [eragon] (D-Schiffe=2)
+   F80[dkdz] = 5
+   (F76[Beerbowl]-->W139 F128[eragon]-->W139 )
+
+W139(23,25,120)
+   F77[---] = 0
+   F125[Beerbowl] = 7
+   F38[Beerbowl] = 7
+   F100[Beerbowl] = 5
+   F138[Beerbowl] = 3 (Ambush: {F89[eragon]})
+   F87[Beerbowl] = 5
+   F76[Beerbowl] = 5
+   F128[eragon] = 3
+   (F80[dkdz]-->W120 )
+

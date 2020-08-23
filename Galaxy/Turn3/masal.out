@@ -1,0 +1,22 @@
+Infos zu Spieler: masal Runde: 4 
+Punkte: 140 | Welten: 4 | Flotten: 9 | Schiffe auf Flotten: 25 | D-Schiffe: 6
+Verbündete: ()
+
+W7(88,110) [masal] (D-Schiffe=3)
+   F99[masal] = 5
+   F145[masal] = 5
+   F92[masal] = 5
+   F51[masal] = 1
+   F71[masal] = 1
+
+W35(110,126,145) [masal] (D-Schiffe=1)
+   F5[masal] = 4
+
+W110(35,122,7) [masal] (D-Schiffe=2)
+
+W122(110,96,51,17) [masal]
+   F20[masal] = 0
+   F127[masal] = 0
+   F22[masal] = 4
+   (F94[Red-Ex]-->W17 F37[Drake]-->W96 )
+

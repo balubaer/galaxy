@@ -1,0 +1,69 @@
+Infos zu Spieler: ZAPHOD Runde: 5 
+Punkte: 580 | Welten: 14 | Flotten: 13 | Schiffe auf Flotten: 34 | D-Schiffe: 15
+Verbündete: ()
+
+W14(115,100,92) [dernils] (D-Schiffe=1)
+   (F148[dernils]-->W115 F93[ZAPHOD]-->W100 )
+
+W32(150,80,52) [ZAPHOD]
+   F120[ZAPHOD] = 4
+
+W47(141,105,100) [ZAPHOD] (D-Schiffe=1)
+   (F93[ZAPHOD]-->W141 F50[ZAPHOD]-->W100 F101[ZAPHOD]-->W100 F82[ZAPHOD]-->W100 F63[ZAPHOD]-->W105 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=1 (Ambusch: {F42[eragon]}))
+   F82[ZAPHOD] = 1 (Ambush: {F42[eragon]})
+   (F101[ZAPHOD]-->W73 F63[ZAPHOD]-->W100 F42[eragon]-->W73 )
+
+W71(86,91,85) [ZAPHOD] (D-Schiffe=2)
+   (F70[ZAPHOD]-->W85 F129[ZAPHOD]-->W91 F78[ZAPHOD]-->W85 )
+
+W73(86,65) [ZAPHOD] (D-Schiffe=2)
+   F101[ZAPHOD] = 1
+   F42[eragon] = 3
+   (F70[ZAPHOD]-->W86 )
+
+W85(62,13,71)
+   F73[Toaster] = 3
+   F70[ZAPHOD] = 6
+   F78[ZAPHOD] = 4
+   (F129[ZAPHOD]-->W71 )
+
+W86(150,73,71) [ZAPHOD] (D-Schiffe=2)
+   (F70[ZAPHOD]-->W71 F78[ZAPHOD]-->W71 )
+
+W90(150,27,135) [Red-Ex] (D-Schiffe=3)
+   (F56[ZAPHOD]-->W150 F120[ZAPHOD]-->W150 )
+
+W91(148,103,71,68) [ZAPHOD] (D-Schiffe=1)
+   (F129[ZAPHOD]-->W103 F126[ZAPHOD]-->W148 )
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=2)
+   F50[ZAPHOD] = 1
+   (F93[ZAPHOD]-->W47 F101[ZAPHOD]-->W65 F82[ZAPHOD]-->W65 F63[ZAPHOD]-->W47 F42[eragon]-->W65 )
+
+W103(1,10,91)
+   F86[---] = 0
+   F98[Drake] = 4
+   F129[ZAPHOD] = 3
+
+W105(47,130,109,52,24) [ZAPHOD]
+   F63[ZAPHOD] = 4
+
+W116(6,128) [ZAPHOD]
+   F46[ZAPHOD] = 4
+
+W128(116,54,132,150) [ZAPHOD] (D-Schiffe=2)
+   (F46[ZAPHOD]-->W116 )
+
+W141(47,51,80) [ZAPHOD]
+   F9[ZAPHOD] = 0
+   F93[ZAPHOD] = 3
+
+W148(107,91,69) [ZAPHOD]
+   F126[ZAPHOD] = 2
+
+W150(90,86,32,128) [ZAPHOD] (D-Schiffe=2)
+   F56[ZAPHOD] = 1
+   (F120[ZAPHOD]-->W32 )
+

@@ -1,0 +1,161 @@
+Infos zu Spieler: ZAPHOD Runde: 11 
+Punkte: 4000 | Welten: 35 | Flotten: 30 | Schiffe auf Flotten: 141 | D-Schiffe: 88
+Verbündete: ()
+
+W1(103,77) [ZAPHOD] (D-Schiffe=2)
+   (F126[ZAPHOD]-->W77 )
+
+W11(130,28,63,3,115) [Toaster] (D-Schiffe=6 (Ambusch: {F78[ZAPHOD]}))
+   F18[Toaster] = 5 (Ambush: {F78[ZAPHOD]})
+   F101[ZAPHOD] = 5
+   F93[ZAPHOD] = 6
+   F78[---] = 0
+   F124[ZAPHOD] = 3
+   F34[ZAPHOD] = 4
+   (F82[ZAPHOD]-->W28 )
+
+W13(40,85,38,108) [ZAPHOD] (D-Schiffe=1)
+   (F84[dernils]-->W40 F74[dernils]-->W40 F59[ZAPHOD]-->W85 F86[ZAPHOD]-->W85 )
+
+W26(133,149,28) [dernils] (D-Schiffe=1)
+   F26[dernils] = 3
+   F133[dernils] = 1
+   F83[dernils] = 7
+   (F101[ZAPHOD]-->W28 F52[Drake]-->W28 )
+
+W28(97,11,26) [ZAPHOD] (D-Schiffe=2)
+   F82[ZAPHOD] = 3
+   F52[Drake] = 1
+   (F101[ZAPHOD]-->W11 F93[ZAPHOD]-->W11 F34[ZAPHOD]-->W11 )
+
+W32(150,80,52) [ZAPHOD] (D-Schiffe=4)
+
+W44(97,51,119) [ZAPHOD] (D-Schiffe=2)
+   (F93[ZAPHOD]-->W97 )
+
+W47(141,105,100) [ZAPHOD] (D-Schiffe=4)
+   F57[ZAPHOD] = 1
+   (F63[ZAPHOD]-->W100 )
+
+W51(122,141,44) [ZAPHOD] (D-Schiffe=2)
+
+W52(32,104,115,105) [ZAPHOD] (D-Schiffe=3)
+   F120[ZAPHOD] = 1
+
+W54(128,81,79) [ZAPHOD] (D-Schiffe=1)
+   (F56[ZAPHOD]-->W128 F36[eragon]-->W79 )
+
+W56(69,117,67,108) [Drake] (D-Schiffe=2)
+   F108[Drake] = 1
+   F113[Drake] = 1
+   F110[ZAPHOD] = 6
+   (F17[Drake]-->W67 F49[Drake]-->W117 F81[Drake]-->W108 F88[Drake]-->W69 )
+
+W59(69,21,143) [ZAPHOD]
+   F129[ZAPHOD] = 6
+
+W63(11,78,125) [ZAPHOD] (D-Schiffe=1)
+   F126[ZAPHOD] = 9
+   (F78[ZAPHOD]-->W11 F124[ZAPHOD]-->W11 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=6)
+   F42[eragon] = 15
+   F46[ZAPHOD] = 14
+
+W66(107,82,3) [Toaster] (D-Schiffe=2)
+   F134[Drake] = 2
+   F14[ZAPHOD] = 5
+
+W67(137,56,81)
+   F85[dernils] = 2
+   F17[Drake] = 1
+   F109[ZAPHOD] = 9
+   F130[dernils] = 3
+
+W69(56,59,148) [ZAPHOD] (D-Schiffe=1)
+   F88[Drake] = 1
+   (F110[ZAPHOD]-->W56 F129[ZAPHOD]-->W59 )
+
+W71(86,91,85) [ZAPHOD] (D-Schiffe=4)
+
+W73(86,65) [ZAPHOD] (D-Schiffe=12)
+   (F46[ZAPHOD]-->W65 )
+
+W77(1,125,108) [ZAPHOD] (D-Schiffe=1)
+   F81[Drake] = 1
+   (F126[ZAPHOD]-->W125 F124[ZAPHOD]-->W125 )
+
+W80(3,32,141) [ZAPHOD] (D-Schiffe=3)
+
+W81(49,54,67) [ZAPHOD] (D-Schiffe=1)
+   (F109[ZAPHOD]-->W67 )
+
+W85(62,13,71) [ZAPHOD] (D-Schiffe=1)
+   F70[ZAPHOD] = 1 (feuert auf F25[Toaster])
+   F25[Toaster] = 5 (feuert auf F70[ZAPHOD])
+   F59[ZAPHOD] = 6
+   F86[ZAPHOD] = 11
+
+W86(150,73,71) [ZAPHOD] (D-Schiffe=2)
+   (F46[ZAPHOD]-->W73 )
+
+W91(148,103,71,68) [ZAPHOD] (D-Schiffe=2)
+   (F29[ZAPHOD]-->W103 )
+
+W97(28,44,143) [ZAPHOD] (D-Schiffe=2)
+   (F93[ZAPHOD]-->W28 F34[ZAPHOD]-->W28 )
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=6)
+   F63[ZAPHOD] = 1
+
+W103(1,10,91) [ZAPHOD] (D-Schiffe=3)
+   F29[ZAPHOD] = 1
+
+W105(47,130,109,52,24) [ZAPHOD] (D-Schiffe=1)
+   (F102[ZAPHOD]-->W130 F63[ZAPHOD]-->W47 F57[ZAPHOD]-->W47 F120[ZAPHOD]-->W52 )
+
+W107(66,148,49) [ZAPHOD] (D-Schiffe=1)
+   (F29[ZAPHOD]-->W148 F14[ZAPHOD]-->W66 )
+
+W109(3,105,121) [Toaster] (D-Schiffe=10)
+   F27[---] = 0
+   F50[ZAPHOD] = 18 (feuert auf F27[Toaster])
+   F105[Toaster] = 6
+   F73[Toaster] = 8
+   (F63[ZAPHOD]-->W105 F57[ZAPHOD]-->W105 F120[ZAPHOD]-->W105 )
+
+W116(6,128) [ZAPHOD] (D-Schiffe=2)
+
+W119(16,8,44) [ZAPHOD] (D-Schiffe=3)
+   (F90[eragon]-->W16 )
+
+W122(110,96,51,17) [masal] (D-Schiffe=2)
+   F20[ZAPHOD] = 0
+   F127[ZAPHOD] = 0
+   F22[ZAPHOD] = 0
+   F55[ZAPHOD] = 0
+   F37[ZAPHOD] = 0
+   F106[ZAPHOD] = 2 (feuert auf F20[masal])
+   F7[ZAPHOD] = 2 (feuert auf F127[masal])
+   F142[ZAPHOD] = 4 (feuert auf F22[masal])
+   F9[ZAPHOD] = 10 (feuert auf D-Schiffe)
+
+W125(77,140,63,117) [ZAPHOD] (D-Schiffe=2)
+   (F126[ZAPHOD]-->W63 F124[ZAPHOD]-->W63 )
+
+W128(116,54,132,150) [ZAPHOD] (D-Schiffe=2)
+   F56[ZAPHOD] = 6
+
+W130(94,11,105) [ZAPHOD]
+   F150[Toaster] = 7 (feuert auf D-Schiffe)
+   F102[ZAPHOD] = 7
+
+W141(47,51,80) [ZAPHOD] (D-Schiffe=4)
+
+W143(8,97,59) [ZAPHOD] (D-Schiffe=2)
+
+W148(107,91,69) [ZAPHOD] (D-Schiffe=3)
+   (F29[ZAPHOD]-->W91 )
+
+W150(90,86,32,128) [ZAPHOD] (D-Schiffe=2)
+

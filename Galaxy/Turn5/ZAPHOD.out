@@ -1,0 +1,91 @@
+Infos zu Spieler: ZAPHOD Runde: 6 
+Punkte: 980 | Welten: 20 | Flotten: 17 | Schiffe auf Flotten: 41 | D-Schiffe: 25
+Verbündete: ()
+
+W6(116,60,145) [eragon] (D-Schiffe=1)
+   F46[ZAPHOD] = 4
+   (F116[eragon]-->W116 F32[eragon]-->W145 )
+
+W32(150,80,52) [ZAPHOD] (D-Schiffe=1)
+   (F120[ZAPHOD]-->W80 )
+
+W47(141,105,100) [ZAPHOD] (D-Schiffe=3)
+   F101[ZAPHOD] = 3
+   (F82[ZAPHOD]-->W105 F50[ZAPHOD]-->W105 )
+
+W51(122,141,44) [ZAPHOD]
+   F93[ZAPHOD] = 3
+
+W52(32,104,115,105)
+   F102[---] = 0
+   F50[ZAPHOD] = 3
+   F148[dernils] = 3
+
+W54(128,81,79) [ZAPHOD]
+   F56[ZAPHOD] = 3
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=1)
+   F42[eragon] = 3
+   (F82[ZAPHOD]-->W100 F101[ZAPHOD]-->W100 )
+
+W68(136,112,84,91) [dernils] (D-Schiffe=1)
+   F126[ZAPHOD] = 2
+   (F84[dernils]-->W91 )
+
+W71(86,91,85) [ZAPHOD] (D-Schiffe=3)
+   (F78[ZAPHOD]-->W91 )
+
+W73(86,65) [ZAPHOD] (D-Schiffe=2)
+   (F101[ZAPHOD]-->W65 F42[eragon]-->W65 )
+
+W80(3,32,141) [ZAPHOD]
+   F120[ZAPHOD] = 4
+
+W85(62,13,71) [ZAPHOD]
+   F70[ZAPHOD] = 1
+   (F73[Toaster]-->W62 F78[ZAPHOD]-->W71 )
+
+W86(150,73,71) [ZAPHOD] (D-Schiffe=4)
+
+W91(148,103,71,68) [ZAPHOD] (D-Schiffe=2)
+   F84[dernils] = 5
+   (F78[ZAPHOD]-->W103 F126[ZAPHOD]-->W68 )
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=1)
+   (F82[ZAPHOD]-->W47 F101[ZAPHOD]-->W47 F50[ZAPHOD]-->W47 )
+
+W103(1,10,91) [ZAPHOD]
+   F86[ZAPHOD] = 0
+   F129[ZAPHOD] = 3
+   F78[ZAPHOD] = 9
+   (F98[Drake]-->W10 )
+
+W105(47,130,109,52,24) [ZAPHOD] (D-Schiffe=1)
+   F82[ZAPHOD] = 2
+   F147[Drake] = 5
+   (F50[ZAPHOD]-->W52 F63[ZAPHOD]-->W130 )
+
+W116(6,128) [ZAPHOD] (D-Schiffe=1)
+   F116[eragon] = 2
+   (F46[ZAPHOD]-->W6 )
+
+W128(116,54,132,150) [ZAPHOD] (D-Schiffe=3)
+   (F56[ZAPHOD]-->W54 )
+
+W130(94,11,105) [ZAPHOD]
+   F7[ZAPHOD] = 0
+   F57[ZAPHOD] = 0
+   F106[ZAPHOD] = 0
+   F114[ZAPHOD] = 0
+   F63[ZAPHOD] = 4
+
+W141(47,51,80) [ZAPHOD] (D-Schiffe=1)
+   F9[---] = 0
+   (F93[ZAPHOD]-->W51 )
+
+W148(107,91,69) [ZAPHOD] (D-Schiffe=1)
+   (F126[ZAPHOD]-->W91 )
+
+W150(90,86,32,128) [ZAPHOD] (D-Schiffe=1)
+   (F56[ZAPHOD]-->W128 )
+

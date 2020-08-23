@@ -1,0 +1,54 @@
+Infos zu Spieler: dernils Runde: 5 
+Punkte: 500 | Welten: 11 | Flotten: 11 | Schiffe auf Flotten: 38 | D-Schiffe: 13
+Verbündete: ()
+
+W14(115,100,92) [dernils] (D-Schiffe=1)
+   (F148[dernils]-->W115 F93[ZAPHOD]-->W100 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1 (Ambusch: {F89[eragon], F104[eragon]}))
+   (F89[eragon]-->W87 F84[dernils]-->W87 F138[Beerbowl]-->W88 F104[eragon]-->W87 )
+
+W68(136,112,84,91) [dernils] (D-Schiffe=1)
+   F84[dernils] = 4
+   (F74[dernils]-->W112 F132[dernils]-->W136 )
+
+W75(92,84,87) [dernils] (D-Schiffe=2)
+   (F24[dernils]-->W92 )
+
+W83(129,60,123) [Toaster] (D-Schiffe=1)
+   F32[eragon] = 1
+   F119[dernils] = 4
+   F58[dernils] = 4
+   (F67[Toaster]-->W60 F21[Toaster]-->W129 )
+
+W84(87,68,75) [dernils] (D-Schiffe=5)
+   (F84[dernils]-->W68 F132[dernils]-->W68 )
+
+W87(61,84,75) [dernils] (D-Schiffe=1)
+   F89[eragon] = 2
+   F104[eragon] = 4
+   (F84[dernils]-->W84 F132[dernils]-->W84 )
+
+W92(129,75,14) [dernils] (D-Schiffe=2)
+   (F24[dernils]-->W129 F119[dernils]-->W129 )
+
+W112(74,68,19) [dernils]
+   F74[dernils] = 6
+
+W115(14,36,52,11) [dernils]
+   F2[dernils] = 0
+   F148[dernils] = 6
+
+W129(92,83,144) [dernils] (D-Schiffe=1)
+   F21[Toaster] = 3
+   (F24[dernils]-->W144 F119[dernils]-->W83 F133[dernils]-->W144 F58[dernils]-->W83 )
+
+W136(134,68,94) [dernils]
+   F132[dernils] = 3
+
+W144(48,129,149) [dernils]
+   F122[dernils] = 0
+   F137[dernils] = 0
+   F24[dernils] = 6
+   F133[dernils] = 5
+

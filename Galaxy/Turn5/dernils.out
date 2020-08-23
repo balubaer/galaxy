@@ -1,0 +1,75 @@
+Infos zu Spieler: dernils Runde: 6 
+Punkte: 800 | Welten: 15 | Flotten: 15 | Schiffe auf Flotten: 39 | D-Schiffe: 24
+Verbündete: ()
+
+W14(115,100,92) [dernils] (D-Schiffe=2)
+   F119[dernils] = 4
+   F58[dernils] = 4
+
+W19(70,134,112) [dernils]
+   F74[dernils] = 6
+
+W36(115,138,124)
+   F90[eragon] = 2
+   F2[dernils] = 3
+
+W48(144,145,133) [dernils]
+   F48[dernils] = 0
+   F85[dernils] = 0
+   F130[dernils] = 0
+   F24[dernils] = 5
+
+W52(32,104,115,105)
+   F102[---] = 0
+   F50[ZAPHOD] = 3
+   F148[dernils] = 3
+
+W68(136,112,84,91) [dernils] (D-Schiffe=1)
+   F126[ZAPHOD] = 2
+   (F84[dernils]-->W91 )
+
+W75(92,84,87) [dernils] (D-Schiffe=4)
+   F122[dernils] = 1
+
+W83(129,60,123) [Toaster] (D-Schiffe=2)
+   F67[Toaster] = 3
+   F19[Toaster] = 5
+   F97[Toaster] = 6
+   (F32[eragon]-->W60 F119[dernils]-->W129 F58[dernils]-->W129 )
+
+W84(87,68,75) [dernils] (D-Schiffe=7)
+
+W87(61,84,75) [dernils] (D-Schiffe=1)
+   (F89[eragon]-->W61 F104[eragon]-->W61 )
+
+W91(148,103,71,68) [ZAPHOD] (D-Schiffe=2)
+   F84[dernils] = 5
+   (F78[ZAPHOD]-->W103 F126[ZAPHOD]-->W68 )
+
+W92(129,75,14) [dernils] (D-Schiffe=4)
+   F137[dernils] = 1
+   (F119[dernils]-->W14 F58[dernils]-->W14 F122[dernils]-->W75 )
+
+W94(130,136,138) [dernils]
+   F132[dernils] = 3
+
+W112(74,68,19) [dernils] (D-Schiffe=1)
+   (F74[dernils]-->W19 )
+
+W115(14,36,52,11) [dernils] (D-Schiffe=1)
+   (F2[dernils]-->W36 F148[dernils]-->W52 )
+
+W129(92,83,144) [dernils] (D-Schiffe=1)
+   F21[Toaster] = 4
+   (F119[dernils]-->W92 F58[dernils]-->W92 F122[dernils]-->W92 F137[dernils]-->W92 )
+
+W136(134,68,94) [dernils] (D-Schiffe=1)
+   (F132[dernils]-->W94 )
+
+W144(48,129,149) [dernils] (D-Schiffe=1)
+   (F122[dernils]-->W129 F137[dernils]-->W129 F24[dernils]-->W48 F133[dernils]-->W149 )
+
+W149(34,144,26) [dernils]
+   F117[dernils] = 0
+   F133[dernils] = 4
+

@@ -31,6 +31,14 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 - Flotten dürfen nur einmal fliege
   - Doppelter Flugbefehl Copiert Flotte
 - Command kommt nicht mit Weltennummern zurecht die es nicht gibt
+- Keine Ausgabe für den der angeschossen wurde:
+W125(77,140,63,117) [ZAPHOD] (D-Schiffe=1)
+   F69[ZAPHOD] = 0
+   F34[ZAPHOD] = 7 (feuert auf F69[Drake])
+   F102[ZAPHOD] = 5
+   (F110[ZAPHOD]-->W140 )
+- feuern D-Schiffe wird nicht angezeigt
+
 
 ## TODOs
 - FinalPhaseCoreGame Tests

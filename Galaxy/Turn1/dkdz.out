@@ -1,0 +1,17 @@
+Infos zu Spieler: dkdz Runde: 2 
+Punkte: NaN | Welten: 3 | Flotten: 6 | Schiffe auf Flotten: 25 | D-Schiffe: 1
+Verbündete: ()
+
+W25(46,70,139) [dkdz]
+   F13[dkdz] = 5
+
+W41(46,8,127) [dkdz]
+   F96[dkdz] = 0
+   F6[dkdz] = 5
+
+W46(25,41) [dkdz] (D-Schiffe=1)
+   F80[dkdz] = 5
+   F66[dkdz] = 5
+   F16[dkdz] = 5
+   (F13[dkdz]-->W25 F6[dkdz]-->W41 )
+

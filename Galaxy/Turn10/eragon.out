@@ -1,0 +1,88 @@
+Infos zu Spieler: eragon Runde: 11 
+Punkte: 2040 | Welten: 15 | Flotten: 10 | Schiffe auf Flotten: 49 | D-Schiffe: 84
+Verbündete: ()
+
+W6(116,60,145) [eragon] (D-Schiffe=6)
+
+W9(79,57,120) [eragon] (D-Schiffe=6)
+
+W16(119,114,147) [eragon] (D-Schiffe=2)
+   F143[---] = 0
+   (F90[eragon]-->W147 )
+
+W29(61,57,65) [eragon] (D-Schiffe=9)
+
+W39(124,31,18) [Toaster] (D-Schiffe=5)
+   F123[---] = 0
+   F11[Toaster] = 1
+   F61[Drake] = 2
+   (F104[eragon]-->W124 F33[Toaster]-->W18 )
+
+W42(89,64,111,60) [eragon] (D-Schiffe=2)
+   F44[Toaster] = 2
+   (F89[eragon]-->W64 F91[eragon]-->W64 )
+
+W54(128,81,79) [ZAPHOD] (D-Schiffe=1)
+   (F56[ZAPHOD]-->W128 F36[eragon]-->W79 )
+
+W57(9,29) [eragon] (D-Schiffe=6)
+
+W58(45,114,133) [eragon] (D-Schiffe=3)
+   (F103[Drake]-->W45 F60[Drake]-->W133 )
+
+W60(6,83,79,42) [eragon] (D-Schiffe=7)
+   (F68[Toaster]-->W83 F21[Toaster]-->W83 )
+
+W64(4,2,42) [Drake] (D-Schiffe=10)
+   F89[eragon] = 9
+   F91[eragon] = 4
+   (F72[Drake]-->W2 F44[Toaster]-->W4 F44[Toaster]-->W42 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=6)
+   F42[eragon] = 15
+   F46[ZAPHOD] = 14
+
+W79(9,60,54) [eragon] (D-Schiffe=8)
+   F36[eragon] = 2
+
+W89(132,42,142) [Drake] (D-Schiffe=5)
+   F115[Drake] = 3
+   F141[Drake] = 3
+   F79[Drake] = 3
+   F30[Drake] = 8
+   (F89[eragon]-->W42 F91[eragon]-->W42 )
+
+W111(42) [eragon] (D-Schiffe=10)
+
+W114(58,16,120) [eragon] (D-Schiffe=5)
+
+W119(16,8,44) [ZAPHOD] (D-Schiffe=3)
+   (F90[eragon]-->W16 )
+
+W120(124,9,114,139) [eragon] (D-Schiffe=8)
+   F80[dkdz] = 5
+   (F104[eragon]-->W139 )
+
+W124(39,36,120) [eragon] (D-Schiffe=7)
+   (F104[eragon]-->W120 F33[Toaster]-->W39 )
+
+W133(26,58,48)
+   F128[eragon] = 4
+   F116[eragon] = 2
+   F60[Drake] = 1
+   (F133[dernils]-->W26 )
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=1)
+   F13[dkdz] = 5
+   F51[Beerbowl] = 2
+   F71[Beerbowl] = 3
+   F104[eragon] = 9
+
+W145(6,48,35) [eragon] (D-Schiffe=5)
+   (F4[dernils]-->W48 F48[dernils]-->W48 )
+
+W147(30,21,16) [eragon]
+   F111[eragon] = 0
+   F149[eragon] = 0
+   F90[eragon] = 4
+

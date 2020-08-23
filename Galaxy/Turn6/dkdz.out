@@ -1,0 +1,41 @@
+Infos zu Spieler: dkdz Runde: 7 
+Punkte: 480 | Welten: 5 | Flotten: 8 | Schiffe auf Flotten: 25 | D-Schiffe: 28
+Verbündete: ()
+
+W25(46,70,139) [dkdz] (D-Schiffe=5)
+   (F13[dkdz]-->W139 F66[dkdz]-->W139 )
+
+W41(46,8,127) [dkdz] (D-Schiffe=5)
+   F96[---] = 0
+
+W46(25,41) [dkdz] (D-Schiffe=11)
+
+W55(30,70,135) [Red-Ex] (D-Schiffe=5)
+   F3[dkdz] = 0
+   F40[dkdz] = 0
+   F139[dkdz] = 0
+   F16[dkdz] = 5
+   (F135[Red-Ex]-->W70 )
+
+W70(19,55,25) [dkdz] (D-Schiffe=4)
+   F23[---] = 0
+   F112[---] = 0
+   F74[dernils] = 6
+   F135[Red-Ex] = 5
+
+W120(124,9,114,139) [eragon] (D-Schiffe=4)
+   F80[dkdz] = 5
+   (F90[eragon]-->W114 )
+
+W123(53,83,127) [Toaster] (D-Schiffe=3)
+   F6[dkdz] = 5
+   F19[Toaster] = 5
+
+W127(123,41) [dkdz] (D-Schiffe=3)
+   F54[---] = 0
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=1)
+   F13[dkdz] = 5
+   F66[dkdz] = 5
+   (F77[Beerbowl]-->W23 F125[Beerbowl]-->W23 F38[Beerbowl]-->W23 F100[Beerbowl]-->W23 )
+

@@ -1,0 +1,101 @@
+Infos zu Spieler: eragon Runde: 10 
+Punkte: 1740 | Welten: 14 | Flotten: 8 | Schiffe auf Flotten: 49 | D-Schiffe: 66
+Verbündete: ()
+
+W6(116,60,145) [eragon] (D-Schiffe=5)
+
+W9(79,57,120) [eragon] (D-Schiffe=4)
+
+W16(119,114,147) [eragon] (D-Schiffe=1)
+   F143[---] = 0
+   (F90[eragon]-->W119 )
+
+W29(61,57,65) [eragon] (D-Schiffe=8)
+   (F42[eragon]-->W65 )
+
+W36(115,138,124) [dernils] (D-Schiffe=1)
+   F2[dernils] = 5
+   F119[dernils] = 8
+   (F104[eragon]-->W124 )
+
+W39(124,31,18) [Toaster] (D-Schiffe=4)
+   F123[---] = 0
+   F11[Toaster] = 1
+   F104[eragon] = 9
+   (F8[Toaster]-->W18 F33[Toaster]-->W124 )
+
+W42(89,64,111,60) [eragon] (D-Schiffe=1)
+   (F89[eragon]-->W89 F91[eragon]-->W89 )
+
+W45(132,58,33) [Drake] (D-Schiffe=4)
+   (F128[eragon]-->W58 )
+
+W48(144,145,133) [dernils] (D-Schiffe=1)
+   (F48[dernils]-->W145 F116[eragon]-->W133 )
+
+W54(128,81,79) [ZAPHOD] (D-Schiffe=4)
+   F56[ZAPHOD] = 2
+   F36[eragon] = 2
+   (F109[ZAPHOD]-->W81 )
+
+W57(9,29) [eragon] (D-Schiffe=4)
+
+W58(45,114,133) [eragon] (D-Schiffe=2)
+   F103[Drake] = 0
+   F60[Drake] = 2
+   (F128[eragon]-->W133 )
+
+W60(6,83,79,42) [eragon] (D-Schiffe=6)
+   F68[Toaster] = 0
+   F21[Toaster] = 4
+   (F36[eragon]-->W79 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1)
+   F92[Beerbowl] = 2
+   F100[Beerbowl] = 3
+   F99[Beerbowl] = 7
+   F125[Beerbowl] = 1
+   F77[Beerbowl] = 4
+   F138[Beerbowl] = 4
+   (F42[eragon]-->W29 F137[dernils]-->W87 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=5)
+   F42[eragon] = 15
+
+W79(9,60,54) [eragon] (D-Schiffe=7)
+   (F36[eragon]-->W54 )
+
+W83(129,60,123) [Toaster] (D-Schiffe=4)
+   F67[Toaster] = 3
+   F97[Toaster] = 8
+   (F35[Drake]-->W123 F36[eragon]-->W60 F21[Toaster]-->W60 )
+
+W89(132,42,142) [Drake] (D-Schiffe=4)
+   F89[eragon] = 9
+   F91[eragon] = 4
+   (F30[Drake]-->W142 )
+
+W111(42) [eragon] (D-Schiffe=8)
+
+W114(58,16,120) [eragon] (D-Schiffe=3)
+   (F60[Drake]-->W58 )
+
+W119(16,8,44) [ZAPHOD] (D-Schiffe=2)
+   F90[eragon] = 4
+
+W120(124,9,114,139) [eragon] (D-Schiffe=7)
+   F80[dkdz] = 5
+
+W124(39,36,120) [eragon] (D-Schiffe=6)
+   F33[Toaster] = 3
+   (F104[eragon]-->W39 )
+
+W133(26,58,48)
+   F133[dernils] = 1
+   F128[eragon] = 4
+   F116[eragon] = 2
+
+W145(6,48,35) [eragon] (D-Schiffe=4)
+   F4[dernils] = 0
+   F48[dernils] = 2
+

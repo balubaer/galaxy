@@ -1,0 +1,32 @@
+Infos zu Spieler: Toaster Runde: 3 
+Punkte: 120 | Welten: 6 | Flotten: 10 | Schiffe auf Flotten: 25 | D-Schiffe: 5
+Verbündete: ()
+
+W3(80,15,109,11,66) [Toaster]
+   F18[Toaster] = 5
+   F19[Toaster] = 5
+   F33[Toaster] = 5
+
+W15(3,53,62) [Toaster] (D-Schiffe=1)
+   F73[Toaster] = 2
+   (F97[Toaster]-->W53 F44[Toaster]-->W62 F18[Toaster]-->W3 F19[Toaster]-->W3 F33[Toaster]-->W3 )
+
+W53(123,15) [Toaster] (D-Schiffe=3)
+   F97[Toaster] = 1
+
+W62(15,18,85) [Toaster]
+   F27[Toaster] = 0
+   F150[Toaster] = 0
+   F44[Toaster] = 2
+
+W83(129,60,123) [Toaster]
+   F67[Toaster] = 2
+
+W123(53,83,127) [Toaster] (D-Schiffe=1)
+   (F67[Toaster]-->W83 F21[Toaster]-->W127 )
+
+W127(123,41)
+   F54[---] = 0
+   F6[dkdz] = 5
+   F21[Toaster] = 3
+

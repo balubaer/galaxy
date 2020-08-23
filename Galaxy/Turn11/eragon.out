@@ -1,0 +1,65 @@
+Infos zu Spieler: eragon Runde: 12 
+Punkte: 2360 | Welten: 16 | Flotten: 10 | Schiffe auf Flotten: 49 | D-Schiffe: 103
+Verbündete: ()
+
+W6(116,60,145) [eragon] (D-Schiffe=7)
+
+W9(79,57,120) [eragon] (D-Schiffe=8)
+
+W16(119,114,147) [eragon] (D-Schiffe=3)
+   F143[---] = 0
+
+W29(61,57,65) [eragon] (D-Schiffe=10)
+
+W42(89,64,111,60) [eragon] (D-Schiffe=3)
+   F44[Toaster] = 2
+
+W57(9,29) [eragon] (D-Schiffe=8)
+
+W58(45,114,133) [eragon] (D-Schiffe=4)
+   F118[Drake] = 6
+   F141[Drake] = 3
+
+W60(6,83,79,42) [eragon] (D-Schiffe=8)
+
+W64(4,2,42) [Drake] (D-Schiffe=11)
+   F89[eragon] = 9
+   F91[eragon] = 4
+   F136[Drake] = 7
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=1)
+   F42[eragon] = 15
+   (F46[ZAPHOD]-->W100 )
+
+W79(9,60,54) [eragon] (D-Schiffe=9)
+   F36[eragon] = 2
+
+W111(42) [eragon] (D-Schiffe=12)
+
+W114(58,16,120) [eragon] (D-Schiffe=7)
+
+W120(124,9,114,139) [eragon] (D-Schiffe=9)
+   F80[dkdz] = 5
+
+W124(39,36,120) [eragon] (D-Schiffe=8)
+
+W133(26,58,48) [eragon]
+   F128[eragon] = 4
+   F116[eragon] = 2
+   (F60[Drake]-->W48 )
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=1)
+   F13[dkdz] = 5
+   F51[Beerbowl] = 3
+   F71[Beerbowl] = 3
+   F104[eragon] = 9
+   F77[Beerbowl] = 4
+   F145[Beerbowl] = 2
+
+W145(6,48,35) [eragon] (D-Schiffe=6)
+
+W147(30,21,16) [eragon] (D-Schiffe=1)
+   F111[eragon] = 0
+   F149[eragon] = 0
+   F90[eragon] = 4
+

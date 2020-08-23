@@ -1,0 +1,139 @@
+Infos zu Spieler: Drake Runde: 8 
+Punkte: 2080 | Welten: 27 | Flotten: 27 | Schiffe auf Flotten: 35 | D-Schiffe: 95
+Verbündete: ()
+
+W2(64,24) [Drake] (D-Schiffe=4)
+   (F30[Drake]-->W64 )
+
+W5(96,10,142) [Drake] (D-Schiffe=9)
+
+W10(5,103,104) [Drake] (D-Schiffe=4)
+   (F129[ZAPHOD]-->W103 )
+
+W12(22,24,131) [Drake] (D-Schiffe=5)
+   F12[Drake] = 1
+   F1[Drake] = 1
+
+W17(135,101,22,122) [Red-Ex] (D-Schiffe=6)
+   F94[Red-Ex] = 5
+   (F37[Drake]-->W122 )
+
+W22(12,17) [Drake] (D-Schiffe=1)
+   F75[Drake] = 0
+   F140[Drake] = 1
+   (F12[Drake]-->W12 )
+
+W24(12,43,2,105) [Drake] (D-Schiffe=4)
+   (F63[ZAPHOD]-->W105 )
+
+W32(150,80,52) [ZAPHOD] (D-Schiffe=3)
+   F134[Drake] = 2
+
+W33(72,45,113) [Drake] (D-Schiffe=3)
+
+W34(149,137,126)
+   F26[---] = 0
+   F52[Drake] = 1
+   F117[dernils] = 4
+
+W38(74,13,72) [Drake]
+   F146[Drake] = 0
+   F121[Drake] = 7
+
+W42(89,64,111,60) [eragon] (D-Schiffe=3)
+   F72[Drake] = 0
+   F118[Drake] = 0
+   F131[Drake] = 0
+   F136[Drake] = 1
+   F30[Drake] = 4
+   F68[Drake] = 3
+   (F35[Drake]-->W60 F91[Drake]-->W111 )
+
+W43(106,24,93) [Drake] (D-Schiffe=10)
+
+W45(132,58,33) [Drake] (D-Schiffe=2)
+   (F60[Drake]-->W58 )
+
+W52(32,104,115,105) [ZAPHOD]
+   F102[ZAPHOD] = 0
+   F50[ZAPHOD] = 3
+   F82[ZAPHOD] = 3
+   F106[ZAPHOD] = 1
+   (F148[dernils]-->W115 F134[Drake]-->W32 )
+
+W58(45,114,133) [eragon] (D-Schiffe=1)
+   F103[---] = 0
+   F128[eragon] = 3
+   F60[Drake] = 2
+
+W60(6,83,79,42) [eragon] (D-Schiffe=4)
+   F35[Drake] = 1
+
+W64(4,2,42) [Drake] (D-Schiffe=3)
+   F36[eragon] = 2
+   (F30[Drake]-->W42 )
+
+W72(33,106,38) [Drake] (D-Schiffe=5)
+   (F121[Drake]-->W38 )
+
+W76(118,142,108) [Drake] (D-Schiffe=5)
+
+W89(132,42,142) [Drake] (D-Schiffe=2)
+   (F88[Drake]-->W142 F68[Drake]-->W42 )
+
+W93(96,43) [Drake] (D-Schiffe=6)
+
+W96(5,122,93) [Drake] (D-Schiffe=9)
+
+W98(131,4,99) [Drake]
+   F98[Drake] = 1
+   F147[Drake] = 4
+
+W99(104,98) [Drake] (D-Schiffe=1)
+   F79[Drake] = 1
+   (F98[Drake]-->W98 )
+
+W102(95,131,113) [Drake]
+   F61[Drake] = 1
+
+W104(99,10,52) [Drake] (D-Schiffe=2)
+
+W106(43,72) [Drake] (D-Schiffe=3)
+   (F121[Drake]-->W72 )
+
+W108(77,76,50,13,56) [Drake] (D-Schiffe=2)
+   F113[Drake] = 0
+   F115[Drake] = 0
+   F141[Drake] = 0
+   F10[Drake] = 1
+
+W111(42) [eragon] (D-Schiffe=4)
+   F91[Drake] = 1
+
+W118(76,126) [Drake] (D-Schiffe=3)
+
+W122(110,96,51,17) [masal] (D-Schiffe=4 (Ambusch: {F37[Drake]}))
+   F20[masal] = 1 (Ambush: {F37[Drake]})
+   F127[masal] = 1 (Ambush: {F37[Drake]})
+   F22[masal] = 2 (Ambush: {F37[Drake]})
+   F55[---] = 0 (Ambush: {F37[Drake]})
+   F37[---] = 0
+   F9[ZAPHOD] = 4
+
+W126(35,118,34) [Drake] (D-Schiffe=1)
+   (F52[Drake]-->W34 )
+
+W128(116,54,132,150) [ZAPHOD] (D-Schiffe=5)
+   (F60[Drake]-->W132 )
+
+W131(98,102,12) [Drake] (D-Schiffe=2)
+   (F1[Drake]-->W12 F61[Drake]-->W102 F147[Drake]-->W98 )
+
+W132(89,45,128) [Drake] (D-Schiffe=2)
+   F62[Drake] = 1
+   F46[ZAPHOD] = 4
+   (F60[Drake]-->W45 )
+
+W142(5,76,89) [Drake] (D-Schiffe=7)
+   F88[Drake] = 1
+

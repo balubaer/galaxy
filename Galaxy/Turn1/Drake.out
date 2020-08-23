@@ -1,0 +1,18 @@
+Infos zu Spieler: Drake Runde: 2 
+Punkte: NaN | Welten: 3 | Flotten: 7 | Schiffe auf Flotten: 25 | D-Schiffe: 1
+Verbündete: ()
+
+W43(106,24,93) [Drake]
+   F140[Drake] = 0
+   F91[Drake] = 5
+   F68[Drake] = 5
+
+W93(96,43) [Drake] (D-Schiffe=1)
+   F147[Drake] = 1
+   (F60[Drake]-->W96 F91[Drake]-->W43 F37[Drake]-->W96 F68[Drake]-->W43 )
+
+W96(5,122,93) [Drake]
+   F98[Drake] = 0
+   F60[Drake] = 9
+   F37[Drake] = 5
+

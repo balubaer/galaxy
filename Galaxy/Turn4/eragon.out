@@ -1,0 +1,82 @@
+Infos zu Spieler: eragon Runde: 5 
+Punkte: 420 | Welten: 9 | Flotten: 13 | Schiffe auf Flotten: 19 | D-Schiffe: 20
+Verbündete: ()
+
+W6(116,60,145) [eragon]
+   F116[eragon] = 2
+
+W9(79,57,120) [eragon] (D-Schiffe=5)
+
+W29(61,57,65) [eragon] (D-Schiffe=3)
+   (F89[eragon]-->W61 )
+
+W39(124,31,18)
+   F123[---] = 0
+   F33[Toaster] = 5
+   F90[eragon] = 2
+
+W42(89,64,111,60) [eragon]
+   F30[eragon] = 0
+   F35[eragon] = 0
+   F72[eragon] = 0
+   F118[eragon] = 0
+   F131[eragon] = 0
+   F36[eragon] = 2
+
+W57(9,29) [eragon] (D-Schiffe=6)
+
+W60(6,83,79,42) [eragon] (D-Schiffe=1)
+   F67[Toaster] = 3
+   (F36[eragon]-->W42 F116[eragon]-->W6 F32[eragon]-->W83 )
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1 (Ambusch: {F89[eragon], F104[eragon]}))
+   (F89[eragon]-->W87 F84[dernils]-->W87 F138[Beerbowl]-->W88 F104[eragon]-->W87 )
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=1 (Ambusch: {F42[eragon]}))
+   F82[ZAPHOD] = 1 (Ambush: {F42[eragon]})
+   (F101[ZAPHOD]-->W73 F63[ZAPHOD]-->W100 F42[eragon]-->W73 )
+
+W73(86,65) [ZAPHOD] (D-Schiffe=2)
+   F101[ZAPHOD] = 1
+   F42[eragon] = 3
+   (F70[ZAPHOD]-->W86 )
+
+W79(9,60,54) [eragon] (D-Schiffe=2)
+
+W83(129,60,123) [Toaster] (D-Schiffe=1)
+   F32[eragon] = 1
+   F119[dernils] = 4
+   F58[dernils] = 4
+   (F67[Toaster]-->W60 F21[Toaster]-->W129 )
+
+W87(61,84,75) [dernils] (D-Schiffe=1)
+   F89[eragon] = 2
+   F104[eragon] = 4
+   (F84[dernils]-->W84 F132[dernils]-->W84 )
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=1)
+   (F138[Beerbowl]-->W23 F104[eragon]-->W61 F87[Beerbowl]-->W23 )
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=2)
+   F50[ZAPHOD] = 1
+   (F93[ZAPHOD]-->W47 F101[ZAPHOD]-->W65 F82[ZAPHOD]-->W65 F63[ZAPHOD]-->W47 F42[eragon]-->W65 )
+
+W120(124,9,114,139) [eragon] (D-Schiffe=2)
+   F80[dkdz] = 5
+   (F76[Beerbowl]-->W139 F128[eragon]-->W139 )
+
+W124(39,36,120) [eragon] (D-Schiffe=1)
+   F25[---] = 0
+   (F90[eragon]-->W39 F128[eragon]-->W120 )
+
+W139(23,25,120)
+   F77[---] = 0
+   F125[Beerbowl] = 7
+   F38[Beerbowl] = 7
+   F100[Beerbowl] = 5
+   F138[Beerbowl] = 3 (Ambush: {F89[eragon]})
+   F87[Beerbowl] = 5
+   F76[Beerbowl] = 5
+   F128[eragon] = 3
+   (F80[dkdz]-->W120 )
+

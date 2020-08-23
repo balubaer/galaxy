@@ -1,0 +1,21 @@
+Infos zu Spieler: dernils Runde: 2 
+Punkte: NaN | Welten: 4 | Flotten: 8 | Schiffe auf Flotten: 25 | D-Schiffe: 1
+Verbündete: ()
+
+W75(92,84,87) [dernils] (D-Schiffe=1)
+   (F58[dernils]-->W92 F133[dernils]-->W84 F84[dernils]-->W87 F148[dernils]-->W92 F74[dernils]-->W84 )
+
+W84(87,68,75) [dernils]
+   F24[dernils] = 0
+   F133[dernils] = 5
+   F74[dernils] = 5
+
+W87(61,84,75) [dernils]
+   F132[dernils] = 0
+   F84[dernils] = 5
+
+W92(129,75,14) [dernils]
+   F119[dernils] = 0
+   F58[dernils] = 5
+   F148[dernils] = 5
+

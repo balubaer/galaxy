@@ -1,0 +1,16 @@
+Infos zu Spieler: eragon Runde: 2 
+Punkte: NaN | Welten: 3 | Flotten: 5 | Schiffe auf Flotten: 25 | D-Schiffe: 1
+Verbündete: ()
+
+W9(79,57,120) [eragon]
+   F32[eragon] = 5
+
+W29(61,57,65) [eragon]
+   F104[eragon] = 5
+
+W57(9,29) [eragon] (D-Schiffe=1)
+   F89[eragon] = 5
+   F42[eragon] = 5
+   F128[eragon] = 5
+   (F32[eragon]-->W9 F104[eragon]-->W29 )
+

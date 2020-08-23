@@ -1,0 +1,89 @@
+Infos zu Spieler: Toaster Runde: 11 
+Punkte: 1880 | Welten: 13 | Flotten: 15 | Schiffe auf Flotten: 60 | D-Schiffe: 69
+Verbündete: ()
+
+W3(80,15,109,11,66) [Toaster] (D-Schiffe=3)
+   (F105[Toaster]-->W109 F134[Drake]-->W66 F73[Toaster]-->W109 )
+
+W4(64,98,18) [Toaster] (D-Schiffe=6)
+   F44[Toaster] = 2
+
+W11(130,28,63,3,115) [Toaster] (D-Schiffe=6 (Ambusch: {F78[ZAPHOD]}))
+   F18[Toaster] = 5 (Ambush: {F78[ZAPHOD]})
+   F101[ZAPHOD] = 5
+   F93[ZAPHOD] = 6
+   F78[---] = 0
+   F124[ZAPHOD] = 3
+   F34[ZAPHOD] = 4
+   (F82[ZAPHOD]-->W28 )
+
+W15(3,53,62) [Toaster] (D-Schiffe=5)
+   F97[Toaster] = 8
+   (F73[Toaster]-->W3 )
+
+W18(62,39,4) [Toaster] (D-Schiffe=6)
+   F8[Toaster] = 1
+   F33[Toaster] = 3
+
+W31(39,95,140) [Toaster] (D-Schiffe=2)
+   (F147[Drake]-->W140 F61[Drake]-->W39 )
+
+W39(124,31,18) [Toaster] (D-Schiffe=5)
+   F123[---] = 0
+   F11[Toaster] = 1
+   F61[Drake] = 2
+   (F104[eragon]-->W124 F33[Toaster]-->W18 )
+
+W42(89,64,111,60) [eragon] (D-Schiffe=2)
+   F44[Toaster] = 2
+   (F89[eragon]-->W64 F91[eragon]-->W64 )
+
+W53(123,15) [Toaster] (D-Schiffe=8)
+   F35[Drake] = 1
+   (F97[Toaster]-->W15 )
+
+W60(6,83,79,42) [eragon] (D-Schiffe=7)
+   (F68[Toaster]-->W83 F21[Toaster]-->W83 )
+
+W62(15,18,85) [Toaster] (D-Schiffe=4)
+
+W64(4,2,42) [Drake] (D-Schiffe=10)
+   F89[eragon] = 9
+   F91[eragon] = 4
+   (F72[Drake]-->W2 F44[Toaster]-->W4 F44[Toaster]-->W42 )
+
+W66(107,82,3) [Toaster] (D-Schiffe=2)
+   F134[Drake] = 2
+   F14[ZAPHOD] = 5
+
+W83(129,60,123) [Toaster] (D-Schiffe=5)
+   F67[Toaster] = 3
+   F68[Toaster] = 1
+   F21[Toaster] = 3
+   (F97[Toaster]-->W123 )
+
+W85(62,13,71) [ZAPHOD] (D-Schiffe=1)
+   F70[ZAPHOD] = 1 (feuert auf F25[Toaster])
+   F25[Toaster] = 5 (feuert auf F70[ZAPHOD])
+   F59[ZAPHOD] = 6
+   F86[ZAPHOD] = 11
+
+W109(3,105,121) [Toaster] (D-Schiffe=10)
+   F27[---] = 0
+   F50[ZAPHOD] = 18 (feuert auf F27[Toaster])
+   F105[Toaster] = 6
+   F73[Toaster] = 8
+   (F63[ZAPHOD]-->W105 F57[ZAPHOD]-->W105 F120[ZAPHOD]-->W105 )
+
+W123(53,83,127) [Toaster] (D-Schiffe=7)
+   F6[dkdz] = 5
+   F19[Toaster] = 5
+   (F97[Toaster]-->W53 F35[Drake]-->W53 )
+
+W124(39,36,120) [eragon] (D-Schiffe=7)
+   (F104[eragon]-->W120 F33[Toaster]-->W39 )
+
+W130(94,11,105) [ZAPHOD]
+   F150[Toaster] = 7 (feuert auf D-Schiffe)
+   F102[ZAPHOD] = 7
+

@@ -1,0 +1,19 @@
+Infos zu Spieler: masal Runde: 11 
+Punkte: 640 | Welten: 2 | Flotten: 1 | Schiffe auf Flotten: 4 | D-Schiffe: 10
+Verbündete: ()
+
+W35(110,126,145) [masal] (D-Schiffe=8)
+   F5[masal] = 4
+   F76[Beerbowl] = 7
+
+W122(110,96,51,17) [masal] (D-Schiffe=2)
+   F20[ZAPHOD] = 0
+   F127[ZAPHOD] = 0
+   F22[ZAPHOD] = 0
+   F55[ZAPHOD] = 0
+   F37[ZAPHOD] = 0
+   F106[ZAPHOD] = 2 (feuert auf F20[masal])
+   F7[ZAPHOD] = 2 (feuert auf F127[masal])
+   F142[ZAPHOD] = 4 (feuert auf F22[masal])
+   F9[ZAPHOD] = 10 (feuert auf D-Schiffe)
+

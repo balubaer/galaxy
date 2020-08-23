@@ -1,0 +1,21 @@
+Infos zu Spieler: masal Runde: 2 
+Punkte: NaN | Welten: 2 | Flotten: 7 | Schiffe auf Flotten: 25 | D-Schiffe: 1
+Verbündete: ()
+
+W7(88,110) [masal] (D-Schiffe=1)
+   F99[masal] = 5
+   F100[Beerbowl] = 5
+   F125[Beerbowl] = 5
+   (F22[masal]-->W110 F145[masal]-->W88 F92[masal]-->W88 F5[masal]-->W110 )
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=1)
+   F145[masal] = 5
+   F92[masal] = 5
+   (F87[Beerbowl]-->W61 F100[Beerbowl]-->W7 F76[Beerbowl]-->W23 F38[Beerbowl]-->W61 F125[Beerbowl]-->W7 )
+
+W110(35,122,7) [masal]
+   F51[masal] = 0
+   F71[masal] = 0
+   F22[masal] = 5
+   F5[masal] = 5
+

@@ -1,0 +1,31 @@
+Infos zu Spieler: masal Runde: 8 
+Punkte: 460 | Welten: 4 | Flotten: 4 | Schiffe auf Flotten: 8 | D-Schiffe: 24
+Verbündete: ()
+
+W7(88,110) [masal] (D-Schiffe=5)
+   F99[Beerbowl] = 0
+   F145[Beerbowl] = 0
+   F92[Beerbowl] = 0
+   F51[Beerbowl] = 0
+   F71[Beerbowl] = 0
+   F87[Beerbowl] = 10 (feuert auf F99[masal])
+   F138[Beerbowl] = 2 (feuert auf F51[masal])
+   F76[Beerbowl] = 10 (feuert auf F145[masal])
+   F125[Beerbowl] = 2 (feuert auf F71[masal])
+   F38[Beerbowl] = 10 (feuert auf F92[masal])
+   F100[Beerbowl] = 3 (feuert auf D-Schiffe)
+
+W35(110,126,145) [masal] (D-Schiffe=5)
+   F5[masal] = 4
+   F116[eragon] = 2
+
+W110(35,122,7) [masal] (D-Schiffe=10)
+
+W122(110,96,51,17) [masal] (D-Schiffe=4 (Ambusch: {F37[Drake]}))
+   F20[masal] = 1 (Ambush: {F37[Drake]})
+   F127[masal] = 1 (Ambush: {F37[Drake]})
+   F22[masal] = 2 (Ambush: {F37[Drake]})
+   F55[---] = 0 (Ambush: {F37[Drake]})
+   F37[---] = 0
+   F9[ZAPHOD] = 4
+

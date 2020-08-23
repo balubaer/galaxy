@@ -1,0 +1,29 @@
+Infos zu Spieler: Beerbowl Runde: 8 
+Punkte: 420 | Welten: 4 | Flotten: 12 | Schiffe auf Flotten: 38 | D-Schiffe: 10
+Verbündete: ()
+
+W7(88,110) [masal] (D-Schiffe=5)
+   F99[Beerbowl] = 0
+   F145[Beerbowl] = 0
+   F92[Beerbowl] = 0
+   F51[Beerbowl] = 0
+   F71[Beerbowl] = 0
+   F87[Beerbowl] = 10 (feuert auf F99[masal])
+   F138[Beerbowl] = 2 (feuert auf F51[masal])
+   F76[Beerbowl] = 10 (feuert auf F145[masal])
+   F125[Beerbowl] = 2 (feuert auf F71[masal])
+   F38[Beerbowl] = 10 (feuert auf F92[masal])
+   F100[Beerbowl] = 3 (feuert auf D-Schiffe)
+
+W23(88,139) [Beerbowl] (D-Schiffe=4)
+   F66[dkdz] = 5
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=2)
+
+W88(61,7,23) [Beerbowl] (D-Schiffe=2)
+   F77[Beerbowl] = 1
+
+W139(23,25,120) [Beerbowl] (D-Schiffe=2)
+   F13[dkdz] = 5
+   (F66[dkdz]-->W23 )
+

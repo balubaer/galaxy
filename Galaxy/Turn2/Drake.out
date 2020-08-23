@@ -1,0 +1,32 @@
+Infos zu Spieler: Drake Runde: 3 
+Punkte: 120 | Welten: 6 | Flotten: 8 | Schiffe auf Flotten: 26 | D-Schiffe: 4
+Verbündete: ()
+
+W5(96,10,142) [Drake]
+   F98[Drake] = 4
+   F60[Drake] = 5
+
+W24(12,43,2,105) [Drake]
+   F55[Drake] = 0
+   F91[Drake] = 4
+
+W43(106,24,93) [Drake] (D-Schiffe=1)
+   F140[Drake] = 1
+   (F91[Drake]-->W24 F68[Drake]-->W106 )
+
+W93(96,43) [Drake] (D-Schiffe=2)
+   F147[Drake] = 2
+
+W96(5,122,93) [Drake] (D-Schiffe=1)
+   (F98[Drake]-->W5 F60[Drake]-->W5 F37[Drake]-->W122 )
+
+W106(43,72) [Drake]
+   F68[Drake] = 5
+
+W122(110,96,51,17)
+   F20[---] = 0
+   F127[---] = 0
+   F94[Red-Ex] = 5
+   F37[Drake] = 5
+   F22[masal] = 4
+

@@ -1,0 +1,187 @@
+Infos zu Spieler: Drake Runde: 11 
+Punkte: 4000 | Welten: 34 | Flotten: 36 | Schiffe auf Flotten: 86 | D-Schiffe: 177
+Verbündete: ()
+
+W2(64,24) [Drake] (D-Schiffe=5)
+   (F72[Drake]-->W24 )
+
+W3(80,15,109,11,66) [Toaster] (D-Schiffe=3)
+   (F105[Toaster]-->W109 F134[Drake]-->W66 F73[Toaster]-->W109 )
+
+W5(96,10,142) [Drake] (D-Schiffe=8)
+
+W10(5,103,104) [Drake] (D-Schiffe=7)
+
+W12(22,24,131) [Drake] (D-Schiffe=7)
+   F140[Drake] = 4
+   F12[Drake] = 2
+
+W22(12,17) [Drake] (D-Schiffe=10)
+   (F12[Drake]-->W12 )
+
+W24(12,43,2,105) [Drake] (D-Schiffe=7)
+   F136[Drake] = 7
+   (F72[Drake]-->W43 )
+
+W26(133,149,28) [dernils] (D-Schiffe=1)
+   F26[dernils] = 3
+   F133[dernils] = 1
+   F83[dernils] = 7
+   (F101[ZAPHOD]-->W28 F52[Drake]-->W28 )
+
+W28(97,11,26) [ZAPHOD] (D-Schiffe=2)
+   F82[ZAPHOD] = 3
+   F52[Drake] = 1
+   (F101[ZAPHOD]-->W11 F93[ZAPHOD]-->W11 F34[ZAPHOD]-->W11 )
+
+W31(39,95,140) [Toaster] (D-Schiffe=2)
+   (F147[Drake]-->W140 F61[Drake]-->W39 )
+
+W33(72,45,113) [Drake] (D-Schiffe=8)
+   F121[Drake] = 1
+   F15[Drake] = 1
+   (F118[Drake]-->W45 )
+
+W38(74,13,72) [Drake] (D-Schiffe=8)
+   F146[Drake] = 1
+   (F121[Drake]-->W72 )
+
+W39(124,31,18) [Toaster] (D-Schiffe=5)
+   F123[---] = 0
+   F11[Toaster] = 1
+   F61[Drake] = 2
+   (F104[eragon]-->W124 F33[Toaster]-->W18 )
+
+W43(106,24,93) [Drake] (D-Schiffe=2)
+   F72[Drake] = 2
+   (F136[Drake]-->W24 )
+
+W45(132,58,33) [Drake] (D-Schiffe=5)
+   F103[Drake] = 1
+   F118[Drake] = 10
+
+W50(117,108) [Drake] (D-Schiffe=1)
+   (F10[Drake]-->W117 )
+
+W53(123,15) [Toaster] (D-Schiffe=8)
+   F35[Drake] = 1
+   (F97[Toaster]-->W15 )
+
+W56(69,117,67,108) [Drake] (D-Schiffe=2)
+   F108[Drake] = 1
+   F113[Drake] = 1
+   F110[ZAPHOD] = 6
+   (F17[Drake]-->W67 F49[Drake]-->W117 F81[Drake]-->W108 F88[Drake]-->W69 )
+
+W58(45,114,133) [eragon] (D-Schiffe=3)
+   (F103[Drake]-->W45 F60[Drake]-->W133 )
+
+W64(4,2,42) [Drake] (D-Schiffe=10)
+   F89[eragon] = 9
+   F91[eragon] = 4
+   (F72[Drake]-->W2 F44[Toaster]-->W4 F44[Toaster]-->W42 )
+
+W66(107,82,3) [Toaster] (D-Schiffe=2)
+   F134[Drake] = 2
+   F14[ZAPHOD] = 5
+
+W67(137,56,81)
+   F85[dernils] = 2
+   F17[Drake] = 1
+   F109[ZAPHOD] = 9
+   F130[dernils] = 3
+
+W69(56,59,148) [ZAPHOD] (D-Schiffe=1)
+   F88[Drake] = 1
+   (F110[ZAPHOD]-->W56 F129[ZAPHOD]-->W59 )
+
+W72(33,106,38) [Drake] (D-Schiffe=11)
+   (F121[Drake]-->W33 F118[Drake]-->W33 )
+
+W76(118,142,108) [Drake] (D-Schiffe=6)
+   (F115[Drake]-->W142 F141[Drake]-->W142 F79[Drake]-->W142 )
+
+W77(1,125,108) [ZAPHOD] (D-Schiffe=1)
+   F81[Drake] = 1
+   (F126[ZAPHOD]-->W125 F124[ZAPHOD]-->W125 )
+
+W78(137,82,63)
+   F1[Drake] = 2
+   F130[dernils] = 3
+
+W82(113,66,78) [Drake] (D-Schiffe=1)
+   F47[Drake] = 2
+   (F1[Drake]-->W78 )
+
+W89(132,42,142) [Drake] (D-Schiffe=5)
+   F115[Drake] = 3
+   F141[Drake] = 3
+   F79[Drake] = 3
+   F30[Drake] = 8
+   (F89[eragon]-->W42 F91[eragon]-->W42 )
+
+W93(96,43) [Drake] (D-Schiffe=12)
+
+W95(31,102) [Drake] (D-Schiffe=2)
+   F140[Drake] = 4
+   (F15[Drake]-->W102 )
+
+W96(5,122,93) [Drake] (D-Schiffe=12)
+
+W98(131,4,99) [Drake] (D-Schiffe=3)
+   F75[Drake] = 7
+   (F98[Drake]-->W99 )
+
+W99(104,98) [Drake] (D-Schiffe=7)
+   F98[Drake] = 1
+
+W102(95,131,113) [Drake] (D-Schiffe=2)
+   (F140[Drake]-->W95 F15[Drake]-->W113 )
+
+W104(99,10,52) [Drake] (D-Schiffe=5)
+
+W106(43,72) [Drake] (D-Schiffe=3)
+   (F118[Drake]-->W72 )
+
+W108(77,76,50,13,56) [Drake] (D-Schiffe=3)
+   (F81[Drake]-->W77 F115[Drake]-->W76 F141[Drake]-->W76 F79[Drake]-->W76 )
+
+W113(82,102,33) [Drake] (D-Schiffe=4)
+   (F15[Drake]-->W33 )
+
+W117(56,50,125) [Drake]
+   F64[Drake] = 0
+   F10[Drake] = 1
+   F49[Drake] = 1
+
+W118(76,126) [Drake] (D-Schiffe=9)
+   F131[Drake] = 6
+
+W123(53,83,127) [Toaster] (D-Schiffe=7)
+   F6[dkdz] = 5
+   F19[Toaster] = 5
+   (F97[Toaster]-->W53 F35[Drake]-->W53 )
+
+W126(35,118,34) [Drake] (D-Schiffe=4)
+   (F117[dernils]-->W34 F131[Drake]-->W118 )
+
+W131(98,102,12) [Drake] (D-Schiffe=2)
+   (F75[Drake]-->W98 )
+
+W132(89,45,128) [Drake] (D-Schiffe=4)
+   F62[Drake] = 2
+
+W133(26,58,48)
+   F128[eragon] = 4
+   F116[eragon] = 2
+   F60[Drake] = 1
+   (F133[dernils]-->W26 )
+
+W140(146,125,31) [Drake]
+   F45[Drake] = 0
+   F69[Drake] = 0
+   F147[Drake] = 2
+
+W142(5,76,89) [Drake] (D-Schiffe=2)
+   (F115[Drake]-->W89 F141[Drake]-->W89 F79[Drake]-->W89 F30[Drake]-->W89 )
+

@@ -1,0 +1,106 @@
+Infos zu Spieler: Drake Runde: 6 
+Punkte: 1060 | Welten: 22 | Flotten: 26 | Schiffe auf Flotten: 30 | D-Schiffe: 43
+Verbündete: ()
+
+W2(64,24) [Drake] (D-Schiffe=3)
+
+W4(64,98,18) [Toaster] (D-Schiffe=1)
+   F44[Toaster] = 2
+   F91[Drake] = 2
+
+W5(96,10,142) [Drake] (D-Schiffe=5)
+
+W10(5,103,104) [Drake] (D-Schiffe=2)
+   (F98[Drake]-->W104 )
+
+W12(22,24,131) [Drake] (D-Schiffe=1)
+   (F61[Drake]-->W131 F140[Drake]-->W22 )
+
+W22(12,17) [Drake]
+   F12[Drake] = 0
+   F75[Drake] = 0
+   F140[Drake] = 1
+
+W24(12,43,2,105) [Drake] (D-Schiffe=2)
+   (F55[Drake]-->W43 F147[Drake]-->W105 )
+
+W33(72,45,113) [Drake] (D-Schiffe=1)
+   (F68[Drake]-->W45 )
+
+W42(89,64,111,60) [eragon] (D-Schiffe=1)
+   F30[Drake] = 0
+   F35[Drake] = 0
+   F72[Drake] = 0
+   F118[Drake] = 0
+   F131[Drake] = 0
+   F136[Drake] = 2
+   (F36[eragon]-->W111 )
+
+W43(106,24,93) [Drake] (D-Schiffe=6)
+   (F55[Drake]-->W93 F147[Drake]-->W24 )
+
+W45(132,58,33) [Drake]
+   F121[Drake] = 0
+   F68[Drake] = 4
+
+W64(4,2,42) [Drake] (D-Schiffe=1)
+   (F136[Drake]-->W42 F91[Drake]-->W4 )
+
+W72(33,106,38) [Drake] (D-Schiffe=3)
+
+W76(118,142,108) [Drake] (D-Schiffe=1)
+   (F52[Drake]-->W118 F10[Drake]-->W108 )
+
+W89(132,42,142) [Drake] (D-Schiffe=1)
+   F88[---] = 0
+   (F60[Drake]-->W132 )
+
+W93(96,43) [Drake] (D-Schiffe=2)
+   (F55[Drake]-->W96 F147[Drake]-->W43 )
+
+W96(5,122,93) [Drake] (D-Schiffe=7)
+   F55[Drake] = 1
+   (F37[Drake]-->W122 )
+
+W103(1,10,91) [ZAPHOD]
+   F86[ZAPHOD] = 0
+   F129[ZAPHOD] = 3
+   F78[ZAPHOD] = 9
+   (F98[Drake]-->W10 )
+
+W104(99,10,52) [Drake]
+   F134[Drake] = 0
+   F98[Drake] = 4
+
+W105(47,130,109,52,24) [ZAPHOD] (D-Schiffe=1)
+   F82[ZAPHOD] = 2
+   F147[Drake] = 5
+   (F50[ZAPHOD]-->W52 F63[ZAPHOD]-->W130 )
+
+W106(43,72) [Drake] (D-Schiffe=5)
+
+W108(77,76,50,13,56) [Drake]
+   F113[Drake] = 0
+   F115[Drake] = 0
+   F141[Drake] = 0
+   F10[Drake] = 1
+
+W118(76,126) [Drake]
+   F52[Drake] = 1
+
+W122(110,96,51,17) [masal] (D-Schiffe=2)
+   F20[masal] = 1
+   F127[masal] = 1
+   F22[masal] = 2
+   F37[Drake] = 5
+
+W131(98,102,12) [Drake]
+   F1[Drake] = 0
+   F61[Drake] = 1
+
+W132(89,45,128) [Drake]
+   F62[Drake] = 0
+   F60[Drake] = 3
+
+W142(5,76,89) [Drake] (D-Schiffe=3)
+

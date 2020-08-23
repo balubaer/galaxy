@@ -1,0 +1,134 @@
+Infos zu Spieler: ZAPHOD Runde: 8 
+Punkte: 2000 | Welten: 28 | Flotten: 23 | Schiffe auf Flotten: 60 | D-Schiffe: 60
+Verbündete: ()
+
+W1(103,77) [ZAPHOD] (D-Schiffe=1)
+   (F78[ZAPHOD]-->W77 )
+
+W3(80,15,109,11,66) [Toaster] (D-Schiffe=5)
+   F27[Toaster] = 10
+   (F120[ZAPHOD]-->W80 )
+
+W10(5,103,104) [Drake] (D-Schiffe=4)
+   (F129[ZAPHOD]-->W103 )
+
+W11(130,28,63,3,115) [Toaster] (D-Schiffe=3)
+   F18[Toaster] = 5
+   F2[dernils] = 3
+   (F7[ZAPHOD]-->W130 )
+
+W13(40,85,38,108) [ZAPHOD] (D-Schiffe=1)
+   F59[ZAPHOD] = 0
+   F126[ZAPHOD] = 7
+   (F70[ZAPHOD]-->W85 )
+
+W24(12,43,2,105) [Drake] (D-Schiffe=4)
+   (F63[ZAPHOD]-->W105 )
+
+W32(150,80,52) [ZAPHOD] (D-Schiffe=3)
+   F134[Drake] = 2
+
+W44(97,51,119) [ZAPHOD] (D-Schiffe=1)
+   (F93[ZAPHOD]-->W119 F101[ZAPHOD]-->W97 )
+
+W47(141,105,100) [ZAPHOD] (D-Schiffe=4)
+   F63[ZAPHOD] = 1
+
+W51(122,141,44) [ZAPHOD] (D-Schiffe=2)
+   (F9[ZAPHOD]-->W122 F101[ZAPHOD]-->W44 )
+
+W52(32,104,115,105) [ZAPHOD]
+   F102[ZAPHOD] = 0
+   F50[ZAPHOD] = 3
+   F82[ZAPHOD] = 3
+   F106[ZAPHOD] = 1
+   (F148[dernils]-->W115 F134[Drake]-->W32 )
+
+W54(128,81,79) [ZAPHOD] (D-Schiffe=2)
+   (F56[ZAPHOD]-->W81 )
+
+W62(15,18,85) [Toaster] (D-Schiffe=2)
+   F86[ZAPHOD] = 7
+
+W65(29,73,100) [ZAPHOD] (D-Schiffe=3)
+
+W71(86,91,85) [ZAPHOD] (D-Schiffe=2)
+   (F126[ZAPHOD]-->W85 F86[ZAPHOD]-->W85 )
+
+W73(86,65) [ZAPHOD] (D-Schiffe=6)
+
+W77(1,125,108) [ZAPHOD]
+   F14[ZAPHOD] = 0
+   F78[ZAPHOD] = 5
+
+W79(9,60,54) [eragon] (D-Schiffe=5)
+   (F56[ZAPHOD]-->W54 )
+
+W80(3,32,141) [ZAPHOD] (D-Schiffe=2)
+   F73[Toaster] = 3
+   F120[ZAPHOD] = 4
+
+W81(49,54,67) [ZAPHOD]
+   F109[ZAPHOD] = 0
+   F56[ZAPHOD] = 3
+
+W85(62,13,71) [ZAPHOD] (D-Schiffe=2)
+   F70[ZAPHOD] = 1
+   (F126[ZAPHOD]-->W13 F86[ZAPHOD]-->W62 )
+
+W86(150,73,71) [ZAPHOD] (D-Schiffe=2)
+   (F86[ZAPHOD]-->W71 )
+
+W91(148,103,71,68) [ZAPHOD] (D-Schiffe=4)
+
+W94(130,136,138) [dernils] (D-Schiffe=2)
+   (F57[ZAPHOD]-->W130 F132[dernils]-->W130 )
+
+W97(28,44,143) [ZAPHOD]
+   F101[ZAPHOD] = 5
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=3)
+   F106[ZAPHOD] = 1
+   (F58[dernils]-->W14 F137[dernils]-->W14 )
+
+W103(1,10,91) [ZAPHOD] (D-Schiffe=2)
+   F129[ZAPHOD] = 6
+
+W105(47,130,109,52,24) [ZAPHOD] (D-Schiffe=2)
+   F57[ZAPHOD] = 1
+   (F63[ZAPHOD]-->W47 )
+
+W116(6,128) [ZAPHOD] (D-Schiffe=3)
+
+W119(16,8,44) [ZAPHOD]
+   F142[ZAPHOD] = 0
+   F93[ZAPHOD] = 3
+
+W122(110,96,51,17) [masal] (D-Schiffe=4 (Ambusch: {F37[Drake]}))
+   F20[masal] = 1 (Ambush: {F37[Drake]})
+   F127[masal] = 1 (Ambush: {F37[Drake]})
+   F22[masal] = 2 (Ambush: {F37[Drake]})
+   F55[---] = 0 (Ambush: {F37[Drake]})
+   F37[---] = 0
+   F9[ZAPHOD] = 4
+
+W128(116,54,132,150) [ZAPHOD] (D-Schiffe=5)
+   (F60[Drake]-->W132 )
+
+W130(94,11,105) [ZAPHOD] (D-Schiffe=2)
+   F7[ZAPHOD] = 1
+   F132[dernils] = 3
+   (F57[ZAPHOD]-->W105 )
+
+W132(89,45,128) [Drake] (D-Schiffe=2)
+   F62[Drake] = 1
+   F46[ZAPHOD] = 4
+   (F60[Drake]-->W45 )
+
+W141(47,51,80) [ZAPHOD] (D-Schiffe=2)
+   (F9[ZAPHOD]-->W51 F101[ZAPHOD]-->W51 )
+
+W148(107,91,69) [ZAPHOD] (D-Schiffe=3)
+
+W150(90,86,32,128) [ZAPHOD] (D-Schiffe=3)
+

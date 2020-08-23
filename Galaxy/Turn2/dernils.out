@@ -1,0 +1,35 @@
+Infos zu Spieler: dernils Runde: 3 
+Punkte: 140 | Welten: 7 | Flotten: 8 | Schiffe auf Flotten: 25 | D-Schiffe: 6
+Verbündete: ()
+
+W14(115,100,92) [dernils]
+   F148[dernils] = 5
+
+W61(87,88,29) [Beerbowl] (D-Schiffe=1)
+   F104[eragon] = 5
+   F84[dernils] = 4
+   (F138[Beerbowl]-->W88 F87[Beerbowl]-->W87 F38[Beerbowl]-->W29 )
+
+W68(136,112,84,91) [dernils]
+   F74[dernils] = 5
+
+W75(92,84,87) [dernils] (D-Schiffe=3)
+   F24[dernils] = 1
+   (F133[dernils]-->W92 )
+
+W84(87,68,75) [dernils] (D-Schiffe=1)
+   (F24[dernils]-->W75 F133[dernils]-->W75 F74[dernils]-->W68 )
+
+W87(61,84,75) [dernils] (D-Schiffe=1)
+   F132[dernils] = 1
+   F87[Beerbowl] = 4
+   (F84[dernils]-->W61 )
+
+W92(129,75,14) [dernils] (D-Schiffe=1)
+   F119[dernils] = 1
+   (F133[dernils]-->W129 F58[dernils]-->W129 F148[dernils]-->W14 )
+
+W129(92,83,144) [dernils]
+   F133[dernils] = 4
+   F58[dernils] = 4
+

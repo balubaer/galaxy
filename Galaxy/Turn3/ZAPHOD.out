@@ -1,37 +1,52 @@
 Infos zu Spieler: ZAPHOD Runde: 4 
-Punkte: 180 | Welten: 5 | Flotten: 5 | Schiffe auf Flotten: 10 | D-Schiffe: 9
+Punkte: 300 | Welten: 9 | Flotten: 12 | Schiffe auf Flotten: 25 | D-Schiffe: 13
 Verbündete: ()
 
-W1(7,8,6) [ZAPHOD] (D-Schiffe=2 (Ambusch: {F7[MARVIN]}))
-   F7[---] = 0
-   (F5[MARVIN]-->W7 )
+W14(115,100,92) [dernils] (D-Schiffe=1)
+   F148[dernils] = 5
+   F93[ZAPHOD] = 3
 
-W2(9,7,5) [ZAPHOD] (D-Schiffe=1)
-   F4[MARVIN] = 1
-   (F10[ZAPHOD]-->W7 F9[ZAPHOD]-->W5 )
+W29(61,57,65) [eragon] (D-Schiffe=2)
+   F89[eragon] = 6
+   (F38[Beerbowl]-->W61 F93[ZAPHOD]-->W65 F82[ZAPHOD]-->W65 )
 
-W3(4,10,6) [MARVIN] (D-Schiffe=1)
-   F3[ZAPHOD] = 5
-   (F2[MARVIN]-->W10 F8[MARVIN]-->W6 )
+W47(141,105,100) [ZAPHOD]
+   F50[ZAPHOD] = 0
+   F101[ZAPHOD] = 0
+   F82[ZAPHOD] = 3
 
-W4(10,6,3) [MARVIN] (D-Schiffe=2)
-   (F3[ZAPHOD]-->W3 )
+W65(29,73,100) [ZAPHOD] (D-Schiffe=2)
+   F63[ZAPHOD] = 2
+   (F93[ZAPHOD]-->W100 F82[ZAPHOD]-->W100 F42[eragon]-->W100 F70[ZAPHOD]-->W73 F78[ZAPHOD]-->W73 )
 
-W5(2) [ZAPHOD]
-   F6[ZAPHOD] = 0
-   F9[ZAPHOD] = 2
+W71(86,91,85) [ZAPHOD] (D-Schiffe=1)
+   (F126[ZAPHOD]-->W91 F129[ZAPHOD]-->W85 )
 
-W6(7,1,4,3) [ZAPHOD] (D-Schiffe=2)
-   F8[MARVIN] = 4
+W73(86,65) [ZAPHOD] (D-Schiffe=5)
+   F70[ZAPHOD] = 1
+   (F78[ZAPHOD]-->W86 )
 
-W7(6,1,2) [ZAPHOD] (D-Schiffe=4)
-   F5[MARVIN] = 3
-   F10[ZAPHOD] = 1
+W85(62,13,71)
+   F73[Toaster] = 3
+   F129[ZAPHOD] = 3
 
-W8(9,1,10) [MARVIN] (D-Schiffe=2)
-   (F1[ZAPHOD]-->W9 F7[MARVIN]-->W1 )
+W86(150,73,71) [ZAPHOD] (D-Schiffe=3)
+   F78[ZAPHOD] = 1
 
-W9(2,8) [MARVIN] (D-Schiffe=1)
-   F1[ZAPHOD] = 2
-   (F7[MARVIN]-->W8 F4[MARVIN]-->W2 )
+W90(150,27,135) [Red-Ex] (D-Schiffe=2)
+   F56[ZAPHOD] = 0
+   F120[ZAPHOD] = 5
+
+W91(148,103,71,68) [ZAPHOD]
+   F126[ZAPHOD] = 2
+
+W100(14,65,47) [ZAPHOD] (D-Schiffe=1)
+   F42[eragon] = 5
+   (F93[ZAPHOD]-->W14 F82[ZAPHOD]-->W47 F70[ZAPHOD]-->W65 F78[ZAPHOD]-->W65 F63[ZAPHOD]-->W65 )
+
+W128(116,54,132,150) [ZAPHOD]
+   F46[ZAPHOD] = 5
+
+W150(90,86,32,128) [ZAPHOD] (D-Schiffe=1)
+   (F46[ZAPHOD]-->W128 F120[ZAPHOD]-->W90 )
 

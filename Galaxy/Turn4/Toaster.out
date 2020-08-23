@@ -1,0 +1,55 @@
+Infos zu Spieler: Toaster Runde: 5 
+Punkte: 440 | Welten: 9 | Flotten: 9 | Schiffe auf Flotten: 33 | D-Schiffe: 14
+Verbündete: ()
+
+W3(80,15,109,11,66) [Toaster] (D-Schiffe=2)
+   (F18[Toaster]-->W11 )
+
+W4(64,98,18) [Toaster]
+   F44[Toaster] = 2
+
+W11(130,28,63,3,115) [Toaster]
+   F18[Toaster] = 5
+
+W15(3,53,62) [Toaster] (D-Schiffe=4)
+   F150[Toaster] = 1
+
+W18(62,39,4) [Toaster] (D-Schiffe=1)
+   (F33[Toaster]-->W39 F44[Toaster]-->W4 )
+
+W39(124,31,18)
+   F123[---] = 0
+   F33[Toaster] = 5
+   F90[eragon] = 2
+
+W53(123,15) [Toaster] (D-Schiffe=4)
+
+W60(6,83,79,42) [eragon] (D-Schiffe=1)
+   F67[Toaster] = 3
+   (F36[eragon]-->W42 F116[eragon]-->W6 F32[eragon]-->W83 )
+
+W62(15,18,85) [Toaster] (D-Schiffe=1)
+   F27[---] = 0
+   (F150[Toaster]-->W15 F44[Toaster]-->W18 )
+
+W83(129,60,123) [Toaster] (D-Schiffe=1)
+   F32[eragon] = 1
+   F119[dernils] = 4
+   F58[dernils] = 4
+   (F67[Toaster]-->W60 F21[Toaster]-->W129 )
+
+W85(62,13,71)
+   F73[Toaster] = 3
+   F70[ZAPHOD] = 6
+   F78[ZAPHOD] = 4
+   (F129[ZAPHOD]-->W71 )
+
+W123(53,83,127) [Toaster] (D-Schiffe=1)
+   F19[Toaster] = 5
+   F97[Toaster] = 6
+   (F21[Toaster]-->W83 )
+
+W129(92,83,144) [dernils] (D-Schiffe=1)
+   F21[Toaster] = 3
+   (F24[dernils]-->W144 F119[dernils]-->W83 F133[dernils]-->W144 F58[dernils]-->W83 )
+
