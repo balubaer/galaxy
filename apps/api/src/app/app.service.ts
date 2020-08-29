@@ -214,6 +214,22 @@ export class AppService {
     return nodeArray;
   }
 
+  getNode(): any[] {
+    return [
+      {"name":"King","dept":10},{"name":"Blake","dept":30},
+      {"name":"Clark","dept":10},{"name":"Jones","dept":20},
+      {"name":"Scott","dept":20},{"name":"Ford","dept":20},
+      {"name":"Smith","dept":20},{"name":"Allen","dept":30},
+      {"name":"Ward","dept":30},{"name":"Martin","dept":30},
+      {"name":"Turner","dept":30},{"name":"Adams","dept":20},
+      {"name":"James","dept":30},{"name":"Miller","dept":10}
+    ];
+   /* return [
+      {"name":"King","dept":10},{"name":"Blake","dept":30}
+    ];*/
+  }
+
+
   getWorldsEdge(): Edge[] {
     const worlds: World[] = this.getWorlds();
     const edgeArray: Array<Edge> = new Array<Edge>();
@@ -231,4 +247,20 @@ export class AppService {
     }
     return edgeArray;
   }
+
+  getEdge(): any[] {
+    return [
+      {"source":1,"target":0},{"source":2,"target":0},
+      {"source":3,"target":0},{"source":7,"target":1},
+      {"source":8,"target":1},{"source":9,"target":1},
+      {"source":10,"target":1},{"source":12,"target":1},
+      {"source":13,"target":2},{"source":4,"target":3},
+      {"source":5,"target":3},{"source":6,"target":5},
+      {"source":11,"target":4}
+    ];
+   /* return [
+      {"source":"Blake","target":"King"}
+    ];*/
+  }
+
 }

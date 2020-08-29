@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, Subject } from 'rxjs';
-import * as d3 from 'd3';
+//import * as d3 from 'd3';
 import { Edge, Node } from '@swimlane/ngx-graph';
+
+declare var d3 : any;
 
 @Component({
   selector: 'galaxy-world-list',
@@ -15,13 +17,16 @@ export class WorldListComponent implements OnInit, OnDestroy {
   width: number;
   height: number;
 
+  nodes: any[]; 
+  links: any[];
+
  // public layout: Layout = new DagreNodesOnlyLayout();
   public links$: Observable<Edge[]>;
-  public links: Edge[];
-  public nodes: Node[];
+  //public links: Edge[];
+ // public nodes: Node[];
   public nodes$: Observable<Node[]>;
   
-  public node: Node;
+ // public node: Node;
   autoZoom = true;
   autoCenter = true; 
 
@@ -35,19 +40,94 @@ export class WorldListComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {
-    this.node = null;
-    this.nodes = new Array();
-    this.links = new Array();
+    //this.node = null;
+   this.nodes = new Array();
+   this.links = new Array();
   }
 
   ngOnInit() {
+    this.links$ = this.http.get<any[]>('/api/GetEdge');
+    //this.links$ = this.http.get<any[]>('/api/GetWorldsEdge');
+    this.subscriptions.add(this.links$.subscribe(aLinks => {
+      this.links = aLinks;
+      console.log(this.links);
+      this.initGraf();
+     }));
+     this.nodes$ = this.http.get<any[]>('/api/GetNode');
+    // this.nodes$ = this.http.get<any[]>('/api/GetWorldsNode');
+     this.subscriptions.add(this.nodes$.subscribe(aNodes => {
+      this.nodes = aNodes;
+      console.log(this.nodes);
+      this.initGraf();
+    }));
+  
+   /* this.nodes = [
+      {"name":"King","dept":10},{"name":"Blake","dept":30},
+      {"name":"Clark","dept":10},{"name":"Jones","dept":20},
+      {"name":"Scott","dept":20},{"name":"Ford","dept":20},
+      {"name":"Smith","dept":20},{"name":"Allen","dept":30},
+      {"name":"Ward","dept":30},{"name":"Martin","dept":30},
+      {"name":"Turner","dept":30},{"name":"Adams","dept":20},
+      {"name":"James","dept":30},{"name":"Miller","dept":10}
+    ];
+
+    this.links = [
+      {"source":1,"target":0},{"source":2,"target":0},
+      {"source":3,"target":0},{"source":7,"target":1},
+      {"source":8,"target":1},{"source":9,"target":1},
+      {"source":10,"target":1},{"source":12,"target":1},
+      {"source":13,"target":2},{"source":4,"target":3},
+      {"source":5,"target":3},{"source":6,"target":5},
+      {"source":11,"target":4}
+    ]; */
+
+   
+
     this.worlds$ = this.http.get<string[]>('/api/WorldStringList');
     this.worldList$ = this.http.get<string[]>('/api/WorldsString');
-    this.links$ = this.http.get<Edge[]>('/api/GetWorldsEdge');
-    this.subscriptions.add(this.links$.subscribe(aLinks => this.links = aLinks));
-    this.nodes$ = this.http.get<Node[]>('/api/GetWorldsNode');
-    this.subscriptions.add(this.nodes$.subscribe(aNodes => this.nodes = aNodes));
-    setTimeout(()=> this.autoCenter = false, 500);
+      // setTimeout(()=> this.autoCenter = false, 500);
+  }
+
+  initGraf() {
+    if (this.nodes.length > 0 && this.links.length > 0) {
+      const width = 300;
+      const height = 225;
+  
+      const svg = d3.select("svg#v6")
+      .attr("viewBox","0 0 " + width + " " + height)
+      .attr("width","500px")
+      .style("max-width","100%")
+      .style("background-color","white");
+  
+      const color = d3.scale.category10();
+      const force = d3.layout.force().size([width,height]);
+  
+      const links = svg.selectAll("line").data(this.links)
+      .enter().append("line").style('stroke','#999');
+    
+    const nodes = svg.selectAll("circle").data(this.nodes)
+      .enter().append("circle")
+        .attr("r", 5)
+        .style("fill", function(d){ return color(d.dept); })
+        .call(force.drag);
+    
+    force.on("tick", function(){
+      links
+        .attr("x1", function(d){ return d.source.x; })
+        .attr("y1", function(d){ return d.source.y; })
+        .attr("x2", function(d){ return d.target.x; })
+        .attr("y2", function(d){ return d.target.y; });
+    
+      nodes
+        .attr("cx", function(d){ return d.x; })
+        .attr("cy", function(d){ return d.y; });
+    });
+    
+    force
+      .nodes(this.nodes)
+      .links(this.links)
+      .start();
+    }
   }
 
   ngOnDestroy() {
@@ -55,7 +135,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
   }
 
   onNodeSelected(aNode) {
-    this.node = aNode;
+  //  this.node = aNode;
     console.log(aNode);
   }
 

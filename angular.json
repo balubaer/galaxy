@@ -28,7 +28,9 @@
             "styles": [
               "apps/worlds/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "apps/worlds/src/assets/d3.min.js"
+            ]
           },
           "configurations": {
             "production": {

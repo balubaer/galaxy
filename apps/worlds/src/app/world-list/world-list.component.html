@@ -1,30 +1,6 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h2>World List</h2>
-<ngx-graph class="chart-container" [view]="[1000, 1000]" [links]="links" [nodes]="nodes" layout="d3ForceDirected"
-  [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$" [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]="zoomEnabled" [zoomToFit$]="zoomToFit$">
-  <ng-template #nodeTemplate let-node>
-    <svg:g class="node" (click)="onNodeSelected(node)"
-      [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
-      <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor"></circle>
-      <svg:text alignment-baseline="central" text-anchor="middle">{{node.label}}</svg:text>
-
-      <circle [attr.r]="node.dimension.width/4" fill="black" [attr.cx]="node.dimension.width/2"
-        [attr.cy]="node.dimension.width/2"></circle>
-      <svg:text alignment-baseline="central" text-anchor="middle" [attr.x]="node.dimension.width/2"
-        [attr.y]="node.dimension.width/2" fill="white">{{node.data.dships}}</svg:text>>
-      <svg:g *ngFor="let fleet of node.data.fleets">
-        <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="20"
-          ry="10" />
-        <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-          alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
-      </svg:g>
-
-      <!--TODO: in data Color und Flotten und d-Schiffe packen -->
-
-    </svg:g>
-
-  </ng-template>
-</ngx-graph>
+<svg id="v6"></svg><!--graph container-->
 <div class="container">
   <table id="table1">
       <tr>
@@ -50,7 +26,7 @@
 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
 <br />
 
-<svg class="world" width="200" height="200">
+<!--svg class="world" width="200" height="200">
   <g *ngIf="node" [attr.transform]="'translate(100,100)'">
     <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
     <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
@@ -67,7 +43,7 @@
         alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
     </g>
   </g>
-</svg>
+</svg-->
 
 <pre *ngFor="let world of worldList$ | async">{{ world }}</pre>
 <br />
