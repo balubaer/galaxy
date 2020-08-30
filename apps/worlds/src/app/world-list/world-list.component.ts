@@ -90,6 +90,20 @@ export class WorldListComponent implements OnInit, OnDestroy {
         .attr("r", 5)
         .style("fill", function (d) { return color(d.dept); });
 
+      nodes.on("click", clicked);
+
+      function clicked(event, d) {
+        console.log(d);
+        if (event.defaultPrevented) return; // dragged
+
+        d3.select(this).transition()
+          .attr("fill", "black")
+          .attr("r", 10 * 2)
+          .transition()
+          .attr("r", 10)
+          .attr("fill", d3.schemeCategory10[d.index % 10]);
+      }
+
       force.on("tick", function () {
         links
           .attr("x1", function (d) { return d.source.x; })
