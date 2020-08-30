@@ -22,6 +22,9 @@ export class WorldListComponent implements OnInit, OnDestroy {
   public links$: Observable<Edge[]>;
   public nodes$: Observable<Node[]>;
 
+  public node: Node;
+  //node$: Observable<Node>;
+
   autoZoom = true;
   autoCenter = true;
 
@@ -35,7 +38,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {
-    //this.node = null;
+    this.node = null;
     this.nodes = new Array();
     this.links = new Array();
   }
@@ -62,6 +65,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
   }
 
   initGraf() {
+    let th = this;
+
     if (this.nodes.length > 0 && this.links.length > 0) {
       const width = 300;
       const height = 225;
@@ -93,7 +98,9 @@ export class WorldListComponent implements OnInit, OnDestroy {
       nodes.on("click", clicked);
 
       function clicked(event, d) {
-        console.log(d);
+        th.node = d;
+
+        //console.log(d);
         if (event.defaultPrevented) return; // dragged
 
         d3.select(this).transition()
@@ -151,20 +158,18 @@ export class WorldListComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  onNodeSelected(aNode) {
-    //  this.node = aNode;
+  onNodeSelected(e, aNode) {
+   // this.node$ = aNode.asObservable();
+   // this.node$.subscribe(aNodeIn => {
+   //   this.node = aNodeIn;
+   // });
+   this.node = aNode;
     console.log(aNode);
   }
 
-  onBubbleSelected(d) {
-    for (const node of this.nodes) {
-      console.log(node);
-    }
-    // d.r = d.r * 2
-
-  }
-
   clickdragging() {
+    console.log(this.node);
+
     if (this.draggingEnabled === true) {
       this.draggingEnabled = false;
     } else {

@@ -26,7 +26,7 @@
 <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
 <br />
 
-<!--svg class="world" width="200" height="200">
+<svg class="world" width="200" height="200">
   <g *ngIf="node" [attr.transform]="'translate(100,100)'">
     <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
     <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
@@ -43,7 +43,7 @@
         alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
     </g>
   </g>
-</svg-->
+</svg>
 
 <pre *ngFor="let world of worldList$ | async">{{ world }}</pre>
 <br />
