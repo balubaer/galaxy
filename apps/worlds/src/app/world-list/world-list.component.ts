@@ -81,7 +81,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
 
       const force = d3.forceSimulation();
 
-      force.force("link", d3.forceLink().id(d => d.id).distance(10));
+      force.force("link", d3.forceLink().id(d => d.id).distance(15));
 
       force
         .force("charge_force", d3.forceManyBody())
@@ -90,17 +90,37 @@ export class WorldListComponent implements OnInit, OnDestroy {
       const links = svg.selectAll("line").data(this.links)
         .enter().append("line").style('stroke', '#999');
 
-      const nodes = svg.selectAll("circle").data(this.nodes)
-        .enter().append("circle")
-        .attr("r", 5)
-        .style("fill", function (d) { return color(d.dept); });
+      const nodes = svg.selectAll(".nodes")
+        .data(this.nodes)
+        .enter()
+        .append("g")
+        .attr("class", "nodes");
+
+
+      nodes.append("circle")
+        .attr("r", 10)
+        .style("fill", function (d) { return d.data.backgroundColor; })
+
+      const drag_handler = d3.drag()
+        .on("start", drag_start)
+        .on("drag", drag_drag)
+        .on("end", drag_end);
+
+      drag_handler(nodes)
+
+      nodes.append("text")
+        .attr("dy", 3)
+        .attr("dx", 0)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 7)
+        .attr("text-anchor", "middle")
+        .text(d => d.id);
 
       nodes.on("click", clicked);
 
       function clicked(event, d) {
         th.node = d;
 
-        //console.log(d);
         if (event.defaultPrevented) return; // dragged
 
         d3.select(this).transition()
@@ -118,17 +138,9 @@ export class WorldListComponent implements OnInit, OnDestroy {
           .attr("x2", function (d) { return d.target.x; })
           .attr("y2", function (d) { return d.target.y; });
 
-        nodes
-          .attr("cx", function (d) { return d.x; })
-          .attr("cy", function (d) { return d.y; });
+        nodes.attr("transform", d => `translate(${d.x},${d.y})`);
+
       });
-
-      const drag_handler = d3.drag()
-        .on("start", drag_start)
-        .on("drag", drag_drag)
-        .on("end", drag_end);
-
-      drag_handler(nodes)
 
       function drag_start(d) {
         if (!d.active) force.alphaTarget(0.3).restart();
@@ -156,15 +168,6 @@ export class WorldListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
-  }
-
-  onNodeSelected(e, aNode) {
-   // this.node$ = aNode.asObservable();
-   // this.node$.subscribe(aNodeIn => {
-   //   this.node = aNodeIn;
-   // });
-   this.node = aNode;
-    console.log(aNode);
   }
 
   clickdragging() {
