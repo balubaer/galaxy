@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthenticationService } from '../_services/authentication.service';
 import { AlertService } from '../_services/alert.service';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
     selector: 'galaxy-login',
@@ -16,17 +15,14 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
-    cookieValue = 'UNKNOWN';
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private alertService: AlertService,
-        private cookieService: CookieService
+        private alertService: AlertService
     ) {
-        console.log(`this.cookieService.get: ${this.cookieService.get('sess-tutorial')}`);
         // redirect to home if already logged in
         if (this.authenticationService.currentUserValue) {
             this.router.navigate(['/']);
@@ -34,9 +30,6 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.cookieService.set( 'Test', 'Hello World' );
-        this.cookieValue = this.cookieService.get('Test');
-        console.log(`this.cookieValue: ${this.cookieValue}`);
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]

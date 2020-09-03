@@ -14,7 +14,6 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationModule } from './NavigationComponent/navigation.module';
 import { CustomHttpInterceptor } from './_helpers/customhttp.interceptor';
-import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -45,8 +44,9 @@ import { CookieService } from 'ngx-cookie-service';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true,
-    },
-    CookieService
+    }
+    //,
+    //CookieService
   ], bootstrap: [AppComponent],
   exports: [
   ]

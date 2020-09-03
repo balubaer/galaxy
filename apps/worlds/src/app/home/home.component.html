@@ -1,4 +1,5 @@
-﻿<div class="container">
+﻿<svg id="v7" width="750" height="750"></svg><!--graph container-->
+<div class="container">
     <table id="table1">
         <tr>
             <h3>Runden ändern und es wird Runde: {{changeround + 1}} angezeigt</h3>
@@ -37,74 +38,6 @@
             </tr>
         </table>
     </div>
-    <div class="container">
-        <table id="table1">
-            <tr>
-                <div class="container-chart">
-                    <ngx-graph class="chart-container" [view]="[750, 750]" [links]=turnData.links [nodes]=turnData.nodes
-                        layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
-                        [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]=false
-                        [zoomToFit$]="zoomToFit$">
-                        <ng-template #nodeTemplate let-node>
-                            <svg:g class="node" (click)="onNodeSelected(node)"
-                                [attr.transform]="'translate('+node.dimension.width/2+','+node.dimension.width/2+')'">
-                                <circle [attr.r]="node.dimension.width/2" [attr.fill]="node.data?.backgroundColor">
-                                </circle>
-                                <svg:text [attr.fill]="node.data?.fontColor" alignment-baseline="central"
-                                    text-anchor="middle">{{node.label}}</svg:text>
-
-                                <circle [attr.r]="node.dimension.width/4" fill="black"
-                                    [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
-                                <svg:text alignment-baseline="central" text-anchor="middle"
-                                    [attr.x]="node.dimension.width/2" [attr.y]="node.dimension.width/2" fill="white">
-                                    {{node.data.dships}}</svg:text>>
-                                <!--node.data.fleets-->
-                                <svg:g *ngFor="let fleet of node.data.fleets">
-                                    <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
-                                        [attr.cy]="fleet.y" rx="20" ry="10" />
-                                    <text [attr.fill]="fleet.fontColor"
-                                        font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                                        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x"
-                                        [attr.y]="fleet.y">{{fleet.label}}</text>
-                                </svg:g>
-                            </svg:g>
-                        </ng-template>
-                    </ngx-graph>
-                </div>
-            </tr>
-        </table>
-    </div>
-
-    <div class="container">
-        <table id="table1">
-            <tr>
-                <td> Enable Dragging </td>
-                <td> Enable Panning </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type="checkbox" [checked]="draggingEnabled" (change)="draggingEnabled = !draggingEnabled" />
-                </td>
-                <td>
-                    <input type="checkbox" [checked]="panningEnabled" (change)="panningEnabled = !panningEnabled" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    <br />
-    <div class="container">
-        <table id="table1">
-            <tr>
-                <button mat-stroked-button color="primary" class="button" (click)="pressViewHomeWorld()">View
-                    Homeworld</button>
-                <button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
-                <button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to
-                    fit</button>
-            </tr>
-        </table>
-    </div>
-    <br />
-    <br />
     <div class="container">
         <table id="table1">
             <tr>

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from './_services/authentication.service';
-import { CookieService } from 'ngx-cookie-service';
 import { Cookie } from 'ng2-cookies';
 
 @Component({
@@ -18,7 +17,6 @@ export class AppComponent {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
-    private cookieService: CookieService
   ) {
     this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
   }
