@@ -176,8 +176,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     function drag_start(d) {
-      console.log(`drag_end : ${th.force}`);
-
       if (!d.active) th.force.alphaTarget(0.3).restart();
       d.subject.fx = d.subject.x;
       d.subject.fy = d.subject.y;
@@ -189,8 +187,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     function drag_end(d) {
-  
-      console.log(`drag_end : ${th.force}`);
       if (!d.active) th.force.alphaTarget(0);
       if (th.fixEnabled === false) {
         d.subject.fx = null;
