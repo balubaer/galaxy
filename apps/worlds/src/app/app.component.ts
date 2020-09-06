@@ -26,6 +26,10 @@ export class AppComponent {
     this.keys = Object.keys(this.cookies);
   }
 
+  showMaps() {
+    this.router.navigate(['/showMaps']);
+  }
+  
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['/login']);

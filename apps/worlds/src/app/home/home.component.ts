@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectWorld: number;
 
   public node: Node;
-  nodes: any
+  nodes: any;
   links: any;
   force: any;
 
@@ -176,6 +176,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     function drag_start(d) {
+      console.log(d.subject);
       if (!d.active) th.force.alphaTarget(0.3).restart();
       d.subject.fx = d.subject.x;
       d.subject.fy = d.subject.y;
@@ -310,5 +311,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   pressViewWorld() {
     this.readNewTurnDataWithRoundAndWorldName(this.changeround, `W${this.selectWorld}`);
+  }
+
+  pressSavewWorld() {
+    for (var n of this.turnData.nodes) {
+      n.fx = n.x;
+      n.fy = n.y;
+    }
+    const key = `R${this.round}W${this.selectWorld}D${this.distanceLevelHomes}.${this.currentUser.username}`;
+    localStorage.setItem(key, JSON.stringify(this.turnData));
   }
 }

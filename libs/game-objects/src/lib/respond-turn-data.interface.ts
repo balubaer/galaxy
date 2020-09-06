@@ -5,6 +5,6 @@ export interface RespondTurnData {
     points: number;
     turnCommanTxt: string;
     links: Edge[];
-    nodes: Node[];
+    nodes: any[];
     homeWorldName: string;
 }

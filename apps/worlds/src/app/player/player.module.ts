@@ -27,7 +27,7 @@ import { NavigationPlayerComponent } from './navigation-component/NavigationPlay
   ],
   exports: [
     PlayerComponent,
-    PlayerListComponent,
+    PlayerListComponent
   ]
 })
 export class PlayerModule { }
