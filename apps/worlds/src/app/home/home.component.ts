@@ -314,7 +314,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   pressSavewWorld() {
-    for (var n of this.turnData.nodes) {
+    for (const n of this.turnData.nodes) {
       n.fx = n.x;
       n.fy = n.y;
     }
