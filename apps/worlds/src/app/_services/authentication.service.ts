@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -7,13 +7,13 @@ import { Login, User } from '@galaxy/api-interfaces';
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     public currentUser: Observable<User>;
-    private currentUserSubject: BehaviorSubject<User>;
+    private currentUserSubject: BehaviorSubject<User | null>;
     private currentAdminLoginSubject: BehaviorSubject<Login>;
 
     constructor(private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
         this.currentUser = this.currentUserSubject.asObservable();
-        this.currentAdminLoginSubject = new BehaviorSubject<Login>(JSON.parse(localStorage.getItem('currentAdminUser')));
+        this.currentAdminLoginSubject = new BehaviorSubject<Login>(JSON.parse(localStorage.getItem('currentAdminUser') as string));
     }
 
     public get currentUserValue(): User {

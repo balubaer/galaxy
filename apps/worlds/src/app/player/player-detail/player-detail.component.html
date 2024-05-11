@@ -15,17 +15,17 @@
                 <button [hidden]="ishiddenNextButton" mat-stroked-button color="primary" class="button"
                     (click)="pressNextRound()">--&gt;</button>
             </td>
-            <td>
+            <!--td>
                 Distnacelevel: <input type="number" [value]="distanceLevelHomes"
-                    (input)="distanceLevelHomes = $event.target.value" size="4" maxlength="4"/>
+                    (input)="distanceLevelHomes = $event.target['value'] ?? 0" size="4" maxlength="4"/>
             </td>
             <td>
-                Select W<input type="number" [value]="selectWorld" (input)="selectWorld = $event.target.value" size="4" maxlength="4"/>
+                Select W<input type="number" [value]="selectWorld" (input)="selectWorld = $event.target['value']" size="4" maxlength="4"/>
             </td>
             <td>
                 <button mat-stroked-button color="primary" class="button" (click)="pressViewWorld()"> show
                 </button>
-            </td>
+            </td-->
         </tr>
     </table>
 </div>
@@ -38,11 +38,11 @@
             </tr>
         </table>
     </div>
-    <div class="container">
+    <!--div class="container">
         <table id="table1">
             <tr>
                 <div class="container-chart">
-                    <ngx-graph class="chart-container" [view]="[750, 750]" [links]=turnData.links [nodes]=turnData.nodes
+                    <ngx-graph class="chart-container" [view]="[750, 750]" [links]=turnData['links'] [nodes]=turnData.nodes
                         layout="d3ForceDirected" [autoZoom]="autoZoom" [autoCenter]="autoCenter" [center$]="center$"
                         [draggingEnabled]="draggingEnabled" [panningEnabled]="panningEnabled" [enableZoom]=false
                         [zoomToFit$]="zoomToFit$">
@@ -58,9 +58,9 @@
                                     [attr.cx]="node.dimension.width/2" [attr.cy]="node.dimension.width/2"></circle>
                                 <svg:text alignment-baseline="central" text-anchor="middle"
                                     [attr.x]="node.dimension.width/2" [attr.y]="node.dimension.width/2" fill="white">
-                                    {{node.data.dships}}</svg:text>>
+                                    {{node.data.dships}}</svg:text>-->
                                 <!--node.data.fleets-->
-                                <svg:g *ngFor="let fleet of node.data.fleets">
+                                <!--svg:g *ngFor="let fleet of node.data.fleets">
                                     <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x"
                                         [attr.cy]="fleet.y" rx="20" ry="10" />
                                     <text [attr.fill]="fleet.fontColor"
@@ -102,8 +102,8 @@
                     fit</button>
             </tr>
         </table>
-    </div>
-    <br />
+    </div-->
+    <!--br />
     <br />
     <div class="container">
         <table id="table1">
@@ -181,7 +181,7 @@
                 </td>
             </tr>
         </table>
-    </div>
+    </div-->
    <div class="container2">
         <table id="table2">
             <tr id="tr2">
@@ -205,7 +205,7 @@
     <div *ngIf="turnCommandTxt">
         <pre>{{ turnCommandTxt }}</pre>
     </div>
-    <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!--form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
         <textarea name="Text1" cols="40" rows="5" formControlName="Commands"></textarea>
         <button>Speichern</button>
-    </form>
+    </form-->

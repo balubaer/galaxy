@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Message, User } from '@galaxy/api-interfaces';
 import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager, objToMap, GamePref } from '@galaxy/game-objects';
 import { readFileSync, writeFileSync } from 'fs';
-import { Edge, Node } from '@swimlane/ngx-graph';
+//import { Edge, Node } from '@swimlane/ngx-graph';
 
 const piVirtel: number = Math.PI / 4;
 const radiusForFleet = 70;
@@ -57,7 +57,7 @@ export class AppService {
   }
 
   getWorldsString(): string[] {
-    const stringArray = new Array();
+    const stringArray = [];
     const string = readFileSync(`worlds.txt`, 'utf8');
     stringArray.push(string);
     return stringArray;
@@ -90,7 +90,7 @@ export class AppService {
 
   getWorldStringList(): string[] {
     const worlds = new TestWorldsArrayFactory().worlds;
-    const worldStringList = new Array();
+    const worldStringList = [];
 
     for (const world of worlds) {
       worldStringList.push(world.description());
@@ -102,7 +102,7 @@ export class AppService {
     const colorPlayerMap: Map<string, string> = new Map();
     const usersData = readFileSync('user.json', 'utf8');
     const users: Array<User> = JSON.parse(usersData);
-    const playerNameArray: Array<string> = new Array();
+    const playerNameArray: Array<string> = [];
 
     for (const user of users) {
       playerNameArray.push(user.username);
@@ -128,7 +128,7 @@ export class AppService {
     const fontColorPlayerMap: Map<string, string> = new Map();
     const usersData = readFileSync('user.json', 'utf8');
     const users: Array<User> = JSON.parse(usersData);
-    const playerNameArray: Array<string> = new Array();
+    const playerNameArray: Array<string> = [];
 
     for (const user of users) {
       playerNameArray.push(user.username);
@@ -175,7 +175,7 @@ export class AppService {
   }
 
   getFleetsWithWorld(world: World): any {
-    const fleets = new Array();
+    const fleets = [];
 
     this.startPosForFleet();
 
@@ -193,7 +193,7 @@ export class AppService {
     return fleets;
   }
 
-  getWorldsNode(): Node[] {
+  /*getWorldsNode(): Node[] {
     const worlds: World[] = this.getWorlds();
     const nodeArray: Array<Node> = new Array<Node>();
 
@@ -230,5 +230,5 @@ export class AppService {
       }
     }
     return edgeArray;
-  }
+  }*/
 }

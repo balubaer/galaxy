@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameServiceService } from '../game-service.service';
 import { Message } from '@galaxy/api-interfaces';
 import { GamePref } from '@galaxy/game-objects';
@@ -14,11 +14,13 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 
 export class CreateWorldsComponent implements OnInit, OnDestroy {
 
-  form: FormGroup;
-  message: Message;
+  form: FormGroup = this.fb.group({
+    Round: ['']
+  });
+  message: Message = {message: ''};
   ishidden: boolean;
   ishidden2: boolean;
-  gamepref: GamePref;
+  gamepref: GamePref | undefined = undefined;
   private readonly subscriptions = new Subscription();
 
 
@@ -28,10 +30,6 @@ export class CreateWorldsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.form = this.fb.group({
-      Round: ['']
-    });
-
     this.subscriptions.add(this.gameService.getGamePref().subscribe(out_gamepref => this.gamepref = out_gamepref));
   }
 
@@ -60,7 +58,9 @@ export class CreateWorldsComponent implements OnInit, OnDestroy {
   }
 
   onSubmitSetRound() {
-    this.gamepref.round = this.form.value.Round;
+    if (this.gamepref) {
+      this.gamepref.round = this.form.value.Round;
+    }
 
     this.gameService.setGamePref(this.gamepref)
       .subscribe();

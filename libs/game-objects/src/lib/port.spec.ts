@@ -1,13 +1,13 @@
 import { Port } from './port';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
-import { World } from './world';
+import { World } from './';
 
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 const twoWorlds = [worlds[1], worlds[2]];
-const world = worlds[0];
+const  = worlds[0];
 const port = new Port();
 port.worlds = twoWorlds;
-port.setWorld(world);
+port.setWorld();
 
 const testString = 'W1(2,3)';
 const world2 = worlds[1];

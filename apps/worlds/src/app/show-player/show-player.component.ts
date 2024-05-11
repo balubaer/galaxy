@@ -11,8 +11,8 @@ import { GameServiceService } from '../game-service.service';
 })
 
 export class ShowPlayerComponent implements OnInit {
-  players$: Observable<Array<string>>;
-  colors$: Observable<Array<string>>;
+  players$: Observable<Array<string>> | undefined;
+  colors$: Observable<Array<string>> | undefined;
   isPickerShown = true;
 
   constructor(private gameService: GameServiceService) { }

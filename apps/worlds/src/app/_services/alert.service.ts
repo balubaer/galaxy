@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 
@@ -38,6 +38,6 @@ export class AlertService {
 
     clear() {
         // clear by calling subject.next() without parameters
-        this.subject.next();
+        this.subject.complete();
     }
 }

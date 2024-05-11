@@ -313,8 +313,8 @@ export class CommandFactory {
                     }
                     counter++
             }
-            return { toFleet, fromHomeWorld, toHomeWorld };
         }
+        return { toFleet, fromHomeWorld, toHomeWorld };
     }
 
     createFireDShipsToFleetCommand(): FireDShipsToFleet {

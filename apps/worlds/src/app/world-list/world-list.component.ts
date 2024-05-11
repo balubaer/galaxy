@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, Subject } from 'rxjs';
-import * as d3 from 'd3';
-import { Edge, Node } from '@swimlane/ngx-graph';
+//import * as d3 from 'd3';
+//import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Component({
   selector: 'galaxy-world-list',
@@ -10,18 +10,18 @@ import { Edge, Node } from '@swimlane/ngx-graph';
   styleUrls: ['./world-list.component.css']
 })
 export class WorldListComponent implements OnInit, OnDestroy {
-  worlds$: Observable<string[]>;
-  worldList$: Observable<string[]>;
-  width: number;
-  height: number;
+  worlds$: Observable<string[]> | undefined;
+  worldList$: Observable<string[]> | undefined;
+  width = 0;
+  height = 0;
 
  // public layout: Layout = new DagreNodesOnlyLayout();
-  public links$: Observable<Edge[]>;
-  public links: Edge[];
-  public nodes: Node[];
-  public nodes$: Observable<Node[]>;
+  //public links$: Observable<Edge[]> | undefined;
+  //public links: Edge[];
+  //public nodes: Node[];
+  //public nodes$: Observable<Node[]> | undefined;
   
-  public node: Node;
+  //public node: Node | null;
   autoZoom = true;
   autoCenter = true; 
 
@@ -35,18 +35,18 @@ export class WorldListComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {
-    this.node = null;
-    this.nodes = new Array();
-    this.links = new Array();
+    /*this.node = null;
+    this.nodes = [];
+    this.links = [];*/
   }
 
   ngOnInit() {
     this.worlds$ = this.http.get<string[]>('/api/WorldStringList');
     this.worldList$ = this.http.get<string[]>('/api/WorldsString');
-    this.links$ = this.http.get<Edge[]>('/api/GetWorldsEdge');
-    this.subscriptions.add(this.links$.subscribe(aLinks => this.links = aLinks));
-    this.nodes$ = this.http.get<Node[]>('/api/GetWorldsNode');
-    this.subscriptions.add(this.nodes$.subscribe(aNodes => this.nodes = aNodes));
+    //this.links$ = this.http.get<Edge[]>('/api/GetWorldsEdge');
+    //this.subscriptions.add(this.links$.subscribe(aLinks => this.links = aLinks));
+    //this.nodes$ = this.http.get<Node[]>('/api/GetWorldsNode');
+    //this.subscriptions.add(this.nodes$.subscribe(aNodes => this.nodes = aNodes));
     setTimeout(()=> this.autoCenter = false, 500);
   }
 
@@ -54,18 +54,16 @@ export class WorldListComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  onNodeSelected(aNode) {
-    this.node = aNode;
-    console.log(aNode);
+  /*onNodeSelected(aNode: Node | null) {
+   // this.node = aNode;
   }
 
-  onBubbleSelected(d) {
+  onBubbleSelected(_d: any) {
     for (const node of this.nodes) {
-      console.log(node);
     }
    // d.r = d.r * 2
 
-  }
+  }*/
 
   getBubbles(): any {
 

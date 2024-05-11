@@ -7,7 +7,7 @@ import { PlayerComponent } from './player/player.component';
 import { PlayerListComponent } from './player-list/player-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgxGraphModule } from '@swimlane/ngx-graph';
+//import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { NavigationPlayerComponent } from './navigation-component/NavigationPlayerComponent';
 
 
@@ -23,7 +23,7 @@ import { NavigationPlayerComponent } from './navigation-component/NavigationPlay
     PlayerRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    NgxGraphModule
+  //  NgxGraphModule
   ],
   exports: [
     PlayerComponent,

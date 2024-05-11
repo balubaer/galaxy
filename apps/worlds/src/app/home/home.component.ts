@@ -1,32 +1,39 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { RespondTurnData, RequestTurnDataOnlyPlayer, PlayerCommands, GamePref, RequestTurnDataOnlyPlayerAndRound, PlayerColor, extractNumberString } from '@galaxy/game-objects';
+import {
+  RespondTurnData,
+  RequestTurnDataOnlyPlayer,
+  PlayerCommands,
+  GamePref,
+  RequestTurnDataOnlyPlayerAndRound,
+  PlayerColor,
+  extractNumberString,
+} from '@galaxy/game-objects';
 import { GamePlayService } from '../player/game-play.service';
-import { Node } from '@swimlane/ngx-graph';
+//import { NgxGraphZoomOptions, Node } from '@swimlane/ngx-graph';
 import { GameServiceService } from '../game-service.service';
-
 
 @Component({
   selector: 'galaxy-home',
   templateUrl: 'home.component.html',
-  styleUrls: ['home.component.css']
+  styleUrls: ['home.component.css'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   currentUser: User;
   form: FormGroup;
-  turnData$: Observable<RespondTurnData>;
+  turnData$: Observable<RespondTurnData> | undefined;
   private readonly subscriptions = new Subscription();
-  subscriptionsTurnData: Subscription = null;
-  gamePref$: Observable<GamePref>;
-  gamePrefSubsription: Subscription = null;
+  subscriptionsTurnData: Subscription | null = null;
+  gamePref$: Observable<GamePref> | undefined;
+  gamePrefSubsription: Subscription | null = null;
   homeWorldName: string;
-  distanceLevelHomes: number;
-  selectWorld: number;
+  distanceLevelHomes = 0;
+  selectWorld = 0;
 
-  public node: Node;
+  public node: Node | undefined;
   autoZoom = true;
   autoCenter = true;
 
@@ -34,10 +41,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   panningEnabled = false;
 
   center$: Subject<boolean> = new Subject();
-  zoomToFit$: Subject<boolean> = new Subject();
-  round: number;
-  changeround: number;
-  playercolor$: Observable<Array<PlayerColor>>;
+  //zoomToFit$: Observable<NgxGraphZoomOptions> = new Observable();
+  round = 0;
+  changeround = 0;
+  playercolor$: Observable<Array<PlayerColor>> | undefined;
 
   turnCommandTxt = '';
 
@@ -51,9 +58,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     private gamePrefService: GameServiceService,
     private fb: FormBuilder
   ) {
+    this.homeWorldName = '';
     this.currentUser = this.authenticationService.currentUserValue;
     this.form = this.fb.group({
-      Commands: ['']
+      Commands: [''],
     });
   }
 
@@ -62,16 +70,22 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const request: RequestTurnDataOnlyPlayer = {
       playerName: this.currentUser.username,
-      distanceLevelHomes: this.distanceLevelHomes
-    }
-    const playerCommands$: Observable<PlayerCommands> = this.gamePlayService.getCommand(request);
-    playerCommands$.subscribe(aPlayerCommands => {
+      distanceLevelHomes: this.distanceLevelHomes,
+    };
+    const playerCommands$: Observable<PlayerCommands> =
+      this.gamePlayService.getCommand(request);
+    playerCommands$.subscribe((aPlayerCommands) => {
       this.turnCommandTxt = aPlayerCommands.commands;
-      this.form.get('Commands').setValue(aPlayerCommands.commands);
-    })
+      if (this.form) {
+        const element = this.form.get('Commands');
+        if (element) {
+          element.setValue(aPlayerCommands.commands);
+        }
+      }
+    });
 
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
-    this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
+    this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
       this.homeWorldName = aTurnData.homeWorldName;
       this.selectWorld = +extractNumberString(aTurnData.homeWorldName);
     });
@@ -81,34 +95,45 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
     this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
-    this.gamePrefSubsription = this.gamePref$.subscribe(aGamePref => {
+    this.gamePrefSubsription = this.gamePref$.subscribe((aGamePref) => {
       this.round = aGamePref.round;
-      this.changeround = aGamePref.round
+      this.changeround = aGamePref.round;
     });
-    setTimeout(() => this.autoCenter = false, 500);
+    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   onSubmit() {
     if (this.round === this.changeround) {
       const commands: PlayerCommands = {
         player: this.currentUser.username,
-        commands: this.form.value.Commands
-      }
-      this.subscriptions.add(this.gamePlayService.setCommands(commands).subscribe());
+        commands: this.form.value.Commands,
+      };
+      this.subscriptions.add(
+        this.gamePlayService.setCommands(commands).subscribe()
+      );
       this.turnCommandTxt = this.form.value.Commands;
     }
   }
 
-  onNodeSelected(aNode) {
+  /*onNodeSelected(aNode: Node | undefined) {
     this.node = aNode;
     if (this.draggingEnabled === false && this.panningEnabled === false) {
-      this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
-      this.selectWorld = +extractNumberString(this.node.id);
+      if (this.node) {
+        this.readNewTurnDataWithRoundAndWorldName(
+          this.changeround,
+          this.node.id
+        );
+        this.selectWorld = +extractNumberString(this.node.id);
+      }
     }
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    if (this.subscriptionsTurnData !== null) {
+      this.subscriptionsTurnData.unsubscribe();
+      this.subscriptionsTurnData = null;
+    }
   }
 
   readNewTurnDataWithRound(aRound: number) {
@@ -120,22 +145,26 @@ export class HomeComponent implements OnInit, OnDestroy {
       playerName: this.currentUser.username,
       round: this.changeround,
       worldName: `W${this.selectWorld}`,
-      distanceLevelHomes: this.distanceLevelHomes
-    }
+      distanceLevelHomes: this.distanceLevelHomes,
+    };
     this.autoCenter = true;
 
     if (this.subscriptionsTurnData !== null) {
       this.subscriptionsTurnData.unsubscribe();
       this.subscriptionsTurnData = null;
     }
-    this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
-    this.subscriptionsTurnData = this.turnData$.subscribe(aTurnData => {
+    this.turnData$ =
+      this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
+    this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
       this.turnCommandTxt = aTurnData.turnCommanTxt;
       if (this.changeround === this.round) {
-        this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
+        const element = this.form.get('Commands');
+        if (element) {
+          element.setValue(aTurnData.turnCommanTxt);
+        }
       }
     });
-    setTimeout(() => this.autoCenter = false, 500);
+    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string) {
@@ -147,12 +176,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       playerName: this.currentUser.username,
       round: this.changeround,
       worldName: aWorldName,
-      distanceLevelHomes: this.distanceLevelHomes
-    }
+      distanceLevelHomes: this.distanceLevelHomes,
+    };
     this.autoCenter = true;
 
-    this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
-    setTimeout(() => this.autoCenter = false, 500);
+    this.turnData$ =
+      this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
+    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   pressPrevRound() {
@@ -187,6 +217,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   pressViewWorld() {
-    this.readNewTurnDataWithRoundAndWorldName(this.changeround, `W${this.selectWorld}`);
+    this.readNewTurnDataWithRoundAndWorldName(
+      this.changeround,
+      `W${this.selectWorld}`
+    );
   }
 }

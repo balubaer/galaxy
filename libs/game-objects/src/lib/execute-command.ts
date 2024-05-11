@@ -6,7 +6,7 @@ import { WorldsPersist } from './worlds-persist.interface';
 import { CommandFactory } from './command-factory';
 import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { OutputPlyerStatisticCoreGame } from './output-plyer-statistic-core-game';
-import { NodesAndLinks } from './nodes-and-links.interface';
+//import { NodesAndLinks } from './nodes-and-links.interface';
 import { PersistenceGrafManager } from './persistence-graf-manager';
 
 export class ExecuteCommand {
@@ -42,7 +42,7 @@ export class ExecuteCommand {
 
     }
 
-    generateNodeAndLinks(): Map<string, NodesAndLinks> {
+    /*generateNodeAndLinks(): Map<string, NodesAndLinks> {
         const outputDict: Map<string, NodesAndLinks> = new Map<string, NodesAndLinks>();
 
         for (const playerName of this.allPlayerDict.keys()) {
@@ -51,7 +51,7 @@ export class ExecuteCommand {
             outputDict.set(playerName, nodesAndLinks);
         }
         return outputDict;
-    }
+    }*/
 
     generateOutput(): Map<string, string> {
         const outputDict: Map<string, string> = new Map<string, string>();

@@ -1,20 +1,20 @@
 [
     {
-        "id": 1,
-        "username": "ZAPHOD",
-        "password": "$2a$10$Ti2uyiPPoyTVI4KdVMdZYuG39SZ8mGKUJYLk6Z.mwJF.4pwp22.oa",
+        "color": "#FF672B",
         "firstName": "Bernd",
+        "id": 1,
         "lastName": "Niklas",
+        "password": "$2a$10$Ti2uyiPPoyTVI4KdVMdZYuG39SZ8mGKUJYLk6Z.mwJF.4pwp22.oa",
         "token": "",
-        "color": "#FF672B"
+        "username": "ZAPHOD"
     },
     {
-        "id": 1,
-        "username": "MARVIN",
-        "password": "$2a$10$YvMK9THKSypy6LoqSmyQV.MK/lQ.KXXTWg3WARsS7dOqMaWQa6PVG",
+        "color": "#289E6B",
         "firstName": "Bernd",
+        "id": 1,
         "lastName": "Niklas",
+        "password": "$2a$10$YvMK9THKSypy6LoqSmyQV.MK/lQ.KXXTWg3WARsS7dOqMaWQa6PVG",
         "token": "",
-        "color": "#289E6B"
+        "username": "MARVIN"
     }
 ]

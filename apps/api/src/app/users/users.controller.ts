@@ -26,7 +26,7 @@ export class UsersController {
             const stringData = readFileSync('user.json', 'utf8');
             userArray = JSON.parse(stringData);
         } else {
-            userArray = new Array();
+            userArray = [];
         }
         user.password = hashSync(user.password, 10);
 

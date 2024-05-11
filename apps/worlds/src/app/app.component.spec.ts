@@ -1,19 +1,26 @@
-import { Component } from '@angular/core';
-import { TestBed, async } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      imports: [HttpClientModule]
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppComponent, RouterTestingModule],
     }).compileComponents();
-  }));
+  });
 
-  it('should create the app', () => {
+  it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Welcome worlds'
+    );
+  });
+
+  it(`should have as title 'worlds'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('worlds');
   });
 });

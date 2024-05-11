@@ -10,8 +10,12 @@ import { UserService, AlertService } from '../_services';
   templateUrl: './set-admin.component.html',
   styleUrls: ['./set-admin.component.css']
 })
-export class SetAdminComponent implements OnInit {
-  registerForm: FormGroup;
+export class SetAdminComponent {
+  registerForm: FormGroup = this.formBuilder.group({
+    username: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
+
   submitted = false;
   loading = false;
 
@@ -26,13 +30,6 @@ export class SetAdminComponent implements OnInit {
     if (this.authenticationService.currentAdminLoginValue) {
       this.router.navigate(['/login']);
     }
-  }
-
-  ngOnInit() {
-    this.registerForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
   }
 
   // convenience getter for easy access to form fields

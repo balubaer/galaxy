@@ -1,9 +1,9 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "types": []
+    "declaration": true,
+    "outDir": "../../dist/libs/api-interfaces"
   },
-  "exclude": ["**/*.spec.ts"],
-  "include": ["**/*.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

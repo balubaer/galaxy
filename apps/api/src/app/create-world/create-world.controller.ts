@@ -26,8 +26,8 @@ export class CreateWorldController {
     for (const playerName of output.keys()) {
       const outPutStringWithNodesAndLinks: OutPutStringWithNodesAndLinksInterface = output.get(playerName);
       writeFileSync(`${outPath}${playerName}.out`, outPutStringWithNodesAndLinks.outPutString);
-      const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
-      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);
+      /*const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
+      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);*/
     }
 
     const data = JSON.stringify(worldsPersist);
@@ -40,7 +40,13 @@ export class CreateWorldController {
   getGamePref(): GamePref {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
+
     return gamepref;
+  }
+
+  @Get('GetGamePref2')
+  getGamePref2(): Message {
+    return { message: 'OK' };
   }
 
   @Get('GetPlayerList')

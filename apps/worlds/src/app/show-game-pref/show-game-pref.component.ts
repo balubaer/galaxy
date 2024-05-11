@@ -10,8 +10,8 @@ import { GameServiceService } from '../game-service.service';
   styleUrls: ['./show-game-pref.component.css']
 })
 export class ShowGamePrefComponent implements OnInit {
-  gamePref$: Observable<GamePref>;
-  players$: Observable<Array<string>>;
+  gamePref$: Observable<GamePref> | undefined;
+  players$: Observable<Array<string>> | undefined;
 
   constructor(private route: ActivatedRoute, private gamePrefService: GameServiceService) { }
 

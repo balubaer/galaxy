@@ -1,10 +1,10 @@
-import { Edge, Node } from '@swimlane/ngx-graph';
+//import { Edge, Node } from '@swimlane/ngx-graph';
 
 export interface RespondTurnData {
     turnDataTxt: string;
     points: number;
     turnCommanTxt: string;
-    links: Edge[];
-    nodes: Node[];
+   // links: Edge[];
+   // nodes: any[];
     homeWorldName: string;
 }

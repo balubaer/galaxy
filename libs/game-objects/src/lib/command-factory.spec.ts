@@ -141,6 +141,7 @@ it('test findFromDShipsFireToFleetAndWorlds and createFireDShipsToFleetCommand',
   commandFactory.initMembers('D4AF4', 'ZAPHOD');
 
   const commandInstance = commandFactory.getCommandInstance();
+  console.log(commandInstance);
   expect(commandInstance instanceof FireDShipsToFleet).toBeTruthy();
 });
 

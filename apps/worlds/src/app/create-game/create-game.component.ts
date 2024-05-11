@@ -10,10 +10,19 @@ import { GamePlayService } from '../player/game-play.service';
   templateUrl: './create-game.component.html',
   styleUrls: ['./create-game.component.css']
 })
-export class CreateGameComponent implements OnInit, OnDestroy {
-  form: FormGroup;
-  players: Array<string> = new Array();
-  playerForm: FormGroup;
+export class CreateGameComponent implements OnDestroy {
+  form: FormGroup = this.fb.group({
+    DistanceLevelHomes: [''],
+    FleetCount: [''],
+    FleetsOnHomeWorld: [''],
+    WorldsCount: ['', Validators.required],
+    PlayName: [''],
+    StartShipCount: ['']
+  });
+  players: Array<string> = [];
+  playerForm: FormGroup = this.fb.group({
+    PlayerName: ['']
+  });
   playercolor$: Observable<Array<PlayerColor>>;
   playercolorubscription: Subscription;
 
@@ -21,26 +30,13 @@ export class CreateGameComponent implements OnInit, OnDestroy {
     private gameService: GameServiceService,
     private gamePlayService: GamePlayService
   ) {
-  }
-
-  ngOnInit() {
-    this.form = this.fb.group({
-      DistanceLevelHomes: [''],
-      FleetCount: [''],
-      FleetsOnHomeWorld: [''],
-      WorldsCount: ['', Validators.required],
-      PlayName: [''],
-      StartShipCount: ['']
-    });
-    this.playerForm = this.fb.group({
-      PlayerName: ['']
-    });
     this.playercolor$ = this.gamePlayService.getPlayerColor();
     this.playercolorubscription = this.playercolor$.subscribe(aPlyerColor => {
       for (const onePlayerColor of aPlyerColor) {
         this.players.push(onePlayerColor.playername);
       }
     })
+
   }
 
   ngOnDestroy(): void {

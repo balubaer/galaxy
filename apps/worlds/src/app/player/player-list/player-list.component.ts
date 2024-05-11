@@ -8,7 +8,7 @@ import { GameServiceService } from '../../game-service.service';
   styleUrls: ['./player-list.component.scss']
 })
 export class PlayerListComponent implements OnInit {
-  players$: Observable<Array<string>>;
+  players$: Observable<Array<string>> | undefined;
 
   constructor(private gameService: GameServiceService) { }
 

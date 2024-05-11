@@ -5,7 +5,7 @@ import { Player, World, GamePref, objToMap, PlayerColor } from '@galaxy/game-obj
 
 import { AppService } from './app.service';
 import { readFileSync, writeFileSync } from 'fs';
-import { Edge, Node } from '@swimlane/ngx-graph';
+//import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Controller()
 export class AppController {
@@ -25,7 +25,7 @@ export class AppController {
   getWorld(): World {
     const world: World = this.appService.getWorld();
     // tslint:disable-next-line: prefer-const
-    let data = JSON.stringify(world);
+    const data = JSON.stringify(world);
     /* const gamePref: GamePref = {
        worldCount: 1
      };*/
@@ -55,7 +55,7 @@ export class AppController {
     return worldStringList;
   }
 
-  @Get('GetWorldsNode')
+ /* @Get('GetWorldsNode')
   getWorldsNode(): Node[] {
     const worldsNodes: Node[] = this.appService.getWorldsNode();
     return worldsNodes;
@@ -65,12 +65,12 @@ export class AppController {
   getWorldsEdge(): Edge[] {
     const worldsEdges = this.appService.getWorldsEdge();
     return worldsEdges;
-  }
+  }*/
 
   @Get('GetColors')
   getColors(): Array<string> {
     const colorMap: Map<string, string> = this.appService.getColors();
-    const colors: Array<string> = new Array();
+    const colors: Array<string> = [];
     for (const key of colorMap.keys()) {
       colors.push(key);
     }
@@ -81,7 +81,7 @@ export class AppController {
   getPlayerColor(): Array<PlayerColor> {
     const colorPlayerMap: Map<string, string> = this.appService.getColorPlayerMap();
     const fontColorMap: Map<string, string> = this.appService.getFontColorPlayerMap();
-    const playercolors: Array<PlayerColor> = new Array();
+    const playercolors: Array<PlayerColor> = [];
     for (const key of colorPlayerMap.keys()) {
       playercolors.push({
         playername: key,

@@ -12,7 +12,7 @@ export class GameServiceService {
 
   constructor(private http: HttpClient) { }
 
-  setGamePref(gamepref): Observable<GamePref> {
+  setGamePref(gamepref: GamePref | undefined): Observable<GamePref> {
     return this.http.post<GamePref>('/api/create-world/SetGamePref', gamepref)
   }
 

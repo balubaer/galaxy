@@ -1,14 +1,16 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AlertService } from '../_services/alert.service';
 
 
 @Component({ selector: 'galaxy-alert', templateUrl: 'alert.component.html' })
 export class AlertComponent implements OnInit, OnDestroy {
-    private subscription: Subscription;
+    private subscription: Subscription | null;
     message: any;
 
-    constructor(private alertService: AlertService) { }
+    constructor(private alertService: AlertService) { 
+        this.subscription = null;
+    }
     ngOnInit() {
         this.subscription = this.alertService.getAlert()
             .subscribe(message => {
@@ -26,6 +28,8 @@ export class AlertComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 }

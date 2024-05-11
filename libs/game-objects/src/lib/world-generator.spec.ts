@@ -63,8 +63,8 @@ describe('WorldGenerator', () => {
     for (const playerName of output.keys()) {
       const outPutStringWithNodesAndLinks: OutPutStringWithNodesAndLinksInterface = output.get(playerName);
       writeFileSync(`${outPath}${playerName}.out`, outPutStringWithNodesAndLinks.outPutString);
-      const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
-      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);
+     /* const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
+      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);*/
     }
 
     const data = JSON.stringify(worldsPersist);

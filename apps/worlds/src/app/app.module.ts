@@ -11,7 +11,7 @@ import { HttpErrorInterceptor } from './_helpers/error.interceptor';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register';
 import { AlertComponent } from './_components';
-import { NgxGraphModule } from '@swimlane/ngx-graph';
+//import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationModule } from './NavigationComponent/navigation.module';
 
@@ -28,7 +28,7 @@ import { NavigationModule } from './NavigationComponent/navigation.module';
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    NgxGraphModule,
+    //NgxGraphModule,
     BrowserAnimationsModule,
     NavigationModule
   ],

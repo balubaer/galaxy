@@ -15,10 +15,12 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
 
             if (err instanceof HttpErrorResponse) {
+                if (err.url) {
                 if ((err.url.endsWith('/users/authenticate')) && err.status === 401) {
                     this.authenticationService.logout();
-                    location.reload(true);
+                    location.reload();
                 }
+            }
             } else {
                 // The backend returned an unsuccessful response code.
                 // The response body may contain clues as to what went wrong,

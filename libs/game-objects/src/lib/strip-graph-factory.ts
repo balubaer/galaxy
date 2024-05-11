@@ -1,23 +1,24 @@
 import { World, worldWithName, worldWithNumber } from './world';
-import { NodesAndLinks } from './nodes-and-links.interface';
-import { Node, Edge} from '@swimlane/ngx-graph';
+//import { NodesAndLinks } from './nodes-and-links.interface';
+//import { Node, Edge} from '@swimlane/ngx-graph';
 import { DistanceLevel } from './distance-level';
 
 export class StripGraphFactory {
     worldString: string;
     worldsArray: Array<World>;
-    graphData: NodesAndLinks;
+   // graphData: NodesAndLinks;
     disdance: number;
 
-    constructor(aWorldString: string, aWorldsArray:Array<World>, aGraphData: NodesAndLinks, aDistance: number) {
-        this.worldString = aWorldString;
+    constructor(aWorldString: string, aWorldsArray:Array<World>, aDistance: number) {
+       // constructor(aWorldString: string, aWorldsArray:Array<World>, aGraphData: NodesAndLinks, aDistance: number) {
+            this.worldString = aWorldString;
         this.worldsArray = aWorldsArray;
-        this.graphData = aGraphData;
+       // this.graphData = aGraphData;
         this.disdance = aDistance*1 + 1; //Erzwingen das aDistance immer eine number ist mit aDistance*1
         //Durch den Request über http kann aDistance zu einem string werden
     }
 
-    getResult(): NodesAndLinks {
+    /*getResult(): NodesAndLinks {
         const links: Edge[] = new Array;
         const nodes: Node[] = new Array;
         const world: World = worldWithName(this.worldsArray, this.worldString);
@@ -44,5 +45,5 @@ export class StripGraphFactory {
             links: links,
             nodes: nodes
         }
-    }
+    }*/
 }

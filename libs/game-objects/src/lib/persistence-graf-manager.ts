@@ -1,7 +1,7 @@
 import { World } from './world';
-import { NodesAndLinks } from './nodes-and-links.interface';
+//import { NodesAndLinks } from './nodes-and-links.interface';
 import { Player, isWorldOutPutForPlayer } from './player';
-import { Edge, Node } from '@swimlane/ngx-graph';
+//import { Edge, Node } from '@swimlane/ngx-graph';
 
 const piVirtel: number = Math.PI / 4;
 const radiusForFleet = 70;
@@ -80,7 +80,7 @@ export class PersistenceGrafManager {
         return fleets;
     }
 
-    generateNodesAndLinks(playerName: string): NodesAndLinks {
+    /*generateNodesAndLinks(playerName: string): NodesAndLinks {
         const player = this.allPlayerDict.get(playerName);
         const edgeArray: Array<Edge> = new Array<Edge>();
         const nodeArray: Array<Node> = new Array<Node>();
@@ -149,5 +149,5 @@ export class PersistenceGrafManager {
             nodes: nodeArray,
             links: edgeArray
         };
-    }
+    }*/
 }

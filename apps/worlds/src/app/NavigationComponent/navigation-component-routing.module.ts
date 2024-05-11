@@ -48,7 +48,6 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AdminAuthGuard],
     pathMatch: 'full',
     redirectTo: 'admin/create-worlds'
   },

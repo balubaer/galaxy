@@ -7,15 +7,12 @@ import { AuthenticationService } from '../../_services/authentication.service';
   templateUrl: './navigation-component.component.html',
   styleUrls: ['./navigation-component.component.scss']
 })
-export class NavigationComponentComponent implements OnInit {
+export class NavigationComponentComponent {
 
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
   ) {}
-
-  ngOnInit() {
-  }
 
   logout() {
     this.authenticationService.logoutAdmin();

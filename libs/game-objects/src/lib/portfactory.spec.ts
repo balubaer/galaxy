@@ -1,5 +1,5 @@
 import { PortFactory } from './portfactory';
-import { World } from './world';
+import { World } from './';
 import { Port } from './port';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
 

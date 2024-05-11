@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -17,15 +17,15 @@ import { GamePlayService } from '../player/game-play.service';
     styleUrls: ['register.component.css']
 })
 export class RegisterComponent implements OnInit {
-    registerForm: FormGroup;
+    registerForm: any;
     loading = false;
     submitted = false;
-    colors$: Observable<Array<string>>;
+    colors$: Observable<Array<string>> | undefined;
     isPickerHidden = false;
     color = '';
     isColorHidden = true;
     isButtonHidden = true;
-    playercolor$: Observable<Array<PlayerColor>>;
+    playercolor$: Observable<Array<PlayerColor>> | undefined;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -55,7 +55,7 @@ export class RegisterComponent implements OnInit {
     }
 
     // convenience getter for easy access to form fields
-    get f() { return this.registerForm.controls; }
+    get f() { return this.registerForm?.controls ?? undefined;}
 
     onSubmit() {
         this.submitted = true;
@@ -64,16 +64,16 @@ export class RegisterComponent implements OnInit {
         this.alertService.clear();
 
         // stop here if form is invalid
-        if (this.registerForm.invalid) {
+        if (this.registerForm?.invalid) {
             return;
         }
 
         const user: User = {
             id: 1,
-            username: this.registerForm.value.username,
-            password: this.registerForm.value.password,
-            firstName: this.registerForm.value.firstName,
-            lastName: this.registerForm.value.lastName,
+            username: this.registerForm?.value.username ?? '',
+            password: this.registerForm?.value.password,
+            firstName: this.registerForm?.value.firstName,
+            lastName: this.registerForm?.value.lastName,
             token: '',
             color: this.color
         }

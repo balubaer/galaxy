@@ -27,7 +27,7 @@ export class OutPutLists {
 
         for (const playerName of this.allPlayerDict.keys()) {
             const persistGrafManager = new PersistenceGrafManager(this.worlds, this.allPlayerDict, this.colorMap, this.fontColorMap);
-            const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
+            //const nodesAndLinks = persistGrafManager.generateNodesAndLinks(playerName);
 
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1}\n\n`;
             const player = this.allPlayerDict.get(playerName);
@@ -40,7 +40,7 @@ export class OutPutLists {
             }
             result.set(playerName, {
                 outPutString: outPutString,
-                nodesAndLinks: nodesAndLinks
+               // nodesAndLinks: nodesAndLinks
             });
         }
         return result;

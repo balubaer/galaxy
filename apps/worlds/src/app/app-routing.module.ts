@@ -25,6 +25,11 @@ const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('./NavigationComponent/navigation.module').then(m => m.NavigationModule)
   },
+  {
+    path: 'logout',
+    pathMatch: 'full',
+    redirectTo: 'login'
+  },
   // otherwise redirect to home
   { path: '**', redirectTo: '' }
 ];

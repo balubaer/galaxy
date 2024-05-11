@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgxGraphModule } from '@swimlane/ngx-graph';
+//import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { NavigationComponentRoutingModule } from './navigation-component-routing.module';
 import { ShowGamePrefComponent } from '../show-game-pref/show-game-pref.component';
 import { CreateWorldsComponent } from '../create-worlds/create-worlds.component';
@@ -32,7 +32,7 @@ import { AdminLoginComponent } from '../adminLogin/admin-login.component';
     NavigationComponentRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    NgxGraphModule
+    //NgxGraphModule
   ],
   exports: [AdminComponent]
 })

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RespondTurnData, PlayerColor, PlayerCommands } from '@galaxy/game-objects';
+import { RespondTurnData, PlayerColor, PlayerCommands, RequestTurnDataOnlyPlayer, RequestTurnDataOnlyPlayerAndRound } from '@galaxy/game-objects';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Message } from '@galaxy/api-interfaces';
@@ -11,15 +11,15 @@ export class GamePlayService {
 
   constructor(private http: HttpClient) { }
 
-  getTurnData(request): Observable<RespondTurnData> {
+  getTurnData(request: any): Observable<RespondTurnData> {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnData', request);
   }
 
-  getTurnDataOnlyPlayer(request): Observable<RespondTurnData> {
+  getTurnDataOnlyPlayer(request: RequestTurnDataOnlyPlayer): Observable<RespondTurnData> {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayer', request);
   }
 
-  getTurnDataOnlyPlayerAndRound(request): Observable<RespondTurnData> {
+  getTurnDataOnlyPlayerAndRound(request: RequestTurnDataOnlyPlayerAndRound): Observable<RespondTurnData> {
     return this.http.post<RespondTurnData>('/api/game-play/GetTurnDataOnlyPlayerAndRound', request);
   }
 
@@ -27,11 +27,11 @@ export class GamePlayService {
     return this.http.get<Array<PlayerColor>>('/api/GetPlayerColor');
   }
 
-  setCommands(request): Observable<Message> {
+  setCommands(request: PlayerCommands): Observable<Message> {
     return this.http.post<Message>('/api/game-play/SetCommands', request);
   }
 
-  getCommand(request): Observable<PlayerCommands> {
+  getCommand(request: RequestTurnDataOnlyPlayer): Observable<PlayerCommands> {
     return this.http.post<PlayerCommands>('/api/game-play/GetCommands', request);
   }
  
