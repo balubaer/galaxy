@@ -59,13 +59,26 @@ export class AppController {
   getWorldsNode(): Node[] {
     const worldsNodes: Node[] = this.appService.getWorldsNode();
     return worldsNodes;
+  }*/
+
+  @Get('GetNode')
+  getNode(): any[] {
+    const nodes: any[] = this.appService.getNode();
+    return nodes;
   }
 
-  @Get('GetWorldsEdge')
+  /*@Get('GetWorldsEdge')
   getWorldsEdge(): Edge[] {
     const worldsEdges = this.appService.getWorldsEdge();
     return worldsEdges;
   }*/
+
+
+  @Get('GetEdge')
+  getEdge(): any[] {
+    const edges = this.appService.getEdge();
+    return edges;
+  }
 
   @Get('GetColors')
   getColors(): Array<string> {

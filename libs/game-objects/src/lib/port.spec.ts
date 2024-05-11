@@ -13,8 +13,6 @@ const testString = 'W1(2,3)';
 const world2 = worldsForPortTest[1];
 const world4 = worldsForPortTest[3];
 
-//beforeAll(async () => {
-
 describe('Port', () => {
   it('should create an instance', () => {
     expect(port).toBeTruthy();
