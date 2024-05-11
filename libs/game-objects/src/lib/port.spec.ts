@@ -1,17 +1,19 @@
 import { Port } from './port';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
-import { World } from './';
+import { World } from './world';
 
-const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
-const twoWorlds = [worlds[1], worlds[2]];
-const  = worlds[0];
+const worldsForPortTest: Array<World> = new TestWorldsArrayFactory().worlds;
+const twoWorlds = [worldsForPortTest[1], worldsForPortTest[2]];
+const  world = worldsForPortTest[0];
 const port = new Port();
 port.worlds = twoWorlds;
-port.setWorld();
+port.setWorld(world);
 
 const testString = 'W1(2,3)';
-const world2 = worlds[1];
-const world4 = worlds[3];
+const world2 = worldsForPortTest[1];
+const world4 = worldsForPortTest[3];
+
+//beforeAll(async () => {
 
 describe('Port', () => {
   it('should create an instance', () => {
@@ -22,7 +24,7 @@ describe('Port', () => {
     expect(port.number).toBe(1);
   })
   it('test getWorld', () => {
-    expect(port.getWorld()).toBe(worlds[0]);
+    expect(port.getWorld()).toBe(worldsForPortTest[0]);
   })
   it('test description', () => {
     expect(port.description()).toBe(testString);

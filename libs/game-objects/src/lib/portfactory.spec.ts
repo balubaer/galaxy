@@ -1,7 +1,7 @@
 import { PortFactory } from './portfactory';
-import { World } from './';
 import { Port } from './port';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
+import { World } from './world';
 
 const portFactory: PortFactory = new PortFactory();
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
