@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, Subject } from 'rxjs';
 import * as d3 from 'd3';
-//declare let d3: any;
 
 @Component({
   selector: 'galaxy-world-list',
@@ -61,12 +60,6 @@ export class WorldListComponent implements OnInit, OnDestroy {
         this.initGraf();
       })
     );
-
-    //this.links$ = this.http.get<Edge[]>('/api/GetWorldsEdge');
-    //this.subscriptions.add(this.links$.subscribe(aLinks => this.links = aLinks));
-    //this.nodes$ = this.http.get<Node[]>('/api/GetWorldsNode');
-    //this.subscriptions.add(this.nodes$.subscribe(aNodes => this.nodes = aNodes));
-    //setTimeout(()=> this.autoCenter = false, 500);
   }
 
   initGraf() {

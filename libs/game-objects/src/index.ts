@@ -17,7 +17,7 @@ export * from './lib/player-commands.interface';
 export * from './lib/execute-command';
 export * from './lib/persistence-manager';
 export * from './lib/persistence-graf-manager';
-//export * from './lib/nodes-and-links.interface';
+export * from './lib/nodes-and-links.interface';
 export * from './lib/out-put-string-with-nodes-and-links.interface';
 export * from './lib/request-turn-data-only-player-and-round.interface';
 export * from './lib/player-color.interface';

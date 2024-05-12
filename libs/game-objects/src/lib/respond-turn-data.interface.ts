@@ -1,10 +1,10 @@
-//import { Edge, Node } from '@swimlane/ngx-graph';
+import { Edge, Node } from "@galaxy/api-interfaces";
 
 export interface RespondTurnData {
     turnDataTxt: string;
     points: number;
     turnCommanTxt: string;
-   // links: Edge[];
-   // nodes: any[];
+    links: Edge[];
+    nodes: Node[];
     homeWorldName: string;
 }
