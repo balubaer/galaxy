@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Message, User } from '@galaxy/api-interfaces';
+import { Edge, Node, Message, User } from '@galaxy/api-interfaces';
+
 import { Player, World, TestWorldsArrayFactory, WorldsPersist, PersistenceManager, objToMap, GamePref } from '@galaxy/game-objects';
 import { readFileSync, writeFileSync } from 'fs';
-//import { Edge, Node } from '@swimlane/ngx-graph';
 
 const piVirtel: number = Math.PI / 4;
 const radiusForFleet = 70;
@@ -193,7 +193,7 @@ export class AppService {
     return fleets;
   }
 
-  /*getWorldsNode(): Node[] {
+  getWorldsNode(): Node[] {
     const worlds: World[] = this.getWorlds();
     const nodeArray: Array<Node> = new Array<Node>();
 
@@ -212,7 +212,7 @@ export class AppService {
     }
 
     return nodeArray;
-  }*/
+  }
 
   getNode(): any[] {
     /*return [
@@ -230,7 +230,7 @@ export class AppService {
   }
 
 
- /* getWorldsEdge(): Edge[] {
+ getWorldsEdge(): Edge[] {
     const worlds: World[] = this.getWorlds();
     const edgeArray: Array<Edge> = new Array<Edge>();
     for (const world of worlds) {
@@ -246,7 +246,7 @@ export class AppService {
       }
     }
     return edgeArray;
-  }*/
+  }
 
   getEdge(): any[] {
     /*return [

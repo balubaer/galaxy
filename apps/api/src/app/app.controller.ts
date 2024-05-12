@@ -1,11 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 
-import { Message } from '@galaxy/api-interfaces';
+import { Edge, Node, Message } from '@galaxy/api-interfaces';
 import { Player, World, GamePref, objToMap, PlayerColor } from '@galaxy/game-objects';
 
 import { AppService } from './app.service';
 import { readFileSync, writeFileSync } from 'fs';
-//import { Edge, Node } from '@swimlane/ngx-graph';
 
 @Controller()
 export class AppController {
@@ -55,11 +54,11 @@ export class AppController {
     return worldStringList;
   }
 
- /* @Get('GetWorldsNode')
+  @Get('GetWorldsNode')
   getWorldsNode(): Node[] {
     const worldsNodes: Node[] = this.appService.getWorldsNode();
     return worldsNodes;
-  }*/
+  }
 
   @Get('GetNode')
   getNode(): any[] {
@@ -67,11 +66,11 @@ export class AppController {
     return nodes;
   }
 
-  /*@Get('GetWorldsEdge')
+  @Get('GetWorldsEdge')
   getWorldsEdge(): Edge[] {
     const worldsEdges = this.appService.getWorldsEdge();
     return worldsEdges;
-  }*/
+  }
 
 
   @Get('GetEdge')
