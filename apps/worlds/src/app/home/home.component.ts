@@ -40,14 +40,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   nodes: any;
   links: any;
   force: any;
-  autoZoom = true;
-  autoCenter = true;
+    
+  fixEnabled = false;
 
-  draggingEnabled = false;
-  panningEnabled = false;
-
-  center$: Subject<boolean> = new Subject();
-  //zoomToFit$: Observable<NgxGraphZoomOptions> = new Observable();
   round = 0;
   changeround = 0;
   playercolor$: Observable<Array<PlayerColor>> | undefined;
@@ -107,7 +102,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.round = aGamePref.round;
       this.changeround = aGamePref.round;
     });
-    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   deleteGraf() {
@@ -220,7 +214,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     function drag_start(d) {
       if (!d.active) th.force.alphaTarget(0.3).restart();
       d.subject.fx = d.subject.x;
-      d.subjectfy = d.subject.y;
+      d.subject.fy = d.subject.y;
     }
 
     function drag_drag(d) {
@@ -230,8 +224,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     function drag_end(d) {
       if (!d.active) th.force.alphaTarget(0);
-      d.subject.fx = null;
-      d.subject.fy = null;
+      if (th.fixEnabled === false) {
+        d.subject.fx = null;
+        d.subject.fy = null;
+      }
     }
     th.force.nodes(this.turnData.nodes);
     th.force.force('link').links(this.turnData.links);
@@ -251,21 +247,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  onNodeSelected(aNode: Node | undefined) {
-    this.node = aNode;
-    if (this.draggingEnabled === false && this.panningEnabled === false) {
-      if (this.node) {
-        this.readNewTurnDataWithRoundAndWorldName(
-          this.changeround,
-          this.node.id
-        );
+    onNodeSelected(aNode: Node | undefined) {
+        this.node = aNode;
+        this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
         this.selectWorld = +extractNumberString(this.node.id);
-      }
-    }
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
     if (this.subscriptionsTurnData !== null) {
       this.subscriptionsTurnData.unsubscribe();
       this.subscriptionsTurnData = null;
@@ -283,7 +271,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       worldName: `W${this.selectWorld}`,
       distanceLevelHomes: this.distanceLevelHomes,
     };
-    this.autoCenter = true;
 
     if (this.subscriptionsTurnData !== null) {
       this.subscriptionsTurnData.unsubscribe();
@@ -300,7 +287,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       }
     });
-    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string) {
@@ -314,7 +300,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       worldName: aWorldName,
       distanceLevelHomes: this.distanceLevelHomes,
     };
-    this.autoCenter = true;
 
     if (this.subscriptionsTurnData !== null) {
       this.subscriptionsTurnData.unsubscribe();
@@ -332,7 +317,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
       }
     });
-    setTimeout(() => (this.autoCenter = false), 500);
   }
 
   pressPrevRound() {
