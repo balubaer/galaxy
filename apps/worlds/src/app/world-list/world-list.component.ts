@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, Subject } from 'rxjs';
-
-declare let d3: any;
+import * as d3 from "d3";
+//declare let d3: any;
 
 @Component({
   selector: 'galaxy-world-list',
