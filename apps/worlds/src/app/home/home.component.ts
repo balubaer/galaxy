@@ -356,4 +356,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       `W${this.selectWorld}`
     );
   }
+
+  pressSavewWorld() {
+    for (const n of this.turnData.nodes) {
+      n.fx = n.x;
+      n.fy = n.y;
+    }
+    const key = `R${this.round}W${this.selectWorld}D${this.distanceLevelHomes}.${this.currentUser.username}`;
+    localStorage.setItem(key, JSON.stringify(this.turnData));
+  }
+
 }

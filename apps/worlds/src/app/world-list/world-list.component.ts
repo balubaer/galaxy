@@ -16,10 +16,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
 
   nodes: any[];
   links: any[];
-  // public layout: Layout = new DagreNodesOnlyLayout();
   public links$: Observable<any[]> | undefined;
-  //public links: Edge[];
-  //public nodes: Node[];
   public nodes$: Observable<any[]> | undefined;
 
   public node: any | null;
@@ -36,7 +33,6 @@ export class WorldListComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(private http: HttpClient) {
-    /*this.node = null;*/
     this.nodes = [];
     this.links = [];
   }
@@ -116,7 +112,6 @@ export class WorldListComponent implements OnInit, OnDestroy {
       function clicked(this: any, event, d) {
         th.node = d;
 
-        //console.log(d);
         if (event.defaultPrevented) return; // dragged
 
         d3.select(this)
@@ -193,24 +188,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  /*onNodeSelected(aNode: Node | null) {
-   // this.node = aNode;
-  }
-
-  onBubbleSelected(_d: any) {
-    for (const node of this.nodes) {
-    }
-   // d.r = d.r * 2
-
-  }*/
-
   onNodeSelected(e, aNode) {
-    // this.node$ = aNode.asObservable();
-    // this.node$.subscribe(aNodeIn => {
-    //   this.node = aNodeIn;
-    // });
     this.node = aNode;
-    console.log(aNode);
   }
 
   clickdragging() {

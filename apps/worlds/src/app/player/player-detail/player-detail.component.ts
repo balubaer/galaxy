@@ -4,7 +4,6 @@ import { Observable, Subscription, Subject } from 'rxjs';
 import { GamePlayService } from '../game-play.service';
 import { RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, PlayerColor, RequestTurnDataOnlyPlayerAndRound, extractNumberString } from '@galaxy/game-objects';
 import { FormGroup, FormBuilder } from '@angular/forms';
-//import { Node } from '@swimlane/ngx-graph';
 import { GameServiceService } from '../../game-service.service';
 
 @Component({

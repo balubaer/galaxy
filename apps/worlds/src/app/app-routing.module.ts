@@ -22,6 +22,10 @@ const routes: Routes = [
     component: RegisterComponent
   },
   {
+    path: 'showMaps',
+    loadChildren: () => import('./map/map.module').then(m => m.MapModule)
+  },
+  {
     path: 'admin',
     loadChildren: () => import('./NavigationComponent/navigation.module').then(m => m.NavigationModule)
   },
