@@ -284,6 +284,15 @@
         <pre>{{ turnCommandTxt }}</pre>
       </div>
     }
+    <galaxy-command-table
+      [hidden]="ishidden"
+      [node]="node"
+      [links]="turnData.links"
+      [ownColor]="ownColor"
+      [commandText]="form.value.Commands"
+      [readonly]="ishidden"
+      (commandToggled)="onCommandToggled($event)"
+    ></galaxy-command-table>
     <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
       <textarea
         name="Text1"

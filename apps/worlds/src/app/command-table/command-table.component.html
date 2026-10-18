@@ -1,0 +1,44 @@
+@if (node) {
+  <div class="command-table">
+    <h3>Befehle für {{ node.id }}</h3>
+    <label class="count">
+      Anzahl Schiffe (Transfer/Bauen)
+      <input
+        type="number"
+        min="1"
+        [value]="count"
+        (input)="setCount($any($event.target).value)"
+      />
+    </label>
+    @for (group of groups; track group.title) {
+      <table>
+        <caption>
+          {{
+            group.title
+          }}
+        </caption>
+        @for (row of group.rows; track row.label) {
+          <tr>
+            <th scope="row">{{ row.label }}</th>
+            <td>
+              @for (option of row.options; track option.command) {
+                <button
+                  type="button"
+                  [class.selected]="isSelected(option)"
+                  [attr.aria-pressed]="isSelected(option)"
+                  [disabled]="isOptionDisabled(option)"
+                  [title]="option.command"
+                  (click)="press(option)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </table>
+    } @empty {
+      <p>Auf dieser Welt sind keine Befehle möglich.</p>
+    }
+  </div>
+}

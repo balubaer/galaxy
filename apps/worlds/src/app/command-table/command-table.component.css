@@ -1,0 +1,44 @@
+.command-table {
+  width: 750px;
+  margin: 1em auto;
+  text-align: left;
+}
+.count {
+  display: block;
+  margin-bottom: 0.5em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+caption {
+  font-weight: bold;
+  text-align: left;
+  padding: 0.25em 0;
+}
+th,
+td {
+  text-align: left;
+  width: auto;
+  border: 1px solid #ccc;
+  padding: 0.25em 0.5em;
+}
+th {
+  width: 150px;
+  font-weight: normal;
+}
+button {
+  margin: 2px;
+  padding: 0.2em 0.6em;
+  cursor: pointer;
+}
+button.selected {
+  background: #1976d2;
+  color: #fff;
+  border-color: #0d47a1;
+}
+button:disabled:not(.selected) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

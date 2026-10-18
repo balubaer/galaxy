@@ -13,6 +13,7 @@ import { RegisterComponent } from './register';
 import { AlertComponent } from './_components';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationModule } from './NavigationComponent/navigation.module';
+import { CommandTableComponent } from './command-table/command-table.component';
 
 @NgModule({ declarations: [
         HomeComponent,
@@ -27,7 +28,8 @@ import { NavigationModule } from './NavigationComponent/navigation.module';
         AppRoutingModule,
         //NgxGraphModule,
         BrowserAnimationsModule,
-        NavigationModule], providers: [
+        NavigationModule,
+        CommandTableComponent], providers: [
         // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
         {

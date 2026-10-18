@@ -16,6 +16,7 @@ import { GamePlayService } from '../player/game-play.service';
 import { Node } from "@galaxy/api-interfaces";
 import * as d3 from 'd3';
 import { GameServiceService } from '../game-service.service';
+import { addCommand, removeCommand } from '../command-table/command-options';
 
 @Component({
     selector: 'galaxy-home',
@@ -49,6 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   playercolor$: Observable<Array<PlayerColor>> | undefined;
 
   turnCommandTxt = '';
+  ownColor = '';
 
   ishidden = false;
   ishiddenNextButton = true;
@@ -96,6 +98,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.gamePref$ = this.gamePrefService.getGamePref();
     this.playercolor$ = this.gamePlayService.getPlayerColor();
+    this.subscriptions.add(
+      this.playercolor$.subscribe((colors) => {
+        this.ownColor =
+          colors.find((c) => c.playername === this.currentUser.username)?.color ?? '';
+      })
+    );
 
     this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
     this.subscriptions.add(this.form.statusChanges.subscribe(console.log));
@@ -233,6 +241,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     th.force.nodes(this.turnData.nodes);
     th.force.force('link').links(this.turnData.links);
     th.force.alpha(1).restart();
+  }
+
+  onCommandToggled(event: { command: string; selected: boolean }) {
+    const element = this.form.get('Commands');
+    if (element) {
+      const text: string = element.value ?? '';
+      element.setValue(
+        event.selected
+          ? addCommand(text, event.command)
+          : removeCommand(text, event.command)
+      );
+    }
   }
 
   onSubmit() {
