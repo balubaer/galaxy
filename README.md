@@ -99,7 +99,7 @@ Sternen Karten nur noch 3 Level anzeigen
 	
 ## Projekt
 
-Nx-Monorepo (Nx 18.3, Angular 17.3, NestJS 10):
+Nx-Monorepo (Nx 21.6, Angular 20.3, NestJS 10):
 
 | Projekt | Beschreibung |
 |---|---|
@@ -112,8 +112,8 @@ Nx-Monorepo (Nx 18.3, Angular 17.3, NestJS 10):
 
 ### Node-Version
 
-Ideal ist **Node.js 20 (LTS)**. Angular 17.3 benötigt `^18.13.0 || ^20.9.0`, Nx 18 läuft ebenfalls damit.
-Entwickelt und getestet mit `v20.19.x`. Node 22 oder neuer sowie Node 16 und älter werden nicht empfohlen.
+Ideal ist **Node.js 24 (LTS „Krypton“)**, getestet mit `v24.17.0`. Angular 20 unterstützt `^20.19 || ^22.12 || ^24`.
+In `package.json` ist `engines` auf `>=24 <25` gesetzt.
 
 Die Version steht in der Datei `.nvmrc`.
 
@@ -131,15 +131,15 @@ Im Projektverzeichnis die passende Version installieren und aktivieren:
 
 ```bash
 cd galaxy
-nvm install   # liest .nvmrc und installiert Node 20
+nvm install   # liest .nvmrc und installiert Node 24
 nvm use       # aktiviert die Version aus .nvmrc
-node -v       # sollte v20.x.x ausgeben
+node -v       # sollte v24.x.x ausgeben
 ```
 
 Optional als Standard für neue Terminals:
 
 ```bash
-nvm alias default 20
+nvm alias default 24
 ```
 
 ## Projekt starten
