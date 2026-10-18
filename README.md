@@ -96,6 +96,28 @@ Sternen Karten nur noch 3 Level anzeigen
 - Flotten dürfen nur einmal fliege
   - Doppelter Flugbefehl Copiert Flotte
 	
+## Claude-Skills
+
+Projekt-Skills liegen unter `.claude/skills/` und werden von Claude Code beim Start einer Session geladen
+(nach dem Anlegen eines Skills eine neue Session starten).
+
+### `commit-aenderungen`
+
+Committet die offenen Änderungen mit passender deutscher Commit-Nachricht (Titel + Stichpunkte), ohne zu pushen.
+
+**Benutzung**
+
+- Im Eingabefeld von Claude Code: `/commit-aenderungen`
+- Optional mit Hinweis: `/commit-aenderungen nur die Bugfixes`
+- Oder einfach sagen: "committe die letzten Änderungen mit entsprechendem Kommentar"
+
+**Was der Skill macht**
+
+1. Prüft `git status`/`git diff` und die bisherigen Commit-Titel.
+2. Sortiert aus, was nicht dazugehört (von Tests überschriebenes `TestGame/`, neue `Galaxy/TurnN/`-Ordner).
+3. Teilt in logische Commits auf, stagt gezielt per Pfad und lässt vorher Build/Tests der betroffenen Teile laufen.
+4. Meldet Hash und Titel jedes Commits sowie nicht eingecheckte Dateien.
+
 ## Projekt
 
 Nx-Monorepo (Nx 21.6, Angular 20.3, NestJS 10):
