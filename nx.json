@@ -66,5 +66,6 @@
       "style": "scss",
       "unitTestRunner": "jest"
     }
-  }
+  },
+  "useLegacyCache": true
 }
