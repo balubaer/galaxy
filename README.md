@@ -99,85 +99,84 @@ Sternen Karten nur noch 3 Level anzeigen
 	
 ## Projekt
 
-This project was generated using [Nx](https://nx.dev).
+Nx-Monorepo (Nx 18.3, Angular 17.3, NestJS 10):
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/nx-logo.png" width="450"></p>
+| Projekt | Beschreibung |
+|---|---|
+| `apps/worlds` | Angular-Frontend (http://localhost:4200) |
+| `apps/api` | NestJS-Backend |
+| `libs/game-objects` | Spiellogik |
+| `libs/api-interfaces` | Gemeinsame Interfaces |
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+## Voraussetzungen
 
-## Quick Start & Documentation
+### Node-Version
 
-[Nx Documentation](https://nx.dev/angular)
+Ideal ist **Node.js 20 (LTS)**. Angular 17.3 benötigt `^18.13.0 || ^20.9.0`, Nx 18 läuft ebenfalls damit.
+Entwickelt und getestet mit `v20.19.x`. Node 22 oder neuer sowie Node 16 und älter werden nicht empfohlen.
 
-[10-minute video showing all Nx features](https://nx.dev/angular/getting-started/what-is-nx)
+Die Version steht in der Datei `.nvmrc`.
 
-[Interactive Tutorial](https://nx.dev/angular/tutorial/01-create-application)
+### Node mit nvm einstellen
 
-## Adding capabilities to your workspace
+nvm installieren (falls noch nicht vorhanden):
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+```bash
+brew install nvm
+```
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+Danach die Hinweise von Homebrew beachten (nvm-Zeilen in `~/.zshrc` eintragen) und ein neues Terminal öffnen.
 
-Below are some plugins which you can add to your workspace:
+Im Projektverzeichnis die passende Version installieren und aktivieren:
 
-- [Angular](https://angular.io)
-  - `ng add @nrwl/angular`
-- [React](https://reactjs.org)
-  - `ng add @nrwl/react`
-- Web (no framework frontends)
-  - `ng add @nrwl/web`
-- [Nest](https://nestjs.com)
-  - `ng add @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `ng add @nrwl/express`
-- [Node](https://nodejs.org)
-  - `ng add @nrwl/node`
+```bash
+cd galaxy
+nvm install   # liest .nvmrc und installiert Node 20
+nvm use       # aktiviert die Version aus .nvmrc
+node -v       # sollte v20.x.x ausgeben
+```
 
-## Generate an application
+Optional als Standard für neue Terminals:
 
-Run `ng g @nrwl/angular:app my-app` to generate an application.
+```bash
+nvm alias default 20
+```
 
-> You can use any of the plugins above to generate applications as well.
+## Projekt starten
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+```bash
+npm install
+```
 
-## Generate a library
+Backend und Frontend in zwei getrennten Terminals starten (in beiden vorher `nvm use`):
 
-Run `ng g @nrwl/angular:lib my-lib` to generate a library.
+```bash
+npx nx serve api
+```
 
-> You can also use any of the plugins above to generate libraries as well.
+```bash
+npx nx serve worlds
+```
 
-Libraries are sharable across libraries and applications. They can be imported from `@galaxy/mylib`.
+Das Frontend ist danach unter http://localhost:4200/ erreichbar und lädt bei Änderungen automatisch neu.
 
-## Development server
+## Weitere Befehle
 
-Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+| Zweck | Befehl |
+|---|---|
+| Build | `npx nx build worlds` bzw. `npx nx build api` (Ergebnis in `dist/`) |
+| Unit-Tests (Jest) | `npx nx test game-objects` (oder `api`, `worlds`) |
+| Alle betroffenen Tests | `npx nx affected -t test` |
+| E2E-Tests (Cypress) | `npx nx e2e worlds-e2e` |
+| Lint | `npx nx lint worlds` |
+| Abhängigkeitsgraph | `npx nx graph` |
 
-## Code scaffolding
+## Fehlersuche
 
-Run `ng g component my-component --project=my-app` to generate a new component.
+- `nvm: command not found`: nvm-Zeilen in `~/.zshrc` fehlen, neues Terminal öffnen.
+- Fehler beim `npm install` oder Build nach Node-Wechsel: `rm -rf node_modules && npm install` und `npx nx reset`.
+- Falsche Node-Version im Terminal: `nvm use` im Projektverzeichnis erneut ausführen.
 
-## Build
+## Weitere Dokumentation
 
-Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
+[Nx Dokumentation](https://nx.dev) · [Angular](https://angular.io) · [NestJS](https://nestjs.com)
