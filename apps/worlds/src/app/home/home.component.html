@@ -240,6 +240,24 @@
         </tr>
       </table>
     </div>
+    <galaxy-command-table
+      [hidden]="ishidden"
+      [node]="node"
+      [links]="turnData.links"
+      [ownColor]="ownColor"
+      [commandText]="form.value.Commands"
+      [readonly]="ishidden"
+      (commandToggled)="onCommandToggled($event)"
+    ></galaxy-command-table>
+    <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <textarea
+        name="Text1"
+        cols="40"
+        rows="5"
+        formControlName="Commands"
+      ></textarea>
+      <button>Speichern</button>
+    </form>
     <br />
     <div class="container">
       <table id="table1">
@@ -284,23 +302,5 @@
         <pre>{{ turnCommandTxt }}</pre>
       </div>
     }
-    <galaxy-command-table
-      [hidden]="ishidden"
-      [node]="node"
-      [links]="turnData.links"
-      [ownColor]="ownColor"
-      [commandText]="form.value.Commands"
-      [readonly]="ishidden"
-      (commandToggled)="onCommandToggled($event)"
-    ></galaxy-command-table>
-    <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <textarea
-        name="Text1"
-        cols="40"
-        rows="5"
-        formControlName="Commands"
-      ></textarea>
-      <button>Speichern</button>
-    </form>
   </div>
 }
