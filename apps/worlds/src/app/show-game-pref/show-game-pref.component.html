@@ -1,19 +1,23 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h2>Show Game</h2>
 
-<div *ngIf="gamePref$|async as gamePref">
+@if (gamePref$|async; as gamePref) {
+  <div>
     <div>Runde: <b>"{{ gamePref.round }}"</b></div>
     <div>Der Name des Speils lautet <b>"{{ gamePref.playName }}"</b> mit <b>{{ gamePref.worldCount }} Welten</b> und
-        <b>{{ gamePref.fleetCount}} Flotten</b>.</div>
+    <b>{{ gamePref.fleetCount}} Flotten</b>.</div>
     <div>Abstand zu den Spielern beträgt <b>{{ gamePref.distanceLevelHomes }} Welten</b>.</div>
     <div>Die Anzahl der Flotten auf Heimatwelt beträgt am Anfang des Spiels <b>{{ gamePref.fleetsOnHomeWorld }}
-            Stück</b>.</div>
+    Stück</b>.</div>
     <div>Die Flotten, die Anfang des Spieles auf der Heimatwelt sind, haben <b>{{ gamePref.startShipCount }}
-            Schiffe</b>.</div>
-</div>
+    Schiffe</b>.</div>
+  </div>
+}
 
 <h4>Spieler-Liste</h4>
 
 <ol>
-    <li *ngFor="let player of players$| async">{{ player }}</li>
+  @for (player of players$| async; track player) {
+    <li>{{ player }}</li>
+  }
 </ol>

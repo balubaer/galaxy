@@ -1,5 +1,7 @@
 <table>
-    <tr *ngFor="let key of keys">
+  @for (key of keys; track key) {
+    <tr>
       <td><a [routerLink]="[key]">{{ key }}</a></td>
     </tr>
-  </table>
+  }
+</table>

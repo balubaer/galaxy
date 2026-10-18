@@ -3,22 +3,22 @@
 <svg id="v6" width="960" height="600"></svg><!--graph container-->
 <div class="container">
   <table id="table1">
-      <tr>
-          <td> Enable Dragging </td>
-          <td> Enable Panning </td>
-          <td> Enable Zoom </td>
-      </tr>
-      <tr>
-          <td>
-              <input type="checkbox" ng-model="draggingEnabled" (click)="clickdragging()">
-          </td>
-          <td>
-              <input type="checkbox" ng-model="panningEnabled" (click)="clickpanning()">
-          </td>
-          <td>
-              <input type="checkbox" ng-model="zoomEnabled" (click)="clickzoom()">
-          </td>
-      </tr>
+    <tr>
+      <td> Enable Dragging </td>
+      <td> Enable Panning </td>
+      <td> Enable Zoom </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="checkbox" ng-model="draggingEnabled" (click)="clickdragging()">
+      </td>
+      <td>
+        <input type="checkbox" ng-model="panningEnabled" (click)="clickpanning()">
+      </td>
+      <td>
+        <input type="checkbox" ng-model="zoomEnabled" (click)="clickzoom()">
+      </td>
+    </tr>
   </table>
 </div>
 <br />
@@ -27,28 +27,34 @@
 <br />
 
 <svg class="world" width="200" height="200">
-  <g *ngIf="node" [attr.transform]="'translate(100,100)'">
-    <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
-    <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
-    <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
+  @if (node) {
+    <g [attr.transform]="'translate(100,100)'">
+      <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
+      <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
+      <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
       fill="white">{{node.data.dships}}</text>>
-
-    <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-      alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
-
-    <g *ngFor="let fleet of node.data.fleets">
-      <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="30"
-        ry="10" />
       <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-        alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
+      alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
+      @for (fleet of node.data.fleets; track fleet) {
+        <g>
+          <ellipse stroke="none" [attr.fill]="fleet.backgroundColor" [attr.cx]="fleet.x" [attr.cy]="fleet.y" rx="30"
+            ry="10" />
+          <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+          alignment-baseline="central" text-anchor="middle" [attr.x]="fleet.x" [attr.y]="fleet.y">{{fleet.label}}</text>
+        </g>
+      }
     </g>
-  </g>
+  }
 </svg>
 
-<pre *ngFor="let world of worldList$ | async">{{ world }}</pre>
+@for (world of worldList$ | async; track world) {
+  <pre>{{ world }}</pre>
+}
 <br />
 <pre>
-  <tr *ngFor="let world of worlds$ | async">
-  <td>{{ world }}</td>
-</tr></pre>
-<br />
+  @for (world of worlds$ | async; track world) {
+    <tr>
+      <td>{{ world }}</td>
+    </tr>
+  }</pre>
+  <br />

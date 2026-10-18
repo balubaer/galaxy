@@ -1,74 +1,100 @@
 ﻿<h2>Register</h2>
 
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input type="text" formControlName="firstName" class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
-        <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
-            <div *ngIf="f.firstName.errors.required">First Name is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="lastName">Last Name</label>
-        <input type="text" formControlName="lastName" class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
-        <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
-            <div *ngIf="f.lastName.errors.required">Last Name is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" formControlName="username" class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-        <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-            <div *ngIf="f.username.errors.required">Username is required</div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" formControlName="password" class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-        <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-            <div *ngIf="f.password.errors.required">Password is required</div>
-            <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
-        </div>
-    </div>
-    <h4 [hidden]="isPickerHidden">Bitte Farbe auswählen</h4>
-    <button class="btn btn-default" (click)="showHideColorPicker()" [hidden]="isButtonHidden">Select color </button>
-    <div class="color-picker" [hidden]="isPickerHidden">
-        <div *ngFor="let color of colors$| async" [ngStyle]="{'background-color': color}" (click)="pickColor(color)">
-        </div>
-    </div>
-    <h4 [hidden]="isColorHidden">Ausgewählte Farbe</h4>
-    <div class="color-picker2" [hidden]="isColorHidden">
-        <div *ngIf="color" [ngStyle]="{'background-color': color}">
-        </div>
-    </div>
+  <div class="form-group">
+    <label for="firstName">First Name</label>
+    <input type="text" formControlName="firstName" class="form-control"
+      [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
+    @if (submitted && f.firstName.errors) {
+      <div class="invalid-feedback">
+        @if (f.firstName.errors.required) {
+          <div>First Name is required</div>
+        }
+      </div>
+    }
+  </div>
+  <div class="form-group">
+    <label for="lastName">Last Name</label>
+    <input type="text" formControlName="lastName" class="form-control"
+      [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
+    @if (submitted && f.lastName.errors) {
+      <div class="invalid-feedback">
+        @if (f.lastName.errors.required) {
+          <div>Last Name is required</div>
+        }
+      </div>
+    }
+  </div>
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" formControlName="username" class="form-control"
+      [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+    @if (submitted && f.username.errors) {
+      <div class="invalid-feedback">
+        @if (f.username.errors.required) {
+          <div>Username is required</div>
+        }
+      </div>
+    }
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" formControlName="password" class="form-control"
+      [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+    @if (submitted && f.password.errors) {
+      <div class="invalid-feedback">
+        @if (f.password.errors.required) {
+          <div>Password is required</div>
+        }
+        @if (f.password.errors.minlength) {
+          <div>Password must be at least 6 characters</div>
+        }
+      </div>
+    }
+  </div>
+  <h4 [hidden]="isPickerHidden">Bitte Farbe auswählen</h4>
+  <button class="btn btn-default" (click)="showHideColorPicker()" [hidden]="isButtonHidden">Select color </button>
+  <div class="color-picker" [hidden]="isPickerHidden">
+    @for (color of colors$| async; track color) {
+      <div [ngStyle]="{'background-color': color}" (click)="pickColor(color)">
+      </div>
+    }
+  </div>
+  <h4 [hidden]="isColorHidden">Ausgewählte Farbe</h4>
+  <div class="color-picker2" [hidden]="isColorHidden">
+    @if (color) {
+      <div [ngStyle]="{'background-color': color}">
+      </div>
+    }
+  </div>
 
-    <br />
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            Register
-        </button>
-        <a routerLink="/login" class="btn btn-link">Cancel</a>
-    </div>
-    <h4>Schon ausgewählte Farbe anderer Spieler</h4>
-    <div class="container2">
-        <table id="table2">
-            <tr id="tr2">
-                <td id="td2" *ngFor="let aPlayerColor of playercolor$| async">
-                    <svg class="world" width="80" height="80">
-                        <g transform="translate(40,40)">
-                            <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
-                            <text [attr.fill]="aPlayerColor.fontColor"
-                                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                                alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
-                        </g>
-                    </svg>
-                </td>
-            </tr>
-        </table>
-    </div>
+  <br />
+  <div class="form-group">
+    <button [disabled]="loading" class="btn btn-primary">
+      @if (loading) {
+        <span class="spinner-border spinner-border-sm mr-1"></span>
+      }
+      Register
+    </button>
+    <a routerLink="/login" class="btn btn-link">Cancel</a>
+  </div>
+  <h4>Schon ausgewählte Farbe anderer Spieler</h4>
+  <div class="container2">
+    <table id="table2">
+      <tr id="tr2">
+        @for (aPlayerColor of playercolor$| async; track aPlayerColor) {
+          <td id="td2">
+            <svg class="world" width="80" height="80">
+              <g transform="translate(40,40)">
+                <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
+                <text [attr.fill]="aPlayerColor.fontColor"
+                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                alignment-baseline="central" text-anchor="middle">{{ aPlayerColor.playername }}</text>
+              </g>
+            </svg>
+          </td>
+        }
+      </tr>
+    </table>
+  </div>
 </form>

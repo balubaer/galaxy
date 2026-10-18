@@ -1,24 +1,25 @@
 
-  <!-- nav -->
-  <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="currentUser">
+<!-- nav -->
+@if (currentUser) {
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="navbar-nav">
-        <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" (click)="showMaps()">ShowMaps</a>
-        <a class="nav-item nav-link" (click)="logout()">Logout</a>
+      <a class="nav-item nav-link" routerLink="/">Home</a>
+      <a class="nav-item nav-link" (click)="showMaps()">ShowMaps</a>
+      <a class="nav-item nav-link" (click)="logout()">Logout</a>
     </div>
     <!--<galaxy-navigation-component></galaxy-navigation-component>-->
     <!--<galaxy-player-detail></galaxy-player-detail>-->
-
-</nav>
+  </nav>
+}
 
 <!-- main content container -->
 <div class="jumbotron">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-8 offset-sm-2">
-                <galaxy-alert></galaxy-alert>
-                <router-outlet></router-outlet>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-8 offset-sm-2">
+        <galaxy-alert></galaxy-alert>
+        <router-outlet></router-outlet>
+      </div>
     </div>
+  </div>
 </div>

@@ -1,1 +1,1 @@
-﻿<div *ngIf="message" [ngClass]="message.cssClass">{{message.text}}</div>
+﻿@if (message) {<div [ngClass]="message.cssClass">{{message.text}}</div>}

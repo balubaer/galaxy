@@ -3,10 +3,14 @@
 <h4>Spieler-Liste</h4>
 
 <ol>
-    <li *ngFor="let player of players$| async">{{ player }}</li>
+  @for (player of players$| async; track player) {
+    <li>{{ player }}</li>
+  }
 </ol>
 <button class="btn btn-default" (click)="showHideColorPicker()">Select color </button>
 <div class="color-picker" [hidden]="isPickerShown">
-    <div *ngFor="let color of colors$| async" [ngStyle]="{'background-color': color}" (click)="pickColor(color)">
+  @for (color of colors$| async; track color) {
+    <div [ngStyle]="{'background-color': color}" (click)="pickColor(color)">
     </div>
+  }
 </div>

@@ -9,12 +9,13 @@
 
 <h2>Set Round</h2>
 
-<div *ngIf="gamepref">
+@if (gamepref) {
+  <div>
     <div>Runde: <b>"{{ gamepref.round }}"</b></div>
-</div>
+  </div>
+}
 <br/>
 <form [formGroup]="form" (ngSubmit)="onSubmitSetRound()">
-    Runde setzen: <input type="number" formControlName="Round" /><br />
-    <button>Speichern</button>
+  Runde setzen: <input type="number" formControlName="Round" /><br />
+  <button>Speichern</button>
 </form>
-  
