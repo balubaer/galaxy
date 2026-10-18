@@ -33,6 +33,41 @@
                   {{ option.label }}
                 </button>
               }
+              @if (group.title === 'Bewegen') {
+                @if (routePlan?.fleet === row.fleet) {
+                  <span class="route">
+                    Route: <strong>{{ routeText() }}</strong> (Welten im Graphen
+                    anklicken, max. {{ maxRouteSteps }})
+                    <button
+                      type="button"
+                      (click)="routeStepBack.emit()"
+                      [disabled]="routePlan!.path.length === 0"
+                    >
+                      Zurück
+                    </button>
+                    <button
+                      type="button"
+                      class="selected"
+                      (click)="routeConfirmed.emit()"
+                      [disabled]="routePlan!.path.length === 0"
+                    >
+                      Übernehmen
+                    </button>
+                    <button type="button" (click)="routeCancelled.emit()">
+                      Abbrechen
+                    </button>
+                  </span>
+                } @else {
+                  <button
+                    type="button"
+                    class="route-start"
+                    [disabled]="isRouteDisabled(row)"
+                    (click)="routeStarted.emit(row.fleet)"
+                  >
+                    Route planen…
+                  </button>
+                }
+              }
             </td>
           </tr>
         }

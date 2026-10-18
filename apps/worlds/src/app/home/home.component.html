@@ -247,6 +247,11 @@
       [ownColor]="ownColor"
       [commandText]="form.value.Commands"
       [readonly]="ishidden"
+      [routePlan]="routePlan"
+      (routeStarted)="onRouteStarted($event)"
+      (routeStepBack)="onRouteStepBack()"
+      (routeConfirmed)="onRouteConfirmed()"
+      (routeCancelled)="onRouteCancelled()"
       (commandToggled)="onCommandToggled($event)"
     ></galaxy-command-table>
     <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">

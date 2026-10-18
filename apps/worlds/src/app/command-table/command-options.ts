@@ -8,6 +8,8 @@ export interface CommandOption {
 export interface CommandRow {
   label: string;
   options: CommandOption[];
+  /** Bei Bewegungszeilen: Nummer der Flotte (für die Routenplanung). */
+  fleet?: number;
 }
 
 export interface CommandGroup {
@@ -19,6 +21,11 @@ interface WorldFleet {
   number: number;
   ships: number;
   own: boolean;
+}
+
+/** d3 ersetzt source/target der Kanten durch die Knoten-Objekte. */
+export function idOf(end: unknown): string {
+  return typeof end === 'string' ? end : (end as Node).id;
 }
 
 function readFleets(node: Node, ownColor: string): WorldFleet[] {
@@ -55,9 +62,6 @@ export function buildCommandGroups(
   const ownFleets = fleets.filter((f) => f.own);
   const movable = ownFleets.filter((f) => f.ships > 0);
   const enemyFleets = fleets.filter((f) => !f.own);
-  // d3 ersetzt source/target der Kanten durch die Knoten-Objekte.
-  const idOf = (end: unknown): string =>
-    typeof end === 'string' ? end : (end as Node).id;
   const targets = Array.from(
     new Set(
       links
@@ -81,6 +85,7 @@ export function buildCommandGroups(
     'Bewegen',
     movable.map((f) => ({
       label: `Flotte ${f.number} (${f.ships})`,
+      fleet: f.number,
       options: targets.map((t) => opt(`F${f.number}${t}`, `→ ${t}`)),
     })),
   );
@@ -210,4 +215,45 @@ export function removeCommand(text: string, command: string): string {
   return splitCommands(text)
     .filter((c) => c !== command)
     .join('\n');
+}
+
+/** Mehrschritt-Flug: Eine Flotte kann bis zu drei Welten nacheinander anfliegen (FnnnWmmmWooo...). */
+export const MAX_ROUTE_STEPS = 3;
+
+export interface RoutePlan {
+  fleet: number;
+  start: string;
+  path: string[];
+}
+
+export function routeWorlds(plan: RoutePlan): string[] {
+  return [plan.start, ...plan.path];
+}
+
+export function canExtendRoute(
+  plan: RoutePlan,
+  links: Edge[],
+  worldId: string,
+): boolean {
+  if (plan.path.length >= MAX_ROUTE_STEPS) {
+    return false;
+  }
+  const last = routeWorlds(plan)[plan.path.length];
+  return links.some(
+    (l) => idOf(l.source) === last && idOf(l.target) === worldId,
+  );
+}
+
+export function extendRoute(
+  plan: RoutePlan,
+  links: Edge[],
+  worldId: string,
+): RoutePlan {
+  return canExtendRoute(plan, links, worldId)
+    ? { ...plan, path: [...plan.path, worldId] }
+    : plan;
+}
+
+export function routeCommand(plan: RoutePlan): string {
+  return `F${plan.fleet}${plan.path.join('')}`;
 }

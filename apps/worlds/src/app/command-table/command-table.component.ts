@@ -4,7 +4,11 @@ import {
   buildCommandGroups,
   CommandGroup,
   CommandOption,
+  CommandRow,
   isDisabled,
+  MAX_ROUTE_STEPS,
+  routeCommand,
+  RoutePlan,
   splitCommands,
 } from './command-options';
 
@@ -21,6 +25,12 @@ export class CommandTableComponent {
   /** Aktueller Inhalt des Befehls-Textfelds. */
   @Input() commandText = '';
   @Input() readonly = false;
+  /** Aktive Routenplanung (Welten werden im Graphen angeklickt). */
+  @Input() routePlan: RoutePlan | null = null;
+  @Output() routeStarted = new EventEmitter<number>();
+  @Output() routeStepBack = new EventEmitter<void>();
+  @Output() routeConfirmed = new EventEmitter<void>();
+  @Output() routeCancelled = new EventEmitter<void>();
   @Output() commandToggled = new EventEmitter<{
     command: string;
     selected: boolean;
@@ -42,6 +52,22 @@ export class CommandTableComponent {
     return (
       this.readonly ||
       isDisabled(option.command, splitCommands(this.commandText))
+    );
+  }
+
+  readonly maxRouteSteps = MAX_ROUTE_STEPS;
+
+  routeText(): string {
+    return this.routePlan ? routeCommand(this.routePlan) : '';
+  }
+
+  /** Eine Flotte pro Zug nur eine Aktion: bereits belegte Flotten können keine Route planen. */
+  isRouteDisabled(row: CommandRow): boolean {
+    return (
+      this.readonly ||
+      this.routePlan !== null ||
+      row.fleet === undefined ||
+      isDisabled(`F${row.fleet}W`, splitCommands(this.commandText))
     );
   }
 

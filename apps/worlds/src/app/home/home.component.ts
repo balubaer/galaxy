@@ -16,7 +16,16 @@ import { GamePlayService } from '../player/game-play.service';
 import { Node } from "@galaxy/api-interfaces";
 import * as d3 from 'd3';
 import { GameServiceService } from '../game-service.service';
-import { addCommand, removeCommand } from '../command-table/command-options';
+import {
+  addCommand,
+  canExtendRoute,
+  extendRoute,
+  idOf,
+  removeCommand,
+  RoutePlan,
+  routeCommand,
+  routeWorlds,
+} from '../command-table/command-options';
 
 @Component({
     selector: 'galaxy-home',
@@ -51,6 +60,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   turnCommandTxt = '';
   ownColor = '';
+  routePlan: RoutePlan | null = null;
 
   ishidden = false;
   ishiddenNextButton = true;
@@ -189,6 +199,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     th.nodes.on('click', clicked);
 
     function clicked(this: any, event, d) {
+      if (th.routePlan) {
+        // Routenplanung: Klick wählt die nächste Welt der Route, die Auswahl bleibt.
+        if (!event.defaultPrevented) {
+          th.routePlan = extendRoute(th.routePlan, th.turnData.links, d.id);
+          th.highlightRoute();
+        }
+        return;
+      }
       th.node = d;
 
       if (event.defaultPrevented) return; // dragged
@@ -241,6 +259,50 @@ export class HomeComponent implements OnInit, OnDestroy {
     th.force.nodes(this.turnData.nodes);
     th.force.force('link').links(this.turnData.links);
     th.force.alpha(1).restart();
+    this.highlightRoute();
+  }
+
+  highlightRoute() {
+    const worlds = this.routePlan ? routeWorlds(this.routePlan) : [];
+    const svg = d3.select('svg#v7');
+    svg
+      .selectAll('.nodes circle')
+      .style('stroke', (d: any) => (worlds.includes(d.id) ? '#1976d2' : null))
+      .style('stroke-width', (d: any) => (worlds.includes(d.id) ? 3 : null));
+    const inRoute = (d: any) => {
+      const from = worlds.indexOf(idOf(d.source));
+      return from >= 0 && worlds[from + 1] === idOf(d.target);
+    };
+    svg
+      .selectAll('line')
+      .style('stroke', (d: any) => (inRoute(d) ? '#1976d2' : '#999'))
+      .style('stroke-width', (d: any) => (inRoute(d) ? 3 : null));
+  }
+
+  onRouteStarted(fleet: number) {
+    if (this.node) {
+      this.routePlan = { fleet, start: this.node.id, path: [] };
+      this.highlightRoute();
+    }
+  }
+
+  onRouteStepBack() {
+    if (this.routePlan) {
+      this.routePlan = { ...this.routePlan, path: this.routePlan.path.slice(0, -1) };
+      this.highlightRoute();
+    }
+  }
+
+  onRouteConfirmed() {
+    if (this.routePlan && this.routePlan.path.length > 0) {
+      this.onCommandToggled({ command: routeCommand(this.routePlan), selected: true });
+    }
+    this.onRouteCancelled();
+  }
+
+  onRouteCancelled() {
+    this.routePlan = null;
+    this.highlightRoute();
   }
 
   onCommandToggled(event: { command: string; selected: boolean }) {
@@ -282,6 +344,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   readNewTurnDataWithRound(aRound: number) {
+    this.routePlan = null;
     if (this.gamePrefSubsription !== null) {
       this.gamePrefSubsription.unsubscribe();
       this.gamePrefSubsription = null;
@@ -311,6 +374,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string) {
+    this.routePlan = null;
     if (this.gamePrefSubsription !== null) {
       this.gamePrefSubsription.unsubscribe();
       this.gamePrefSubsription = null;

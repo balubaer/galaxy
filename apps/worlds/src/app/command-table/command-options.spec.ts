@@ -2,9 +2,12 @@ import { Node } from '@galaxy/api-interfaces';
 import {
   addCommand,
   buildCommandGroups,
+  canExtendRoute,
   commandsConflict,
+  extendRoute,
   isDisabled,
   removeCommand,
+  routeCommand,
 } from './command-options';
 
 const OWN = 'rgba(255,103, 43,1)';
@@ -97,5 +100,33 @@ describe('text helpers', () => {
     expect(addCommand('F9W7', 'Z')).toBe('F9W7\nZ');
     expect(addCommand('F9W7', 'F9W7')).toBe('F9W7');
     expect(removeCommand('F9W7\nZ', 'F9W7')).toBe('Z');
+  });
+});
+
+describe('route planning', () => {
+  const edges = [
+    { source: 'W1', target: 'W7' },
+    {
+      source: { id: 'W7' } as unknown as string,
+      target: { id: 'W3' } as unknown as string,
+    },
+    { source: 'W3', target: 'W4' },
+    { source: 'W4', target: 'W5' },
+  ];
+  const plan = { fleet: 9, start: 'W1', path: [] as string[] };
+
+  it('only extends along directed links', () => {
+    expect(canExtendRoute(plan, edges, 'W7')).toBe(true);
+    expect(canExtendRoute(plan, edges, 'W3')).toBe(false);
+    expect(canExtendRoute({ ...plan, path: ['W7'] }, edges, 'W1')).toBe(false);
+  });
+
+  it('builds a multi-hop command and stops after three steps', () => {
+    let p = plan;
+    for (const w of ['W7', 'W3', 'W4', 'W5']) {
+      p = extendRoute(p, edges, w);
+    }
+    expect(p.path).toEqual(['W7', 'W3', 'W4']);
+    expect(routeCommand(p)).toBe('F9W7W3W4');
   });
 });

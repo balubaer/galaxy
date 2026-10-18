@@ -42,3 +42,9 @@ button:disabled:not(.selected) {
   opacity: 0.4;
   cursor: not-allowed;
 }
+.route {
+  margin-left: 0.5em;
+}
+.route-start {
+  border-style: dashed;
+}
