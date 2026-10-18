@@ -1,16 +1,31 @@
-<svg id="v7" width="750" height="750"></svg><!--graph container-->
+<div class="graph-scroll">
+  <svg id="v7" width="750" height="750"></svg><!--graph container-->
+</div>
 <div class="container">
   <table id="table1">
     <tr>
-      <td> Fix </td>
+      <td>
+        Zoom
+        <input
+          type="range"
+          min="0.5"
+          max="4"
+          step="0.1"
+          [value]="zoom"
+          (input)="onZoomChange($any($event.target).value)"
+        />
+        {{ zoom | number: '1.1-1' }}×
+        <button type="button" (click)="onZoomChange('1')">1×</button>
+      </td>
+      <td>
+        <label>
+          <input type="checkbox" [checked]="fixEnabled" (change)="fixEnabled = !fixEnabled" />
+          Fix
+        </label>
+      </td>
       <td>
         <button mat-stroked-button color="primary" class="button" (click)="pressSavewWorld()"> save
         </button>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="checkbox" [checked]="fixEnabled" (change)="fixEnabled = !fixEnabled" />
       </td>
     </tr>
   </table>
@@ -258,7 +273,7 @@
       <textarea
         name="Text1"
         cols="40"
-        rows="5"
+        [rows]="commandRows"
         formControlName="Commands"
       ></textarea>
       <button>Speichern</button>

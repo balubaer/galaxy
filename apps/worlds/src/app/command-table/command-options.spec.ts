@@ -6,6 +6,7 @@ import {
   commandsConflict,
   extendRoute,
   isDisabled,
+  multiStepMoves,
   removeCommand,
   routeCommand,
 } from './command-options';
@@ -128,5 +129,13 @@ describe('route planning', () => {
     }
     expect(p.path).toEqual(['W7', 'W3', 'W4']);
     expect(routeCommand(p)).toBe('F9W7W3W4');
+  });
+});
+
+describe('multiStepMoves', () => {
+  it('finds only routes with more than one step of the given fleet', () => {
+    const text = ['F9W7', 'F9W7W3', 'F90W7W3W4', 'F9W7W3W4', 'F9AF2'];
+    expect(multiStepMoves(text, 9)).toEqual(['F9W7W3', 'F9W7W3W4']);
+    expect(multiStepMoves(text, undefined)).toEqual([]);
   });
 });

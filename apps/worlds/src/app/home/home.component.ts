@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   force: any;
     
   fixEnabled = false;
+  zoom = 1;
 
   round = 0;
   changeround = 0;
@@ -103,6 +104,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.homeWorldName = aTurnData.homeWorldName;
       this.selectWorld = +extractNumberString(aTurnData.homeWorldName);
       this.turnData = aTurnData;
+      this.applySavedLayout(aTurnData.homeWorldName);
       this.initGraf();
     });
 
@@ -139,10 +141,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     const height = 500;
     const svgv7 = d3
       .select('svg#v7')
-      .attr('viewBox', '0 0 ' + width + ' ' + height)
-      .attr('width', '750px')
-      .style('max-width', '100%')
       .style('background-color', 'white');
+
+    th.applyZoom();
 
     th.force = d3.forceSimulation();
 
@@ -179,6 +180,31 @@ export class HomeComponent implements OnInit, OnDestroy {
         return d.data.backgroundColor;
       });
 
+    // Flotten als kleine Ellipsen rund um die Welt (Position wie in der Detailansicht, verkleinert).
+    th.nodes.each(function (this: SVGGElement, d: any) {
+      const group = d3.select(this);
+      for (const fleet of d.data?.fleets ?? []) {
+        const fleetGroup = group
+          .append('g')
+          .attr('class', 'fleet')
+          .attr('transform', `translate(${fleet.x * 0.3},${fleet.y * 0.3})`);
+        fleetGroup.append('title').text(`${d.id}: ${fleet.label}`);
+        fleetGroup
+          .append('ellipse')
+          .attr('rx', 8)
+          .attr('ry', 3.5)
+          .style('fill', fleet.backgroundColor);
+        fleetGroup
+          .append('text')
+          .attr('dy', 1.5)
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', 4)
+          .attr('text-anchor', 'middle')
+          .attr('fill', fleet.fontColor ?? 'black')
+          .text(fleet.label);
+      }
+    });
+
     const drag_handler = d3
       .drag()
       .on('start', drag_start)
@@ -207,17 +233,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
         return;
       }
-      th.node = d;
-
       if (event.defaultPrevented) return; // dragged
 
-      d3.select(this)
-        .transition()
-        .attr('fill', 'black')
-        .attr('r', 10 * 2)
-        .transition()
-        .attr('r', 10)
-        .attr('fill', d3.schemeCategory10[d.index % 10]);
+      // Erneuter Klick hebt die Auswahl auf, eine andere Welt ersetzt sie.
+      th.node = th.node?.id === d.id ? undefined : d;
+      th.highlightRoute();
     }
 
     th.force.on('tick', function () {
@@ -262,13 +282,46 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.highlightRoute();
   }
 
+  /** Zoom über die Größe der SVG-Fläche; der Rahmen (graph-scroll) scrollt. */
+  applyZoom() {
+    const size = 750 * this.zoom;
+    d3.select('svg#v7')
+      .attr('viewBox', '0 0 500 500')
+      .attr('width', size)
+      .attr('height', size)
+      .style('max-width', 'none');
+  }
+
+  onZoomChange(value: string) {
+    const zoom = +value;
+    const newZoom = zoom >= 0.5 && zoom <= 4 ? zoom : 1;
+    const box = document.querySelector<HTMLElement>('.graph-scroll');
+    // Mittelpunkt des sichtbaren Ausschnitts beim Zoomen beibehalten.
+    const center = box
+      ? {
+          x: (box.scrollLeft + box.clientWidth / 2) / this.zoom,
+          y: (box.scrollTop + box.clientHeight / 2) / this.zoom,
+        }
+      : null;
+    this.zoom = newZoom;
+    this.applyZoom();
+    if (box && center) {
+      box.scrollLeft = center.x * newZoom - box.clientWidth / 2;
+      box.scrollTop = center.y * newZoom - box.clientHeight / 2;
+    }
+  }
+
   highlightRoute() {
     const worlds = this.routePlan ? routeWorlds(this.routePlan) : [];
     const svg = d3.select('svg#v7');
     svg
       .selectAll('.nodes circle')
-      .style('stroke', (d: any) => (worlds.includes(d.id) ? '#1976d2' : null))
-      .style('stroke-width', (d: any) => (worlds.includes(d.id) ? 3 : null));
+      .style('stroke', (d: any) =>
+        d.id === this.node?.id ? 'red' : worlds.includes(d.id) ? '#1976d2' : null
+      )
+      .style('stroke-width', (d: any) =>
+        d.id === this.node?.id || worlds.includes(d.id) ? 3 : null
+      );
     const inRoute = (d: any) => {
       const from = worlds.indexOf(idOf(d.source));
       return from >= 0 && worlds[from + 1] === idOf(d.target);
@@ -305,6 +358,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.highlightRoute();
   }
 
+  /** Das Befehlsfeld wächst mit der Zahl der Zeilen (mindestens 5). */
+  get commandRows(): number {
+    const lines = ((this.form.value.Commands as string) ?? '').split('\n').length;
+    return Math.max(5, lines + 1);
+  }
+
   onCommandToggled(event: { command: string; selected: boolean }) {
     const element = this.form.get('Commands');
     if (element) {
@@ -314,6 +373,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           ? addCommand(text, event.command)
           : removeCommand(text, event.command)
       );
+      // Jeder Befehlsbutton speichert die Befehle sofort.
+      this.onSubmit();
     }
   }
 
@@ -396,6 +457,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
       this.turnCommandTxt = aTurnData.turnCommanTxt;
       this.turnData = aTurnData;
+      this.applySavedLayout(aWorldName);
       this.deleteGraf();
       this.initGraf();
       if (this.changeround === this.round) {
@@ -442,12 +504,64 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
+  private layoutKey(worldName: string): string {
+    return `R${this.round}W${extractNumberString(worldName)}D${this.distanceLevelHomes}.${this.currentUser.username}`;
+  }
+
+  private readSave(key: string): Node[] {
+    try {
+      const saved: RespondTurnData | null = JSON.parse(localStorage.getItem(key) ?? 'null');
+      return saved?.nodes ?? [];
+    } catch {
+      return [];
+    }
+  }
+
+  /** Andere Saves des Benutzers: gleiche Runde zuerst, dann das nächstliegende Distanzlevel. */
+  private otherSaveKeys(ownKey: string): string[] {
+    const pattern = /^R(\d+)W(\d+)D(\d+)\.(.+)$/;
+    const keys: { key: string; rank: number }[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i) ?? '';
+      const match = pattern.exec(key);
+      if (match && key !== ownKey && match[4] === this.currentUser.username) {
+        const sameRound = +match[1] === this.round ? 0 : 1000;
+        keys.push({ key, rank: sameRound + Math.abs(+match[3] - this.distanceLevelHomes) });
+      }
+    }
+    return keys.sort((a, b) => a.rank - b.rank).map((k) => k.key);
+  }
+
+  /**
+   * Übernimmt gesicherte Positionen ("save"). Zuerst gilt der eigene Save dieser Ansicht;
+   * Welten, die dort fehlen, bekommen ihre Position aus Saves anderer Distanzlevel.
+   */
+  private applySavedLayout(worldName: string) {
+    const ownKey = this.layoutKey(worldName);
+    const pending = new Map(this.turnData.nodes.map((n) => [n.id, n]));
+    for (const key of [ownKey, ...this.otherSaveKeys(ownKey)]) {
+      if (pending.size === 0) {
+        break;
+      }
+      for (const old of this.readSave(key)) {
+        const node = pending.get(old.id);
+        if (node && old.fx !== undefined && old.fy !== undefined) {
+          node.x = old.fx;
+          node.y = old.fy;
+          node.fx = old.fx;
+          node.fy = old.fy;
+          pending.delete(old.id);
+        }
+      }
+    }
+  }
+
   pressSavewWorld() {
     for (const n of this.turnData.nodes) {
       n.fx = n.x;
       n.fy = n.y;
     }
-    const key = `R${this.round}W${this.selectWorld}D${this.distanceLevelHomes}.${this.currentUser.username}`;
+    const key = this.layoutKey(`W${this.selectWorld}`);
     localStorage.setItem(key, JSON.stringify(this.turnData));
   }
 

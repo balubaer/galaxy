@@ -7,6 +7,7 @@ import {
   CommandRow,
   isDisabled,
   MAX_ROUTE_STEPS,
+  multiStepMoves,
   routeCommand,
   RoutePlan,
   splitCommands,
@@ -52,6 +53,16 @@ export class CommandTableComponent {
     return (
       this.readonly ||
       isDisabled(option.command, splitCommands(this.commandText))
+    );
+  }
+
+  /** Schon eingetragene Flüge mit mehr als einem Schritt, damit der Befehl sichtbar bleibt. */
+  multiStepRoutes(row: CommandRow): CommandOption[] {
+    return multiStepMoves(splitCommands(this.commandText), row.fleet).map(
+      (command) => ({
+        command,
+        label: command,
+      }),
     );
   }
 

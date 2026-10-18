@@ -257,3 +257,12 @@ export function extendRoute(
 export function routeCommand(plan: RoutePlan): string {
   return `F${plan.fleet}${plan.path.join('')}`;
 }
+
+/** Mehrschritt-Flugbefehle (FnnnWmmmWooo...) einer Flotte, die im Text stehen. */
+export function multiStepMoves(
+  commands: string[],
+  fleet: number | undefined,
+): string[] {
+  const pattern = new RegExp(`^F${fleet}(?:W\\d+){2,}$`);
+  return fleet === undefined ? [] : commands.filter((c) => pattern.test(c));
+}

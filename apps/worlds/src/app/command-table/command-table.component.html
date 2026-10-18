@@ -34,6 +34,18 @@
                 </button>
               }
               @if (group.title === 'Bewegen') {
+                @for (route of multiStepRoutes(row); track route.command) {
+                  <button
+                    type="button"
+                    class="selected"
+                    aria-pressed="true"
+                    [disabled]="readonly"
+                    [title]="'Klicken zum Entfernen'"
+                    (click)="press(route)"
+                  >
+                    {{ route.command }}
+                  </button>
+                }
                 @if (routePlan?.fleet === row.fleet) {
                   <span class="route">
                     Route: <strong>{{ routeText() }}</strong> (Welten im Graphen
