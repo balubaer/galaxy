@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 //import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { NavigationComponentRoutingModule } from './navigation-component-routing.module';
@@ -15,25 +15,18 @@ import { NavigationComponentComponent } from './navigation-component/navigation-
 import { SetAdminComponent } from '../set-admin/set-admin.component';
 import { AdminLoginComponent } from '../adminLogin/admin-login.component';
 
-@NgModule({
-  declarations: [
-    AdminComponent,
-    ShowPlayerComponent,
-    CreateWorldsComponent,
-    WorldListComponent,
-    CreateGameComponent,
-    ShowGamePrefComponent,
-    NavigationComponentComponent,
-    SetAdminComponent,
-    AdminLoginComponent
-  ],
-  imports: [
-    CommonModule,
-    NavigationComponentRoutingModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    //NgxGraphModule
-  ],
-  exports: [AdminComponent]
-})
+@NgModule({ declarations: [
+        AdminComponent,
+        ShowPlayerComponent,
+        CreateWorldsComponent,
+        WorldListComponent,
+        CreateGameComponent,
+        ShowGamePrefComponent,
+        NavigationComponentComponent,
+        SetAdminComponent,
+        AdminLoginComponent
+    ],
+    exports: [AdminComponent], imports: [CommonModule,
+        NavigationComponentRoutingModule,
+        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class NavigationModule { }
