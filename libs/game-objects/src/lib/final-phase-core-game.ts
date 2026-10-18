@@ -156,6 +156,11 @@ export class FinalPhaseCoreGame {
                             const toworld = fleetMovement.toWorld;
                             if ((fromworld !== null) && (toworld !== null)) {
                                 const index = fromworld.fleets.indexOf(fleet);
+                                if (index < 0) {
+                                    // Flotte ist nicht (mehr) auf der Startwelt, nichts verschieben.
+                                    movementCount++;
+                                    continue;
+                                }
                                 fromworld.fleets.splice(index, 1);
                                 fromworld.fleetMovements.push(fleetMovement);
                                 toworld.fleets.push(fleet)

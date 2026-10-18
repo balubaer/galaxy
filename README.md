@@ -28,8 +28,6 @@ Um das Adminlogin zu ändern "adminLogin.json" löschen und mit
 </a>
 
 ## Bugs
-- Flotten dürfen nur einmal fliege
-  - Doppelter Flugbefehl Copiert Flotte
 - Command kommt nicht mit Weltennummern zurecht die es nicht gibt
 - Keine Ausgabe für den der angeschossen wurde:
 W125(77,140,63,117) [ZAPHOD] (D-Schiffe=1)
@@ -95,7 +93,8 @@ Sternen Karten nur noch 3 Level anzeigen
 - Oder auf Klick
 * Es kommt zu einem Fehler wenn keine Befehlsdatei vorhanden ist
 * wenn man Welt über kilick setzt auch Welt Eingabefeld setzen
-
+- Flotten dürfen nur einmal fliege
+  - Doppelter Flugbefehl Copiert Flotte
 	
 ## Projekt
 

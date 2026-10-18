@@ -2,6 +2,7 @@ import { Command, TurnPhase, MoveCommand, compareCommand, TransferShipsFleetToFl
 import { Player } from './player';
 import { World, TestWorldsArrayFactory, GamePref, ExecuteCommand, WorldsPersist } from '..';
 import { Fleet } from './fleet';
+import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { readFileSync } from 'fs';
 import { TESTRESOUCESPATH, objToMap } from './utils';
 
@@ -81,6 +82,37 @@ describe('MoveCommand', () => {
     const fleetMovement = fleet4.fleetMovements[0];
     expect(fleetMovement.fromWorld).toBe(world4);
     expect(fleetMovement.toWorld).toBe(world2);
+  });
+});
+
+describe('MoveCommand mit doppeltem Flugbefehl', () => {
+  it('ignoriert den zweiten Flugbefehl derselben Flotte', () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    const world4 = worlds[3];
+    const fleet4 = world4.fleets[0];
+    const player = world4.player;
+
+    new MoveCommand(fleet4, world4, [worlds[1]], 'F4W2', player).executeCommand();
+    new MoveCommand(fleet4, world4, [worlds[2]], 'F4W3', player).executeCommand();
+
+    expect(fleet4.fleetMovements.length).toBe(1);
+    expect(fleet4.fleetMovements[0].toWorld).toBe(worlds[1]);
+  });
+
+  it('kopiert die Flotte nicht beim Ausführen der Flugphase', () => {
+    const worlds = new TestWorldsArrayFactory().worlds;
+    const world4 = worlds[3];
+    const fleet4 = world4.fleets[0];
+    const player = world4.player;
+    const fleetCountBefore = worlds.reduce((sum, w) => sum + w.fleets.length, 0);
+
+    new MoveCommand(fleet4, world4, [worlds[1]], 'F4W2', player).executeCommand();
+    new MoveCommand(fleet4, world4, [worlds[2]], 'F4W3', player).executeCommand();
+    new FinalPhaseCoreGame(worlds, new Map()).checkFleetMovement(world4);
+
+    const fleetCountAfter = worlds.reduce((sum, w) => sum + w.fleets.length, 0);
+    expect(fleetCountAfter).toBe(fleetCountBefore);
+    expect(worlds.filter((w) => w.fleets.includes(fleet4)).length).toBe(1);
   });
 });
 

@@ -71,7 +71,8 @@ export class MoveCommand extends Command implements ExecuteCommand {
             if (this.player.stringName() === this.fleet.player.stringName()) {
                 let fromWorld: World = this.homeWorld;
                 let toWorld: World;
-                let isError = false
+                // Eine Flotte darf nur einmal fliegen: der erste Flugbefehl gilt.
+                let isError = this.fleet.fleetMovements.length > 0;
                 for (const world of this.worlds) {
                     toWorld = world;
                     if (fromWorld.hasConnectionToWorld(toWorld)) {
