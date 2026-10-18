@@ -7,9 +7,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../../game-service.service';
 
 @Component({
-  selector: 'galaxy-player-detail',
-  templateUrl: './player-detail.component.html',
-  styleUrls: ['./player-detail.component.css']
+    selector: 'galaxy-player-detail',
+    templateUrl: './player-detail.component.html',
+    styleUrls: ['./player-detail.component.css'],
+    standalone: false
 })
 export class PlayerDetailComponent implements OnInit, OnDestroy {
   form: FormGroup;

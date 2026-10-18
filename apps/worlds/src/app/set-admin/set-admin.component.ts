@@ -6,9 +6,10 @@ import { Login } from '@galaxy/api-interfaces';
 import { UserService, AlertService } from '../_services';
 
 @Component({
-  selector: 'galaxy-set-admin',
-  templateUrl: './set-admin.component.html',
-  styleUrls: ['./set-admin.component.css']
+    selector: 'galaxy-set-admin',
+    templateUrl: './set-admin.component.html',
+    styleUrls: ['./set-admin.component.css'],
+    standalone: false
 })
 export class SetAdminComponent {
   registerForm: FormGroup = this.formBuilder.group({

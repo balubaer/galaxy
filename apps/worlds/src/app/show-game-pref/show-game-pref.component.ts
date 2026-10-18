@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { GameServiceService } from '../game-service.service';
 
 @Component({
-  selector: 'galaxy-show-game-pref',
-  templateUrl: './show-game-pref.component.html',
-  styleUrls: ['./show-game-pref.component.css']
+    selector: 'galaxy-show-game-pref',
+    templateUrl: './show-game-pref.component.html',
+    styleUrls: ['./show-game-pref.component.css'],
+    standalone: false
 })
 export class ShowGamePrefComponent implements OnInit {
   gamePref$: Observable<GamePref> | undefined;

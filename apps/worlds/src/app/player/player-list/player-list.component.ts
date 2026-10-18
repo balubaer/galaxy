@@ -3,9 +3,10 @@ import { Observable } from 'rxjs';
 import { GameServiceService } from '../../game-service.service';
 
 @Component({
-  selector: 'galaxy-player-list',
-  templateUrl: './player-list.component.html',
-  styleUrls: ['./player-list.component.scss']
+    selector: 'galaxy-player-list',
+    templateUrl: './player-list.component.html',
+    styleUrls: ['./player-list.component.scss'],
+    standalone: false
 })
 export class PlayerListComponent implements OnInit {
   players$: Observable<Array<string>> | undefined;

@@ -5,9 +5,10 @@ import { RespondTurnData } from '@galaxy/game-objects';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'galaxy-show-map-detail',
-  templateUrl: './show-map-detail.component.html',
-  styleUrls: ['./show-map-detail.component.scss']
+    selector: 'galaxy-show-map-detail',
+    templateUrl: './show-map-detail.component.html',
+    styleUrls: ['./show-map-detail.component.scss'],
+    standalone: false
 })
 export class ShowMapDetailComponent implements OnInit {
   key: string;

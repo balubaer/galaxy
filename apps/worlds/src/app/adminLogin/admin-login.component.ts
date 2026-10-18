@@ -6,8 +6,9 @@ import { AuthenticationService } from '../_services/authentication.service';
 import { AlertService } from '../_services/alert.service';
 
 @Component({
-  selector: 'galaxy-admin-login',
-  templateUrl: 'admin-login.component.html',
+    selector: 'galaxy-admin-login',
+    templateUrl: 'admin-login.component.html',
+    standalone: false
 })
 export class AdminLoginComponent {
   loginForm: FormGroup = this.formBuilder.group({

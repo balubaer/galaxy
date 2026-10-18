@@ -5,9 +5,10 @@ import { Player } from '@galaxy/game-objects';
 import { GameServiceService } from '../game-service.service';
 
 @Component({
-  selector: 'galaxy-show-player',
-  templateUrl: './show-player.component.html',
-  styleUrls: ['./show-player.component.css']
+    selector: 'galaxy-show-player',
+    templateUrl: './show-player.component.html',
+    styleUrls: ['./show-player.component.css'],
+    standalone: false
 })
 
 export class ShowPlayerComponent implements OnInit {

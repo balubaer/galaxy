@@ -8,7 +8,8 @@ import { AlertService } from '../_services/alert.service';
 
 @Component({
     selector: 'galaxy-login',
-    templateUrl: 'login.component.html'
+    templateUrl: 'login.component.html',
+    standalone: false
 })
 
 export class LoginComponent {

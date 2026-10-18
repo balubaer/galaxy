@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Login } from '@galaxy/api-interfaces';
 
 @Component({
-  selector: 'galaxy-show-maps',
-  templateUrl: './show-maps.component.html',
-  styleUrls: ['./show-maps.component.scss']
+    selector: 'galaxy-show-maps',
+    templateUrl: './show-maps.component.html',
+    styleUrls: ['./show-maps.component.scss'],
+    standalone: false
 })
 export class ShowMapsComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 
 @Component({
-  selector: 'galaxy-navigation-component',
-  templateUrl: './navigation-component.component.html',
-  styleUrls: ['./navigation-component.component.scss']
+    selector: 'galaxy-navigation-component',
+    templateUrl: './navigation-component.component.html',
+    styleUrls: ['./navigation-component.component.scss'],
+    standalone: false
 })
 export class NavigationComponentComponent {
 

@@ -6,9 +6,10 @@ import { Observable, Subscribable, Subscription } from 'rxjs';
 import { GamePlayService } from '../player/game-play.service';
 
 @Component({
-  selector: 'galaxy-create-game',
-  templateUrl: './create-game.component.html',
-  styleUrls: ['./create-game.component.css']
+    selector: 'galaxy-create-game',
+    templateUrl: './create-game.component.html',
+    styleUrls: ['./create-game.component.css'],
+    standalone: false
 })
 export class CreateGameComponent implements OnDestroy {
   form: FormGroup = this.fb.group({

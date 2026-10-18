@@ -14,7 +14,8 @@ import { GamePlayService } from '../player/game-play.service';
 @Component({
     selector: 'galaxy-register',
     templateUrl: 'register.component.html',
-    styleUrls: ['register.component.css']
+    styleUrls: ['register.component.css'],
+    standalone: false
 })
 export class RegisterComponent implements OnInit {
     registerForm: any;

@@ -4,9 +4,10 @@ import { Observable, Subscription, Subject } from 'rxjs';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'galaxy-world-list',
-  templateUrl: './world-list.component.html',
-  styleUrls: ['./world-list.component.css'],
+    selector: 'galaxy-world-list',
+    templateUrl: './world-list.component.html',
+    styleUrls: ['./world-list.component.css'],
+    standalone: false
 })
 export class WorldListComponent implements OnInit, OnDestroy {
   worlds$: Observable<string[]> | undefined;

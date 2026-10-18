@@ -3,7 +3,10 @@ import { Subscription } from 'rxjs';
 import { AlertService } from '../_services/alert.service';
 
 
-@Component({ selector: 'galaxy-alert', templateUrl: 'alert.component.html' })
+@Component({
+    selector: 'galaxy-alert', templateUrl: 'alert.component.html',
+    standalone: false
+})
 export class AlertComponent implements OnInit, OnDestroy {
     private subscription: Subscription | null;
     message: any;

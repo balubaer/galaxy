@@ -7,9 +7,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 
 
 @Component({
-  selector: 'galaxy-create-worlds',
-  templateUrl: './create-worlds.component.html',
-  styleUrls: ['./create-worlds.component.css']
+    selector: 'galaxy-create-worlds',
+    templateUrl: './create-worlds.component.html',
+    styleUrls: ['./create-worlds.component.css'],
+    standalone: false
 })
 
 export class CreateWorldsComponent implements OnInit, OnDestroy {

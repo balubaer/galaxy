@@ -18,9 +18,10 @@ import * as d3 from 'd3';
 import { GameServiceService } from '../game-service.service';
 
 @Component({
-  selector: 'galaxy-home',
-  templateUrl: 'home.component.html',
-  styleUrls: ['home.component.css'],
+    selector: 'galaxy-home',
+    templateUrl: 'home.component.html',
+    styleUrls: ['home.component.css'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
   currentUser: User;
