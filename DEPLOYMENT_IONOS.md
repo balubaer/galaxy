@@ -160,7 +160,7 @@ npx nx build worlds --configuration=production
 ## 4. Hochladen
 
 ```bash
-SSH="ssh"                      # nutzt den Eintrag galaxy-ionos aus ~/.ssh/config
+SSH="ssh"
 HOST=galaxy-ionos
 
 rsync -az -e "$SSH" dist/apps/api/ $HOST:/opt/galaxy/api/
