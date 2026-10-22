@@ -30,6 +30,7 @@ interface WorldFleet {
   own: boolean;
   /** Classic Game: geladenes Metall. */
   metal: number;
+  atPeace: boolean;
 }
 
 /** Classic-Werte einer Welt, wie sie das Backend in node.data.classic liefert. */
@@ -39,6 +40,7 @@ interface ClassicInfo {
   industry: number;
   metal: number;
   iShips: number;
+  pShips: number;
 }
 
 /** d3 ersetzt source/target der Kanten durch die Knoten-Objekte. */
@@ -47,7 +49,7 @@ export function idOf(end: unknown): string {
 }
 
 function readFleets(node: Node, ownColor: string): WorldFleet[] {
-  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number }> =
+  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number; atPeace?: boolean }> =
     node.data?.fleets ?? [];
   const result: WorldFleet[] = [];
   for (const fleet of fleets) {
@@ -58,6 +60,7 @@ function readFleets(node: Node, ownColor: string): WorldFleet[] {
         ships: +match[2],
         own: fleet.backgroundColor === ownColor,
         metal: fleet.metal ?? 0,
+        atPeace: fleet.atPeace ?? false,
       });
     }
   }
@@ -74,15 +77,60 @@ function applyTransfers(
   dships: number,
   world: string,
   selected: string[],
-): { fleets: WorldFleet[]; dships: number; failed: string[] } {
+  home = { i: 0, p: 0 },
+): { fleets: WorldFleet[]; dships: number; failed: string[]; i: number; p: number } {
   const failed: string[] = [];
+  let iShips = home.i;
+  let pShips = home.p;
   const result = fleets.map((f) => ({ ...f }));
   const find = (n: number) => result.find((f) => f.own && f.number === n);
   for (const command of selected) {
     const toFleet = /^F(\d+)T(\d+)F(\d+)$/.exec(command);
     const toD = /^F(\d+)T(\d+)D$/.exec(command);
     const fromD = /^D(\d+)T(\d+)F(\d+)$/.exec(command);
-    if (toFleet) {
+    // Classic: I- und P-Schiffe der Welt (FaaTxxI/P, IaaTxxFbb, PaaTxxFbb, IaaTxxP, PaaTxxI).
+    const toHome = /^F(\d+)T(\d+)([IP])$/.exec(command);
+    const fromHome = /^([IP])(\d+)T(\d+)F(\d+)$/.exec(command);
+    const betweenHome = /^([IP])(\d+)T(\d+)([IP])$/.exec(command);
+    if (toHome) {
+      const from = find(+toHome[1]);
+      if (from) {
+        if (from.ships >= +toHome[2]) {
+          from.ships -= +toHome[2];
+          if (toHome[3] === 'I') {
+            iShips += +toHome[2];
+          } else {
+            pShips += +toHome[2];
+          }
+        } else {
+          failed.push(command);
+        }
+      }
+    } else if (fromHome && fromHome[2] === world) {
+      const to = find(+fromHome[4]);
+      const available = fromHome[1] === 'I' ? iShips : pShips;
+      if (to) {
+        if (available >= +fromHome[3]) {
+          if (fromHome[1] === 'I') {
+            iShips -= +fromHome[3];
+          } else {
+            pShips -= +fromHome[3];
+          }
+          to.ships += +fromHome[3];
+        } else {
+          failed.push(command);
+        }
+      }
+    } else if (betweenHome && betweenHome[2] === world && betweenHome[1] !== betweenHome[4]) {
+      const count = +betweenHome[3];
+      const available = betweenHome[1] === 'I' ? iShips : pShips;
+      if (available >= count) {
+        iShips += betweenHome[1] === 'I' ? -count : count;
+        pShips += betweenHome[1] === 'P' ? -count : count;
+      } else {
+        failed.push(command);
+      }
+    } else if (toFleet) {
       const from = find(+toFleet[1]);
       const to = find(+toFleet[3]);
       if (from && to) {
@@ -115,7 +163,7 @@ function applyTransfers(
       }
     }
   }
-  return { fleets: result, dships, failed };
+  return { fleets: result, dships, failed, i: iShips, p: pShips };
 }
 
 /**
@@ -171,6 +219,7 @@ export function buildCommandGroups(
   ownColor: string,
   count: number,
   selected: string[] = [],
+  players: string[] = [],
 ): CommandGroup[] {
   const world = node.id.replace(/^W/, '');
   const isOwnWorld = node.data?.backgroundColor === ownColor;
@@ -180,6 +229,7 @@ export function buildCommandGroups(
     node.data?.dships ?? 0,
     world,
     selected,
+    { i: classic?.iShips ?? 0, p: classic?.pShips ?? 0 },
   );
   const dships = projected.dships;
   const fleets = projected.fleets;
@@ -290,6 +340,32 @@ export function buildCommandGroups(
       ),
     });
   }
+  if (classic && !classic.blackHole && isOwnWorld) {
+    for (const from of movable) {
+      transferRows.push({
+        label: `Flotte ${from.number} → Welt`,
+        options: [
+          transferOpt(`F${from.number}T${count}I`, `${count} → I-Schiffe`, from.ships),
+          transferOpt(`F${from.number}T${count}P`, `${count} → P-Schiffe`, from.ships),
+        ],
+      });
+    }
+    for (const [kind, label, available] of [
+      ['I', 'I-Schiffe', projected.i],
+      ['P', 'P-Schiffe', projected.p],
+    ] as Array<[string, string, number]>) {
+      const other = kind === 'I' ? 'P' : 'I';
+      transferRows.push({
+        label,
+        options: [
+          ...ownFleets.map((to) =>
+            transferOpt(`${kind}${world}T${count}F${to.number}`, `${count} → F${to.number}`, available),
+          ),
+          transferOpt(`${kind}${world}T${count}${other}`, `${count} → ${other}-Schiffe`, available),
+        ],
+      });
+    }
+  }
   add('Transfer', transferRows);
 
   if (classic && !classic.blackHole) {
@@ -374,6 +450,48 @@ export function buildCommandGroups(
     );
   }
 
+  if (classic && !classic.blackHole) {
+    add(
+      'At Peace',
+      ownFleets.map((f) => ({
+        label: `Flotte ${f.number}${f.atPeace ? ' (At Peace)' : ''}`,
+        options: [
+          opt(`F${f.number}Q`, 'At Peace'),
+          opt(`F${f.number}X`, 'nicht At Peace'),
+        ],
+      })),
+    );
+    add(
+      'Geschenke',
+      [
+        ...ownFleets.map((f) => ({
+          label: `Flotte ${f.number}`,
+          options: players.map((p) => opt(`F${f.number}G=${p}`, `an ${p}`)),
+        })),
+        ...(isOwnWorld
+          ? [
+              {
+                label: `Welt ${world}`,
+                options: players.map((p) => opt(`W${world}G=${p}`, `an ${p}`)),
+              },
+            ]
+          : []),
+      ].filter((row) => row.options.length > 0),
+    );
+    add(
+      'Beziehungen',
+      players.map((p) => ({
+        label: p,
+        options: [
+          opt(`A=${p}`, 'Verbündeter'),
+          opt(`N=${p}`, 'kein Verbündeter'),
+          opt(`L=${p}`, 'darf Metall laden'),
+          opt(`X=${p}`, 'darf nicht laden'),
+        ],
+      })),
+    );
+  }
+
   if (isOwnWorld) {
     add('Hinterhalt aus', [
       {
@@ -396,11 +514,13 @@ export function brokenCommands(
   selected: string[],
 ): string[] {
   const world = node.id.replace(/^W/, '');
+  const classic: ClassicInfo | undefined = node.data?.classic;
   const projected = applyTransfers(
     readFleets(node, ownColor),
     node.data?.dships ?? 0,
     world,
     selected,
+    { i: classic?.iShips ?? 0, p: classic?.pShips ?? 0 },
   );
   const empty = new Set(
     projected.fleets.filter((f) => f.own && f.ships === 0).map((f) => f.number),
@@ -419,7 +539,7 @@ export function splitCommands(text: string): string[] {
 
 /** Flotte, die der Befehl verwendet, wenn er ihre einmalige Aktion braucht (bewegen/feuern/bereithalten). */
 function actingFleet(command: string): string | null {
-  const match = /^(F\d+)(?:W|AF|AD|S)/.exec(command);
+  const match = /^(F\d+)(?:W|AF|AD|S|G=)/.exec(command);
   return match ? match[1] : null;
 }
 
@@ -445,15 +565,40 @@ export function commandsConflict(a: string, b: string): boolean {
   if (metal && otherMetal && metal[1] === otherMetal[1] && metal[2] === otherMetal[2]) {
     return true;
   }
+  // Pro Flotte entweder At Peace oder nicht.
+  const peace = /^F(\d+)[QX]$/.exec(a);
+  const otherPeace = /^F(\d+)[QX]$/.exec(b);
+  if (peace && otherPeace && peace[1] === otherPeace[1]) {
+    return true;
+  }
+  // Pro Spieler nur eine Aussage zum Bündnis (A=/N=) und eine zum Laden (L=/X=).
+  const relation = /^([ANLX])=(.+)$/.exec(a);
+  const otherRelation = /^([ANLX])=(.+)$/.exec(b);
+  if (
+    relation &&
+    otherRelation &&
+    relation[2] === otherRelation[2] &&
+    'AN'.includes(relation[1]) === 'AN'.includes(otherRelation[1])
+  ) {
+    return true;
+  }
   const isAmbush = (c: string) => /^Z\d*$/.test(c);
   // "Z" gilt für alle Welten und schließt "Znn" damit ein.
   return isAmbush(a) && isAmbush(b) && (a === 'Z' || b === 'Z');
 }
 
+/** Pro Runde sind höchstens zwei Geschenke (FaaG=name, WaaG=name) möglich. */
+export const MAX_GIFTS = 2;
+
+function isGift(command: string): boolean {
+  return /^[FW]\d+G=/.test(command);
+}
+
 export function isDisabled(command: string, selected: string[]): boolean {
   return (
     !selected.includes(command) &&
-    selected.some((s) => commandsConflict(command, s))
+    (selected.some((s) => commandsConflict(command, s)) ||
+      (isGift(command) && selected.filter(isGift).length >= MAX_GIFTS))
   );
 }
 

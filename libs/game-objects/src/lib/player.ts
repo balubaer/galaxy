@@ -16,6 +16,8 @@ export class Player {
     allies: Set<Player> = new Set();
     /** Classic Game: Spieler, die Metall von den Welten dieses Spielers laden dürfen. */
     loaders: Set<Player> = new Set();
+    /** Classic Game: Geschenke dieser Runde (höchstens zwei). */
+    giftsThisTurn = 0;
 
     constructor(name: string) {
         this.playerName = name;

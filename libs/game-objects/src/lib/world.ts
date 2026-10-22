@@ -73,6 +73,8 @@ export class World implements NumberKey {
     industryWorkers = 0;
     /** Zielwelt der Migration dieser Runde (pro Welt nur eine). */
     migratesTo: World | null = null;
+    /** Geschenk dieser Runde an einen anderen Spieler, wird am Rundenende vollzogen. */
+    giftTo: Player | null = null;
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;

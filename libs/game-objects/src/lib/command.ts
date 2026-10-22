@@ -221,6 +221,8 @@ export class TransferShipsFleetToFleet extends Command implements ExecuteCommand
         if (this.isValid()) {
             this.fromFleet.ships -= this.shipsToTransfer;
             this.toFleet.ships += this.shipsToTransfer;
+            // Classic: Metall, das nicht entladen wurde, geht mit den Schiffen verloren.
+            this.fromFleet.metal = Math.min(this.fromFleet.metal, this.fromFleet.ships);
         }
     }
 }
@@ -597,7 +599,7 @@ export class AmbushOffForPlayer extends Command implements ExecuteCommand {
 }
 
 /** Spieler zum Namen hinter "A=" bzw. "N=", ohne Beachtung der Groß-/Kleinschreibung. */
-function playerForHandle(allPlayerDict: Map<string, Player>, command: string): Player | null {
+export function playerForHandle(allPlayerDict: Map<string, Player>, command: string): Player | null {
     const handle = command.substring(2).toUpperCase();
     for (const playerName of allPlayerDict.keys()) {
         if (playerName.toUpperCase() === handle) {

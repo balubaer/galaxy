@@ -63,6 +63,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   turnCommandTxt = '';
   ownColor = '';
+  /** Namen der anderen Spieler, für Geschenke und Beziehungen im Classic Game. */
+  otherPlayerNames: string[] = [];
   routePlan: RoutePlan | null = null;
 
   ishidden = false;
@@ -116,6 +118,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.playercolor$.subscribe((colors) => {
         this.ownColor =
           colors.find((c) => c.playername === this.currentUser.username)?.color ?? '';
+        this.otherPlayerNames = colors
+          .map((c) => c.playername)
+          .filter((name) => name !== this.currentUser.username);
       })
     );
 

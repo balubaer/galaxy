@@ -2,11 +2,11 @@ import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
-import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
+import { playerForHandle, MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
 import { GameType } from './game-pref.interface';
 import {
     UnloadMetal, JettisonMetal, LoadMetal, BuildShips, BuildIndustry, RaisePopulationLimit, ScrapIShips, MigratePopulation,
-    BuildDefaultIShips
+    BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld
 } from './classic-commands';
 import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
 
@@ -517,7 +517,53 @@ export class CommandFactory {
         const numbers = this.commandNumberArray;
         const player = this.commandPlayer;
         const text = this.processCommand;
+
+        // Befehle mit Spielername (Name kann Ziffern enthalten), daher nicht über die Befehlsbuchstaben.
+        const relation = /^([ANLX])=(.+)$/.exec(text);
+        if (relation) {
+            const kinds: { [letter: string]: RelationKind } = { A: 'ally', N: 'noAlly', L: 'loader', X: 'noLoader' };
+            return new SetRelation(playerForHandle(this.allPlayerDict, text), kinds[relation[1]], text, player);
+        }
+        const fleetGift = /^F(\d+)G=(.+)$/.exec(text);
+        if (fleetGift) {
+            return new GiveFleet(this.fleetAndWorld(+fleetGift[1]).fleet,
+                playerForHandle(this.allPlayerDict, text.replace(/^F\d+G=/, '--')), text, player);
+        }
+        const worldGift = /^W(\d+)G=(.+)$/.exec(text);
+        if (worldGift) {
+            return new GiveWorld(worldWithNumber(this.worlds, +worldGift[1]),
+                playerForHandle(this.allPlayerDict, text.replace(/^W\d+G=/, '--')), text, player);
+        }
+
         switch (this.commandChars) {
+            case 'FQ':
+            case 'FX':
+                return numbers.length === 1
+                    ? new SetAtPeace(this.fleetAndWorld(numbers[0]).fleet, this.commandChars === 'FQ', text, player)
+                    : null;
+            case 'FTI':
+            case 'FTP': {
+                if (numbers.length !== 2) {
+                    return null;
+                }
+                const found = this.fleetAndWorld(numbers[0]);
+                return new TransferShipsClassic(found.homeWorld, found.fleet,
+                    this.commandChars === 'FTI' ? 'I' : 'P', numbers[1], text, player);
+            }
+            case 'ITF':
+            case 'PTF': {
+                if (numbers.length !== 3) {
+                    return null;
+                }
+                return new TransferShipsClassic(worldWithNumber(this.worlds, numbers[0]),
+                    this.commandChars === 'ITF' ? 'I' : 'P', this.fleetAndWorld(numbers[2]).fleet, numbers[1], text, player);
+            }
+            case 'ITP':
+            case 'PTI':
+                return numbers.length === 2
+                    ? new TransferShipsClassic(worldWithNumber(this.worlds, numbers[0]),
+                        this.commandChars === 'ITP' ? 'I' : 'P', this.commandChars === 'ITP' ? 'P' : 'I', numbers[1], text, player)
+                    : null;
             case 'FU':
             case 'FN':
             case 'FJ':

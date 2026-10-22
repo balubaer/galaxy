@@ -5,7 +5,8 @@ import { Player } from './player';
 import {
     FleetNotFound_Error, FleetNotOwned_Error, WorldNotFound_Error, WorldNotOwned_Error, FleetNotOnWorld_Error,
     NotEnoughIndustry_Error, NotEnoughMetal_Error, NotEnoughPopulation_Error, NotEnoughShips_Error, FleetNoCapacity_Error,
-    LoadNotAllowed_Error, AlreadyMigrating_Error, InvalidAmount_Error, NoConnection_Error
+    LoadNotAllowed_Error, AlreadyMigrating_Error, InvalidAmount_Error, NoConnection_Error, PlayerNotFound_Error,
+    GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error
 } from './error';
 import { buildBudget, spendIndustry, industryBuildCost, scrapIShipsPerIndustry, CLASSIC_BUILD_COST } from './classic-economy';
 
@@ -323,6 +324,197 @@ export class BuildDefaultIShips extends Command implements ExecuteCommand {
                     world.iShips += units;
                 }
             }
+        }
+    }
+}
+
+export type ShipPlace = Fleet | 'I' | 'P';
+
+//FaaTxxI FaaTxxP IaaTxxFbb PaaTxxFbb IaaTxxP PaaTxxI
+export class TransferShipsClassic extends Command implements ExecuteCommand {
+    constructor(private world: World | null, private from: ShipPlace | null, private to: ShipPlace | null,
+        private count: number, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Transfer);
+    }
+
+    private shipsAt(place: ShipPlace): number {
+        if (place === 'I') {
+            return this.world.iShips;
+        }
+        return place === 'P' ? this.world.pShips : place.ships;
+    }
+
+    private add(place: ShipPlace, count: number) {
+        if (place === 'I') {
+            this.world.iShips += count;
+        } else if (place === 'P') {
+            this.world.pShips += count;
+        } else {
+            place.ships += count;
+            place.metal = Math.min(place.metal, place.ships);
+        }
+    }
+
+    isValid(): boolean {
+        if (this.from === null || this.to === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.world === null) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.count < 1) {
+            return this.fail(InvalidAmount_Error);
+        }
+        for (const place of [this.from, this.to]) {
+            if (place instanceof Fleet && this.world.fleets.indexOf(place) === -1) {
+                return this.fail(FleetNotOnWorld_Error);
+            }
+        }
+        if (this.from instanceof Fleet && this.isOwnedByCommandPlayer(this.from.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        // I- und P-Schiffe gehören dem Eigner der Welt; Schiffe an fremde Flotten zu geben ist ein Geschenk.
+        if ((this.from === 'I' || this.from === 'P' || this.to === 'I' || this.to === 'P')
+            && this.isOwnedByCommandPlayer(this.world.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        if (this.shipsAt(this.from) < this.count) {
+            return this.fail(NotEnoughShips_Error);
+        }
+        return true;
+    }
+
+    executeCommand() {
+        if (this.isValid()) {
+            this.add(this.from, -this.count);
+            this.add(this.to, this.count);
+        }
+    }
+}
+
+//FaaQ FaaX
+export class SetAtPeace extends Command implements ExecuteCommand {
+    constructor(private fleet: Fleet | null, private atPeace: boolean, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+    }
+
+    executeCommand() {
+        if (this.fleet === null) {
+            this.fail(FleetNotFound_Error);
+        } else if (this.isOwnedByCommandPlayer(this.fleet.player) === false) {
+            this.fail(FleetNotOwned_Error);
+        } else {
+            this.fleet.atPeace = this.atPeace;
+        }
+    }
+}
+
+export type RelationKind = 'ally' | 'noAlly' | 'loader' | 'noLoader';
+
+//A=handle N=handle L=handle X=handle
+export class SetRelation extends Command implements ExecuteCommand {
+    constructor(private other: Player | null, private kind: RelationKind, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Initial);
+    }
+
+    executeCommand() {
+        if (this.other === null) {
+            this.fail(PlayerNotFound_Error);
+            return;
+        }
+        if (this.other === this.player) {
+            return;
+        }
+        switch (this.kind) {
+            case 'ally':
+                // Verbündete sind auch Teammates, damit Hinterhalt und Bericht sie wie bisher behandeln.
+                this.player.allies.add(this.other);
+                this.player.teammates.add(this.other);
+                break;
+            case 'noAlly':
+                this.player.allies.delete(this.other);
+                this.player.teammates.delete(this.other);
+                break;
+            case 'loader':
+                this.player.loaders.add(this.other);
+                break;
+            default:
+                this.player.loaders.delete(this.other);
+                break;
+        }
+    }
+}
+
+export const MAX_GIFTS_PER_TURN = 2;
+
+abstract class GiftCommand extends Command {
+    constructor(protected recipient: Player | null, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Final);
+    }
+
+    protected isValidRecipientAndLimit(): boolean {
+        if (this.recipient === null) {
+            return this.fail(PlayerNotFound_Error);
+        }
+        if (this.recipient === this.player) {
+            return this.fail(GiftToSelf_Error);
+        }
+        if (this.player.giftsThisTurn >= MAX_GIFTS_PER_TURN) {
+            return this.fail(GiftLimit_Error);
+        }
+        return true;
+    }
+}
+
+//FaaG=handle
+export class GiveFleet extends GiftCommand implements ExecuteCommand {
+    constructor(private fleet: Fleet | null, recipient: Player | null, aString: string, aPlayer: Player) {
+        super(recipient, aString, aPlayer);
+    }
+
+    isValid(): boolean {
+        if (this.fleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        // Eine verschenkte Flotte darf in derselben Runde weder fliegen noch feuern.
+        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired) {
+            return this.fail(GiftNotPossible_Error);
+        }
+        return this.isValidRecipientAndLimit();
+    }
+
+    executeCommand() {
+        if (this.isValid()) {
+            this.fleet.giftTo = this.recipient;
+            this.fleet.giftFrom = this.player;
+            this.player.giftsThisTurn++;
+        }
+    }
+}
+
+//WaaG=handle
+export class GiveWorld extends GiftCommand implements ExecuteCommand {
+    constructor(private world: World | null, recipient: Player | null, aString: string, aPlayer: Player) {
+        super(recipient, aString, aPlayer);
+    }
+
+    isValid(): boolean {
+        if (this.world === null) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.world.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        return this.isValidRecipientAndLimit();
+    }
+
+    executeCommand() {
+        if (this.isValid()) {
+            this.world.giftTo = this.recipient;
+            this.player.giftsThisTurn++;
         }
     }
 }

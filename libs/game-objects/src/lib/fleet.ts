@@ -34,6 +34,9 @@ export class Fleet implements NumberKey {
     metal = 0;
     /** Classic Game: Flotte ist "At Peace" (erobert nichts, schreckt keine Industrie ab). */
     atPeace = false;
+    /** Classic Game: Geschenk dieser Runde (Empfänger und Geber), wird am Rundenende vollzogen. */
+    giftTo: Player | null = null;
+    giftFrom: Player | null = null;
     /** FaaS: Flotte soll ausdrücklich nur aus dem Hinterhalt feuern (nur für den Bericht). */
     standBy = false;
     hitAmbuschFleets: Array<Fleet> = null;

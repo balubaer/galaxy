@@ -28,3 +28,6 @@ export const FleetNoCapacity_Error: CommandError = { errorNumber: 22, errorStrin
 export const LoadNotAllowed_Error: CommandError = { errorNumber: 23, errorString: 'Metall darf von dieser Welt nicht geladen werden' };
 export const AlreadyMigrating_Error: CommandError = { errorNumber: 24, errorString: 'Von dieser Welt wird schon Bevölkerung migriert' };
 export const InvalidAmount_Error: CommandError = { errorNumber: 25, errorString: 'Anzahl fehlt oder ist 0' };
+export const GiftLimit_Error: CommandError = { errorNumber: 26, errorString: 'Pro Runde höchstens zwei Geschenke' };
+export const GiftNotPossible_Error: CommandError = { errorNumber: 27, errorString: 'Flotte hat sich bewegt oder gefeuert, Geschenk nicht möglich' };
+export const GiftToSelf_Error: CommandError = { errorNumber: 28, errorString: 'Geschenk an sich selbst' };

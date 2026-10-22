@@ -24,6 +24,8 @@ export class CommandTableComponent {
   @Input() node: Node | undefined;
   @Input() links: Edge[] = [];
   @Input() ownColor = '';
+  /** Namen der anderen Spieler (für Geschenke und Beziehungen im Classic Game). */
+  @Input() players: string[] = [];
   /** Aktueller Inhalt des Befehls-Textfelds. */
   @Input() commandText = '';
   @Input() readonly = false;
@@ -48,6 +50,7 @@ export class CommandTableComponent {
           this.ownColor,
           this.count,
           splitCommands(this.commandText),
+          this.players,
         )
       : [];
   }

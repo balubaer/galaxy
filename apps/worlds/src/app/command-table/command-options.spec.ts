@@ -291,3 +291,104 @@ describe('Classic Game', () => {
     expect(all).toContain('F9T2D');
   });
 });
+
+describe('Classic Game: M3', () => {
+  const m3Node: Node = {
+    id: 'W1',
+    data: {
+      dships: 0,
+      backgroundColor: OWN,
+      classic: {
+        blackHole: false,
+        population: 50,
+        populationLimit: 100,
+        industry: 30,
+        metal: 30,
+        mines: 2,
+        turnsOwned: 1,
+        iShips: 4,
+        pShips: 2,
+      },
+      fleets: [
+        { label: 'F1=0', backgroundColor: OWN, metal: 0 },
+        { label: 'F9=5', backgroundColor: OWN, metal: 0, atPeace: true },
+        { label: 'F20=3', backgroundColor: 'blue', metal: 0 },
+      ],
+    },
+  };
+
+  function options(count = 1, selected: string[] = [], players = ['MARVIN', 'ZAPHOD']) {
+    return buildCommandGroups(m3Node, links, OWN, count, selected, players).flatMap((g) =>
+      g.rows.flatMap((r) => r.options),
+    );
+  }
+  const commandsOf = (opts: Array<{ command: string }>) => opts.map((o) => o.command);
+
+  it('offers transfers between fleets, I-ships and P-ships', () => {
+    const all = commandsOf(options(2));
+    expect(all).toEqual(
+      expect.arrayContaining(['F9T2I', 'F9T2P', 'I1T2F1', 'I1T2F9', 'P1T2F9', 'I1T2P', 'P1T2I']),
+    );
+  });
+
+  it('marks home-ship transfers insufficient when too few I- or P-ships are left', () => {
+    // I: 4, P: 2
+    const opts = options(3);
+    expect(opts.find((o) => o.command === 'I1T3F9').insufficient).toBe(false);
+    expect(opts.find((o) => o.command === 'P1T3F9').insufficient).toBe(true);
+    const afterTransfer = options(3, ['I1T3F9']);
+    expect(afterTransfer.find((o) => o.command === 'I1T3F1').insufficient).toBe(true);
+    // Schiffe, die in I-Schiffe wandern, stehen danach zur Verfügung
+    const refilled = options(3, ['F9T3P']);
+    expect(refilled.find((o) => o.command === 'P1T3F1').insufficient).toBe(false);
+  });
+
+  it('projects I/P transfers so that a fleet emptied by them can not move, and reports broken ones', () => {
+    expect(brokenCommands(m3Node, OWN, ['F9T9I'])).toEqual(['F9T9I']);
+    expect(brokenCommands(m3Node, OWN, ['I1T5F1'])).toEqual(['I1T5F1']);
+    expect(brokenCommands(m3Node, OWN, ['I1T2F1', 'F1W7'])).toEqual([]);
+  });
+
+  it('offers At Peace, gifts and relations', () => {
+    const all = commandsOf(options());
+    expect(all).toEqual(
+      expect.arrayContaining([
+        'F9Q',
+        'F9X',
+        'F9G=MARVIN',
+        'W1G=ZAPHOD',
+        'A=MARVIN',
+        'N=MARVIN',
+        'L=ZAPHOD',
+        'X=ZAPHOD',
+      ]),
+    );
+    expect(all).not.toContain('F20Q');
+  });
+
+  it('offers no gifts or relations without other players', () => {
+    const all = commandsOf(options(1, [], []));
+    expect(all.filter((c) => /G=|^[ANLX]=/.test(c))).toEqual([]);
+  });
+
+  it('allows at most two gifts and no gift together with a move of the same fleet', () => {
+    expect(isDisabled('F1G=MARVIN', ['F9G=MARVIN', 'W1G=MARVIN'])).toBe(true);
+    expect(isDisabled('F1G=MARVIN', ['F9G=MARVIN'])).toBe(false);
+    expect(isDisabled('F9G=MARVIN', ['F9W7'])).toBe(true);
+    expect(isDisabled('F9G=MARVIN', ['F9G=MARVIN', 'W1G=MARVIN'])).toBe(false);
+  });
+
+  it('excludes At Peace vs not, ally vs not-ally, loader vs not-loader of the same player', () => {
+    expect(commandsConflict('F9Q', 'F9X')).toBe(true);
+    expect(commandsConflict('F9Q', 'F1X')).toBe(false);
+    expect(commandsConflict('A=MARVIN', 'N=MARVIN')).toBe(true);
+    expect(commandsConflict('L=MARVIN', 'X=MARVIN')).toBe(true);
+    expect(commandsConflict('A=MARVIN', 'L=MARVIN')).toBe(false);
+    expect(commandsConflict('A=MARVIN', 'N=ZAPHOD')).toBe(false);
+  });
+
+  it('keeps I/P transfers and gifts out of the Core Game', () => {
+    const all = commands(2);
+    expect(all.filter((c) => /^[IP]\d|G=|Q$|^[ANLX]=/.test(c))).toEqual([]);
+  });
+});
