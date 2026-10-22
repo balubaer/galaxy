@@ -171,6 +171,7 @@ describe('TransferShipsFleetToDShips', () => {
     fleet42.player = player;
 
     world42.fleets.push(fleet42);
+    world42.player = player;
 
     transferShipsFleetToDShips = new TransferShipsFleetToDShips(fleet42, world42, 3, 'F42T3D', player);
   });

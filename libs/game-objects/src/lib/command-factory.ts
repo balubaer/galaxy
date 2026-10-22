@@ -2,7 +2,13 @@ import { World, worldWithNumber } from './world';
 import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
-import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips } from './command';
+import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
+import { CommandError, NotInCoreGame_Error, UnknownCommand_Error } from './error';
+
+export interface CommandErrorEntry {
+    command: string;
+    error: CommandError;
+}
 
 export class CommandFactory {
     public static readonly FLEET_INDEX = 0;
@@ -16,6 +22,8 @@ export class CommandFactory {
     commandNumberArray: Array<number>;
     allPlayerDict: Map<string, Player>;
     coreGame = false;
+    /** Abgelehnte Befehle pro Spieler, für den Bericht. */
+    commandErrors: Map<string, Array<CommandErrorEntry>> = new Map();
 
     constructor(aWorldArray: Array<World>, aAllPlayerDict: Map<string, Player>) {
         this.worlds = aWorldArray;
@@ -33,12 +41,15 @@ export class CommandFactory {
 
     setCommandStringsWithLongString(playerName: string, commandString: string) {
         if (commandString !== undefined && commandString !== null) {
-            const stringArray = commandString.split(/ |\r\n|\n|\r/);
+            // Groß-/Kleinschreibung spielt bei Befehlen keine Rolle.
+            const stringArray = commandString.toUpperCase().split(/\s+/);
             const aSet = new Set();
             const array = new Array();
 
             for (const aString of stringArray) {
-                aSet.add(aString);
+                if (aString.length > 0) {
+                    aSet.add(aString);
+                }
             }
 
             for (const aString of aSet) {
@@ -101,13 +112,9 @@ export class CommandFactory {
                         homeWorld = aFleetAndHomeWorld.homeWorld;
                     }
                     break;
-                case MoveCommandEnum.WORLD1:
-                case MoveCommandEnum.WORLD2:
-                case MoveCommandEnum.WORLD3:
-                    const world = worldWithNumber(this.worlds, commantNumber);
-                    if (world !== null) {
-                        worldArray.push(world)
-                    }
+                default:
+                    // Unbekannte Welten bleiben als null stehen, MoveCommand meldet sie; mehr als drei Welten ebenso.
+                    worldArray.push(worldWithNumber(this.worlds, commantNumber));
                     break;
             }
             counter++
@@ -301,18 +308,18 @@ export class CommandFactory {
 
         for (const commantNumber of this.commandNumberArray) {
             switch (counter) {
-                case FireDShipsToFleetEnum.FLEED:
+                case FireDShipsToFleetEnum.WORLD:
                     fromHomeWorld = worldWithNumber(this.worlds, commantNumber);
                     break;
-                case FireDShipsToFleetEnum.WORLD:
+                case FireDShipsToFleetEnum.FLEED:
                     const aFleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, commantNumber)
                     if (aFleetAndHomeWorld.fleet != null && aFleetAndHomeWorld.homeWorld != null) {
                         toFleet = aFleetAndHomeWorld.fleet;
                         toHomeWorld = aFleetAndHomeWorld.homeWorld;
-                        break;
                     }
-                    counter++
+                    break;
             }
+            counter++
         }
         return { toFleet, fromHomeWorld, toHomeWorld };
     }
@@ -320,6 +327,12 @@ export class CommandFactory {
     createFireDShipsToFleetCommand(): FireDShipsToFleet {
         const fromDShipsFireToFleetAndWorlds = this.findFromDShipsFireToFleetAndWorlds();
         return new FireDShipsToFleet(fromDShipsFireToFleetAndWorlds.toFleet, fromDShipsFireToFleetAndWorlds.fromHomeWorld, fromDShipsFireToFleetAndWorlds.toHomeWorld, this.processCommand, this.commandPlayer)
+    }
+
+    //FaaS
+    createStandByCommand(): StandByCommand {
+        const fleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, this.commandNumberArray[CommandFactory.FLEET_INDEX]);
+        return new StandByCommand(fleetAndHomeWorld.fleet, this.processCommand, this.commandPlayer);
     }
 
     findWorld(): World {
@@ -407,14 +420,24 @@ export class CommandFactory {
         for (const playerName of this.commandStringsDict.keys()) {
             const commands: Array<string> = this.commandStringsDict.get(playerName);
 
+            if (this.allPlayerDict.has(playerName) === false) {
+                continue;
+            }
+
             for (const command of commands) {
                 this.initMembers(command, playerName);
 
+                if (this.coreGame && this.isBuildFleetShipCommand()) {
+                    // Im Core Game entstehen Schiffe nur als D-Schiffe auf den Welten.
+                    this.addError(playerName, command, NotInCoreGame_Error);
+                    continue;
+                }
+
                 const commandInstance = this.getCommandInstance();
-                if (commandInstance !== null) {
-                    if (commandInstance instanceof Command) {
-                        commandArray.push(commandInstance);
-                    }
+                if (commandInstance instanceof Command) {
+                    commandArray.push(commandInstance);
+                } else {
+                    this.addError(playerName, command, UnknownCommand_Error);
                 }
             }
         }
@@ -431,8 +454,22 @@ export class CommandFactory {
             for (const command of commandArray) {
                 const executeCommand = command as unknown as ExecuteCommand;
                 executeCommand.executeCommand();
+                for (const error of command.errors) {
+                    this.addError(command.player.playerName, command.string, error);
+                }
             }
         }
+    }
+
+    addError(playerName: string, command: string, error: CommandError) {
+        if (this.commandErrors.has(playerName) === false) {
+            this.commandErrors.set(playerName, new Array<CommandErrorEntry>());
+        }
+        this.commandErrors.get(playerName).push({ command, error });
+    }
+
+    isBuildFleetShipCommand(): boolean {
+        return this.commandChars === 'WBF';
     }
 
     getCommandInstance(): Object {
@@ -443,7 +480,14 @@ export class CommandFactory {
                     case 'F':
                         switch (this.commandChars.charAt(1)) {
                             case 'W':
-                                result = this.createMoveCommand();
+                                if (/^FW+$/.test(this.commandChars)) {
+                                    result = this.createMoveCommand();
+                                }
+                                break;
+                            case 'S':
+                                if (this.commandChars.length === 2) {
+                                    result = this.createStandByCommand();
+                                }
                                 break;
                             case 'U':
                                 result = null; //this.createUnloadingMetalCommand()

@@ -3,7 +3,11 @@ import { Fleet } from './fleet';
 import { World } from './world';
 import { FleetMovement } from './fleet-movement';
 import { DistanceLevel } from './distance-level';
-import { FleetNotOnWorld_Error } from './error';
+import {
+    CommandError, FleetNotOnWorld_Error, FleetNotFound_Error, WorldNotFound_Error, FleetNotOwned_Error, WorldNotOwned_Error,
+    NotSameWorld_Error, NotEnoughShips_Error, NoConnection_Error, FleetAlreadyActed_Error, FleetHasNoShips_Error,
+    FireOnOwnFleet_Error, PlayerNotFound_Error, TooManyWorlds_Error, DShipsAlreadyFired_Error, FireOnOwnDShips_Error
+} from './error';
 
 export interface ExecuteCommand {
     executeCommand(): void;
@@ -35,13 +39,24 @@ export function compareCommand(a: Command, b: Command) {
 export class Command {
     string: string;
     player: Player;
-    errors: Array<any> = new Array();
+    errors: Array<CommandError> = new Array();
     turnPhase: number;
 
     constructor(aString: string, aPlayer: Player, aTurnPhase: number) {
         this.string = aString;
         this.player = aPlayer;
         this.turnPhase = aTurnPhase;
+    }
+
+    /** Merkt den Fehler und liefert false, damit Prüfungen mit `return this.fail(...)` abbrechen können. */
+    fail(error: CommandError): false {
+        this.errors.push(error);
+        return false;
+    }
+
+    isOwnedByCommandPlayer(owner: Player): boolean {
+        return owner !== null && owner !== undefined && this.player !== null && this.player !== undefined
+            && owner.playerName === this.player.playerName;
     }
 }
 
@@ -52,6 +67,9 @@ export const enum MoveCommandEnum {
     WORLD2,
     WORLD3
 }
+
+/** Höchstens drei Verbindungen pro Flug (FaaWbbWccWdd). */
+export const MAX_MOVE_WORLDS = 3;
 
 export class MoveCommand extends Command implements ExecuteCommand {
     fleet: Fleet
@@ -66,54 +84,52 @@ export class MoveCommand extends Command implements ExecuteCommand {
         this.worlds = aWorldArray;
     }
 
+    isValid(): boolean {
+        if (this.fleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        if (this.worlds.length === 0 || this.worlds.indexOf(null) !== -1) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.worlds.length > MAX_MOVE_WORLDS) {
+            return this.fail(TooManyWorlds_Error);
+        }
+        // Eine Flotte darf nur einmal fliegen (der erste Flugbefehl gilt) und nicht fliegen und feuern.
+        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired) {
+            return this.fail(FleetAlreadyActed_Error);
+        }
+        if (this.fleet.ships === 0) {
+            return this.fail(FleetHasNoShips_Error);
+        }
+        let fromWorld: World = this.homeWorld;
+        for (const world of this.worlds) {
+            if (fromWorld.hasConnectionToWorld(world) === false) {
+                return this.fail(NoConnection_Error);
+            }
+            fromWorld = world;
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.player !== null && this.fleet.player !== null) {
-            if (this.player.stringName() === this.fleet.player.stringName()) {
-                let fromWorld: World = this.homeWorld;
-                let toWorld: World;
-                // Eine Flotte darf nur einmal fliegen: der erste Flugbefehl gilt.
-                let isError = this.fleet.fleetMovements.length > 0;
-                for (const world of this.worlds) {
-                    toWorld = world;
-                    if (fromWorld.hasConnectionToWorld(toWorld)) {
-                        fromWorld = world;;
-                    } else {
-                        //TODO: Fehler
-                        isError = true;
-                        break;
-                    }
+        if (this.isValid()) {
+            let fromWorld = this.homeWorld;
 
-                    if (this.fleet.ships === 0) {
-                        isError = true;
-                    }
+            for (const toWorld of this.worlds) {
+                const fleetMovement = new FleetMovement();
+                const fleetCopy = new Fleet();
+                fleetCopy.player = this.fleet.player;
+                fleetCopy.number = this.fleet.number;
+                fleetMovement.fleet = fleetCopy;
+                fleetMovement.toWorld = toWorld;
+                fleetMovement.fromWorld = fromWorld;
 
-                    if (isError === false) {
-                        if (this.fleet.fired) {
-                            isError = true;
-                        }
-                    }
-                }
+                this.fleet.fleetMovements.push(fleetMovement);
 
-                if (isError === false) {
-                    fromWorld = this.homeWorld;
-
-                    for (const toWorldFromWorlds of this.worlds) {
-                        toWorld = toWorldFromWorlds;
-                        const fleetMovement = new FleetMovement();
-                        const fleetCopy = new Fleet();
-                        fleetCopy.player = this.fleet.player;
-                        fleetCopy.number = this.fleet.number;
-                        fleetMovement.fleet = fleetCopy;
-                        fleetMovement.toWorld = toWorld;
-                        fleetMovement.fromWorld = fromWorld;
-
-                        this.fleet.fleetMovements.push(fleetMovement);
-
-                        fromWorld = toWorld;
-                    }
-                }
-            } else {
-                //TODO: Fehler Flotte ist nicht vom Spieler
+                fromWorld = toWorld;
             }
         }
     }
@@ -140,36 +156,23 @@ export class BuildFleetShip extends Command implements ExecuteCommand {
         this.shipsToBuild = aShipsToBuild;
     }
 
+    isValid(): boolean {
+        if (this.fleet === null || this.homeWorld === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.homeWorld.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        // Welt, auf der die Flotte ist, muss die Welt sein, auf der gebaut wird.
+        if (this.homeWorld.number !== this.worldNumber || this.homeWorld.fleets.indexOf(this.fleet) === -1) {
+            return this.fail(FleetNotOnWorld_Error);
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.homeWorld.player.playerName === this.player.playerName) {
-            let aIsError = false;
-
-            if (this.homeWorld.number !== this.worldNumber) {
-                //Fehler World wo die Flotte ist, ist nicht der gleiche auf dem gebaut werden muss
-                aIsError = true
-            }
-
-            if (aIsError === false) {
-                if (this.homeWorld.fleets.indexOf(this.fleet) === -1) {
-                    this.errors.push(FleetNotOnWorld_Error);
-                    aIsError = true
-                }
-            }
-
-            /* if (isError === false) {
-                 if (this.homeWorld.metal < this.shipsToBuild) {
-                     //TODO: Fehler zuwenig Metalle
-                 }
-             }*/
-
-            //TODO: Weiter Tests implementieren
-
-            if (aIsError === false) {
-                this.fleet.ships += this.shipsToBuild;
-                // this.homeWorld.metal -= this.shipsToBuild
-            }
-        } else {
-            //TODO: Fehler Welt ist nicht vom Spieler
+        if (this.isValid()) {
+            this.fleet.ships += this.shipsToBuild;
         }
     }
 }
@@ -195,36 +198,29 @@ export class TransferShipsFleetToFleet extends Command implements ExecuteCommand
         this.fromHomeWorld = aFromHomeWorld;
         this.toHomeWorld = aToHomeWorld;
         this.shipsToTransfer = aShipsToTransfer;
+    }
 
+    // Schiffe an fremde oder leere Flotten zu geben ist erlaubt (Geschenk bzw. neutrale Flotte).
+    isValid(): boolean {
+        if (this.fromFleet === null || this.toFleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromFleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        if (this.fromHomeWorld !== this.toHomeWorld) {
+            return this.fail(NotSameWorld_Error);
+        }
+        if (this.fromFleet.ships < this.shipsToTransfer) {
+            return this.fail(NotEnoughShips_Error);
+        }
+        return true;
     }
 
     executeCommand() {
-        if (this.player.playerName === this.fromFleet.player.playerName) {
-            let isError = false;
-
-            if (isError === false) {
-                if (this.fromHomeWorld !== this.toHomeWorld) {
-                    //TODO: Fehler art zufügen
-                    isError = true;
-                }
-                if (isError === false) {
-                    if (this.fromFleet.ships < this.shipsToTransfer) {
-                        //TODO: Fehler art zufügen
-                        isError = true
-                    }
-                }
-                //TODO: Check Owner Man kann einer Neutralen Flotte keine Schiffe Transverieren
-            }
-
-            //TODO: Weiter Tests implementieren
-
-            if (isError === false) {
-                this.fromFleet.ships -= this.shipsToTransfer;
-                this.toFleet.ships += this.shipsToTransfer;
-            }
-        } else {
-            //TODO: Fehler Flotte ist nicht vom Spieler
-
+        if (this.isValid()) {
+            this.fromFleet.ships -= this.shipsToTransfer;
+            this.toFleet.ships += this.shipsToTransfer;
         }
     }
 }
@@ -247,25 +243,26 @@ export class TransferShipsFleetToDShips extends Command implements ExecuteComman
         this.shipsToTransfer = aShipsToTransfer;
     }
 
+    isValid(): boolean {
+        if (this.fromFleet === null || this.fromHomeWorld === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromFleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromHomeWorld.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        if (this.fromFleet.ships < this.shipsToTransfer) {
+            return this.fail(NotEnoughShips_Error);
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.player.playerName === this.fromFleet.player.playerName) {
-            let isError = false;
-
-            if (isError === false) {
-                if (this.fromFleet.ships < this.shipsToTransfer) {
-                    //TODO: Fehler art zufügen
-                    isError = true;
-                }
-            }
-
-            //TODO: Weiter Tests implementieren
-
-            if (isError === false) {
-                this.fromFleet.ships -= this.shipsToTransfer;
-                this.fromHomeWorld.dShips += this.shipsToTransfer;
-            }
-        } else {
-            //TODO: Fehler Flotte ist nicht vom Spieler
+        if (this.isValid()) {
+            this.fromFleet.ships -= this.shipsToTransfer;
+            this.fromHomeWorld.dShips += this.shipsToTransfer;
         }
     }
 }
@@ -291,32 +288,29 @@ export class TransferDShipsToFleet extends Command implements ExecuteCommand {
         this.shipsToTransfer = aShipsToTransfer;
     }
 
+    isValid(): boolean {
+        if (this.fromHomeWorld === null) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.toFleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromHomeWorld.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        if (this.fromHomeWorld !== this.toHomeWorld) {
+            return this.fail(NotSameWorld_Error);
+        }
+        if (this.fromHomeWorld.dShips < this.shipsToTransfer) {
+            return this.fail(NotEnoughShips_Error);
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.fromHomeWorld.player.playerName === this.player.playerName) {
-            let isError = false;
-
-            if (isError === false) {
-                if (this.fromHomeWorld !== this.toHomeWorld) {
-                    //TODO: Fehler art zufügen
-                    isError = true;
-                }
-                if (isError === false) {
-                    if (this.fromHomeWorld.dShips < this.shipsToTransfer) {
-                        //TODO: Fehler art zufügen
-                        isError = true;
-                    }
-                }
-                //TODO: Check Owner Man kann einer Neutralen Flotte keine Schiffe Transverieren
-            }
-
-            //TODO: Weiter Tests implementieren
-
-            if (isError === false) {
-                this.fromHomeWorld.dShips -= this.shipsToTransfer;
-                this.toFleet.ships += this.shipsToTransfer;
-            }
-        } else {
-            //TODO: Fehler Welt ist nicht vom Spieler
+        if (this.isValid()) {
+            this.fromHomeWorld.dShips -= this.shipsToTransfer;
+            this.toFleet.ships += this.shipsToTransfer;
         }
     }
 }
@@ -404,30 +398,36 @@ export class FireFleetToFleet extends Command implements ExecuteCommand {
         this.toFleet = aToFleet;
         this.fromHomeWorld = aFromHomeWorld;
         this.toHomeWorld = aToHomeWorld;
+    }
 
+    isValid(): boolean {
+        if (this.fromFleet === null || this.toFleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromFleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        if (this.fromHomeWorld !== this.toHomeWorld) {
+            return this.fail(NotSameWorld_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.toFleet.player)) {
+            return this.fail(FireOnOwnFleet_Error);
+        }
+        if (this.fromFleet.fired) {
+            return this.fail(FleetAlreadyActed_Error);
+        }
+        if (this.fromFleet.ships === 0) {
+            return this.fail(FleetHasNoShips_Error);
+        }
+        return true;
     }
 
     executeCommand() {
-        if (this.player.playerName === this.fromFleet.player.playerName) {
-            let isError = false;
-
-            if (isError === false) {
-                if (this.fromHomeWorld !== this.toHomeWorld) {
-                    //TODO: Fehler art zufügen
-                    isError = true;
-                }
-            }
-
-            //TODO: Weiter Tests implementieren
-
-            if (isError === false) {
-                this.toFleet.hitedShots += this.fromFleet.ships
-                this.fromFleet.fired = true;
-                this.fromFleet.firesTo = this.toFleet.name();
-                this.fromFleet.firesToCommand = `AF${this.toFleet.number}`
-            }
-        } else {
-            //TODO: Fehler Flotte ist nicht vom Spieler
+        if (this.isValid()) {
+            this.toFleet.hitedShots += this.fromFleet.ships
+            this.fromFleet.fired = true;
+            this.fromFleet.firesTo = this.toFleet.name();
+            this.fromFleet.firesToCommand = `AF${this.toFleet.number}`
         }
     }
 }
@@ -450,28 +450,33 @@ export class FireDShipsToFleet extends Command implements ExecuteCommand {
         this.toHomeWorld = aToHomeWorld
     }
 
+    isValid(): boolean {
+        if (this.fromHomeWorld === null) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.toFleet === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromHomeWorld.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        if (this.fromHomeWorld !== this.toHomeWorld) {
+            return this.fail(NotSameWorld_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.toFleet.player)) {
+            return this.fail(FireOnOwnFleet_Error);
+        }
+        if (this.fromHomeWorld.dShipsFired) {
+            return this.fail(DShipsAlreadyFired_Error);
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.fromHomeWorld !== null && this.player !== null) {
-            if (this.fromHomeWorld.player.playerName === this.player.playerName) {
-                let isError = false;
-
-                if (isError === false) {
-                    if (this.fromHomeWorld !== this.toHomeWorld) {
-                        //TODO: Fehler art zufügen
-                        isError = true;
-                    }
-                }
-
-                //TODO: Weiter Tests implementieren
-
-                if (isError === false) {
-                    this.toFleet.hitedShots += this.fromHomeWorld.dShips;
-                    this.fromHomeWorld.dShipsFired = true;
-                    this.fromHomeWorld.dShipsFiredFleet = this.toFleet;
-                }
-            } else {
-                //TODO: Fehler Welt ist nicht vom Spieler
-            }
+        if (this.isValid()) {
+            this.toFleet.hitedShots += this.fromHomeWorld.dShips;
+            this.fromHomeWorld.dShipsFired = true;
+            this.fromHomeWorld.dShipsFiredFleet = this.toFleet;
         }
     }
 }
@@ -491,21 +496,52 @@ export class FireFleetToDShips extends Command implements ExecuteCommand {
         this.fromHomeWorld = aFromHomeWorld;
     }
 
+    isValid(): boolean {
+        if (this.fromFleet === null || this.fromHomeWorld === null) {
+            return this.fail(FleetNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromFleet.player) === false) {
+            return this.fail(FleetNotOwned_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.fromHomeWorld.player)) {
+            return this.fail(FireOnOwnDShips_Error);
+        }
+        if (this.fromFleet.fired) {
+            return this.fail(FleetAlreadyActed_Error);
+        }
+        if (this.fromFleet.ships === 0) {
+            return this.fail(FleetHasNoShips_Error);
+        }
+        return true;
+    }
+
     executeCommand() {
-        if (this.player.playerName === this.fromFleet.player.playerName) {
-            const isError = false;
+        if (this.isValid()) {
+            this.fromHomeWorld.hitedShotsDShips += this.fromFleet.ships;
+            this.fromFleet.fired = true;
+            this.fromFleet.firesTo = 'D-Schiffe';
+            this.fromFleet.firesToCommand = 'AD';
+        }
+    }
+}
 
-            //TODO: Weiter Tests implementieren
+//FaaS
+export class StandByCommand extends Command implements ExecuteCommand {
+    fleet: Fleet;
 
-            if (isError === false) {
-                this.fromHomeWorld.hitedShotsDShips += this.fromFleet.ships;
-                this.fromFleet.fired = true;
-                this.fromFleet.firesTo = 'D-Schiffe';
-                this.fromFleet.firesToCommand = 'AD';
+    constructor(aFleet: Fleet, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Combat);
+        this.fleet = aFleet;
+    }
 
-            }
+    // Ohne Wirkung: Flotten ohne Flug- oder Feuerbefehl feuern ohnehin aus dem Hinterhalt.
+    executeCommand() {
+        if (this.fleet === null) {
+            this.fail(FleetNotFound_Error);
+        } else if (this.isOwnedByCommandPlayer(this.fleet.player) === false) {
+            this.fail(FleetNotOwned_Error);
         } else {
-            //TODO: Fehler Flotte ist nicht vom Spieler
+            this.fleet.standBy = true;
         }
     }
 }
@@ -524,18 +560,12 @@ export class AmbushOffForWorld extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
-        if (this.world.player.playerName === this.player.playerName) {
-            const worldPlayer = this.world.player;
-
-            if (worldPlayer !== null) {
-                if (worldPlayer === this.player) {
-                    this.world.ambushOff = true;
-                } else {
-                    //TODO: Fehler
-                }
-            }
+        if (this.world === null) {
+            this.fail(WorldNotFound_Error);
+        } else if (this.isOwnedByCommandPlayer(this.world.player) === false) {
+            this.fail(WorldNotOwned_Error);
         } else {
-            //TODO: Fehler Welt ist nicht vom Spieler
+            this.world.ambushOff = true;
         }
     }
 }
@@ -563,6 +593,17 @@ export class AmbushOffForPlayer extends Command implements ExecuteCommand {
     }
 }
 
+/** Spieler zum Namen hinter "A=" bzw. "N=", ohne Beachtung der Groß-/Kleinschreibung. */
+function playerForHandle(allPlayerDict: Map<string, Player>, command: string): Player | null {
+    const handle = command.substring(2).toUpperCase();
+    for (const playerName of allPlayerDict.keys()) {
+        if (playerName.toUpperCase() === handle) {
+            return allPlayerDict.get(playerName);
+        }
+    }
+    return null;
+}
+
 //A=handel
 export class AddTeammate extends Command implements ExecuteCommand {
     allPlayerDict: Map<string, Player>;
@@ -573,9 +614,12 @@ export class AddTeammate extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
-        const keyString = this.string.substring(2);
-        const aPlayer = this.allPlayerDict.get(keyString);
-        this.player.teammates.add(aPlayer);
+        const aPlayer = playerForHandle(this.allPlayerDict, this.string);
+        if (aPlayer === null) {
+            this.fail(PlayerNotFound_Error);
+        } else if (aPlayer !== this.player) {
+            this.player.teammates.add(aPlayer);
+        }
     }
 }
 
@@ -589,8 +633,11 @@ export class RemoveTeammate extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
-        const keyString = this.string.substring(2);
-        const aPlayer = this.allPlayerDict.get(keyString);
-        this.player.teammates.delete(aPlayer);
+        const aPlayer = playerForHandle(this.allPlayerDict, this.string);
+        if (aPlayer === null) {
+            this.fail(PlayerNotFound_Error);
+        } else {
+            this.player.teammates.delete(aPlayer);
+        }
     }
 }

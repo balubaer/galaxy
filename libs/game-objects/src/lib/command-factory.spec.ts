@@ -3,6 +3,11 @@ import { TestWorldsArrayFactory, World, Player, fleetAndHomeWorldWithNumber } fr
 import { TESTRESOUCESPATH } from './utils';
 import { MoveCommand, TransferShipsFleetToFleet, TransferShipsFleetToDShips, FireFleetToFleet, FireFleetToDShips, FireDShipsToFleet, AmbushOffForWorld, AmbushOffForPlayer, AddTeammate, RemoveTeammate } from './command';
 import { readFileSync } from 'fs';
+import { Fleet } from './fleet';
+import {
+  NotInCoreGame_Error, UnknownCommand_Error, WorldNotFound_Error, FleetNotFound_Error, TooManyWorlds_Error, NoConnection_Error,
+  FireOnOwnFleet_Error, FleetAlreadyActed_Error, FleetNotOwned_Error, WorldNotOwned_Error, NotEnoughShips_Error, PlayerNotFound_Error
+} from './error';
 import { async } from 'rxjs/internal/scheduler/async';
 
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
@@ -177,4 +182,130 @@ it('test createTeammateForPlayer', () => {
   expect(commandInstance instanceof RemoveTeammate).toBeTruthy();
 });
 
+});
+
+// W4 gehört ZAPHOD (F4=4, F5=5, 4 D-Schiffe), W1 gehört MARVIN; dazu MARVINs F7=6 auf W4.
+function executeForZaphod(commands: string) {
+  const testWorlds = new TestWorldsArrayFactory().worlds;
+  const zaphod = testWorlds[3].player;
+  const marvin = testWorlds[0].player;
+  const enemyFleet = new Fleet();
+  enemyFleet.number = 7;
+  enemyFleet.ships = 6;
+  enemyFleet.player = marvin;
+  testWorlds[3].fleets.push(enemyFleet);
+  const dict = new Map<string, Player>([['ZAPHOD', zaphod], ['MARVIN', marvin]]);
+  const commandFactory = new CommandFactory(testWorlds, dict);
+  commandFactory.coreGame = true;
+  commandFactory.setCommandStringsWithLongString('ZAPHOD', commands);
+  commandFactory.executeCommands();
+  const errorNumbers = (commandFactory.commandErrors.get('ZAPHOD') ?? []).map((e) => e.error.errorNumber);
+  return { commandFactory, testWorlds, zaphod, marvin, enemyFleet, errorNumbers };
+}
+
+describe('CommandFactory Core Game', () => {
+  it('DaaAFbb: Welt und Flotte werden richtig gelesen', () => {
+    const testWorlds = new TestWorldsArrayFactory().worlds;
+    const commandFactory = new CommandFactory(testWorlds, new Map());
+    commandFactory.initMembers('D4AF5', 'ZAPHOD');
+
+    const command = commandFactory.getCommandInstance() as FireDShipsToFleet;
+
+    expect(command.fromHomeWorld.number).toBe(4);
+    expect(command.toFleet.number).toBe(5);
+    expect(command.toHomeWorld.number).toBe(4);
+  });
+
+  it('DaaAFbb: D-Schiffe feuern auf die fremde Flotte', () => {
+    const r = executeForZaphod('D4AF7');
+
+    expect(r.errorNumbers).toEqual([]);
+    expect(r.testWorlds[3].dShipsFired).toBe(true);
+    expect(r.enemyFleet.hitedShots).toBeGreaterThan(0);
+  });
+
+  it('Kleinschreibung und doppelte Leerzeichen werden akzeptiert', () => {
+    const r = executeForZaphod('  f4w2   \n\n f5t1d ');
+
+    expect(r.errorNumbers).toEqual([]);
+    expect(fleetAndHomeWorldWithNumber(r.testWorlds, 4).fleet.fleetMovements.length).toBe(1);
+    expect(fleetAndHomeWorldWithNumber(r.testWorlds, 5).fleet.ships).toBe(4);
+  });
+
+  it('FaaS wird angenommen und ändert nichts außer der Markierung', () => {
+    const r = executeForZaphod('F4S');
+    const fleet = fleetAndHomeWorldWithNumber(r.testWorlds, 4).fleet;
+
+    expect(r.errorNumbers).toEqual([]);
+    expect(fleet.standBy).toBe(true);
+    expect(fleet.ships).toBe(4);
+  });
+
+  it('WaaBxxFbb gibt es im Core Game nicht', () => {
+    const r = executeForZaphod('W4B3F4');
+
+    expect(r.errorNumbers).toEqual([NotInCoreGame_Error.errorNumber]);
+    expect(fleetAndHomeWorldWithNumber(r.testWorlds, 4).fleet.ships).toBe(4);
+  });
+
+  it('unbekannte Befehle werden gemeldet', () => {
+    expect(executeForZaphod('XYZ').errorNumbers).toEqual([UnknownCommand_Error.errorNumber]);
+    expect(executeForZaphod('F4W2X').errorNumbers).toEqual([UnknownCommand_Error.errorNumber]);
+  });
+
+  it('unbekannte Welt oder Flotte führt zu einer Meldung statt zum Absturz', () => {
+    expect(executeForZaphod('F4W99').errorNumbers).toEqual([WorldNotFound_Error.errorNumber]);
+    expect(executeForZaphod('F99W2').errorNumbers).toEqual([FleetNotFound_Error.errorNumber]);
+    expect(executeForZaphod('F99AF4').errorNumbers).toEqual([FleetNotFound_Error.errorNumber]);
+    expect(executeForZaphod('D99AF7').errorNumbers).toEqual([WorldNotFound_Error.errorNumber]);
+    expect(executeForZaphod('Z99').errorNumbers).toEqual([WorldNotFound_Error.errorNumber]);
+  });
+
+  it('Flug über mehr als drei Welten und ohne Verbindung', () => {
+    expect(executeForZaphod('F4W1W2W1W2').errorNumbers).toEqual([TooManyWorlds_Error.errorNumber]);
+    expect(executeForZaphod('F4W2W3').errorNumbers).toEqual([NoConnection_Error.errorNumber]);
+  });
+
+  it('nicht auf eigene Flotten feuern', () => {
+    expect(executeForZaphod('F4AF5').errorNumbers).toEqual([FireOnOwnFleet_Error.errorNumber]);
+    expect(executeForZaphod('D4AF4').errorNumbers).toEqual([FireOnOwnFleet_Error.errorNumber]);
+  });
+
+  it('feuern und fliegen schließen sich aus', () => {
+    const r = executeForZaphod('F4AF7 F4W2');
+
+    expect(r.errorNumbers).toEqual([FleetAlreadyActed_Error.errorNumber]);
+    expect(r.commandFactory.commandErrors.get('ZAPHOD')[0].command).toBe('F4W2');
+  });
+
+  it('fremde Flotten und Welten lassen sich nicht befehligen', () => {
+    expect(executeForZaphod('F7W2').errorNumbers).toEqual([FleetNotOwned_Error.errorNumber]);
+    expect(executeForZaphod('Z1').errorNumbers).toEqual([WorldNotOwned_Error.errorNumber]);
+    expect(executeForZaphod('D1T1F4').errorNumbers).toEqual([WorldNotOwned_Error.errorNumber]);
+  });
+
+  it('Transfer mit zu vielen Schiffen wird abgelehnt', () => {
+    const r = executeForZaphod('F4T9F5');
+
+    expect(r.errorNumbers).toEqual([NotEnoughShips_Error.errorNumber]);
+    expect(fleetAndHomeWorldWithNumber(r.testWorlds, 5).fleet.ships).toBe(5);
+  });
+
+  it('A=handle ohne Beachtung der Groß-/Kleinschreibung, unbekannter Name wird gemeldet', () => {
+    const r = executeForZaphod('a=marvin A=NOBODY');
+
+    expect(r.zaphod.teammates.has(r.marvin)).toBe(true);
+    expect(r.zaphod.teammates.has(undefined)).toBe(false);
+    expect(r.errorNumbers).toEqual([PlayerNotFound_Error.errorNumber]);
+  });
+
+  it('Befehle unbekannter Spieler werden übergangen', () => {
+    const testWorlds = new TestWorldsArrayFactory().worlds;
+    const commandFactory = new CommandFactory(testWorlds, new Map([['ZAPHOD', testWorlds[3].player]]));
+    commandFactory.coreGame = true;
+    commandFactory.setCommandStringsWithLongString('NIEMAND', 'F4W2');
+
+    expect(() => commandFactory.executeCommands()).not.toThrow();
+    expect(fleetAndHomeWorldWithNumber(testWorlds, 4).fleet.fleetMovements.length).toBe(0);
+  });
 });

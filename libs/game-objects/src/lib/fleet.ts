@@ -30,6 +30,8 @@ export class Fleet implements NumberKey {
     firesTo: string;
     firesToCommand: string;
     moved: boolean;
+    /** FaaS: Flotte soll ausdrücklich nur aus dem Hinterhalt feuern (nur für den Bericht). */
+    standBy = false;
     hitAmbuschFleets: Array<Fleet> = null;
 
 
