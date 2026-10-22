@@ -1,6 +1,6 @@
 import { Player, isPlayOnWorldWithPlayer } from './player'
 import { World, worldWithNumber } from './world';
-import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
+import { Fleet } from './fleet';
 
 export class FinalPhaseCoreGame {
     worlds: Array<World>;
@@ -27,6 +27,10 @@ export class FinalPhaseCoreGame {
 
     checkFireResults(world: World) {
         //DShips
+        // Mindestens zwei Schuss mehr als nötig, um alle D-Schiffe zu zerstören: Welt wird neutral.
+        if (world.hitedShotsDShips > 0 && world.hitedShotsDShips >= world.dShips * 2 + 2) {
+            world.player = null;
+        }
         world.dShips -= world.hitedShotsDShips / 2;
         world.dShips = Math.floor(world.dShips);
         if (world.dShips < 0) {
@@ -100,23 +104,26 @@ export class FinalPhaseCoreGame {
         return result;
     }
 
-    isAmbushFleet(ambushFleet: Fleet, passingFleet: Fleet, movementCount: number): boolean {
+    isAmbushOffForFleet(world: World, ambushPlayer: Player): boolean {
+        if (ambushPlayer.ambushOff === true) {
+            return true;
+        }
+        return world.ambushOff === true && world.player !== null && world.player.playerName === ambushPlayer.playerName;
+    }
+
+    // Nur Flotten ohne Flug- oder Feuerbefehl schießen aus dem Hinterhalt; die Welt muss dafür nicht dem Spieler gehören.
+    isAmbushFleet(world: World, ambushFleet: Fleet, passingFleet: Fleet, movementCount: number): boolean {
         let result = false;
         if (this.isAmbushFromMovementCount(movementCount, passingFleet.fleetMovements.length)) {
             if ((ambushFleet.number === passingFleet.number) === false) {
-                if (ambushFleet.fired === false) {
-                    if (ambushFleet.moved === false) {
-                        const ambushPlayer = ambushFleet.player;
-                        const passingFleetPlayer = passingFleet.player;
-                        const fleetAndHomeWorld = fleetAndHomeWorldWithNumber(this.worlds, ambushFleet.number);
+                if (ambushFleet.fired === false && ambushFleet.fleetMovements.length === 0 && ambushFleet.ships > 0) {
+                    const ambushPlayer = ambushFleet.player;
+                    const passingFleetPlayer = passingFleet.player;
 
-                        if (fleetAndHomeWorld.homeWorld.player === fleetAndHomeWorld.fleet.player) {
-                            if ((ambushPlayer !== null) && (passingFleetPlayer !== null)) {
-                                if ((ambushPlayer.playerName === passingFleetPlayer.playerName) === false) {
-                                    if (ambushPlayer.teammates.has(passingFleetPlayer) === false) {
-                                        result = true;
-                                    }
-                                }
+                    if ((ambushPlayer !== null) && (passingFleetPlayer !== null)) {
+                        if ((ambushPlayer.playerName === passingFleetPlayer.playerName) === false) {
+                            if (ambushPlayer.teammates.has(passingFleetPlayer) === false) {
+                                result = this.isAmbushOffForFleet(world, ambushPlayer) === false;
                             }
                         }
                     }
@@ -175,7 +182,7 @@ export class FinalPhaseCoreGame {
                                     toworld.addHitAmbushFleets(fleet);
                                 }
                                 for (const fleetFromworld of toworld.fleets) {
-                                    if (this.isAmbushFleet(fleetFromworld, fleet, movementCount)) {
+                                    if (this.isAmbushFleet(toworld, fleetFromworld, fleet, movementCount)) {
                                         fleet.ships -= fleetFromworld.ships;
                                         if (fleet.ships < 0) {
                                             fleet.ships = 0;
@@ -253,9 +260,14 @@ export class FinalPhaseCoreGame {
     }
 
     doFinal() {
+        // Erst alle Kampfergebnisse, damit zerstörte Schiffe auf keiner Welt mehr aus dem Hinterhalt feuern.
         for (const world of this.worlds) {
             if (this.isSomeBodyOnworld(world)) {
                 this.checkFireResults(world);
+            }
+        }
+        for (const world of this.worlds) {
+            if (this.isSomeBodyOnworld(world)) {
                 this.checkFleetMovement(world);
             }
         }

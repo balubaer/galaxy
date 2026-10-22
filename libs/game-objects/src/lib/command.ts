@@ -323,7 +323,6 @@ export class TransferDShipsToFleet extends Command implements ExecuteCommand {
 
 export class BuildDShips extends Command implements ExecuteCommand {
     worlds: Array<World>;
-    maxBuild = 4;
 
     constructor(aWorldArray: Array<World>, aPlayer: Player) {
         super('', aPlayer, TurnPhase.Building);
@@ -351,6 +350,7 @@ export class BuildDShips extends Command implements ExecuteCommand {
         return result;
     }
 
+    // Anzahl = Schritte bis zur nächsten Welt, die nicht dem Spieler gehört (ohne Obergrenze).
     calculateNumberOfShipsToBuild(world: World): number {
         let result = 0;
         let foundDistanceLevel = false;
@@ -360,10 +360,10 @@ export class BuildDShips extends Command implements ExecuteCommand {
             if (this.testPlayerInNextLevelWorlds(disLevel.nextLevelWorlds) === false) {
                 foundDistanceLevel = true;
             } else {
-                if (this.maxBuild <= disLevel.distanceLevel) {
+                disLevel.goNextLevel();
+                if (disLevel.stopCreateNewNextLevelWorlds === true) {
+                    // Dem Spieler gehört der ganze erreichbare Teil der Galaxie.
                     foundDistanceLevel = true;
-                } else {
-                    disLevel.goNextLevel();
                 }
             }
         }
@@ -550,6 +550,8 @@ export class AmbushOffForPlayer extends Command implements ExecuteCommand {
     }
 
     executeCommand() {
+        // Gilt auch für die Flotten des Spielers auf fremden Welten.
+        this.player.ambushOff = true;
         for (const world of this.worlds) {
             const worldPlayer = world.player;
             if (worldPlayer !== null) {
