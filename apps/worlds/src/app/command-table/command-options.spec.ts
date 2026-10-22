@@ -8,6 +8,7 @@ import {
   extendRoute,
   isDisabled,
   multiStepMoves,
+  remainingIndustry,
   removeCommand,
   routeCommand,
 } from './command-options';
@@ -187,5 +188,106 @@ describe('multiStepMoves', () => {
     const text = ['F9W7', 'F9W7W3', 'F90W7W3W4', 'F9W7W3W4', 'F9AF2'];
     expect(multiStepMoves(text, 9)).toEqual(['F9W7W3', 'F9W7W3W4']);
     expect(multiStepMoves(text, undefined)).toEqual([]);
+  });
+});
+
+describe('Classic Game', () => {
+  const classicNode: Node = {
+    id: 'W1',
+    data: {
+      dships: 0,
+      backgroundColor: OWN,
+      classic: {
+        blackHole: false,
+        population: 50,
+        populationLimit: 100,
+        industry: 30,
+        metal: 20,
+        mines: 2,
+        turnsOwned: 1,
+        iShips: 8,
+        pShips: 1,
+      },
+      fleets: [
+        { label: 'F1=0', backgroundColor: OWN, metal: 0 },
+        { label: 'F9=5', backgroundColor: OWN, metal: 3 },
+        { label: 'F20=3', backgroundColor: 'blue', metal: 0 },
+      ],
+    },
+  };
+
+  function classicOptions(count = 1, selected: string[] = [], n = classicNode) {
+    return buildCommandGroups(n, links, OWN, count, selected).flatMap((g) =>
+      g.rows.flatMap((r) => r.options),
+    );
+  }
+
+  it('offers building, industry, migration and metal commands on an own world', () => {
+    const all = classicOptions(2).map((o) => o.command);
+    expect(all).toEqual(
+      expect.arrayContaining([
+        'W1B2I',
+        'W1B2P',
+        'W1B2F1',
+        'W1B2F9',
+        'W1I2I',
+        'W1I2L',
+        'W1S2',
+        'P1M2W7',
+        'P1M2W6',
+        'F9U',
+        'F9U2',
+        'F9N',
+        'F9J',
+        'F9L',
+        'F9L2',
+      ]),
+    );
+  });
+
+  it('offers no D-ship commands in a Classic Game', () => {
+    const all = classicOptions(2).map((o) => o.command);
+    expect(all).not.toContain('F9T2D');
+    expect(all.filter((c) => /D/.test(c))).toEqual([]);
+  });
+
+  it('offers no unload for a fleet without metal, and no building on a foreign world', () => {
+    const all = classicOptions(1).map((o) => o.command);
+    expect(all).not.toContain('F1U');
+    const foreign: Node = {
+      ...classicNode,
+      data: { ...classicNode.data, backgroundColor: 'blue' },
+    };
+    const foreignAll = classicOptions(1, [], foreign).map((o) => o.command);
+    expect(foreignAll.filter((c) => /^[WP]/.test(c))).toEqual([]);
+  });
+
+  it('marks building as insufficient when the usable industry is spent', () => {
+    // nutzbar: min(30, 20, 50) = 20
+    expect(remainingIndustry(classicNode.data.classic, '1', [])).toBe(20);
+    expect(remainingIndustry(classicNode.data.classic, '1', ['W1B5F9', 'W1I2I', 'P1M3W7'])).toBe(20 - 5 - 8 - 3);
+    const opts = classicOptions(10, ['W1B15I']);
+    expect(opts.find((o) => o.command === 'W1B10P').insufficient).toBe(true);
+    expect(classicOptions(10).find((o) => o.command === 'W1B10P').insufficient).toBe(false);
+  });
+
+  it('marks scrapping as insufficient without enough I-ships', () => {
+    const opts = classicOptions(3);
+    expect(opts.find((o) => o.command === 'W1S3').insufficient).toBe(true); // 3*4 > 8
+    expect(classicOptions(2).find((o) => o.command === 'W1S2').insufficient).toBe(false);
+  });
+
+  it('allows only one migration target per world and one amount per metal action', () => {
+    expect(commandsConflict('P1M2W7', 'P1M1W6')).toBe(true);
+    expect(commandsConflict('P1M2W7', 'P2M1W6')).toBe(false);
+    expect(commandsConflict('F9U', 'F9U2')).toBe(true);
+    expect(commandsConflict('F9U', 'F9L')).toBe(false);
+    expect(commandsConflict('F9U', 'F9W7')).toBe(false);
+  });
+
+  it('keeps Core nodes free of Classic commands', () => {
+    const all = commands(2);
+    expect(all.filter((c) => /^[WP]\d/.test(c))).toEqual([]);
+    expect(all).toContain('F9T2D');
   });
 });
