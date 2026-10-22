@@ -5,6 +5,7 @@ import { PersistenceManager } from './persistence-manager';
 import { WorldsPersist } from './worlds-persist.interface';
 import { CommandFactory, CommandErrorEntry } from './command-factory';
 import { FinalPhaseCoreGame } from './final-phase-core-game';
+import { FinalPhaseClassicGame } from './final-phase-classic-game';
 import { OutputPlyerStatisticCoreGame } from './output-plyer-statistic-core-game';
 import { NodesAndLinks } from './nodes-and-links.interface';
 import { PersistenceGrafManager } from './persistence-graf-manager';
@@ -39,7 +40,9 @@ export class ExecuteCommand {
         commandFactory.executeCommands();
         this.commandErrors = commandFactory.commandErrors;
 
-        const finalPhase = new FinalPhaseCoreGame(this.worlds, this.allPlayerDict);
+        const finalPhase = gameTypeOf(this.gamePref) === 'classic'
+            ? new FinalPhaseClassicGame(this.worlds, this.allPlayerDict)
+            : new FinalPhaseCoreGame(this.worlds, this.allPlayerDict);
         finalPhase.doFinal();
 
     }

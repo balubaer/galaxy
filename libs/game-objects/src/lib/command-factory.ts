@@ -4,7 +4,11 @@ import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
 import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
 import { GameType } from './game-pref.interface';
-import { CommandError, NotInCoreGame_Error, UnknownCommand_Error } from './error';
+import {
+    UnloadMetal, JettisonMetal, LoadMetal, BuildShips, BuildIndustry, RaisePopulationLimit, ScrapIShips, MigratePopulation,
+    BuildDefaultIShips
+} from './classic-commands';
+import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
 
 export interface CommandErrorEntry {
     command: string;
@@ -443,6 +447,12 @@ export class CommandFactory {
                     continue;
                 }
 
+                if (this.gameType === 'classic' && this.isDShipCommand()) {
+                    // Im Classic Game gibt es keine D-Schiffe, nur I- und P-Schiffe.
+                    this.addError(playerName, command, NotInClassicGame_Error);
+                    continue;
+                }
+
                 const commandInstance = this.getCommandInstance();
                 if (commandInstance instanceof Command) {
                     commandArray.push(commandInstance);
@@ -453,6 +463,12 @@ export class CommandFactory {
         }
 
         if (this.gameType !== null) {
+            if (this.gameType === 'classic') {
+                for (const aPlayerName of this.allPlayerDict.keys()) {
+                    const player = this.allPlayerDict.get(aPlayerName);
+                    commandArray.push(new BuildDefaultIShips(this.worlds, player) as Command);
+                }
+            }
             if (this.coreGame) {
                 for (const aPlayerName of this.allPlayerDict.keys()) {
                     const player = this.allPlayerDict.get(aPlayerName);
@@ -480,12 +496,85 @@ export class CommandFactory {
         this.commandErrors.get(playerName).push({ command, error });
     }
 
+    isDShipCommand(): boolean {
+        return ['FTD', 'FAD', 'DAF', 'DTF'].indexOf(this.commandChars) !== -1;
+    }
+
+    /** Zahl hinter dem Befehlsbuchstaben, null wenn sie fehlt. */
+    private optionalAmount(index: number): number | null {
+        return this.commandNumberArray.length > index ? this.commandNumberArray[index] : null;
+    }
+
+    private fleetAndWorld(number: number): { fleet: Fleet, homeWorld: World } {
+        return fleetAndHomeWorldWithNumber(this.worlds, number);
+    }
+
+    /**
+     * Befehle des Classic Games (Wirtschaft). undefined, wenn der Befehl kein Classic-Befehl ist
+     * und wie im Core Game behandelt wird; null, wenn er ein Classic-Befehl mit falscher Form ist.
+     */
+    getClassicCommandInstance(): Command | null | undefined {
+        const numbers = this.commandNumberArray;
+        const player = this.commandPlayer;
+        const text = this.processCommand;
+        switch (this.commandChars) {
+            case 'FU':
+            case 'FN':
+            case 'FJ':
+            case 'FL': {
+                if (numbers.length < 1 || numbers.length > 2) {
+                    return null;
+                }
+                const found = this.fleetAndWorld(numbers[0]);
+                const amount = this.optionalAmount(1);
+                switch (this.commandChars) {
+                    case 'FU': return new UnloadMetal(found.fleet, found.homeWorld, amount, false, text, player);
+                    case 'FN': return new UnloadMetal(found.fleet, found.homeWorld, amount, true, text, player);
+                    case 'FJ': return new JettisonMetal(found.fleet, found.homeWorld, amount, text, player);
+                    default: return new LoadMetal(found.fleet, found.homeWorld, amount, text, player);
+                }
+            }
+            case 'WBI':
+            case 'WBP':
+                if (numbers.length !== 2) {
+                    return null;
+                }
+                return new BuildShips(worldWithNumber(this.worlds, numbers[0]), numbers[1],
+                    this.commandChars === 'WBI' ? 'I' : 'P', text, player);
+            case 'WBF': {
+                if (numbers.length !== 3) {
+                    return null;
+                }
+                return new BuildShips(worldWithNumber(this.worlds, numbers[0]), numbers[1],
+                    this.fleetAndWorld(numbers[2]).fleet, text, player);
+            }
+            case 'WII':
+                return numbers.length === 2 ? new BuildIndustry(worldWithNumber(this.worlds, numbers[0]), numbers[1], text, player) : null;
+            case 'WIL':
+                return numbers.length === 2 ? new RaisePopulationLimit(worldWithNumber(this.worlds, numbers[0]), numbers[1], text, player) : null;
+            case 'WS':
+                return numbers.length === 2 ? new ScrapIShips(worldWithNumber(this.worlds, numbers[0]), numbers[1], text, player) : null;
+            case 'PMW':
+                return numbers.length === 3
+                    ? new MigratePopulation(worldWithNumber(this.worlds, numbers[0]), numbers[1], worldWithNumber(this.worlds, numbers[2]), text, player)
+                    : null;
+            default:
+                return undefined;
+        }
+    }
+
     isBuildFleetShipCommand(): boolean {
         return this.commandChars === 'WBF';
     }
 
     getCommandInstance(): Object {
         let result: Object = null;
+        if (this.gameType === 'classic') {
+            const classicCommand = this.getClassicCommandInstance();
+            if (classicCommand !== undefined) {
+                return classicCommand;
+            }
+        }
         if (this.commandChars !== null) {
             if (this.commandChars.length >= 2) {
                 switch (this.commandChars.charAt(0)) {

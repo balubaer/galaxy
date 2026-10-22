@@ -64,6 +64,16 @@ export class World implements NumberKey {
     pShips = 0;
     blackHole = false;
 
+    // Rundenzustand der Classic-Wirtschaft, wird nicht gespeichert und am Rundenende zurückgesetzt.
+    /** Metall, das in dieser Runde entladen wurde und erst nächste Runde zum Bauen bereitsteht. */
+    unloadedMetal = 0;
+    /** Noch verfügbare nutzbare Industrie dieser Runde, null bis zum ersten Bauen. */
+    buildBudget: number | null = null;
+    /** Bevölkerung, die in dieser Runde an der Industrie arbeitet (fehlt dann in den Minen). */
+    industryWorkers = 0;
+    /** Zielwelt der Migration dieser Runde (pro Welt nur eine). */
+    migratesTo: World | null = null;
+
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
     hitedShotsDShips = 0;

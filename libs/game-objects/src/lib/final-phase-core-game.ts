@@ -235,7 +235,7 @@ export class FinalPhaseCoreGame {
                 world.addEvent(`Welt erobert von ${world.player.stringName()}`);
             }
         } else {
-            if (world.dShips === 0) {
+            if (world.dShips + world.iShips + world.pShips === 0) {
                 const player = world.player;
                 if (players.length === 1) {
                     if (player.playerName !== players[0].playerName) {

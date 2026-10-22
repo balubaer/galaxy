@@ -25,3 +25,6 @@ export * from './lib/strip-graph-factory';
 export * from './lib/core-game-rules';
 export * from './lib/classic-game-rules';
 export * from './lib/classic-world-factory';
+export * from './lib/classic-economy';
+export * from './lib/classic-commands';
+export * from './lib/final-phase-classic-game';
