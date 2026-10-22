@@ -1,5 +1,6 @@
 import { World } from './world';
 import { Player } from './player';
+import { classicLog } from './classic-log';
 
 /** Metall (und Industrie), um eine Einheit Industrie bzw. +1 Bevölkerungslimit zu bauen. */
 export const CLASSIC_BUILD_COST = 5;
@@ -64,13 +65,47 @@ export function buildBudget(world: World): number {
     if (world.buildBudget === null) {
         world.buildBudget = usableIndustry(world);
         world.industryWorkers = world.buildBudget;
+        logBudget(world);
     }
     return world.buildBudget;
+}
+
+/** Nennt, was die nutzbare Industrie einer Welt begrenzt. */
+function limitingFactors(world: World, shelter: number): string {
+    const industry = Math.max(0, world.industry - shelter);
+    const metal = availableMetal(world);
+    const limits: Array<string> = [];
+    const usable = world.buildBudget;
+    if (industry === usable) {
+        limits.push(shelter > 0 ? 'Industrie (abzüglich Schutzräume)' : 'Industrie');
+    }
+    if (metal === usable) {
+        limits.push('Metall');
+    }
+    if (world.population === usable) {
+        limits.push('Bevölkerung');
+    }
+    return limits.join(' und ');
+}
+
+function logBudget(world: World) {
+    if (world.player === null) {
+        return;
+    }
+    const shelter = shelterPenalty(world);
+    classicLog(`${world.name} [${world.player.playerName}] nutzbare Industrie ${world.buildBudget}: `
+        + `Industrie ${world.industry}, Metall ${world.metal} (davon heute entladen ${world.unloadedMetal}, `
+        + `nutzbar ${availableMetal(world)}), Bevölkerung ${world.population}, Schutzraum-Abzug ${shelter}`
+        + ` -> begrenzt durch ${limitingFactors(world, shelter)}`);
+    if (world.buildBudget === 0) {
+        classicLog(`${world.name} baut nichts: keine nutzbare Industrie`);
+    }
 }
 
 /** Verbraucht Industrie und gleich viel Metall der Welt; false, wenn die nutzbare Industrie nicht reicht. */
 export function spendIndustry(world: World, units: number): boolean {
     if (buildBudget(world) < units) {
+        classicLog(`${world.name} kann ${units} nicht bauen: nur ${world.buildBudget} nutzbare Industrie übrig`);
         return false;
     }
     world.buildBudget -= units;

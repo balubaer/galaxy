@@ -8,6 +8,7 @@ import {
     LoadNotAllowed_Error, AlreadyMigrating_Error, InvalidAmount_Error, NoConnection_Error, PlayerNotFound_Error,
     GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error
 } from './error';
+import { classicLog } from './classic-log';
 import { buildBudget, spendIndustry, industryBuildCost, scrapIShipsPerIndustry, CLASSIC_BUILD_COST } from './classic-economy';
 
 abstract class FleetMetalCommand extends Command {
@@ -322,6 +323,7 @@ export class BuildDefaultIShips extends Command implements ExecuteCommand {
                 const units = buildBudget(world);
                 if (units > 0 && spendIndustry(world, units)) {
                     world.iShips += units;
+                    classicLog(`${world.name} baut ${units} I-Schiffe (Industrie ohne Befehl)`);
                 }
             }
         }

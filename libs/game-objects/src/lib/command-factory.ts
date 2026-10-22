@@ -4,6 +4,7 @@ import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
 import { playerForHandle, MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
 import { GameType } from './game-pref.interface';
+import { classicLog } from './classic-log';
 import {
     UnloadMetal, JettisonMetal, LoadMetal, BuildShips, BuildIndustry, RaisePopulationLimit, ScrapIShips, MigratePopulation,
     BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld
@@ -435,7 +436,13 @@ export class CommandFactory {
             const commands: Array<string> = this.commandStringsDict.get(playerName);
 
             if (this.allPlayerDict.has(playerName) === false) {
+                if (this.gameType === 'classic') {
+                    classicLog(`Befehle von ${playerName} ignoriert: Spieler besitzt keine Welt (Spieler unbekannt)`);
+                }
                 continue;
+            }
+            if (this.gameType === 'classic') {
+                classicLog(`${playerName}: ${commands.length} Befehle: ${commands.join(' ')}`);
             }
 
             for (const command of commands) {
@@ -494,6 +501,9 @@ export class CommandFactory {
             this.commandErrors.set(playerName, new Array<CommandErrorEntry>());
         }
         this.commandErrors.get(playerName).push({ command, error });
+        if (this.gameType === 'classic') {
+            classicLog(`${playerName}: Befehl ${command} abgelehnt: ${error.errorString} (Fehler ${error.errorNumber})`);
+        }
     }
 
     isDShipCommand(): boolean {

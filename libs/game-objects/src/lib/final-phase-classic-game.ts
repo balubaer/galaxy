@@ -1,6 +1,7 @@
 import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { World } from './world';
 import { Player } from './player';
+import { classicLog } from './classic-log';
 import { CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
 
 /**
@@ -120,8 +121,12 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
     endEconomy(world: World) {
         this.updateTurnsOwned(world);
         if (world.player !== null && world.blackHole === false) {
+            const metalBefore = world.metal;
             this.produceMetal(world);
             this.growPopulation(world);
+            classicLog(`${world.name} [${world.player.playerName}] Rundenende: Metall ${metalBefore} -> ${world.metal}, `
+                + `Bevölkerung ${world.population}/${world.populationLimit}, Industrie ${world.industry}, `
+                + `I-Schiffe ${world.iShips}, P-Schiffe ${world.pShips}`);
         }
         resetEconomyTurn(world);
     }

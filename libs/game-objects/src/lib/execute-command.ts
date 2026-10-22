@@ -1,4 +1,5 @@
 import { GamePref, gameTypeOf } from './game-pref.interface';
+import { classicLog } from './classic-log';
 import { World } from './world';
 import { Player, isWorldOutPutForPlayer } from './player';
 import { PersistenceManager } from './persistence-manager';
@@ -31,6 +32,12 @@ export class ExecuteCommand {
     }
 
     start(commandsDict: Map<string, string>) {
+        if (gameTypeOf(this.gamePref) === 'classic') {
+            for (const playerName of this.allPlayerDict.keys()) {
+                const commands = commandsDict.get(playerName);
+                classicLog(`Runde ${this.gamePref.round}: ${playerName} ${commands === undefined || commands.trim().length === 0 ? 'hat keine Befehle abgegeben' : 'hat Befehle abgegeben'}`);
+            }
+        }
         const commandFactory = new CommandFactory(this.worlds, this.allPlayerDict);
         commandFactory.gameType = gameTypeOf(this.gamePref);
         for (const playerName of this.allPlayerDict.keys()) {
