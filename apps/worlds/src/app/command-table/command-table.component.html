@@ -25,9 +25,14 @@
                 <button
                   type="button"
                   [class.selected]="isSelected(option)"
+                  [class.broken]="isBroken(option)"
                   [attr.aria-pressed]="isSelected(option)"
                   [disabled]="isOptionDisabled(option)"
-                  [title]="option.command"
+                  [title]="
+                    isBroken(option)
+                      ? option.command + ' – nicht genug Schiffe'
+                      : option.command
+                  "
                   (click)="press(option)"
                 >
                   {{ option.label }}

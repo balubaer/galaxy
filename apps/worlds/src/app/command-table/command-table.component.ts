@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Edge, Node } from '@galaxy/api-interfaces';
 import {
+  brokenCommands,
   buildCommandGroups,
   CommandGroup,
   CommandOption,
@@ -51,6 +52,21 @@ export class CommandTableComponent {
       : [];
   }
 
+  /** Gewählte Befehle, die an fehlenden Schiffen scheitern würden. */
+  get broken(): string[] {
+    return this.node
+      ? brokenCommands(
+          this.node,
+          this.ownColor,
+          splitCommands(this.commandText),
+        )
+      : [];
+  }
+
+  isBroken(option: CommandOption): boolean {
+    return this.broken.includes(option.command);
+  }
+
   isSelected(option: CommandOption): boolean {
     return splitCommands(this.commandText).includes(option.command);
   }
@@ -58,6 +74,7 @@ export class CommandTableComponent {
   isOptionDisabled(option: CommandOption): boolean {
     return (
       this.readonly ||
+      !!option.insufficient ||
       isDisabled(option.command, splitCommands(this.commandText))
     );
   }

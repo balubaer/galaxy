@@ -1,6 +1,7 @@
 import { Node } from '@galaxy/api-interfaces';
 import {
   addCommand,
+  brokenCommands,
   buildCommandGroups,
   canExtendRoute,
   commandsConflict,
@@ -87,6 +88,32 @@ describe('buildCommandGroups with selected transfers', () => {
       );
     expect(run([])).not.toContain('F1W7');
     expect(run(['F9T1F1'])).toEqual(expect.arrayContaining(['F1W7', 'F9W7']));
+  });
+});
+
+describe('dependent commands', () => {
+  const find = (selected: string[], command: string) =>
+    buildCommandGroups(node, links, OWN, 3, selected)
+      .flatMap((g) => g.rows.flatMap((r) => r.options))
+      .find((o) => o.command === command);
+
+  it('marks transfers as insufficient when the fleet has too few ships left', () => {
+    expect(find([], 'F9T3F1')?.insufficient).toBe(false);
+    expect(find(['F9T3F1'], 'F9T3D')?.insufficient).toBe(true);
+    expect(find(['F9T3F1'], 'F9T3F1')?.insufficient).toBe(false);
+  });
+
+  it('reports commands that fail for lack of ships', () => {
+    expect(brokenCommands(node, OWN, ['F9T3F1', 'F9T3D'])).toEqual(['F9T3D']);
+    expect(brokenCommands(node, OWN, ['F9T5F1', 'F9W7', 'F9AF20'])).toEqual([
+      'F9W7',
+      'F9AF20',
+    ]);
+    expect(brokenCommands(node, OWN, ['F9T2F1', 'F9W7'])).toEqual([]);
+  });
+
+  it('keeps a fleet with a selected command visible after it gave away all ships', () => {
+    expect(find(['F9T5F1'], 'F9W7')).toBeDefined();
   });
 });
 

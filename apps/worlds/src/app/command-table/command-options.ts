@@ -3,6 +3,8 @@ import { Edge, Node } from '@galaxy/api-interfaces';
 export interface CommandOption {
   command: string;
   label: string;
+  /** Transfer, für den nach den gewählten Transfers nicht genug Schiffe übrig sind. */
+  insufficient?: boolean;
 }
 
 export interface CommandRow {
@@ -55,7 +57,8 @@ function applyTransfers(
   dships: number,
   world: string,
   selected: string[],
-): { fleets: WorldFleet[]; dships: number } {
+): { fleets: WorldFleet[]; dships: number; failed: string[] } {
+  const failed: string[] = [];
   const result = fleets.map((f) => ({ ...f }));
   const find = (n: number) => result.find((f) => f.own && f.number === n);
   for (const command of selected) {
@@ -65,25 +68,37 @@ function applyTransfers(
     if (toFleet) {
       const from = find(+toFleet[1]);
       const to = find(+toFleet[3]);
-      if (from && to && from.ships >= +toFleet[2]) {
-        from.ships -= +toFleet[2];
-        to.ships += +toFleet[2];
+      if (from && to) {
+        if (from.ships >= +toFleet[2]) {
+          from.ships -= +toFleet[2];
+          to.ships += +toFleet[2];
+        } else {
+          failed.push(command);
+        }
       }
     } else if (toD) {
       const from = find(+toD[1]);
-      if (from && from.ships >= +toD[2]) {
-        from.ships -= +toD[2];
-        dships += +toD[2];
+      if (from) {
+        if (from.ships >= +toD[2]) {
+          from.ships -= +toD[2];
+          dships += +toD[2];
+        } else {
+          failed.push(command);
+        }
       }
     } else if (fromD && fromD[1] === world) {
       const to = find(+fromD[3]);
-      if (to && dships >= +fromD[2]) {
-        dships -= +fromD[2];
-        to.ships += +fromD[2];
+      if (to) {
+        if (dships >= +fromD[2]) {
+          dships -= +fromD[2];
+          to.ships += +fromD[2];
+        } else {
+          failed.push(command);
+        }
       }
     }
   }
-  return { fleets: result, dships };
+  return { fleets: result, dships, failed };
 }
 
 /**
@@ -110,7 +125,10 @@ export function buildCommandGroups(
   const dships = projected.dships;
   const fleets = projected.fleets;
   const ownFleets = fleets.filter((f) => f.own);
-  const movable = ownFleets.filter((f) => f.ships > 0);
+  // Flotten mit gewähltem Befehl bleiben sichtbar, damit der Befehl wieder abgewählt werden kann.
+  const hasSelected = (n: number) =>
+    selected.some((c) => new RegExp(`^F${n}(?!\\d)`).test(c));
+  const movable = ownFleets.filter((f) => f.ships > 0 || hasSelected(f.number));
   const enemyFleets = fleets.filter((f) => !f.own);
   const targets = Array.from(
     new Set(
@@ -123,6 +141,14 @@ export function buildCommandGroups(
   const opt = (command: string, label = command): CommandOption => ({
     command,
     label,
+  });
+  const transferOpt = (
+    command: string,
+    label: string,
+    available: number,
+  ): CommandOption => ({
+    ...opt(command, label),
+    insufficient: !selected.includes(command) && available < count,
   });
   const groups: CommandGroup[] = [];
   const add = (title: string, rows: CommandRow[]) => {
@@ -173,13 +199,20 @@ export function buildCommandGroups(
       ...ownFleets
         .filter((to) => to.number !== from.number)
         .map((to) =>
-          opt(
+          transferOpt(
             `F${from.number}T${count}F${to.number}`,
             `${count} → F${to.number}`,
+            from.ships,
           ),
         ),
       ...(isOwnWorld
-        ? [opt(`F${from.number}T${count}D`, `${count} → D-Schiffe`)]
+        ? [
+            transferOpt(
+              `F${from.number}T${count}D`,
+              `${count} → D-Schiffe`,
+              from.ships,
+            ),
+          ]
         : []),
     ];
     if (options.length > 0) {
@@ -190,7 +223,11 @@ export function buildCommandGroups(
     transferRows.push({
       label: 'D-Schiffe',
       options: ownFleets.map((to) =>
-        opt(`D${world}T${count}F${to.number}`, `${count} → F${to.number}`),
+        transferOpt(
+        `D${world}T${count}F${to.number}`,
+        `${count} → F${to.number}`,
+        dships,
+      ),
       ),
     });
   }
@@ -206,6 +243,32 @@ export function buildCommandGroups(
   }
 
   return groups;
+}
+
+/**
+ * Gewählte Befehle dieser Welt, die an fehlenden Schiffen scheitern würden:
+ * Transfers ohne genug Schiffe sowie Flug- und Feuerbefehle einer Flotte ohne Schiffe.
+ */
+export function brokenCommands(
+  node: Node,
+  ownColor: string,
+  selected: string[],
+): string[] {
+  const world = node.id.replace(/^W/, '');
+  const projected = applyTransfers(
+    readFleets(node, ownColor),
+    node.data?.dships ?? 0,
+    world,
+    selected,
+  );
+  const empty = new Set(
+    projected.fleets.filter((f) => f.own && f.ships === 0).map((f) => f.number),
+  );
+  const emptyActing = selected.filter((c) => {
+    const match = /^F(\d+)(?:W|AF|AD)/.exec(c);
+    return match !== null && empty.has(+match[1]);
+  });
+  return [...projected.failed, ...emptyActing];
 }
 
 /** Befehle, die im Text stehen (getrennt durch Leerzeichen/Zeilenumbrüche). */

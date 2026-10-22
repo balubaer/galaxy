@@ -38,6 +38,10 @@ button.selected {
   color: #fff;
   border-color: #0d47a1;
 }
+button.broken {
+  background: #c62828;
+  border-color: #b71c1c;
+}
 button:disabled:not(.selected) {
   opacity: 0.4;
   cursor: not-allowed;
