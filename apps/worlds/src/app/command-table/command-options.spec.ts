@@ -47,20 +47,24 @@ describe('buildCommandGroups', () => {
     expect(all).not.toContain('F20W7');
   });
 
-  it('offers fire, transfer, build and ambush on an own world', () => {
+  it('offers fire, stand-by, transfer and ambush on an own world', () => {
     const all = commands(3);
     expect(all).toEqual(
       expect.arrayContaining([
         'F9AF20',
         'D1AF20',
         'F9T3F1',
+        'F9S',
         'F9T3D',
         'D1T3F9',
-        'W1B3F9',
         'Z1',
         'Z',
       ]),
     );
+  });
+
+  it('offers no build command in the core game', () => {
+    expect(commands(3).some((c) => /^W\d+B/.test(c))).toBe(false);
   });
 
   it('offers no build, D-ship transfer or ambush on a foreign world', () => {
@@ -71,7 +75,7 @@ describe('buildCommandGroups', () => {
     const all = buildCommandGroups(foreign, [], OWN, 1).flatMap((g) =>
       g.rows.flatMap((r) => r.options.map((o) => o.command)),
     );
-    expect(all).toEqual(['F9AF20', 'F9AD', 'F9T1F1']);
+    expect(all).toEqual(['F9AF20', 'F9AD', 'F9S', 'F9T1F1']);
   });
 });
 
@@ -81,6 +85,14 @@ describe('conflicts', () => {
     expect(commandsConflict('F9W7', 'F9AF20')).toBe(true);
     expect(commandsConflict('F9W7', 'F90W7')).toBe(false);
     expect(commandsConflict('F9W7', 'F9W7')).toBe(false);
+  });
+
+  it('stand-by (FnnnS) excludes moving and firing of the same fleet', () => {
+    expect(commandsConflict('F9S', 'F9W7')).toBe(true);
+    expect(commandsConflict('F9S', 'F9AF20')).toBe(true);
+    expect(commandsConflict('F9S', 'F9AD')).toBe(true);
+    expect(commandsConflict('F9S', 'F90W7')).toBe(false);
+    expect(commandsConflict('F9S', 'F9T1F1')).toBe(false);
   });
 
   it('Z excludes Znn but Znn do not exclude each other', () => {

@@ -47,7 +47,8 @@ function readFleets(node: Node, ownColor: string): WorldFleet[] {
 
 /**
  * Alle Befehle, die auf der gewählten Welt möglich sind, gruppiert nach Art.
- * Syntax siehe command.ts (FnnnWmmm, WnnnBqqqFmmm, FnnnTqqqFmmm, ...).
+ * Syntax siehe command.ts (FnnnWmmm, FnnnAFmmm, FnnnS, FnnnTqqqFmmm, ...).
+ * Schiffe bauen gibt es im Core Game nicht, sie entstehen nur als D-Schiffe.
  */
 export function buildCommandGroups(
   node: Node,
@@ -100,6 +101,7 @@ export function buildCommandGroups(
         ...(!isOwnWorld && dships > 0
           ? [opt(`F${f.number}AD`, 'auf D-Schiffe')]
           : []),
+        opt(`F${f.number}S`, 'Bereithalten (Hinterhalt)'),
       ],
     }))
     .filter((row) => row.options.length > 0);
@@ -145,20 +147,6 @@ export function buildCommandGroups(
   }
   add('Transfer', transferRows);
 
-  if (isOwnWorld && ownFleets.length > 0) {
-    add('Bauen', [
-      {
-        label: `Welt ${world}`,
-        options: ownFleets.map((f) =>
-          opt(
-            `W${world}B${count}F${f.number}`,
-            `${count} Schiffe → F${f.number}`,
-          ),
-        ),
-      },
-    ]);
-  }
-
   if (isOwnWorld) {
     add('Hinterhalt aus', [
       {
@@ -176,9 +164,9 @@ export function splitCommands(text: string): string[] {
   return (text ?? '').split(/\s+/).filter((c) => c.length > 0);
 }
 
-/** Flotte, die der Befehl verwendet, wenn er ihre einmalige Aktion braucht (bewegen/feuern). */
+/** Flotte, die der Befehl verwendet, wenn er ihre einmalige Aktion braucht (bewegen/feuern/bereithalten). */
 function actingFleet(command: string): string | null {
-  const match = /^(F\d+)(?:W|AF|AD)/.exec(command);
+  const match = /^(F\d+)(?:W|AF|AD|S)/.exec(command);
   return match ? match[1] : null;
 }
 
