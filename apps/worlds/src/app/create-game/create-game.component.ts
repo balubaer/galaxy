@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { GamePref, PlayerColor, coreGameDefaults } from '@galaxy/game-objects';
+import { GamePref, GameType, PlayerColor, coreGameDefaults, classicGameDefaults } from '@galaxy/game-objects';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../game-service.service';
 import { Observable, Subscribable, Subscription } from 'rxjs';
@@ -17,6 +17,7 @@ export class CreateGameComponent implements OnDestroy {
     FleetCount: [''],
     FleetsOnHomeWorld: [''],
     WorldsCount: ['', Validators.required],
+    GameType: ['core'],
     PlayName: [''],
     StartShipCount: ['']
   });
@@ -36,13 +37,16 @@ export class CreateGameComponent implements OnDestroy {
       for (const onePlayerColor of aPlyerColor) {
         this.players.push(onePlayerColor.playername);
       }
-      this.useCoreDefaults();
+      this.useDefaults();
     })
 
   }
 
-  useCoreDefaults() {
-    const defaults = coreGameDefaults(this.players.length);
+  useDefaults() {
+    const gameType: GameType = this.form.value.GameType;
+    const defaults = gameType === 'classic'
+      ? classicGameDefaults(this.players.length)
+      : coreGameDefaults(this.players.length);
     this.form.patchValue({
       DistanceLevelHomes: defaults.distanceLevelHomes,
       FleetCount: defaults.fleetCount,
@@ -62,6 +66,7 @@ export class CreateGameComponent implements OnDestroy {
 
   onSubmit() {
     const gamepref: GamePref = {
+      gameType: this.form.value.GameType,
       distanceLevelHomes: this.form.value.DistanceLevelHomes,
       fleetCount: this.form.value.FleetCount,
       fleetsOnHomeWorld: this.form.value.FleetsOnHomeWorld,

@@ -1,6 +1,10 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h3>Spieleinstellungen</h3>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  Spieltyp: <select formControlName="GameType" (change)="useDefaults()">
+    <option value="core">RSW Core</option>
+    <option value="classic">RSW Classic</option>
+  </select><br />
   Spielname: <input type="string" formControlName="PlayName" /><br />
   Abstand zu den Spielern: <input type="number" formControlName="DistanceLevelHomes" /><br />
   Anzahl Flotten in Spiel: <input type="number" formControlName="FleetCount" /><br />
@@ -19,7 +23,7 @@
     Spieler-Name: <input type="string" formControlName="PlayerName" />
     <button>Spieler zufügen</button>
   </form>
-  <button type="button" (click)="useCoreDefaults()">Core-Standardwerte übernehmen</button><br />
+  <button type="button" (click)="useDefaults()">Standardwerte des Spieltyps übernehmen</button><br />
   <!--  TODO: span [hidden]="!form.get('WorldsCount').hasError('required')"><font color="#FF0000">Anzahl Welten im Spiel ist erforderlich</font></span--><br />
   <button [disabled]="!form.valid">Speichern</button>
 </form>

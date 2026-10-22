@@ -1,4 +1,4 @@
-import { GamePref } from './game-pref.interface';
+import { GamePref, gameTypeOf } from './game-pref.interface';
 import { World } from './world';
 import { Player, isWorldOutPutForPlayer } from './player';
 import { PersistenceManager } from './persistence-manager';
@@ -31,7 +31,7 @@ export class ExecuteCommand {
 
     start(commandsDict: Map<string, string>) {
         const commandFactory = new CommandFactory(this.worlds, this.allPlayerDict);
-        commandFactory.coreGame = true;
+        commandFactory.gameType = gameTypeOf(this.gamePref);
         for (const playerName of this.allPlayerDict.keys()) {
             const commands = commandsDict.get(playerName);
             commandFactory.setCommandStringsWithLongString(playerName, commands);

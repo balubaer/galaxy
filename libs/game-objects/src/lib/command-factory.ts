@@ -3,6 +3,7 @@ import { Player } from './player';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { extractNumberString, isCharacterANumber, extractCharsFromString } from './utils';
 import { MoveCommand, Command, ExecuteCommand, compareCommand, BuildDShips, BuildFleetShip, TransferShipsFleetToFleet, BuildFleetShipEnum, MoveCommandEnum, TransferShipsFleetToFleetEnum, TransferShipsFleetToDShipsEnum, TransferShipsFleetToDShips, TransferDShipsToFleetEnum, TransferDShipsToFleet, FireFleetToFleet, AmbushOffForPlayer, AddTeammate, RemoveTeammate, FireFleetToFleetEnum, FireDShipsToFleetEnum, FireFleetToDShipsEnum, FireDShipsToFleet, AmbushOffForWorldEnum, AmbushOffForWorld, FireFleetToDShips, StandByCommand } from './command';
+import { GameType } from './game-pref.interface';
 import { CommandError, NotInCoreGame_Error, UnknownCommand_Error } from './error';
 
 export interface CommandErrorEntry {
@@ -21,9 +22,18 @@ export class CommandFactory {
     commandElements: Array<string>;
     commandNumberArray: Array<number>;
     allPlayerDict: Map<string, Player>;
-    coreGame = false;
+    /** Spieltyp, nach dessen Regeln Befehle ausgeführt werden; null führt nichts aus (nur Parser). */
+    gameType: GameType | null = null;
     /** Abgelehnte Befehle pro Spieler, für den Bericht. */
     commandErrors: Map<string, Array<CommandErrorEntry>> = new Map();
+
+    get coreGame(): boolean {
+        return this.gameType === 'core';
+    }
+
+    set coreGame(value: boolean) {
+        this.gameType = value ? 'core' : null;
+    }
 
     constructor(aWorldArray: Array<World>, aAllPlayerDict: Map<string, Player>) {
         this.worlds = aWorldArray;
@@ -442,11 +452,13 @@ export class CommandFactory {
             }
         }
 
-        if (this.coreGame === true) {
-            for (const aPlayerName of this.allPlayerDict.keys()) {
-                const player = this.allPlayerDict.get(aPlayerName);
-                const buildDShips = new BuildDShips(this.worlds, player)
-                commandArray.push(buildDShips as Command);
+        if (this.gameType !== null) {
+            if (this.coreGame) {
+                for (const aPlayerName of this.allPlayerDict.keys()) {
+                    const player = this.allPlayerDict.get(aPlayerName);
+                    const buildDShips = new BuildDShips(this.worlds, player)
+                    commandArray.push(buildDShips as Command);
+                }
             }
 
             commandArray.sort(compareCommand);
