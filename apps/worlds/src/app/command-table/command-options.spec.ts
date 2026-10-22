@@ -42,10 +42,9 @@ function commands(count = 1): string[] {
 }
 
 describe('buildCommandGroups', () => {
-  it('offers moves only for own fleets with ships, along outgoing links', () => {
+  it('offers moves for all own fleets, also empty ones, along outgoing links', () => {
     const all = commands();
-    expect(all).toEqual(expect.arrayContaining(['F9W7', 'F9W6']));
-    expect(all).not.toContain('F1W7');
+    expect(all).toEqual(expect.arrayContaining(['F9W7', 'F9W6', 'F1W7']));
     expect(all).not.toContain('F20W7');
   });
 
@@ -77,18 +76,18 @@ describe('buildCommandGroups', () => {
     const all = buildCommandGroups(foreign, [], OWN, 1).flatMap((g) =>
       g.rows.flatMap((r) => r.options.map((o) => o.command)),
     );
-    expect(all).toEqual(['F9AF20', 'F9AD', 'F9S', 'F9T1F1']);
+    expect(all).toEqual([
+      'F1AF20', 'F1AD', 'F1S',
+      'F9AF20', 'F9AD', 'F9S',
+      'F1T1F9', 'F9T1F1',
+    ]);
   });
 });
 
 describe('buildCommandGroups with selected transfers', () => {
-  it('offers moves for an empty own fleet once a transfer fills it', () => {
-    const run = (selected: string[]) =>
-      buildCommandGroups(node, links, OWN, 1, selected).flatMap((g) =>
-        g.rows.flatMap((r) => r.options.map((o) => o.command)),
-      );
-    expect(run([])).not.toContain('F1W7');
-    expect(run(['F9T1F1'])).toEqual(expect.arrayContaining(['F1W7', 'F9W7']));
+  it('marks a move of an empty own fleet as broken until a transfer fills it', () => {
+    expect(brokenCommands(node, OWN, ['F1W7'])).toEqual(['F1W7']);
+    expect(brokenCommands(node, OWN, ['F9T1F1', 'F1W7'])).toEqual([]);
   });
 });
 
@@ -347,6 +346,21 @@ describe('Classic Game: M3', () => {
     expect(brokenCommands(m3Node, OWN, ['F9T9I'])).toEqual(['F9T9I']);
     expect(brokenCommands(m3Node, OWN, ['I1T5F1'])).toEqual(['I1T5F1']);
     expect(brokenCommands(m3Node, OWN, ['I1T2F1', 'F1W7'])).toEqual([]);
+  });
+
+  it('keeps selected build and transfer commands visible whatever the count field says', () => {
+    const selected = ['W1B7F1', 'F9T4F1', 'I1T3P', 'W1I2I', 'P1M6W7'];
+    const all = commandsOf(options(1, selected));
+    expect(all).toEqual(expect.arrayContaining([...selected, 'W1B1F1', 'F9T1F1', 'I1T1P']));
+    expect(options(1, selected).filter((o) => selected.includes(o.command)).every((o) => !o.insufficient)).toBe(true);
+    expect(all.filter((c) => /^W1B\d+F1$/.test(c))).toEqual(['W1B1F1', 'W1B7F1']);
+  });
+
+  it('counts ships built for a fleet so that it can move in the same turn', () => {
+    expect(brokenCommands(m3Node, OWN, ['F1W7'])).toEqual(['F1W7']);
+    expect(brokenCommands(m3Node, OWN, ['W1B5F1', 'F1W7'])).toEqual([]);
+    // Gebaut wird erst nach den Transfers, die neuen Schiffe lassen sich nicht im selben Zug abgeben.
+    expect(brokenCommands(m3Node, OWN, ['W1B5F1', 'F1T2F9'])).toEqual(['F1T2F9']);
   });
 
   it('offers At Peace, gifts and relations', () => {

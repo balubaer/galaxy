@@ -1,16 +1,20 @@
 @if (node) {
   <div class="command-table">
     <h3>Befehle für {{ node.id }}</h3>
-    <label class="count">
-      Anzahl (Schiffe, Metall, Industrie, Bevölkerung)
-      <input
-        type="number"
-        min="1"
-        [value]="count"
-        (input)="setCount($any($event.target).value)"
-      />
-    </label>
-    @for (group of groups; track group.title) {
+    @let allGroups = groups;
+    @let countTitle = countGroupTitle(allGroups);
+    @for (group of allGroups; track group.title) {
+      @if (group.title === countTitle) {
+        <label class="count">
+          Anzahl (Schiffe, Metall, Industrie, Bevölkerung)
+          <input
+            type="number"
+            min="1"
+            [value]="count"
+            (input)="setCount($any($event.target).value)"
+          />
+        </label>
+      }
       <table>
         <caption>
           {{

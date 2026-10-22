@@ -42,6 +42,11 @@ export class CommandTableComponent {
 
   count = 1;
 
+  /** Gruppe, über der das Feld Anzahl steht: die erste, deren Befehle eine Anzahl haben. */
+  countGroupTitle(groups: CommandGroup[]): string | undefined {
+    return groups.find((g) => ['Transfer', 'Bauen', 'Metall'].includes(g.title))?.title;
+  }
+
   get groups(): CommandGroup[] {
     return this.node
       ? buildCommandGroups(

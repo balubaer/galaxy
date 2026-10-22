@@ -163,6 +163,14 @@ function applyTransfers(
       }
     }
   }
+  // Gebaut wird erst nach den Transfers; die neuen Schiffe kann die Flotte im selben Zug fliegen lassen.
+  for (const command of selected) {
+    const build = new RegExp(`^W${world}B(\\d+)F(\\d+)$`).exec(command);
+    const to = build ? find(+build[2]) : undefined;
+    if (build && to) {
+      to.ships += +build[1];
+    }
+  }
   return { fleets: result, dships, failed, i: iShips, p: pShips };
 }
 
@@ -237,7 +245,8 @@ export function buildCommandGroups(
   // Flotten mit gewähltem Befehl bleiben sichtbar, damit der Befehl wieder abgewählt werden kann.
   const hasSelected = (n: number) =>
     selected.some((c) => new RegExp(`^F${n}(?!\\d)`).test(c));
-  const movable = ownFleets.filter((f) => f.ships > 0 || hasSelected(f.number));
+  // Auch leere Flotten: Ob Bau- oder Transferbefehle sie füllen, zeigt erst die Markierung fehlerhafter Befehle.
+  const movable = ownFleets;
   const enemyFleets = fleets.filter((f) => !f.own);
   const targets = Array.from(
     new Set(
@@ -251,13 +260,26 @@ export function buildCommandGroups(
     command,
     label,
   });
+  // Ein Button je Anzahl: die aus dem Feld Anzahl und jede, mit der der Befehl schon gewählt ist.
+  const counted = (make: (n: number) => CommandOption): CommandOption[] => {
+    const pattern = new RegExp(`^${make(-1).command.replace('-1', '(\\d+)')}$`);
+    const counts = new Set([count]);
+    for (const command of selected) {
+      const match = pattern.exec(command);
+      if (match) {
+        counts.add(+match[1]);
+      }
+    }
+    return [...counts].sort((a, b) => a - b).map(make);
+  };
   const transferOpt = (
     command: string,
     label: string,
     available: number,
+    amount: number,
   ): CommandOption => ({
     ...opt(command, label),
-    insufficient: !selected.includes(command) && available < count,
+    insufficient: !selected.includes(command) && available < amount,
   });
   const groups: CommandGroup[] = [];
   const add = (title: string, rows: CommandRow[]) => {
@@ -307,21 +329,15 @@ export function buildCommandGroups(
     const options = [
       ...ownFleets
         .filter((to) => to.number !== from.number)
-        .map((to) =>
-          transferOpt(
-            `F${from.number}T${count}F${to.number}`,
-            `${count} → F${to.number}`,
-            from.ships,
+        .flatMap((to) =>
+          counted((n) =>
+            transferOpt(`F${from.number}T${n}F${to.number}`, `${n} → F${to.number}`, from.ships, n),
           ),
         ),
       ...(isOwnWorld && !classic
-        ? [
-            transferOpt(
-              `F${from.number}T${count}D`,
-              `${count} → D-Schiffe`,
-              from.ships,
-            ),
-          ]
+        ? counted((n) =>
+            transferOpt(`F${from.number}T${n}D`, `${n} → D-Schiffe`, from.ships, n),
+          )
         : []),
     ];
     if (options.length > 0) {
@@ -331,12 +347,10 @@ export function buildCommandGroups(
   if (isOwnWorld && dships > 0 && ownFleets.length > 0) {
     transferRows.push({
       label: 'D-Schiffe',
-      options: ownFleets.map((to) =>
-        transferOpt(
-        `D${world}T${count}F${to.number}`,
-        `${count} → F${to.number}`,
-        dships,
-      ),
+      options: ownFleets.flatMap((to) =>
+        counted((n) =>
+          transferOpt(`D${world}T${n}F${to.number}`, `${n} → F${to.number}`, dships, n),
+        ),
       ),
     });
   }
@@ -345,8 +359,8 @@ export function buildCommandGroups(
       transferRows.push({
         label: `Flotte ${from.number} → Welt`,
         options: [
-          transferOpt(`F${from.number}T${count}I`, `${count} → I-Schiffe`, from.ships),
-          transferOpt(`F${from.number}T${count}P`, `${count} → P-Schiffe`, from.ships),
+          ...counted((n) => transferOpt(`F${from.number}T${n}I`, `${n} → I-Schiffe`, from.ships, n)),
+          ...counted((n) => transferOpt(`F${from.number}T${n}P`, `${n} → P-Schiffe`, from.ships, n)),
         ],
       });
     }
@@ -358,10 +372,14 @@ export function buildCommandGroups(
       transferRows.push({
         label,
         options: [
-          ...ownFleets.map((to) =>
-            transferOpt(`${kind}${world}T${count}F${to.number}`, `${count} → F${to.number}`, available),
+          ...ownFleets.flatMap((to) =>
+            counted((n) =>
+              transferOpt(`${kind}${world}T${n}F${to.number}`, `${n} → F${to.number}`, available, n),
+            ),
           ),
-          transferOpt(`${kind}${world}T${count}${other}`, `${count} → ${other}-Schiffe`, available),
+          ...counted((n) =>
+            transferOpt(`${kind}${world}T${n}${other}`, `${n} → ${other}-Schiffe`, available, n),
+          ),
         ],
       });
     }
@@ -383,42 +401,35 @@ export function buildCommandGroups(
         {
           label: `Schiffe (Industrie übrig: ${remaining})`,
           options: [
-            buildOpt(`W${world}B${count}I`, `${count} → I-Schiffe`, count),
-            buildOpt(`W${world}B${count}P`, `${count} → P-Schiffe`, count),
-            ...ownFleets.map((f) =>
-              buildOpt(`W${world}B${count}F${f.number}`, `${count} → F${f.number}`, count),
+            ...counted((n) => buildOpt(`W${world}B${n}I`, `${n} → I-Schiffe`, n)),
+            ...counted((n) => buildOpt(`W${world}B${n}P`, `${n} → P-Schiffe`, n)),
+            ...ownFleets.flatMap((f) =>
+              counted((n) => buildOpt(`W${world}B${n}F${f.number}`, `${n} → F${f.number}`, n)),
             ),
           ],
         },
         {
           label: 'Industrie / Limit',
           options: [
-            buildOpt(
-              `W${world}I${count}I`,
-              `${count} Industrie bauen`,
-              count * CLASSIC_EMPEROR_INDUSTRY_COST,
+            ...counted((n) =>
+              buildOpt(`W${world}I${n}I`, `${n} Industrie bauen`, n * CLASSIC_EMPEROR_INDUSTRY_COST),
             ),
-            buildOpt(
-              `W${world}I${count}L`,
-              `Bev.-Limit +${count}`,
-              count * CLASSIC_BUILD_COST,
+            ...counted((n) =>
+              buildOpt(`W${world}I${n}L`, `Bev.-Limit +${n}`, n * CLASSIC_BUILD_COST),
             ),
-            {
-              ...opt(
-                `W${world}S${count}`,
-                `${count} Industrie durch Verschrotten`,
-              ),
+            ...counted((n) => ({
+              ...opt(`W${world}S${n}`, `${n} Industrie durch Verschrotten`),
               insufficient:
-                !selected.includes(`W${world}S${count}`) &&
-                count * CLASSIC_EMPEROR_SCRAP_I_SHIPS >
+                !selected.includes(`W${world}S${n}`) &&
+                n * CLASSIC_EMPEROR_SCRAP_I_SHIPS >
                   remainingIShips(classic, world, selected),
-            },
+            })),
           ],
         },
         {
           label: 'Migration',
-          options: targets.map((t) =>
-            buildOpt(`P${world}M${count}W${t.replace(/^W/, '')}`, `${count} → ${t}`, count),
+          options: targets.flatMap((t) =>
+            counted((n) => buildOpt(`P${world}M${n}W${t.replace(/^W/, '')}`, `${n} → ${t}`, n)),
           ),
         },
       ]);
@@ -433,7 +444,7 @@ export function buildCommandGroups(
             ...(f.metal > 0
               ? [
                   opt(`F${f.number}U`, 'alles entladen'),
-                  opt(`F${f.number}U${count}`, `${count} entladen`),
+                  ...counted((n) => opt(`F${f.number}U${n}`, `${n} entladen`)),
                   opt(`F${f.number}N`, 'alles als Konsumgüter'),
                   opt(`F${f.number}J`, 'alles wegwerfen'),
                 ]
@@ -441,7 +452,7 @@ export function buildCommandGroups(
             ...(isOwnWorld && f.ships > 0
               ? [
                   opt(`F${f.number}L`, 'laden (max.)'),
-                  opt(`F${f.number}L${count}`, `${count} laden`),
+                  ...counted((n) => opt(`F${f.number}L${n}`, `${n} laden`)),
                 ]
               : []),
           ],
