@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 @Controller('create-world')
 export class CreateWorldController {
@@ -15,6 +15,7 @@ export class CreateWorldController {
     const worldGen = new WorldGenerator(gamepref);
     let outString = '';
     const outPath = `${gamepref.playName}/Turn${gamepref.round}/`
+    mkdirSync(outPath, { recursive: true });
 
     const worldsPersist: WorldsPersist = worldGen.generate();
     for (const world of worldGen.worlds) {

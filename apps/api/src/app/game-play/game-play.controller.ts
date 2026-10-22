@@ -62,7 +62,7 @@ export class GamePlayController {
     }
     const turnPath = `${playName}/Turn${gamepref.round + 1}`;
     if (existsSync(turnPath) === false) {
-      mkdirSync(turnPath);
+      mkdirSync(turnPath, { recursive: true });
     }
 
     const commandFile = `${turnPath}/${request.player}.txt`;
@@ -234,6 +234,7 @@ export class GamePlayController {
     executeCommand.start(commandsDict);
     checkGameEnd(gamepref, executeCommand.allPlayerDict.values());
 
+    mkdirSync(`${gamepref.playName}/Turn${gamepref.round}`, { recursive: true });
     const outputDict = executeCommand.generateOutput();
     const grafDict = executeCommand.generateNodeAndLinks();
 
