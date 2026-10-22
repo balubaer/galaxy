@@ -22,3 +22,4 @@ export * from './lib/out-put-string-with-nodes-and-links.interface';
 export * from './lib/request-turn-data-only-player-and-round.interface';
 export * from './lib/player-color.interface';
 export * from './lib/strip-graph-factory';
+export * from './lib/core-game-rules';

@@ -88,23 +88,8 @@ export class PortFactory {
     }
 
     getStartWorldWithDiceAndWorldArray(): World {
-        let result: World = null;
-        this.dice.setSites(this.workingWorlds.length);
-        let indexNumber = this.dice.roll();
-        let realIndex = indexNumber - 1;
-        result = this.workingWorlds[realIndex];
-
-        if (result !== null) {
-            let found = this.isWorldForNewConnectionOK(result);
-
-            while (!found) {
-                indexNumber = this.dice.roll();
-                realIndex = indexNumber - 1;
-                result = this.workingWorlds[realIndex];
-                found = this.isWorldForNewConnectionOK(result);
-            }
-        }
-        return result;
+        const candidates = this.workingWorlds.filter(w => this.isWorldForNewConnectionOK(w));
+        return candidates.length > 0 ? this.pickWorld(candidates) : null;
     }
 
     isEndWorldForNewConnectionOK(aEndWorld: World, aStartWorld: World): boolean {
@@ -120,50 +105,106 @@ export class PortFactory {
     }
 
     getEndWorldWithDiceAndStartWorld(aStartWorld: World): World {
-        let result: World = null;
-        this.dice.setSites(this.workingWorlds.length);
-        let indexNumber = this.dice.roll();
-        let realIndex = indexNumber - 1;
-        result = this.workingWorlds[realIndex];
-
-        if (result !== null) {
-            let found = this.isEndWorldForNewConnectionOK(result, aStartWorld);
-
-            while (!found) {
-                indexNumber = this.dice.roll();
-                realIndex = indexNumber - 1;
-                result = this.workingWorlds[realIndex];
-
-                found = this.isEndWorldForNewConnectionOK(result, aStartWorld);
-            }
-        }
-
-        return result
+        const candidates = this.workingWorlds.filter(w => this.isEndWorldForNewConnectionOK(w, aStartWorld));
+        return candidates.length > 0 ? this.pickWorld(candidates) : null;
     }
 
-    generateOneConnection() {
+    generateOneConnection(): boolean {
+        let created = false;
         let startWorld: World;
         let endWorld: World;
         startWorld = this.getStartWorldWithDiceAndWorldArray();
         if (startWorld !== null) {
             endWorld = this.getEndWorldWithDiceAndStartWorld(startWorld);
-            if (endWorld != null) {
+            if (endWorld !== null) {
                 startWorld.port.worlds.push(endWorld);
                 endWorld.port.worlds.push(startWorld);
                 this.addWorldWithEnoughConnectionTest(startWorld);
                 this.addWorldWithEnoughConnectionTest(endWorld);
                 this.removeWorldFromWorkArrayWithMaxConnectionTest(startWorld);
                 this.removeWorldFromWorkArrayWithMaxConnectionTest(endWorld);
+                created = true;
             }
         }
+        return created;
     }
 
     generateWorldConnection() {
         while (!this.isAllConnectionCreated() && !this.abort) {
-            this.generateOneConnection()
-            if (this.workingWorlds.length < 2) {
+            const created = this.generateOneConnection()
+            if (this.workingWorlds.length < 2 || !created) {
                 this.abort = true;
             }
+        }
+    }
+
+    /**
+     * Breitensuche über die Ports: Alle Welten, die von aStart erreichbar sind.
+     */
+    reachableWorlds(aStart: World): Set<World> {
+        const result = new Set<World>();
+        const queue: Array<World> = [aStart];
+        result.add(aStart);
+        while (queue.length > 0) {
+            const world = queue.shift();
+            if (world.port !== null) {
+                for (const neighbour of world.port.worlds) {
+                    if (!result.has(neighbour)) {
+                        result.add(neighbour);
+                        queue.push(neighbour);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    isConnected(worldArray: Array<World>): boolean {
+        if (worldArray.length === 0) {
+            return true;
+        }
+        return this.reachableWorlds(worldArray[0]).size === worldArray.length;
+    }
+
+    /**
+     * Teilt die Welten in zusammenhängende Teile.
+     */
+    connectedComponents(worldArray: Array<World>): Array<Array<World>> {
+        const result: Array<Array<World>> = [];
+        const seen = new Set<World>();
+        for (const world of worldArray) {
+            if (!seen.has(world)) {
+                const component = Array.from(this.reachableWorlds(world));
+                component.forEach(w => seen.add(w));
+                result.push(component);
+            }
+        }
+        return result;
+    }
+
+    private pickWorld(candidates: Array<World>): World {
+        this.dice.setSites(candidates.length);
+        return candidates[this.dice.roll() - 1];
+    }
+
+    /**
+     * Verbindet getrennte Teile der Galaxie mit je einer Verbindung,
+     * bis alle Welten erreichbar sind. Welten mit weniger Verbindungen werden bevorzugt.
+     */
+    connectComponents(worldArray: Array<World>) {
+        let components = this.connectedComponents(worldArray);
+        while (components.length > 1) {
+            const first = components[0];
+            const second = components[1];
+            const preferred = (component: Array<World>) => {
+                const free = component.filter(w => w.port.worlds.length < this.maxCount);
+                return free.length > 0 ? free : component;
+            };
+            const startWorld = this.pickWorld(preferred(first));
+            const endWorld = this.pickWorld(preferred(second));
+            startWorld.port.worlds.push(endWorld);
+            endWorld.port.worlds.push(startWorld);
+            components = this.connectedComponents(worldArray);
         }
     }
 
@@ -192,44 +233,33 @@ export class PortFactory {
     }
 
     getWorldforClearConnectionWithDiceAndWorldArray(): World {
-        let result: World = null;
-        this.dice.setSites(this.workingWorlds.length);
-        let indexNumber = this.dice.roll();
-        let realIndex = indexNumber - 1;
-        result = this.workingWorlds[realIndex];
-
-        if (result !== null) {
-            let found = this.isWorldForClearConnectionOK(result)
-
-            while (!found) {
-                indexNumber = this.dice.roll();
-                realIndex = indexNumber - 1;
-                result = this.workingWorlds[realIndex];
-
-                found = this.isWorldForClearConnectionOK(result)
-            }
-        }
-        return result
+        const candidates = this.workingWorlds.filter(w => this.isWorldForClearConnectionOK(w));
+        return candidates.length > 0 ? this.pickWorld(candidates) : null;
     }
 
+    /**
+     * Entfernt eine zufällige Verbindung, aber nie eine, ohne die die Galaxie zerfiele.
+     */
     clearOneConnection() {
-        const world = this.getWorldforClearConnectionWithDiceAndWorldArray()
+        const world = this.getWorldforClearConnectionWithDiceAndWorldArray();
+        if (world === null) {
+            return;
+        }
         const port = world.port;
-        if (port !== null) {
-            this.dice.setSites(port.worlds.length);
-            const indexNumber = this.dice.roll();
+        this.dice.setSites(port.worlds.length);
+        const realIndex = this.dice.roll() - 1;
+        const worldFromPort = port.worlds[realIndex];
 
-            const realIndex = indexNumber - 1;
-            const worldFromPort = port.worlds[realIndex];
+        port.worlds.splice(realIndex, 1);
+        const portFPFP = worldFromPort.port;
+        const index = portFPFP.worlds.indexOf(world);
+        if (index !== -1) {
+            portFPFP.worlds.splice(index, 1);
+        }
 
-            port.worlds.splice(realIndex, 1);
-            const portFPFP = worldFromPort.port;
-            if (portFPFP !== null) {
-                const index = portFPFP.worlds.indexOf(world);
-                if (index !== -1) {
-                    portFPFP.worlds.splice(index, 1);
-                }
-            }
+        if (this.reachableWorlds(world).size !== this.worldsCount) {
+            port.worlds.splice(realIndex, 0, worldFromPort);
+            portFPFP.worlds.push(world);
         }
     }
 
@@ -244,6 +274,7 @@ export class PortFactory {
             port.setWorld(world);
         }
         this.generateWorldConnection()
+        this.connectComponents(worldArray);
         this.maxCount = 5
         this.workingWorlds.length = 0;
         for (const world of worldArray) {

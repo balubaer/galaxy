@@ -40,7 +40,7 @@ export class OutPutLists {
             }
             result.set(playerName, {
                 outPutString: outPutString,
-               // nodesAndLinks: nodesAndLinks
+               nodesAndLinks: nodesAndLinks
             });
         }
         return result;

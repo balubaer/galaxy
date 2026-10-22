@@ -12,6 +12,9 @@
 @if (gamepref) {
   <div>
     <div>Runde: <b>"{{ gamepref.round }}"</b></div>
+    @if (gamepref.finished) {
+      <div>Das Spiel ist beendet. Sieger: <b>{{ gamepref.winner }}</b></div>
+    }
   </div>
 }
 <br/>

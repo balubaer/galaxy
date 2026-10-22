@@ -19,6 +19,7 @@
     Spieler-Name: <input type="string" formControlName="PlayerName" />
     <button>Spieler zufügen</button>
   </form>
+  <button type="button" (click)="useCoreDefaults()">Core-Standardwerte übernehmen</button><br />
   <!--  TODO: span [hidden]="!form.get('WorldsCount').hasError('required')"><font color="#FF0000">Anzahl Welten im Spiel ist erforderlich</font></span--><br />
   <button [disabled]="!form.valid">Speichern</button>
 </form>

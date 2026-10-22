@@ -12,12 +12,10 @@ export class FleetFactory {
     }
     
     createWithWorldArray(worldArray:Array <World>) {
-        const worldCount = worldArray.length;
-        const worldCountPlusOne = worldCount + 1;
         this.dice.setSites(worldArray.length)
 
         //Create Fleets
-        for (let index = 1; index < worldCountPlusOne; index++){
+        for (let index = 1; index <= this.fleetCount; index++){
             const world: World = worldWithNumber(worldArray, this.dice.roll())
 
             if (world !== null) {

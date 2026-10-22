@@ -1,6 +1,6 @@
-//import { NodesAndLinks } from './nodes-and-links.interface';
+import { NodesAndLinks } from './nodes-and-links.interface';
 
 export interface OutPutStringWithNodesAndLinksInterface {
     outPutString: string;
-   // nodesAndLinks: NodesAndLinks;
+    nodesAndLinks: NodesAndLinks;
 }

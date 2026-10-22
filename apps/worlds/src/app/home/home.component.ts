@@ -56,6 +56,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   zoom = 1;
 
   round = 0;
+  gameFinished = false;
+  winner = '';
   changeround = 0;
   playercolor$: Observable<Array<PlayerColor>> | undefined;
 
@@ -122,6 +124,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.gamePrefSubsription = this.gamePref$.subscribe((aGamePref) => {
       this.round = aGamePref.round;
       this.changeround = aGamePref.round;
+      this.gameFinished = aGamePref.finished === true;
+      this.winner = aGamePref.winner ?? '';
     });
   }
 

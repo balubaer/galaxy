@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { GamePref, PlayerColor } from '@galaxy/game-objects';
+import { GamePref, PlayerColor, coreGameDefaults } from '@galaxy/game-objects';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../game-service.service';
 import { Observable, Subscribable, Subscription } from 'rxjs';
@@ -36,8 +36,20 @@ export class CreateGameComponent implements OnDestroy {
       for (const onePlayerColor of aPlyerColor) {
         this.players.push(onePlayerColor.playername);
       }
+      this.useCoreDefaults();
     })
 
+  }
+
+  useCoreDefaults() {
+    const defaults = coreGameDefaults(this.players.length);
+    this.form.patchValue({
+      DistanceLevelHomes: defaults.distanceLevelHomes,
+      FleetCount: defaults.fleetCount,
+      FleetsOnHomeWorld: defaults.fleetsOnHomeWorld,
+      WorldsCount: defaults.worldCount,
+      StartShipCount: defaults.startShipCount
+    });
   }
 
   ngOnDestroy(): void {

@@ -32,13 +32,16 @@ export class WorldGenerator {
         portFactory.createWithWorldArray(this.worlds);
 
         //Create Fleets with FleetFactory
-        const fleetFactory = new FleetFactory(this.gamePref.fleetCount);
+        //Für die Startflotten aller Spieler müssen genug Flotten existieren
+        const neededFleets = this.gamePref.player.length * this.gamePref.fleetsOnHomeWorld;
+        const fleetCount = Math.max(this.gamePref.fleetCount, neededFleets);
+        const fleetFactory = new FleetFactory(fleetCount);
 
         fleetFactory.createWithWorldArray(this.worlds);
 
         //Create Player with PlayerFactory
         const playerFactory = new PlayerFactory(this.gamePref.player);
-        playerFactory.createWithWorldArray(this.worlds, this.gamePref.fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
+        playerFactory.createWithWorldArray(this.worlds, fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
 
         //Write to file
         const pm = new PersistenceManager(this.worlds);

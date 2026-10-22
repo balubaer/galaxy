@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Query, Post } from '@nestjs/common';
+import { Controller, Get, Body, Query, Post, ForbiddenException } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import {
   RequestTurnData,
@@ -13,6 +13,7 @@ import {
   World,
   RequestTurnDataOnlyPlayerAndRound,
   StripGraphFactory,
+  checkGameEnd,
 } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
@@ -56,6 +57,9 @@ export class GamePlayController {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
     const playName = gamepref.playName;
+    if (gamepref.finished) {
+      throw new ForbiddenException('Das Spiel ist beendet.');
+    }
     const turnPath = `${playName}/Turn${gamepref.round + 1}`;
     if (existsSync(turnPath) === false) {
       mkdirSync(turnPath);
@@ -202,6 +206,9 @@ export class GamePlayController {
   executeRound(): Message {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
+    if (gamepref.finished) {
+      throw new ForbiddenException('Das Spiel ist beendet.');
+    }
     const executeCommand = new ExecuteCommand(
       gamepref,
       this.appService.getColorPlayerMap(),
@@ -225,16 +232,16 @@ export class GamePlayController {
       }
     }
     executeCommand.start(commandsDict);
+    checkGameEnd(gamepref, executeCommand.allPlayerDict.values());
 
     const outputDict = executeCommand.generateOutput();
-   // const grafDict = executeCommand.generateNodeAndLinks();
+    const grafDict = executeCommand.generateNodeAndLinks();
 
     for (const playerName of outputDict.keys()) {
       const outputFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}.out`;
       writeFileSync(outputFile, outputDict.get(playerName));
-    //  outputFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}_graf.json`;
-    //  const grafData = JSON.stringify(grafDict.get(playerName));
-    //  writeFileSync(outputFile, grafData);
+      const grafFile = `${gamepref.playName}/Turn${gamepref.round}/${playerName}_graf.json`;
+      writeFileSync(grafFile, JSON.stringify(grafDict.get(playerName)));
     }
     const resultWorldsPersist = executeCommand.generateResultWorlds();
 

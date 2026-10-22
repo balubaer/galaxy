@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { GamePref, World, WorldGenerator, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface } from '@galaxy/game-objects';
+import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
-import { readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 @Controller('create-world')
 export class CreateWorldController {
@@ -11,7 +11,7 @@ export class CreateWorldController {
   @Get('CreateWorld')
   getData(): Message {
     const stringData = readFileSync('gamePref.json', 'utf8');
-    const gamepref: GamePref = JSON.parse(stringData);
+    const gamepref: GamePref = startGamePref(JSON.parse(stringData));
     const worldGen = new WorldGenerator(gamepref);
     let outString = '';
     const outPath = `${gamepref.playName}/Turn${gamepref.round}/`
@@ -26,13 +26,14 @@ export class CreateWorldController {
     for (const playerName of output.keys()) {
       const outPutStringWithNodesAndLinks: OutPutStringWithNodesAndLinksInterface = output.get(playerName);
       writeFileSync(`${outPath}${playerName}.out`, outPutStringWithNodesAndLinks.outPutString);
-      /*const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
-      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);*/
+      const grafData = JSON.stringify(outPutStringWithNodesAndLinks.nodesAndLinks);
+      writeFileSync(`${outPath}${playerName}_graf.json`, grafData);
     }
 
     const data = JSON.stringify(worldsPersist);
     writeFileSync(outPath + 'worlds.json', data);
     writeFileSync(outPath + 'worlds.txt', outString);
+    writeFileSync('gamePref.json', JSON.stringify(gamepref));
     return { message: 'OK' };
   }
 
@@ -41,7 +42,7 @@ export class CreateWorldController {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
 
-    return gamepref;
+    return publicGamePref(gamepref);
   }
 
   @Get('GetGamePref2')
@@ -58,7 +59,12 @@ export class CreateWorldController {
 
   @Post('SetGamePref')
   setGamePref(@Body() gamepref: GamePref) {
-    const data = JSON.stringify(gamepref);
+    let newPref = publicGamePref(gamepref);
+    if (existsSync('gamePref.json')) {
+      const stored: GamePref = JSON.parse(readFileSync('gamePref.json', 'utf8'));
+      newPref = keepHiddenGamePref(newPref, stored);
+    }
+    const data = JSON.stringify(newPref);
 
     writeFileSync('gamePref.json', data);
   }

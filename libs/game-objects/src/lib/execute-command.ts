@@ -63,6 +63,7 @@ export class ExecuteCommand {
             const outPutStatistic = new OutputPlyerStatisticCoreGame(this.worlds, player);
             outPutStatistic.calculateStatistic();
             outPutString += `${outPutStatistic.description()}\n`;
+            outPutString += this.createEndString();
             outPutString += this.createErrorString(playerName);
             for (const world of this.worlds) {
                 if (isWorldOutPutForPlayer(player, world)) {
@@ -72,6 +73,14 @@ export class ExecuteCommand {
             outputDict.set(playerName, outPutString);
         }
         return outputDict;
+    }
+
+    createEndString(): string {
+        let result = '';
+        if (this.gamePref.finished) {
+            result = `Das Spiel ist beendet. Sieger: ${this.gamePref.winner}\n\n`;
+        }
+        return result;
     }
 
     createErrorString(playerName: string): string {
