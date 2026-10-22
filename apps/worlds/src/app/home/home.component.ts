@@ -226,24 +226,46 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('text-anchor', 'middle')
       .text((d) => d.id);
 
-    // Classic Game: Industrie/Metall und I-/P-Schiffe als kleine Zeile unter der Welt.
+    // Classic Game: InfoBox mit den Weltenwerten unterhalb der Flotten.
     th.nodes.each(function (this: SVGGElement, d: any) {
       const info = d.data?.classic;
       if (!info || info.blackHole) {
         return;
       }
-      const group = d3.select(this);
-      group.append('title').text(
-        `${d.id}: Bev ${info.population}/${info.populationLimit}, Ind ${info.industry}, Metall ${info.metal}, Minen ${info.mines}, I ${info.iShips}, P ${info.pShips}`
-      );
-      group
-        .append('text')
-        .attr('dy', 19)
-        .attr('font-family', 'sans-serif')
-        .attr('font-size', 4.5)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#333')
-        .text(`Ind ${info.industry} · Me ${info.metal} · I${info.iShips}/P${info.pShips}`);
+      const lines = [
+        `Bev ${info.population}/${info.populationLimit}`,
+        `Ind ${info.industry} · Metall ${info.metal}`,
+        `Minen ${info.mines}`,
+        `I ${info.iShips} · P ${info.pShips}`,
+      ];
+      const lineHeight = 5.5;
+      const boxWidth = 40;
+      const boxHeight = lines.length * lineHeight + 3;
+      // Die Flotten liegen bis ca. 25 unterhalb des Mittelpunkts, die Box beginnt darunter.
+      const boxTop = 28;
+      const box = d3.select(this).append('g').attr('class', 'info-box');
+      box.append('title').text(`${d.id}: ${lines.join(', ')}, Besitz seit ${info.turnsOwned}`);
+      box
+        .append('rect')
+        .attr('x', -boxWidth / 2)
+        .attr('y', boxTop)
+        .attr('width', boxWidth)
+        .attr('height', boxHeight)
+        .attr('rx', 2)
+        .style('fill', 'white')
+        .style('fill-opacity', 0.9)
+        .style('stroke', '#999')
+        .style('stroke-width', 0.4);
+      lines.forEach((line, index) => {
+        box
+          .append('text')
+          .attr('x', -boxWidth / 2 + 2)
+          .attr('y', boxTop + 1.5 + (index + 1) * lineHeight - 1.5)
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', 4)
+          .attr('fill', '#222')
+          .text(line);
+      });
     });
 
     th.nodes.on('click', clicked);
