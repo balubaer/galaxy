@@ -90,6 +90,12 @@ export class Fleet implements NumberKey {
             }
             infoArray.push(desc)
         }
+        if (this.metal > 0) {
+            infoArray.push(`Metall=${this.metal}`);
+        }
+        if (this.atPeace === true) {
+            infoArray.push('At Peace');
+        }
         if (this.fired === true) {
             infoArray.push(`feuert auf ${this.firesTo}`);
         }

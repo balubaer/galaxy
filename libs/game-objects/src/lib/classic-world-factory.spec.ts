@@ -1,3 +1,4 @@
+import { PersistenceGrafManager } from './persistence-graf-manager';
 import { ClassicWorldFactory } from './classic-world-factory';
 import { WorldGenerator } from './world-generator';
 import { PersistenceManager } from './persistence-manager';
@@ -135,5 +136,54 @@ describe('PersistenceManager Classic-Felder', () => {
     const w1 = new World(); w1.setNumber(1);
     const persist = new PersistenceManager([w1]).getWorldPersistWithWorld(w1);
     expect(Object.keys(persist).sort()).toEqual(['dShips', 'fleets', 'name', 'number', 'player']);
+  });
+});
+
+describe('Classic Bericht und Karte', () => {
+  function home(): { world: World; other: World; player: Player } {
+    const world = new World(); world.setNumber(1);
+    const other = new World(); other.setNumber(2);
+    const player = new Player('A'); player.points = 0;
+    world.player = player;
+    Object.assign(world, { population: 50, populationLimit: 100, industry: 30, metal: 30, mines: 2, turnsOwned: 1, iShips: 1, pShips: 1 });
+    for (const [a, b] of [[world, other], [other, world]] as Array<[World, World]>) {
+      a.port = { number: a.number, worlds: [b], getWorld: () => a, description: () => `W${a.number}(${b.number})` } as never;
+    }
+    return { world, other, player };
+  }
+
+  it('Bericht der Welt nennt Bevölkerung, Industrie, Metall, Minen, I-/P-Schiffe', () => {
+    const { world } = home();
+    expect(world.description()).toContain('Bev=50/100, Ind=30, Metall=30, Minen=2, I-Schiffe=1, P-Schiffe=1, Besitz seit 1');
+  });
+
+  it('Schwarzes Loch wird im Bericht und auf der Karte gekennzeichnet', () => {
+    const { other, player } = home();
+    other.blackHole = true;
+    const fleet = new Fleet(); fleet.number = 3; fleet.player = player;
+    other.fleets.push(fleet);
+    expect(other.description()).toContain('(Schwarzes Loch)');
+    const graf = new PersistenceGrafManager([other], new Map([['A', player]]), new Map([['A', 'green']]), new Map([['A', 'white']]));
+    const node = graf.generateNodesAndLinks('A').nodes.find(n => n.id === 'W2');
+    expect(node.data.backgroundColor).toBe('black');
+    expect(node.data.classic.blackHole).toBe(true);
+  });
+
+  it('Karte liefert Classic-Werte und Metall der Flotten, Flottenlabel bleibt F<n>=<Schiffe>', () => {
+    const { world, player } = home();
+    const fleet = new Fleet(); fleet.number = 4; fleet.ships = 6; fleet.metal = 2; fleet.player = player;
+    world.fleets.push(fleet);
+    const graf = new PersistenceGrafManager([world], new Map([['A', player]]), new Map([['A', 'green']]), new Map([['A', 'white']]));
+    const node = graf.generateNodesAndLinks('A').nodes.find(n => n.id === 'W1');
+    expect(node.data.classic.industry).toBe(30);
+    expect(node.data.fleets[0].label).toBe('F4=6');
+    expect(node.data.fleets[0].metal).toBe(2);
+    expect(world.fleets[0].description()).toContain('Metall=2');
+  });
+
+  it('Core-Welt hat keine Classic-Anzeige', () => {
+    const w = new World(); w.setNumber(5);
+    expect(w.classicInfo()).toBeNull();
+    expect(w.description()).toBe('W5');
   });
 });

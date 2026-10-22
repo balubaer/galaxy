@@ -226,6 +226,26 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('text-anchor', 'middle')
       .text((d) => d.id);
 
+    // Classic Game: Industrie/Metall und I-/P-Schiffe als kleine Zeile unter der Welt.
+    th.nodes.each(function (this: SVGGElement, d: any) {
+      const info = d.data?.classic;
+      if (!info || info.blackHole) {
+        return;
+      }
+      const group = d3.select(this);
+      group.append('title').text(
+        `${d.id}: Bev ${info.population}/${info.populationLimit}, Ind ${info.industry}, Metall ${info.metal}, Minen ${info.mines}, I ${info.iShips}, P ${info.pShips}`
+      );
+      group
+        .append('text')
+        .attr('dy', 19)
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 4.5)
+        .attr('text-anchor', 'middle')
+        .attr('fill', '#333')
+        .text(`Ind ${info.industry} · Me ${info.metal} · I${info.iShips}/P${info.pShips}`);
+    });
+
     th.nodes.on('click', clicked);
 
     function clicked(this: any, event, d) {

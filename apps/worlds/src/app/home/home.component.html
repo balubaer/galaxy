@@ -116,21 +116,23 @@
                     [attr.r]="50"
                     [attr.fill]="node.data?.backgroundColor"
                   ></circle>
-                  <circle
-                    [attr.r]="15"
-                    fill="black"
-                    [attr.cx]="30"
-                    [attr.cy]="30"
-                  ></circle>
-                  <text
-                    alignment-baseline="central"
-                    text-anchor="middle"
-                    [attr.x]="30"
-                    [attr.y]="30"
-                    fill="white"
-                    >
-                    {{ node.data.dships }}
-                  </text>
+                  @if (!node.data?.classic) {
+                    <circle
+                      [attr.r]="15"
+                      fill="black"
+                      [attr.cx]="30"
+                      [attr.cy]="30"
+                    ></circle>
+                    <text
+                      alignment-baseline="central"
+                      text-anchor="middle"
+                      [attr.x]="30"
+                      [attr.y]="30"
+                      fill="white"
+                      >
+                      {{ node.data.dships }}
+                    </text>
+                  }
                   >
                   <text
                     [attr.fill]="node.data?.fontColor"
@@ -166,6 +168,24 @@
               }
             </svg>
           </td>
+          @if (node?.data?.classic; as classic) {
+            <td class="classic-info">
+              <b>{{ node.label }}</b>
+              @if (classic.blackHole) {
+                <div>Schwarzes Loch</div>
+              } @else {
+                <table>
+                  <tr><td>Bevölkerung</td><td>{{ classic.population }} / {{ classic.populationLimit }}</td></tr>
+                  <tr><td>Industrie</td><td>{{ classic.industry }}</td></tr>
+                  <tr><td>Metall</td><td>{{ classic.metal }}</td></tr>
+                  <tr><td>Minen</td><td>{{ classic.mines }}</td></tr>
+                  <tr><td>I-Schiffe</td><td>{{ classic.iShips }}</td></tr>
+                  <tr><td>P-Schiffe</td><td>{{ classic.pShips }}</td></tr>
+                  <tr><td>Runden im Besitz</td><td>{{ classic.turnsOwned }}</td></tr>
+                </table>
+              }
+            </td>
+          }
           <td>
             <svg class="world" width="200" height="200">
               <g transform="translate(0,20)">

@@ -72,6 +72,8 @@ export class PersistenceGrafManager {
                     y: this.getYForFleet(),
                     backgroundColor: this.getColorWithPlayer(fleet.player),
                     label: `F${fleet.number}=${fleet.ships}`,
+                    metal: fleet.metal,
+                    atPeace: fleet.atPeace,
                     fontColor: this.getFontColorWithPlayer(fleet.player)
                 }
             )
@@ -94,9 +96,10 @@ export class PersistenceGrafManager {
                         label: world.name,
                         data: {
                             dships: world.dShips,
-                            backgroundColor: this.getColorWithPlayer(world.player),
+                            classic: world.classicInfo(),
+                            backgroundColor: world.blackHole ? 'black' : this.getColorWithPlayer(world.player),
                             fleets: this.getFleetsWithWorld(world),
-                            fontColor: this.getFontColorWithPlayer(world.player)
+                            fontColor: world.blackHole ? 'white' : this.getFontColorWithPlayer(world.player)
                         }
                     }
                 )

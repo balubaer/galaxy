@@ -60,3 +60,13 @@ textarea {
   overflow: auto;
   border: 1px solid #ccc;
 }
+
+.classic-info {
+  vertical-align: top;
+  padding: 0 1em;
+  font-size: 0.9em;
+}
+
+.classic-info td {
+  padding-right: 0.8em;
+}

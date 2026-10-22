@@ -27,6 +27,19 @@ export function worldWithName(worlds: Array<World>, name: string): World {
     return aResult;
 }
 
+/** Classic-Werte einer Welt, wie sie an die Karte im Frontend geliefert werden. */
+export interface ClassicWorldInfo {
+    blackHole: boolean;
+    population: number;
+    populationLimit: number;
+    industry: number;
+    metal: number;
+    mines: number;
+    turnsOwned: number;
+    iShips: number;
+    pShips: number;
+}
+
 export class World implements NumberKey {
     number: number;
     name: string;
@@ -114,6 +127,51 @@ export class World implements NumberKey {
         return aResult;
     }
 
+    /** Hat die Welt Classic-Werte (Wirtschaft, I-/P-Schiffe oder Schwarzes Loch)? Im Core Game immer false. */
+    isClassic(): boolean {
+        return this.blackHole || this.population > 0 || this.populationLimit > 0 || this.industry > 0
+            || this.metal > 0 || this.mines > 0 || this.iShips > 0 || this.pShips > 0 || this.turnsOwned > 0;
+    }
+
+    /** Werte der Welt für Bericht und Karte, null im Core Game. */
+    classicInfo(): ClassicWorldInfo | null {
+        if (this.isClassic() === false) {
+            return null;
+        }
+        return {
+            blackHole: this.blackHole,
+            population: this.population,
+            populationLimit: this.populationLimit,
+            industry: this.industry,
+            metal: this.metal,
+            mines: this.mines,
+            turnsOwned: this.turnsOwned,
+            iShips: this.iShips,
+            pShips: this.pShips,
+        };
+    }
+
+    createClassicString(): string {
+        if (this.blackHole) {
+            return '(Schwarzes Loch)';
+        }
+        if (this.isClassic() === false) {
+            return '';
+        }
+        const parts = [
+            `Bev=${this.population}/${this.populationLimit}`,
+            `Ind=${this.industry}`,
+            `Metall=${this.metal}`,
+            `Minen=${this.mines}`,
+            `I-Schiffe=${this.iShips}`,
+            `P-Schiffe=${this.pShips}`,
+        ];
+        if (this.player !== null) {
+            parts.push(`Besitz seit ${this.turnsOwned}`);
+        }
+        return createBracketAndCommarStringWithStringArray(parts);
+    }
+
     description(): string {
         let desc = this.name;
         if (this.port !== null) {
@@ -121,6 +179,11 @@ export class World implements NumberKey {
         }
         if (this.player !== null) {
             desc += ` ${this.player.stringName()}`;
+        }
+
+        const classicString = this.createClassicString();
+        if (classicString.length !== 0) {
+            desc += ` ${classicString}`;
         }
 
         const resouceString = this.createResourceString();
