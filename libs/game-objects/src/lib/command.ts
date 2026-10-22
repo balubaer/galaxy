@@ -425,6 +425,7 @@ export class FireFleetToFleet extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.isValid()) {
             this.toFleet.hitedShots += this.fromFleet.ships
+            this.toHomeWorld.addReportPlayer(this.toFleet.player);
             this.fromFleet.fired = true;
             this.fromFleet.firesTo = this.toFleet.name();
             this.fromFleet.firesToCommand = `AF${this.toFleet.number}`
@@ -475,6 +476,7 @@ export class FireDShipsToFleet extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.isValid()) {
             this.toFleet.hitedShots += this.fromHomeWorld.dShips;
+            this.toHomeWorld.addReportPlayer(this.toFleet.player);
             this.fromHomeWorld.dShipsFired = true;
             this.fromHomeWorld.dShipsFiredFleet = this.toFleet;
         }
@@ -518,6 +520,7 @@ export class FireFleetToDShips extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.isValid()) {
             this.fromHomeWorld.hitedShotsDShips += this.fromFleet.ships;
+            this.fromHomeWorld.addReportPlayer(this.fromHomeWorld.player);
             this.fromFleet.fired = true;
             this.fromFleet.firesTo = 'D-Schiffe';
             this.fromFleet.firesToCommand = 'AD';

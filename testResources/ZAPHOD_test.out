@@ -2,11 +2,16 @@ Infos zu Spieler: ZAPHOD Runde: 1
 Punkte: 122 | Welten: 4 | Flotten: 2 | Schiffe auf Flotten: 9 | D-Schiffe: 16
 Verbündete: (MARVIN)
 
+Abgelehnte Befehle:
+   D4T2F2: Flotte gibt es nicht (Fehler 3)
+
 W2(1) [ZAPHOD] (D-Schiffe=2)
    F4[ZAPHOD] = 4
+   >> Welt erobert von [ZAPHOD]
 
 W3(1,2) [ZAPHOD] (D-Schiffe=3)
    F5[ZAPHOD] = 5
+   >> Welt erobert von [ZAPHOD]
 
 W4(1,2,3) [ZAPHOD] (D-Schiffe=5)
    (F4[ZAPHOD]-->W2 F5[ZAPHOD]-->W3 )

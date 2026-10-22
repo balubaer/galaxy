@@ -1,7 +1,7 @@
 import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { World } from './world';
 import { TestWorldsArrayFactory } from './test-worlds-array-factory';
-import { Player } from './player';
+import { Player, isWorldOutPutForPlayer } from './player';
 import { readFileSync } from 'fs';
 import { TESTRESOUCESPATH } from './utils';
 import { GamePref } from './game-pref.interface';
@@ -11,7 +11,7 @@ import { CommandFactory } from './command-factory';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { Port } from './port';
 import { FleetMovement } from './fleet-movement';
-import { AmbushOffForPlayer, AmbushOffForWorld, BuildDShips, FireFleetToDShips, FireFleetToFleet, MoveCommand } from './command';
+import { AmbushOffForPlayer, AmbushOffForWorld, BuildDShips, FireDShipsToFleet, FireFleetToDShips, FireFleetToFleet, MoveCommand } from './command';
 
 const worlds: Array<World> = new TestWorldsArrayFactory().worlds;
 const playerName = 'ZAPHOD';
@@ -327,5 +327,103 @@ describe('BuildDShips', () => {
 
     expect(w1.dShips).toBeGreaterThan(0);
     expect(w2.dShips).toBeGreaterThan(0);
+  });
+});
+
+describe('FinalPhaseCoreGame Bericht', () => {
+  it('beschossene und übernommene Flotte erscheint im Bericht des Beschossenen', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, zaphod, 0);
+    const attacker = createFleet(1, zaphod, 6, world);
+    const target = createFleet(2, marvin, 2, world);
+    new FireFleetToFleet(attacker, target, world, world, 'F1AF2', zaphod).executeCommand();
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod, marvin)).doFinal();
+
+    expect(target.player).toBe(zaphod);
+    expect(isWorldOutPutForPlayer(marvin, world)).toBe(true);
+    const desc = world.description();
+    expect(desc).toContain('F1[ZAPHOD] = 6 (feuert auf F2[MARVIN])');
+    expect(desc).toContain('>> F2 übernommen von [ZAPHOD], vorher [MARVIN]');
+  });
+
+  it('beschossene D-Schiffe: Besitzer sieht die Welt, auch wenn er dort keine Flotte hat', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, zaphod, 5);
+    const attacker = createFleet(2, marvin, 4, world);
+    new FireFleetToDShips(attacker, world, 'F2AD', marvin).executeCommand();
+    // Besitz wechselt in dieser Runde nicht (D-Schiffe übrig), Zaphod soll die Welt trotzdem über reportPlayers sehen.
+    world.player = marvin;
+
+    expect(isWorldOutPutForPlayer(zaphod, world)).toBe(true);
+  });
+
+  it('D-Schiffe-Feuer wird angezeigt, auch wenn die D-Schiffe zerstört wurden', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, zaphod, 2);
+    const target = createFleet(2, marvin, 10, world);
+    new FireDShipsToFleet(target, world, world, 'D1AF2', zaphod).executeCommand();
+    new FireFleetToDShips(target, world, 'F2AD', marvin).executeCommand();
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod, marvin)).doFinal();
+
+    expect(world.dShips).toBe(0);
+    expect(world.description()).toContain('(D-Schiffe=0 (feuert auf F2[MARVIN]))');
+  });
+
+  it('Neutralisieren und Eroberung werden gemeldet, der alte Besitzer sieht die Welt', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, zaphod, 2);
+    const attacker = createFleet(2, marvin, 6, world);
+    new FireFleetToDShips(attacker, world, 'F2AD', marvin).executeCommand();
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod, marvin)).doFinal();
+
+    expect(world.events).toEqual(['Welt neutralisiert, vorher [ZAPHOD]', 'Welt erobert von [MARVIN]']);
+    expect(isWorldOutPutForPlayer(zaphod, world)).toBe(true);
+    expect(world.description()).toContain('\n   >> Welt neutralisiert, vorher [ZAPHOD]\n   >> Welt erobert von [MARVIN]');
+  });
+
+  it('Eroberung einer fremden Welt ohne D-Schiffe nennt den alten Besitzer', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, zaphod, 0);
+    createFleet(2, marvin, 3, world);
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod, marvin)).doFinal();
+
+    expect(world.player).toBe(marvin);
+    expect(world.events).toEqual(['Welt erobert von [MARVIN], vorher [ZAPHOD]']);
+    expect(isWorldOutPutForPlayer(zaphod, world)).toBe(true);
+  });
+
+  it('zerstörte Flotte wird herrenlos, wenn mehrere Spieler auf der Welt sind', () => {
+    const zaphod = new Player('ZAPHOD');
+    const marvin = new Player('MARVIN');
+    const world = createWorld(1, null, 0);
+    const victim = createFleet(1, zaphod, 2, world);
+    createFleet(3, zaphod, 5, world);
+    const attacker = createFleet(2, marvin, 4, world);
+    new FireFleetToFleet(attacker, victim, world, world, 'F2AF1', marvin).executeCommand();
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod, marvin)).doFinal();
+
+    expect(victim.player).toBeNull();
+    expect(world.events).toEqual(['F1 ist herrenlos, vorher [ZAPHOD]']);
+  });
+
+  it('ohne Ereignisse bleibt die Beschreibung unverändert', () => {
+    const zaphod = new Player('ZAPHOD');
+    const world = createWorld(1, zaphod, 3);
+    createFleet(1, zaphod, 4, world);
+
+    new FinalPhaseCoreGame([world], playerDictOf(zaphod)).doFinal();
+
+    expect(world.events).toEqual([]);
+    expect(world.description()).not.toContain('>>');
   });
 });

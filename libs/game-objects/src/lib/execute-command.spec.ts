@@ -106,4 +106,23 @@ describe('ExecuteCommand', () => {
     expect(resultWorldsPersist.worlds[1].fleets[0]).toBe(4);
   });
 
+  it('test generateOutput mit abgelehnten Befehlen', () => {
+    const commandsDict = new Map();
+    commandsDict.set('ZAPHOD', 'F4W99 F777AF4 xyz');
+    commandsDict.set('MARVIN', '');
+    const executeCommand = new ExecuteCommand(gamepref, colorMap, fontColorMap);
+    const rawdata = readFileSync(`${TESTRESOUCESPATH}/worlds.json`, 'utf8');
+    const worldsPersist: WorldsPersist = JSON.parse(rawdata);
+    executeCommand.createEnvironment(worldsPersist);
+    executeCommand.start(commandsDict);
+    const outputDict = executeCommand.generateOutput();
+
+    const zaphodOutput = outputDict.get('ZAPHOD');
+    expect(zaphodOutput).toContain('Abgelehnte Befehle:\n');
+    expect(zaphodOutput).toContain('   F4W99: Welt gibt es nicht (Fehler 4)\n');
+    expect(zaphodOutput).toContain('   F777AF4: Flotte gibt es nicht (Fehler 3)\n');
+    expect(zaphodOutput).toContain('   XYZ: Unbekannter Befehl (Fehler 2)\n');
+    expect(outputDict.get('MARVIN')).not.toContain('Abgelehnte Befehle');
+  });
+
 });

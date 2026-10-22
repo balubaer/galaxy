@@ -3,7 +3,7 @@ import { World } from './world';
 import { Player, isWorldOutPutForPlayer } from './player';
 import { PersistenceManager } from './persistence-manager';
 import { WorldsPersist } from './worlds-persist.interface';
-import { CommandFactory } from './command-factory';
+import { CommandFactory, CommandErrorEntry } from './command-factory';
 import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { OutputPlyerStatisticCoreGame } from './output-plyer-statistic-core-game';
 import { NodesAndLinks } from './nodes-and-links.interface';
@@ -15,6 +15,7 @@ export class ExecuteCommand {
     allPlayerDict: Map<string, Player>;
     colorMap: Map<string, string>;
     fontColorMap: Map<string, string>;
+    commandErrors: Map<string, Array<CommandErrorEntry>> = new Map();
 
     constructor(gamePref: GamePref, colorMap: Map<string, string>, fontColorMap: Map<string, string>) {
         this.gamePref = gamePref;
@@ -36,6 +37,7 @@ export class ExecuteCommand {
             commandFactory.setCommandStringsWithLongString(playerName, commands);
         }
         commandFactory.executeCommands();
+        this.commandErrors = commandFactory.commandErrors;
 
         const finalPhase = new FinalPhaseCoreGame(this.worlds, this.allPlayerDict);
         finalPhase.doFinal();
@@ -61,6 +63,7 @@ export class ExecuteCommand {
             const outPutStatistic = new OutputPlyerStatisticCoreGame(this.worlds, player);
             outPutStatistic.calculateStatistic();
             outPutString += `${outPutStatistic.description()}\n`;
+            outPutString += this.createErrorString(playerName);
             for (const world of this.worlds) {
                 if (isWorldOutPutForPlayer(player, world)) {
                     outPutString += `${world.description()}\n\n`;
@@ -69,6 +72,19 @@ export class ExecuteCommand {
             outputDict.set(playerName, outPutString);
         }
         return outputDict;
+    }
+
+    createErrorString(playerName: string): string {
+        let result = '';
+        const errors = this.commandErrors.get(playerName);
+        if (errors !== undefined && errors.length > 0) {
+            result = 'Abgelehnte Befehle:\n';
+            for (const entry of errors) {
+                result += `   ${entry.command}: ${entry.error.errorString} (Fehler ${entry.error.errorNumber})\n`;
+            }
+            result += '\n';
+        }
+        return result;
     }
 
     generateResultWorlds(): WorldsPersist {

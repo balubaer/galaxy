@@ -93,6 +93,11 @@ export function isWorldOutPutForPlayer(player: Player, world: World): boolean {
     if (result === false) {
         result = isPlayerInWorldHitAmbushFleetWithPlayer(player, world.hitAmbuschFleets);
     }
+
+    //Test world.reportPlayers (beschossen, Welt oder Flotte verloren)
+    if (result === false) {
+        result = isPlayerInPlayersWithPlayer(player, world.reportPlayers);
+    }
     return result;
 }
 
@@ -118,6 +123,18 @@ function isPlayerInWorldHitAmbushFleetWithPlayer(aPlayer: Player, hitAmbuschFlee
                 result = true;
                 break;
             }
+        }
+    }
+    return result;
+}
+
+function isPlayerInPlayersWithPlayer(aPlayer: Player, players: Array<Player>): boolean {
+    let result = false;
+
+    for (const player of players) {
+        if (player.playerName === aPlayer.playerName) {
+            result = true;
+            break;
         }
     }
     return result;

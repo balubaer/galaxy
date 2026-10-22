@@ -42,11 +42,17 @@ export class World implements NumberKey {
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
     hitedShotsDShips = 0;
+    /** Spieler, die in dieser Runde auf der Welt beschossen wurden oder Welt bzw. Flotten verloren haben (nur für den Bericht). */
+    reportPlayers: Array<Player>;
+    /** Hinweise zu Eroberung und Neutralisierung in dieser Runde (nur für den Bericht). */
+    events: Array<string>;
 
     constructor() {
         this.fleets = new Array<Fleet>();
         this.fleetMovements = new Array<FleetMovement>();
         this.hitAmbuschFleets = new Array<Fleet>();
+        this.reportPlayers = new Array<Player>();
+        this.events = new Array<string>();
         this.dShips = 0;
         this.ambushOff = false;
         this.dShipsFired = false;
@@ -64,7 +70,10 @@ export class World implements NumberKey {
         if (this.ambushOff === true) {
             resourceArray.push('Ambush "Aus" für diese Runde!!!');
         }
-        if (this.dShips !== 0) {
+        if (this.dShipsFired === true && this.dShipsFiredFleet !== null) {
+            // Auch anzeigen, wenn die D-Schiffe danach selbst zerstört wurden.
+            resourceArray.push(`D-Schiffe=${this.dShips} (feuert auf ${this.dShipsFiredFleet.name()})`);
+        } else if (this.dShips !== 0) {
             if (this.dShipsAmbush === true) {
                 let desc = `D-Schiffe=${this.dShips} (Ambusch: {`;
                 if (this.hitAmbuschFleets.length > 0) {
@@ -82,10 +91,6 @@ export class World implements NumberKey {
                 desc += ')';
 
                 resourceArray.push(desc);
-            } else if (this.dShipsFired === true) {
-                if (this.dShipsFiredFleet !== null) {
-                    resourceArray.push(`D-Schiffe=${this.dShips} (feuert auf ${this.dShipsFiredFleet.name()})`);
-                }
             } else {
                 resourceArray.push(`D-Schiffe=${this.dShips}`);
             }
@@ -139,7 +144,21 @@ export class World implements NumberKey {
             desc += ')';
         }
 
+        for (const event of this.events) {
+            desc += `\n   >> ${event}`;
+        }
+
         return desc;
+    }
+
+    addReportPlayer(aPlayer: Player) {
+        if (aPlayer !== null && aPlayer !== undefined && this.reportPlayers.indexOf(aPlayer) === -1) {
+            this.reportPlayers.push(aPlayer);
+        }
+    }
+
+    addEvent(event: string) {
+        this.events.push(event);
     }
 
     addHitAmbushFleets(aFleet: Fleet) {

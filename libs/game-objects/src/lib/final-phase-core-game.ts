@@ -29,6 +29,10 @@ export class FinalPhaseCoreGame {
         //DShips
         // Mindestens zwei Schuss mehr als nötig, um alle D-Schiffe zu zerstören: Welt wird neutral.
         if (world.hitedShotsDShips > 0 && world.hitedShotsDShips >= world.dShips * 2 + 2) {
+            if (world.player !== null) {
+                world.addReportPlayer(world.player);
+                world.addEvent(`Welt neutralisiert, vorher ${world.player.stringName()}`);
+            }
             world.player = null;
         }
         world.dShips -= world.hitedShotsDShips / 2;
@@ -228,6 +232,7 @@ export class FinalPhaseCoreGame {
         if (world.player === null) {
             if (players.length === 1) {
                 world.player = players[0];
+                world.addEvent(`Welt erobert von ${world.player.stringName()}`);
             }
         } else {
             if (world.dShips === 0) {
@@ -235,6 +240,8 @@ export class FinalPhaseCoreGame {
                 if (players.length === 1) {
                     if (player.playerName !== players[0].playerName) {
                         world.player = players[0]
+                        world.addReportPlayer(player);
+                        world.addEvent(`Welt erobert von ${world.player.stringName()}, vorher ${player.stringName()}`);
                     }
                 }
             }
@@ -242,14 +249,30 @@ export class FinalPhaseCoreGame {
         //fleets
         if (players.length === 1) {
             for (const fleet of world.fleets) {
-                fleet.player = players[0];
+                this.changeFleetOwner(world, fleet, players[0]);
             }
         } else {
             for (const fleet of world.fleets) {
                 if (fleet.ships === 0) {
-                    fleet.player = null;
+                    this.changeFleetOwner(world, fleet, null);
                 }
             }
+        }
+    }
+
+    changeFleetOwner(world: World, fleet: Fleet, player: Player) {
+        const oldPlayer = fleet.player;
+        if (oldPlayer === player) {
+            return;
+        }
+        fleet.player = player;
+        world.addReportPlayer(oldPlayer);
+        if (player === null) {
+            world.addEvent(`F${fleet.number} ist herrenlos, vorher ${oldPlayer.stringName()}`);
+        } else if (oldPlayer === null) {
+            world.addEvent(`F${fleet.number} übernommen von ${player.stringName()}`);
+        } else {
+            world.addEvent(`F${fleet.number} übernommen von ${player.stringName()}, vorher ${oldPlayer.stringName()}`);
         }
     }
 
