@@ -41,3 +41,21 @@ export function classicGamePref(base: GamePref): GamePref {
         startShipCount: defaults.startShipCount,
     };
 }
+
+// Startwerte der Heimatwelt (Handbuch: "Sample Walk-Through: RSW Classic").
+export const CLASSIC_HOME_METAL = 30;
+export const CLASSIC_HOME_MINES = 2;
+export const CLASSIC_HOME_POPULATION = 50;
+export const CLASSIC_HOME_POPULATION_LIMIT = 100;
+
+// Das Handbuch nennt für die übrigen Welten keine Verteilung; diese Werte sind Annahmen.
+export const CLASSIC_MIN_POPULATION = 10;
+export const CLASSIC_MAX_POPULATION = 60;
+export const CLASSIC_MAX_EXTRA_POPULATION_LIMIT = 40;
+export const CLASSIC_MIN_MINES = 1;
+export const CLASSIC_MAX_MINES = 4;
+export const CLASSIC_MAX_START_METAL = 8;
+/** Anteil der Welten mit 1-2 Industrie. */
+export const CLASSIC_INDUSTRY_WORLD_RATIO = 0.15;
+/** Anteil der Schwarzen Löcher an allen Welten. */
+export const CLASSIC_BLACK_HOLE_RATIO = 0.03;

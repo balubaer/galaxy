@@ -57,16 +57,43 @@ export class PersistenceManager {
             name: world.name,
             player: playername,
             fleets: this.getNumberArrayWithNumberKeysArray(world.fleets),
-            dShips: world.dShips
+            dShips: world.dShips,
+            ...this.getClassicWorldPersist(world)
         }
     }
 
+    /** Classic-Felder nur speichern, wenn sie belegt sind, damit Core-Daten unverändert bleiben. */
+    getClassicWorldPersist(world: World): Partial<WorldPersist> {
+        const result: Partial<WorldPersist> = {};
+        const numbers: Array<'population' | 'populationLimit' | 'industry' | 'metal' | 'mines' | 'turnsOwned' | 'iShips' | 'pShips'> =
+            ['population', 'populationLimit', 'industry', 'metal', 'mines', 'turnsOwned', 'iShips', 'pShips'];
+        for (const key of numbers) {
+            if (world[key] !== 0) {
+                result[key] = world[key];
+            }
+        }
+        if (world.blackHole) {
+            result.blackHole = true;
+        }
+        return result;
+    }
+
     getPlayerPersitWithPlayer(player: Player): PlayerPersist {
-        return {
+        const result: PlayerPersist = {
             name: player.playerName,
             points: player.points,
             teammates: player.teanmatesNames()
+        };
+        if (player.characterType !== null) {
+            result.characterType = player.characterType;
         }
+        if (player.allies.size > 0) {
+            result.allies = Array.from(player.allies).map(p => p.playerName);
+        }
+        if (player.loaders.size > 0) {
+            result.loaders = Array.from(player.loaders).map(p => p.playerName);
+        }
+        return result;
     }
 
     getPlayerPersistArray(): Array<PlayerPersist> {
@@ -106,12 +133,19 @@ export class PersistenceManager {
         if (aFleet.player !== null) {
             playername = aFleet.player.playerName;
         }
-        return {
+        const result: FleetPersist = {
             number: aFleet.number,
             ships: aFleet.ships,
             player: playername,
             moved: aFleet.moved,
+        };
+        if (aFleet.metal !== 0) {
+            result.metal = aFleet.metal;
         }
+        if (aFleet.atPeace) {
+            result.atPeace = true;
+        }
+        return result;
     }
 
     getFleetPersistArray(): Array<FleetPersist> {
@@ -140,6 +174,7 @@ export class PersistenceManager {
         for (const playerPersist of playersPersist) {
             const player = new Player(playerPersist.name);
             player.points = playerPersist.points;
+            player.characterType = playerPersist.characterType === 'emperor' ? 'emperor' : null;
             this.allPlayerDict.set(playerPersist.name, player);
             playerPersistDict.set(playerPersist.name, playerPersist);
         }
@@ -150,6 +185,12 @@ export class PersistenceManager {
             for (const teammateName of teammates) {
                 const teammatePlayer = this.allPlayerDict.get(teammateName);
                 player.teammates.add(teammatePlayer);
+            }
+            for (const allyName of playerPersist.allies ?? []) {
+                player.allies.add(this.allPlayerDict.get(allyName));
+            }
+            for (const loaderName of playerPersist.loaders ?? []) {
+                player.loaders.add(this.allPlayerDict.get(loaderName));
             }
         }
     }
@@ -164,6 +205,15 @@ export class PersistenceManager {
                 world.player = this.allPlayerDict.get(worldPersist.player);
             }
             world.dShips = worldPersist.dShips;
+            world.population = worldPersist.population ?? 0;
+            world.populationLimit = worldPersist.populationLimit ?? 0;
+            world.industry = worldPersist.industry ?? 0;
+            world.metal = worldPersist.metal ?? 0;
+            world.mines = worldPersist.mines ?? 0;
+            world.turnsOwned = worldPersist.turnsOwned ?? 0;
+            world.iShips = worldPersist.iShips ?? 0;
+            world.pShips = worldPersist.pShips ?? 0;
+            world.blackHole = worldPersist.blackHole ?? false;
             this.worldArray.push(world);
             this.worldDict.set(worldPersist.number, world);
         }
@@ -191,6 +241,8 @@ export class PersistenceManager {
                 fleet.player = this.allPlayerDict.get(fleetPersist.player);
             }
             fleet.moved = fleetPersist.moved;
+            fleet.metal = fleetPersist.metal ?? 0;
+            fleet.atPeace = fleetPersist.atPeace ?? false;
             this.fleetDict.set(fleetPersist.number, fleet);
         }
     }

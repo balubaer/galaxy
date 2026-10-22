@@ -6,4 +6,14 @@ export interface WorldPersist {
     player: string;
     fleets: Array<number>;
     dShips: number;
+    // Classic Game, fehlt bei Core Games und Spielen vor Einführung von Classic.
+    population?: number;
+    populationLimit?: number;
+    industry?: number;
+    metal?: number;
+    mines?: number;
+    turnsOwned?: number;
+    iShips?: number;
+    pShips?: number;
+    blackHole?: boolean;
 }

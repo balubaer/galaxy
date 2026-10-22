@@ -39,6 +39,18 @@ export class World implements NumberKey {
     dShipsFired: boolean;
     dShipsFiredFleet: Fleet = null;
 
+    // Classic Game: Wirtschaft der Welt (im Core Game immer 0).
+    population = 0;
+    populationLimit = 0;
+    industry = 0;
+    metal = 0;
+    mines = 0;
+    /** Runden im Besitz des aktuellen Eigners, zählt 1..7 und beginnt dann wieder bei 1. */
+    turnsOwned = 0;
+    iShips = 0;
+    pShips = 0;
+    blackHole = false;
+
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
     hitedShotsDShips = 0;

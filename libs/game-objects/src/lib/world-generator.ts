@@ -1,9 +1,10 @@
-import { GamePref } from './game-pref.interface';
+import { GamePref, gameTypeOf } from './game-pref.interface';
 import { World } from './world';
 import { PortFactory } from './portfactory';
 import { FleetFactory } from './fleet-factory';
 import { PlayerFactory } from './player-factory';
 import { PersistenceManager } from './persistence-manager';
+import { ClassicWorldFactory } from './classic-world-factory';
 import { WorldsPersist } from './worlds-persist.interface';
 
 export class WorldGenerator {
@@ -42,6 +43,10 @@ export class WorldGenerator {
         //Create Player with PlayerFactory
         const playerFactory = new PlayerFactory(this.gamePref.player);
         playerFactory.createWithWorldArray(this.worlds, fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
+
+        if (gameTypeOf(this.gamePref) === 'classic') {
+            new ClassicWorldFactory().initWorlds(this.worlds);
+        }
 
         //Write to file
         const pm = new PersistenceManager(this.worlds);

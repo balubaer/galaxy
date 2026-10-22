@@ -24,3 +24,4 @@ export * from './lib/player-color.interface';
 export * from './lib/strip-graph-factory';
 export * from './lib/core-game-rules';
 export * from './lib/classic-game-rules';
+export * from './lib/classic-world-factory';

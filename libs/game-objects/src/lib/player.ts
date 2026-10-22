@@ -2,12 +2,20 @@ import { Fleet } from './fleet';
 import { World } from './world';
 import { FleetMovement } from './fleet-movement';
 
+/** Charaktertypen des Classic Games; bisher ist nur der Emperor umgesetzt. */
+export type CharacterType = 'emperor';
+
 export class Player {
     playerName: string;
     points: number;
     //role: Role?
     ambushOff: boolean;
     teammates: Set<Player> = new Set();
+    characterType: CharacterType = null;
+    /** Classic Game: Spieler, deren Welten und Flotten nicht erobert/beschossen werden. */
+    allies: Set<Player> = new Set();
+    /** Classic Game: Spieler, die Metall von den Welten dieses Spielers laden dürfen. */
+    loaders: Set<Player> = new Set();
 
     constructor(name: string) {
         this.playerName = name;
