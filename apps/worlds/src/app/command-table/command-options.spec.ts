@@ -79,6 +79,17 @@ describe('buildCommandGroups', () => {
   });
 });
 
+describe('buildCommandGroups with selected transfers', () => {
+  it('offers moves for an empty own fleet once a transfer fills it', () => {
+    const run = (selected: string[]) =>
+      buildCommandGroups(node, links, OWN, 1, selected).flatMap((g) =>
+        g.rows.flatMap((r) => r.options.map((o) => o.command)),
+      );
+    expect(run([])).not.toContain('F1W7');
+    expect(run(['F9T1F1'])).toEqual(expect.arrayContaining(['F1W7', 'F9W7']));
+  });
+});
+
 describe('conflicts', () => {
   it('a fleet can only move or fire once', () => {
     expect(commandsConflict('F9W7', 'F9W6')).toBe(true);

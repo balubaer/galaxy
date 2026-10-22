@@ -41,7 +41,13 @@ export class CommandTableComponent {
 
   get groups(): CommandGroup[] {
     return this.node
-      ? buildCommandGroups(this.node, this.links, this.ownColor, this.count)
+      ? buildCommandGroups(
+          this.node,
+          this.links,
+          this.ownColor,
+          this.count,
+          splitCommands(this.commandText),
+        )
       : [];
   }
 

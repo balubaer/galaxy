@@ -46,20 +46,69 @@ function readFleets(node: Node, ownColor: string): WorldFleet[] {
 }
 
 /**
+ * Wendet die gewählten Transfers in Textreihenfolge auf Schiffe und D-Schiffe an,
+ * wie es die Auswertung tut (Transfer läuft vor Bewegen und Feuern).
+ * Transfers ohne genug Schiffe oder mit unbekannter Flotte bleiben wirkungslos.
+ */
+function applyTransfers(
+  fleets: WorldFleet[],
+  dships: number,
+  world: string,
+  selected: string[],
+): { fleets: WorldFleet[]; dships: number } {
+  const result = fleets.map((f) => ({ ...f }));
+  const find = (n: number) => result.find((f) => f.own && f.number === n);
+  for (const command of selected) {
+    const toFleet = /^F(\d+)T(\d+)F(\d+)$/.exec(command);
+    const toD = /^F(\d+)T(\d+)D$/.exec(command);
+    const fromD = /^D(\d+)T(\d+)F(\d+)$/.exec(command);
+    if (toFleet) {
+      const from = find(+toFleet[1]);
+      const to = find(+toFleet[3]);
+      if (from && to && from.ships >= +toFleet[2]) {
+        from.ships -= +toFleet[2];
+        to.ships += +toFleet[2];
+      }
+    } else if (toD) {
+      const from = find(+toD[1]);
+      if (from && from.ships >= +toD[2]) {
+        from.ships -= +toD[2];
+        dships += +toD[2];
+      }
+    } else if (fromD && fromD[1] === world) {
+      const to = find(+fromD[3]);
+      if (to && dships >= +fromD[2]) {
+        dships -= +fromD[2];
+        to.ships += +fromD[2];
+      }
+    }
+  }
+  return { fleets: result, dships };
+}
+
+/**
  * Alle Befehle, die auf der gewählten Welt möglich sind, gruppiert nach Art.
  * Syntax siehe command.ts (FnnnWmmm, FnnnAFmmm, FnnnS, FnnnTqqqFmmm, ...).
  * Schiffe bauen gibt es im Core Game nicht, sie entstehen nur als D-Schiffe.
+ * Bereits gewählte Transfers (selected) zählen mit: Eine Flotte, die dadurch Schiffe erhält, kann fliegen.
  */
 export function buildCommandGroups(
   node: Node,
   links: Edge[],
   ownColor: string,
   count: number,
+  selected: string[] = [],
 ): CommandGroup[] {
   const world = node.id.replace(/^W/, '');
   const isOwnWorld = node.data?.backgroundColor === ownColor;
-  const dships: number = node.data?.dships ?? 0;
-  const fleets = readFleets(node, ownColor);
+  const projected = applyTransfers(
+    readFleets(node, ownColor),
+    node.data?.dships ?? 0,
+    world,
+    selected,
+  );
+  const dships = projected.dships;
+  const fleets = projected.fleets;
   const ownFleets = fleets.filter((f) => f.own);
   const movable = ownFleets.filter((f) => f.ships > 0);
   const enemyFleets = fleets.filter((f) => !f.own);
