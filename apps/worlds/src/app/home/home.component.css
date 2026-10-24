@@ -164,3 +164,32 @@ textarea {
     width: auto;
   }
 }
+
+.world-hint {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  box-sizing: border-box;
+  border: 1px dashed #999;
+  color: #555;
+  font-style: italic;
+}
+
+.command-hint {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1em 0;
+  padding: 2em;
+  box-sizing: border-box;
+  border: 2px dashed #999;
+  border-radius: 8px;
+  color: #555;
+  font-size: 1.6em;
+  font-style: italic;
+  text-align: center;
+}

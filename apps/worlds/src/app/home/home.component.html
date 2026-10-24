@@ -24,8 +24,8 @@
     <table id="table1">
       <tr>
         <td>
+          @if (node) {
           <svg class="world" width="200" height="200">
-            @if (node) {
               <g [attr.transform]="'translate(100,100)'">
                 <circle
                   [attr.r]="50"
@@ -82,8 +82,13 @@
                   </g>
                 }
               </g>
-            }
           </svg>
+          } @else {
+            <div class="world-hint">
+              Wähle eine Welt auf der Karte aus, um Infos zu dieser Welt zu
+              bekommen.
+            </div>
+          }
         </td>
         @if (node?.data?.classic; as classic) {
           <td class="classic-info">
@@ -365,6 +370,11 @@
 </div>
 @if (turnData) {
   <div class="command-column">
+    @if (!node && !ishidden) {
+      <div class="command-hint">
+        Wähle eine Welt auf der Karte aus, um Befehle abzusetzen.
+      </div>
+    }
     <galaxy-command-table
       [hidden]="ishidden"
       [node]="node"
