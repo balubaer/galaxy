@@ -37,3 +37,4 @@ export const NoPbb_Error: CommandError = { errorNumber: 31, errorString: 'Flotte
 export const PbbNeedsShips_Error: CommandError = { errorNumber: 32, errorString: 'Für eine PBB braucht die Flotte mindestens 26 Schiffe' };
 export const AlreadyPbb_Error: CommandError = { errorNumber: 33, errorString: 'Flotte hat schon eine PBB' };
 export const WorldGiftNotPossible_Error: CommandError = { errorNumber: 34, errorString: 'I- oder P-Schiffe der Welt haben gefeuert, Geschenk nicht möglich' };
+export const WorldRecovering_Error: CommandError = { errorNumber: 35, errorString: 'Welt erholt sich noch von einer Plünderung' };

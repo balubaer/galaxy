@@ -242,6 +242,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         `Ind ${info.industry} · Metall ${info.metal}`,
         `Minen ${info.mines}`,
         `I ${info.iShips} · P ${info.pShips}`,
+        ...(info.plunderRecovery > 0 ? [`geplündert, noch ${info.plunderRecovery} Rd.`] : []),
       ];
       const lineHeight = 5.5;
       const boxWidth = 40;

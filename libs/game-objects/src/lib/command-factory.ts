@@ -7,7 +7,8 @@ import { GameType } from './game-pref.interface';
 import { classicLog } from './classic-log';
 import {
     UnloadMetal, JettisonMetal, LoadMetal, BuildShips, BuildIndustry, RaisePopulationLimit, ScrapIShips, MigratePopulation,
-    BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld
+    BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld,
+    PlunderWorld
 } from './classic-commands';
 import { ClassicFire, ClassicProbe, BuildPbb, DropPbb, ResolveConditionalFire, Shooter, FireTarget } from './classic-combat-commands';
 import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
@@ -589,6 +590,8 @@ export class CommandFactory {
                     ? new ClassicProbe(worldWithNumber(this.worlds, numbers[0]), this.commandChars.charAt(0) as 'I' | 'P',
                         worldWithNumber(this.worlds, numbers[1]), text, player)
                     : null;
+            case 'WX':
+                return numbers.length === 1 ? new PlunderWorld(worldWithNumber(this.worlds, numbers[0]), text, player) : null;
             case 'FB':
                 return numbers.length === 1 ? new BuildPbb(this.fleetAndWorld(numbers[0]).fleet, text, player) : null;
             case 'FD': {

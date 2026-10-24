@@ -482,3 +482,26 @@ describe('Classic Game: M4 Kampf', () => {
     expect(brokenCommands(ownWorld, OWN, ['F5T4I', 'F5P7'])).toEqual(['F5P7']);
   });
 });
+
+describe('Classic Game: M5 Plündern', () => {
+  const plunderNode = (owner: string, plunderRecovery: number): Node => ({
+    id: 'W1',
+    data: {
+      dships: 0,
+      backgroundColor: owner,
+      classic: {
+        blackHole: false, population: 50, populationLimit: 100, industry: 30, metal: 30, mines: 2,
+        turnsOwned: 1, iShips: 1, pShips: 1, plunderCount: plunderRecovery > 0 ? 1 : 0, plunderRecovery,
+      },
+      fleets: [],
+    },
+  });
+  const all = (n: Node) =>
+    buildCommandGroups(n, links, OWN, 1).flatMap((g) => g.rows.flatMap((r) => r.options.map((o) => o.command)));
+
+  it('offers plundering an own world that is not recovering', () => {
+    expect(all(plunderNode(OWN, 0))).toContain('W1X');
+    expect(all(plunderNode(OWN, 2))).not.toContain('W1X');
+    expect(all(plunderNode('blue', 0))).not.toContain('W1X');
+  });
+});

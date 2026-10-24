@@ -16,4 +16,6 @@ export interface WorldPersist {
     iShips?: number;
     pShips?: number;
     blackHole?: boolean;
+    plunderCount?: number;
+    plunderRecovery?: number;
 }

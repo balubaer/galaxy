@@ -182,6 +182,14 @@
                   <tr><td>I-Schiffe</td><td>{{ classic.iShips }}</td></tr>
                   <tr><td>P-Schiffe</td><td>{{ classic.pShips }}</td></tr>
                   <tr><td>Runden im Besitz</td><td>{{ classic.turnsOwned }}</td></tr>
+                  @if (classic.plunderCount > 0) {
+                    <tr>
+                      <td>Geplündert</td>
+                      <td>
+                        {{ classic.plunderCount }}×@if (classic.plunderRecovery > 0) {, unproduktiv noch {{ classic.plunderRecovery }} Runden}
+                      </td>
+                    </tr>
+                  }
                 </table>
               }
             </td>

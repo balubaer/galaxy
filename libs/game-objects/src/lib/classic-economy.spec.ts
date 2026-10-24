@@ -298,10 +298,11 @@ describe('Classic Wirtschaft: Rundenende', () => {
     expect(s.worlds[0].player).toBe(s.a);
   });
 
-  it('vergibt noch keine Punkte', () => {
+  it('vergibt Emperor-Punkte aus dem Stand am Rundenende', () => {
     const s = setup();
     endTurn(s);
-    expect(s.a.points).toBe(0);
+    // Bevölkerung 55 -> 5, Industrie 30, Minen 2
+    expect(s.a.points).toBe(37);
   });
 });
 

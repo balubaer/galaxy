@@ -12,6 +12,8 @@ export const CLASSIC_EMPEROR_SCRAP_I_SHIPS = 4;
 export const CLASSIC_POPULATION_GROWTH = 0.1;
 /** Nach so vielen Runden im Besitz bekommt eine Welt mit Minen eine Mine mehr. */
 export const CLASSIC_TURNS_OWNED_CYCLE = 7;
+/** Runden, die eine geplünderte Welt unproduktiv bleibt (Classic; Advanced wären 2). */
+export const CLASSIC_PLUNDER_RECOVERY = 3;
 
 export function industryBuildCost(player: Player): number {
     return player.characterType === 'emperor' ? CLASSIC_EMPEROR_INDUSTRY_COST : CLASSIC_BUILD_COST;
@@ -56,6 +58,10 @@ export function shelterPenalty(world: World): number {
 
 /** Nutzbare Industrie: das Kleinste aus Industrie (abzüglich Schutzräume), Metall und Bevölkerung. */
 export function usableIndustry(world: World): number {
+    if (world.plunderRecovery > 0) {
+        // Eine Welt, die sich von einer Plünderung erholt, baut nicht.
+        return 0;
+    }
     const industry = Math.max(0, world.industry - shelterPenalty(world));
     return Math.max(0, Math.min(industry, availableMetal(world), world.population));
 }
@@ -76,6 +82,9 @@ function limitingFactors(world: World, shelter: number): string {
     const metal = availableMetal(world);
     const limits: Array<string> = [];
     const usable = world.buildBudget;
+    if (world.plunderRecovery > 0) {
+        return `Plünderung (noch ${world.plunderRecovery} Runden)`;
+    }
     if (industry === usable) {
         limits.push(shelter > 0 ? 'Industrie (abzüglich Schutzräume)' : 'Industrie');
     }

@@ -65,8 +65,8 @@ export class PersistenceManager {
     /** Classic-Felder nur speichern, wenn sie belegt sind, damit Core-Daten unverändert bleiben. */
     getClassicWorldPersist(world: World): Partial<WorldPersist> {
         const result: Partial<WorldPersist> = {};
-        const numbers: Array<'population' | 'populationLimit' | 'industry' | 'metal' | 'mines' | 'turnsOwned' | 'iShips' | 'pShips'> =
-            ['population', 'populationLimit', 'industry', 'metal', 'mines', 'turnsOwned', 'iShips', 'pShips'];
+        const numbers: Array<'population' | 'populationLimit' | 'industry' | 'metal' | 'mines' | 'turnsOwned' | 'iShips' | 'pShips' | 'plunderCount' | 'plunderRecovery'> =
+            ['population', 'populationLimit', 'industry', 'metal', 'mines', 'turnsOwned', 'iShips', 'pShips', 'plunderCount', 'plunderRecovery'];
         for (const key of numbers) {
             if (world[key] !== 0) {
                 result[key] = world[key];
@@ -217,6 +217,8 @@ export class PersistenceManager {
             world.iShips = worldPersist.iShips ?? 0;
             world.pShips = worldPersist.pShips ?? 0;
             world.blackHole = worldPersist.blackHole ?? false;
+            world.plunderCount = worldPersist.plunderCount ?? 0;
+            world.plunderRecovery = worldPersist.plunderRecovery ?? 0;
             this.worldArray.push(world);
             this.worldDict.set(worldPersist.number, world);
         }

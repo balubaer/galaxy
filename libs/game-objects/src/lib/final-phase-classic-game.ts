@@ -5,11 +5,12 @@ import { classicLog } from './classic-log';
 import { Fleet } from './fleet';
 import { ambushDamage, applyGroundShots, destroyShips, dropPbb, resetCombatTurn } from './classic-combat';
 import { PBB_MIN_SHIPS, PBB_SHIP_COST } from './classic-combat-commands';
-import { CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
+import { CLASSIC_PLUNDER_RECOVERY, CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
+import { PENALTY_PER_PBB, PENALTY_PER_PLUNDER, PENALTY_PER_POPULATION_KILLED, addPenalty, turnPoints } from './classic-scoring';
 
 /**
  * Rundenende des Classic Games: Kampf, Flüge und Besitzwechsel wie im Core Game, danach die Wirtschaft
- * (Besitzdauer, Minen, Bevölkerung). Punkte (Emperor) folgen später, daher vergibt diese Phase keine.
+ * (Besitzdauer, Minen, Bevölkerung), Plünderungen und die Punkte je Charakter (bisher Emperor) samt Strafen.
  */
 export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
     private ownerAtStart: Map<World, Player> = new Map();
@@ -33,13 +34,17 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         }
         for (const attack of world.groundShots) {
             const owner = world.player;
-            const text = applyGroundShots(world, attack.shots, attack.target);
+            const result = applyGroundShots(world, attack.shots, attack.target);
             world.addReportPlayer(owner);
-            world.addEvent(`Beschuss durch ${attack.player.stringName()}: ${text}`);
+            world.addEvent(`Beschuss durch ${attack.player.stringName()}: ${result.text}`);
+            this.penalize(attack.player, result.killed * PENALTY_PER_POPULATION_KILLED, `${result.killed} Bevölkerung auf ${world.name} getötet`);
         }
         for (const fleet of world.pbbDrops) {
             if (fleet.ships > 0 && fleet.pbb) {
+                const killed = world.population;
                 dropPbb(world);
+                this.penalize(fleet.player, PENALTY_PER_PBB + killed * PENALTY_PER_POPULATION_KILLED,
+                    `PBB auf ${world.name}, ${killed} Bevölkerung getötet`);
                 world.addEvent(`PBB von ${fleet.name()} zerstört alles Leben auf ${world.name}`);
             }
             fleet.pbb = false;
@@ -113,6 +118,35 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         return;
     }
 
+    private penalize(player: Player | null, points: number, reason: string) {
+        if (player !== null && points > 0) {
+            addPenalty(player, points);
+            classicLog(`${player.playerName}: -${points} Punkte (${reason})`);
+        }
+    }
+
+    /** Plünderung gilt, wenn die Welt dem Spieler zu Beginn und am Ende der Runde gehört. */
+    applyPlunder(world: World) {
+        const plunderer = world.plunderBy;
+        world.plunderBy = null;
+        if (plunderer === null || world.player !== plunderer || this.ownerAtStart.get(world) !== plunderer) {
+            return;
+        }
+        world.plunderCount += 1;
+        world.plunderRecovery = CLASSIC_PLUNDER_RECOVERY;
+        world.addEvent(`${world.name} geplündert von ${plunderer.stringName()}`);
+        this.penalize(plunderer, PENALTY_PER_PLUNDER, `${world.name} geplündert`);
+    }
+
+    /** Punkte der Runde je Spieler aus dem Stand am Rundenende. */
+    awardPoints() {
+        for (const player of this.allPlayerDict.values()) {
+            const points = turnPoints(player, this.worlds);
+            player.points = (player.points ?? 0) + points;
+            classicLog(`${player.playerName}: +${points} Punkte, jetzt ${player.points}`);
+        }
+    }
+
     override doFinal() {
         for (const world of this.worlds) {
             this.ownerAtStart.set(world, world.player);
@@ -122,8 +156,10 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         this.completeGifts();
         for (const world of this.worlds) {
             this.endEconomy(world);
+            this.applyPlunder(world);
             resetCombatTurn(world);
         }
+        this.awardPoints();
         for (const player of this.allPlayerDict.values()) {
             player.giftsThisTurn = 0;
         }
@@ -218,6 +254,18 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
     }
 
     endEconomy(world: World) {
+        if (world.plunderRecovery > 0) {
+            // Geplünderte Welt: keine Förderung, kein Wachstum, Besitzdauer steht (außer bei Besitzwechsel).
+            if (this.ownerAtStart.get(world) !== world.player) {
+                this.updateTurnsOwned(world);
+            }
+            world.plunderRecovery -= 1;
+            if (world.population > world.populationLimit) {
+                world.population = world.populationLimit;
+            }
+            resetEconomyTurn(world);
+            return;
+        }
         this.updateTurnsOwned(world);
         if (world.player !== null && world.blackHole === false) {
             const metalBefore = world.metal;

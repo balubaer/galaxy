@@ -38,6 +38,8 @@ export interface ClassicWorldInfo {
     turnsOwned: number;
     iShips: number;
     pShips: number;
+    plunderCount: number;
+    plunderRecovery: number;
 }
 
 export class World implements NumberKey {
@@ -63,6 +65,10 @@ export class World implements NumberKey {
     iShips = 0;
     pShips = 0;
     blackHole = false;
+    /** Wie oft die Welt geplündert wurde. */
+    plunderCount = 0;
+    /** Runden, die sich die Welt noch von der letzten Plünderung erholt (unproduktiv). */
+    plunderRecovery = 0;
 
     // Rundenzustand der Classic-Wirtschaft, wird nicht gespeichert und am Rundenende zurückgesetzt.
     /** Metall, das in dieser Runde entladen wurde und erst nächste Runde zum Bauen bereitsteht. */
@@ -85,6 +91,8 @@ export class World implements NumberKey {
     attacks: Array<{ attacker: Player; victim: Player }> = [];
     /** Flotten, die hier eine PBB abwerfen. */
     pbbDrops: Array<Fleet> = [];
+    /** Spieler, der die Welt in dieser Runde plündern will. */
+    plunderBy: Player | null = null;
 
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
@@ -152,7 +160,8 @@ export class World implements NumberKey {
     /** Hat die Welt Classic-Werte (Wirtschaft, I-/P-Schiffe oder Schwarzes Loch)? Im Core Game immer false. */
     isClassic(): boolean {
         return this.blackHole || this.population > 0 || this.populationLimit > 0 || this.industry > 0
-            || this.metal > 0 || this.mines > 0 || this.iShips > 0 || this.pShips > 0 || this.turnsOwned > 0;
+            || this.metal > 0 || this.mines > 0 || this.iShips > 0 || this.pShips > 0 || this.turnsOwned > 0
+            || this.plunderCount > 0;
     }
 
     /** Werte der Welt für Bericht und Karte, null im Core Game. */
@@ -170,6 +179,8 @@ export class World implements NumberKey {
             turnsOwned: this.turnsOwned,
             iShips: this.iShips,
             pShips: this.pShips,
+            plunderCount: this.plunderCount,
+            plunderRecovery: this.plunderRecovery,
         };
     }
 
@@ -190,6 +201,9 @@ export class World implements NumberKey {
         ];
         if (this.player !== null) {
             parts.push(`Besitz seit ${this.turnsOwned}`);
+        }
+        if (this.plunderCount > 0) {
+            parts.push(`Plunder=${this.plunderCount}/${this.plunderRecovery}`);
         }
         if (this.dShipsAmbush && this.hitAmbuschFleets.length > 0) {
             parts.push(`Hinterhalt: {${this.hitAmbuschFleets.map(f => f.name()).join(', ')}}`);

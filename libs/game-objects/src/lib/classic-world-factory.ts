@@ -44,6 +44,7 @@ export class ClassicWorldFactory {
 
     initHomeWorld(world: World) {
         world.player.characterType = 'emperor';
+        world.player.points = world.player.points ?? 0;
         world.industry = CLASSIC_START_INDUSTRY;
         world.metal = CLASSIC_HOME_METAL;
         world.mines = CLASSIC_HOME_MINES;

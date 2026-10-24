@@ -6,7 +6,7 @@ import {
     FleetNotFound_Error, FleetNotOwned_Error, WorldNotFound_Error, WorldNotOwned_Error, FleetNotOnWorld_Error,
     NotEnoughIndustry_Error, NotEnoughMetal_Error, NotEnoughPopulation_Error, NotEnoughShips_Error, FleetNoCapacity_Error,
     LoadNotAllowed_Error, AlreadyMigrating_Error, InvalidAmount_Error, NoConnection_Error, PlayerNotFound_Error,
-    GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error, WorldGiftNotPossible_Error
+    GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error, WorldGiftNotPossible_Error, WorldRecovering_Error
 } from './error';
 import { classicLog } from './classic-log';
 import { buildBudget, spendIndustry, industryBuildCost, scrapIShipsPerIndustry, CLASSIC_BUILD_COST } from './classic-economy';
@@ -521,6 +521,32 @@ export class GiveWorld extends GiftCommand implements ExecuteCommand {
         if (this.isValid()) {
             this.world.giftTo = this.recipient;
             this.player.giftsThisTurn++;
+        }
+    }
+}
+
+//WaaX: Plündern, wirksam am Rundenende, wenn die Welt dann noch dem Spieler gehört.
+export class PlunderWorld extends Command implements ExecuteCommand {
+    constructor(private world: World | null, aString: string, aPlayer: Player) {
+        super(aString, aPlayer, TurnPhase.Final);
+    }
+
+    isValid(): boolean {
+        if (this.world === null) {
+            return this.fail(WorldNotFound_Error);
+        }
+        if (this.isOwnedByCommandPlayer(this.world.player) === false) {
+            return this.fail(WorldNotOwned_Error);
+        }
+        if (this.world.plunderRecovery > 0) {
+            return this.fail(WorldRecovering_Error);
+        }
+        return true;
+    }
+
+    executeCommand() {
+        if (this.isValid()) {
+            this.world.plunderBy = this.player;
         }
     }
 }

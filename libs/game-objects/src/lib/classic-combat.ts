@@ -61,23 +61,23 @@ export function addAttack(world: World, attacker: Player, victim: Player | null)
 /**
  * Beschuss vom Orbit auf den Boden, je feuernder Flotte: I = I-Schiffe dann Industrie, P = P-Schiffe dann
  * Bevölkerung, H = I- und P-Schiffe; bleiben dabei mindestens zwei Schuss übrig, wird die Welt neutral.
- * Liefert eine Beschreibung für den Bericht.
+ * Liefert eine Beschreibung für den Bericht und die Zahl getöteter Bevölkerung.
  */
-export function applyGroundShots(world: World, shots: number, target: 'I' | 'P' | 'H'): string {
+export function applyGroundShots(world: World, shots: number, target: 'I' | 'P' | 'H'): { text: string; killed: number } {
     const hits = Math.floor(shots / 2);
     if (target === 'I') {
         const ships = Math.min(world.iShips, hits);
         const industry = Math.min(world.industry, hits - ships);
         world.iShips -= ships;
         world.industry -= industry;
-        return `${ships} I-Schiffe und ${industry} Industrie zerstört`;
+        return { text: `${ships} I-Schiffe und ${industry} Industrie zerstört`, killed: 0 };
     }
     if (target === 'P') {
         const ships = Math.min(world.pShips, hits);
         const people = Math.min(world.population, hits - ships);
         world.pShips -= ships;
         world.population -= people;
-        return `${ships} P-Schiffe zerstört und ${people} Bevölkerung getötet`;
+        return { text: `${ships} P-Schiffe zerstört und ${people} Bevölkerung getötet`, killed: people };
     }
     const needed = (world.iShips + world.pShips) * 2;
     const iShips = Math.min(world.iShips, hits);
@@ -89,7 +89,7 @@ export function applyGroundShots(world: World, shots: number, target: 'I' | 'P' 
         text += `, Welt neutralisiert, vorher ${world.player.stringName()}`;
         world.player = null;
     }
-    return text;
+    return { text, killed: 0 };
 }
 
 /** Planet Buster Bomb: alles Leben und alle Wirtschaft der Welt auf 0, Flotten im Orbit bleiben. */

@@ -45,6 +45,8 @@ interface ClassicInfo {
   metal: number;
   iShips: number;
   pShips: number;
+  /** Runden, die sich die Welt noch von einer Plünderung erholt. */
+  plunderRecovery?: number;
 }
 
 /** d3 ersetzt source/target der Kanten durch die Knoten-Objekte. */
@@ -538,6 +540,15 @@ export function buildCommandGroups(
           options: [opt(`F${f.number}B`, `PBB bauen (kostet ${PBB_SHIP_COST} Schiffe)`)],
         })),
     );
+  }
+
+  if (classic && !classic.blackHole && isOwnWorld && (classic.plunderRecovery ?? 0) === 0) {
+    add('Plündern', [
+      {
+        label: `Welt ${world}`,
+        options: [opt(`W${world}X`, 'Plündern (−5 Punkte, 3 Runden unproduktiv)')],
+      },
+    ]);
   }
 
   if (classic && !classic.blackHole) {
