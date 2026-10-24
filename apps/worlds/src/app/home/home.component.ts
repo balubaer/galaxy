@@ -27,6 +27,7 @@ import {
   routeWorlds,
 } from '../command-table/command-options';
 import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
+import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public node: Node | undefined;
   nodes: any;
   links: any;
+  hiddenLinks: any;
   force: any;
     
   fixEnabled = false;
@@ -160,6 +162,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     dellines.remove();
     const delnodes = svgv7.selectAll('.nodes');
     delnodes.remove();
+    svgv7.selectAll('.hidden-link').remove();
   }
 
   initGraf() {
@@ -200,6 +203,48 @@ export class HomeComponent implements OnInit, OnDestroy {
       .enter()
       .append('line')
       .style('stroke', '#999');
+
+    // Gestrichelte Arme zu Welten außerhalb des Distanzlevels (als path, damit die
+    // Routenmarkierung über 'line' sie nicht erfasst).
+    const stubLength = 22;
+    const nodeById = new Map(this.turnData.nodes.map((n) => [n.id, n]));
+    const neighborIds = new Map<string, string[]>();
+    for (const link of this.turnData.links) {
+      const source = idOf(link.source);
+      const target = idOf(link.target);
+      neighborIds.set(source, [...(neighborIds.get(source) ?? []), target]);
+      neighborIds.set(target, [...(neighborIds.get(target) ?? []), source]);
+    }
+    const hiddenByWorld = new Map<string, string[]>();
+    for (const link of this.turnData.hiddenLinks ?? []) {
+      if (nodeById.has(link.source)) {
+        hiddenByWorld.set(link.source, [...(hiddenByWorld.get(link.source) ?? []), link.target]);
+      }
+    }
+    const stubData = [...hiddenByWorld].flatMap(([world, targets]) =>
+      targets.map((target, index) => ({ world, target, index, count: targets.length }))
+    );
+    th.hiddenLinks = svgv7
+      .selectAll('.hidden-link')
+      .data(stubData)
+      .enter()
+      .append('g')
+      .attr('class', 'hidden-link');
+    th.hiddenLinks.append('title').text((d) => `${d.world} – ${d.target} (außerhalb des Distanzlevels)`);
+    th.hiddenLinks
+      .append('path')
+      .style('stroke', '#999')
+      .style('stroke-width', 1)
+      .style('stroke-dasharray', '3,2')
+      .style('fill', 'none');
+    th.hiddenLinks
+      .append('text')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', 5)
+      .attr('text-anchor', 'middle')
+      .attr('dy', 1.5)
+      .attr('fill', '#777')
+      .text((d) => d.target);
 
     th.nodes = svgv7
       .selectAll('.nodes')
@@ -338,6 +383,23 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
       th.nodes.attr('transform', (d) => `translate(${d.x},${d.y})`);
+
+      th.hiddenLinks.each(function (this: SVGGElement, d: any) {
+        const world = nodeById.get(d.world);
+        const neighbors = (neighborIds.get(d.world) ?? [])
+          .map((id) => nodeById.get(id))
+          .filter((n) => n !== undefined);
+        const base = outwardAngle(world, neighbors, { x: width / 2, y: height / 2 });
+        const angle = stubAngles(d.count, base)[d.index];
+        const endX = world.x + Math.cos(angle) * stubLength;
+        const endY = world.y + Math.sin(angle) * stubLength;
+        const group = d3.select(this);
+        group.select('path').attr('d', `M${world.x},${world.y}L${endX},${endY}`);
+        group
+          .select('text')
+          .attr('x', world.x + Math.cos(angle) * (stubLength + 5))
+          .attr('y', world.y + Math.sin(angle) * (stubLength + 5));
+      });
     });
 
     function drag_start(d) {
