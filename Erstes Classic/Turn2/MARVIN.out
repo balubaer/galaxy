@@ -1,0 +1,18 @@
+Infos zu Spieler: MARVIN Runde: 3 
+Punkte: undefined | Welten: 3 | Flotten: 5 | Schiffe auf Flotten: 27 | D-Schiffe: 0
+Verbündete: ()
+
+W2(12,13,10) [MARVIN] (Bev=31/44, Ind=1, Metall=10, Minen=2, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F4[MARVIN] = 5
+   F6[MARVIN] = 5
+   >> Welt erobert von [MARVIN]
+
+W10(19,2) [MARVIN] (Bev=55/100, Ind=30, Metall=2, Minen=2, I-Schiffe=1, P-Schiffe=1, Besitz seit 3)
+   F12[MARVIN] = 7
+   (F13[MARVIN]-->W19 F3[MARVIN]-->W19 F4[MARVIN]-->W2 F6[MARVIN]-->W2 )
+
+W19(33,10) [MARVIN] (Bev=57/74, Ind=2, Metall=3, Minen=2, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F13[MARVIN] = 5
+   F3[MARVIN] = 5
+   >> Welt erobert von [MARVIN]
+

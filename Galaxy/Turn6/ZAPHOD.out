@@ -1,0 +1,32 @@
+Infos zu Spieler: ZAPHOD Runde: 7 
+Punkte: 500 | Welten: 6 | Flotten: 9 | Schiffe auf Flotten: 21 | D-Schiffe: 15
+Verbündete: ()
+
+W1(7,8,6) [ZAPHOD] (D-Schiffe=1)
+   (F7[ZAPHOD]-->W8 F5[ZAPHOD]-->W6 F10[ZAPHOD]-->W6 )
+
+W2(9,7,5) [ZAPHOD] (D-Schiffe=3)
+
+W5(2) [ZAPHOD] (D-Schiffe=6)
+
+W6(7,1,4,3) [ZAPHOD] (D-Schiffe=1)
+   F8[ZAPHOD] = 0
+   F3[ZAPHOD] = 7 (feuert auf F2[MARVIN])
+   F5[ZAPHOD] = 3
+   F10[ZAPHOD] = 4
+   (F2[MARVIN]-->W7 )
+   >> F8 übernommen von [ZAPHOD]
+
+W7(6,1,2) [ZAPHOD] (D-Schiffe=4)
+   F2[MARVIN] = 5
+
+W8(9,1,10) [MARVIN] (D-Schiffe=5)
+   F7[ZAPHOD] = 3
+
+W9(2,8) [ZAPHOD] (D-Schiffe=0 (feuert auf F1[ZAPHOD]))
+   F1[ZAPHOD] = 0
+   F9[ZAPHOD] = 2 (feuert auf D-Schiffe)
+   F4[ZAPHOD] = 2 (feuert auf D-Schiffe)
+   F6[ZAPHOD] = 0
+   >> Welt erobert von [ZAPHOD], vorher [MARVIN]
+

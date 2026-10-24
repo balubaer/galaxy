@@ -1,0 +1,38 @@
+Infos zu Spieler: ZAPHOD Runde: 5 
+Punkte: undefined | Welten: 7 | Flotten: 5 | Schiffe auf Flotten: 17 | D-Schiffe: 0
+Verbündete: ()
+
+W5(20,1) [ZAPHOD] (Bev=64/86, Ind=0, Metall=5, Minen=1, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F9[ZAPHOD] = 3
+   >> Welt erobert von [ZAPHOD]
+
+W6(23,29,13) [ZAPHOD] (Bev=30/30, Ind=2, Metall=8, Minen=4, I-Schiffe=1, P-Schiffe=0, Besitz seit 2)
+   F12[MARVIN] = 8
+   (F7[ZAPHOD]-->W29 )
+
+W7(31,20,21) [ZAPHOD] (Bev=66/73, Ind=0, Metall=12, Minen=2, I-Schiffe=0, P-Schiffe=1, Besitz seit 3)
+   (F5[ZAPHOD]-->W21 F10[ZAPHOD]-->W31 )
+
+W12(31,2,29,8) [MARVIN] (Bev=41/53, Ind=0, Metall=1, Minen=1, I-Schiffe=0, P-Schiffe=2, Besitz seit 2)
+   F7[ZAPHOD] = 3
+   F4[MARVIN] = 7
+   (F6[MARVIN]-->W2 )
+
+W13(25,6,2) [MARVIN] (Bev=63/75, Ind=0, Metall=8, Minen=3, I-Schiffe=0, P-Schiffe=1, Besitz seit 2)
+   (F12[MARVIN]-->W6 )
+
+W20(5,7,29) [ZAPHOD] (Bev=51/58, Ind=0, Metall=18, Minen=4, I-Schiffe=0, P-Schiffe=0, Besitz seit 4)
+   F8[ZAPHOD] = 7
+   (F9[ZAPHOD]-->W5 F5[ZAPHOD]-->W7 F10[ZAPHOD]-->W7 )
+
+W21(18,7,33) [ZAPHOD] (Bev=51/55, Ind=0, Metall=5, Minen=4, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F5[ZAPHOD] = 2
+   >> Welt erobert von [ZAPHOD]
+
+W29(6,20,12) [ZAPHOD] (Bev=75/100, Ind=30, Metall=6, Minen=2, I-Schiffe=17, P-Schiffe=4, Besitz seit 5)
+   (F7[ZAPHOD]-->W12 F8[ZAPHOD]-->W20 F9[ZAPHOD]-->W20 F5[ZAPHOD]-->W20 F10[ZAPHOD]-->W20 )
+
+W31(7,30,12) [ZAPHOD] (Bev=26/63, Ind=0, Metall=7, Minen=1, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F10[ZAPHOD] = 2
+   >> Welt erobert von [ZAPHOD]
+

@@ -1,0 +1,31 @@
+Infos zu Spieler: MARVIN Runde: 7 
+Punkte: 480 | Welten: 4 | Flotten: 1 | Schiffe auf Flotten: 5 | D-Schiffe: 18
+Verbündete: ()
+
+W3(4,10,6) [MARVIN] (D-Schiffe=2)
+
+W4(10,6,3) [MARVIN] (D-Schiffe=5)
+
+W6(7,1,4,3) [ZAPHOD] (D-Schiffe=1)
+   F8[ZAPHOD] = 0
+   F3[ZAPHOD] = 7 (feuert auf F2[MARVIN])
+   F5[ZAPHOD] = 3
+   F10[ZAPHOD] = 4
+   (F2[MARVIN]-->W7 )
+   >> F8 übernommen von [ZAPHOD]
+
+W7(6,1,2) [ZAPHOD] (D-Schiffe=4)
+   F2[MARVIN] = 5
+
+W8(9,1,10) [MARVIN] (D-Schiffe=5)
+   F7[ZAPHOD] = 3
+
+W9(2,8) [ZAPHOD] (D-Schiffe=0 (feuert auf F1[ZAPHOD]))
+   F1[ZAPHOD] = 0
+   F9[ZAPHOD] = 2 (feuert auf D-Schiffe)
+   F4[ZAPHOD] = 2 (feuert auf D-Schiffe)
+   F6[ZAPHOD] = 0
+   >> Welt erobert von [ZAPHOD], vorher [MARVIN]
+
+W10(4,8,3) [MARVIN] (D-Schiffe=6)
+

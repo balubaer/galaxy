@@ -1,0 +1,82 @@
+W1(5,15,30) (Bev=23/54, Ind=0, Metall=5, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W2(12,13,10) (Bev=28/44, Ind=1, Metall=8, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W3(24,27,11) (Bev=23/63, Ind=0, Metall=1, Minen=3, I-Schiffe=0, P-Schiffe=0)
+   F2[---] = 0
+
+W4(26,28,16) (Bev=22/50, Ind=0, Metall=8, Minen=1, I-Schiffe=0, P-Schiffe=0)
+   F14[---] = 0
+
+W5(20,1) (Bev=58/86, Ind=0, Metall=4, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W6(23,29,13) (Bev=30/30, Ind=2, Metall=2, Minen=4, I-Schiffe=0, P-Schiffe=0)
+
+W7(31,20,21) (Bev=49/73, Ind=0, Metall=8, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W8(9,17,32,12) (Bev=28/33, Ind=0, Metall=4, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W9(8,28,14) (Bev=52/75, Ind=0, Metall=4, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W10(19,2) [MARVIN] (Bev=50/100, Ind=30, Metall=30, Minen=2, I-Schiffe=1, P-Schiffe=1, Besitz seit 1)
+   F13[MARVIN] = 0
+   F3[MARVIN] = 0
+   F12[MARVIN] = 0
+   F4[MARVIN] = 0
+   F6[MARVIN] = 0
+
+W11(30,3,25) (Bev=40/48, Ind=0, Metall=5, Minen=3, I-Schiffe=0, P-Schiffe=0)
+
+W12(31,2,29,8) (Bev=27/53, Ind=0, Metall=2, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W13(25,6,2) (Bev=51/75, Ind=0, Metall=2, Minen=3, I-Schiffe=0, P-Schiffe=0)
+
+W14(9,33) (Bev=40/60, Ind=0, Metall=2, Minen=1, I-Schiffe=0, P-Schiffe=0)
+   F11[---] = 0
+
+W15(17,1,26) (Bev=33/72, Ind=0, Metall=1, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W16(4,26,22,18) (Bev=17/39, Ind=0, Metall=8, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W17(23,15,8) (Bev=58/61, Ind=0, Metall=4, Minen=4, I-Schiffe=0, P-Schiffe=0)
+
+W18(28,21,32,16) (Bev=53/53, Ind=0, Metall=7, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W19(33,10) (Bev=46/74, Ind=2, Metall=1, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W20(5,7,29) (Bev=33/58, Ind=0, Metall=5, Minen=4, I-Schiffe=0, P-Schiffe=0)
+
+W21(18,7,33) (Bev=46/55, Ind=0, Metall=1, Minen=4, I-Schiffe=0, P-Schiffe=0)
+
+W22(16,34) (Bev=46/78, Ind=0, Metall=0, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W23(17,6) (Schwarzes Loch)
+
+W24(34,3,27) (Bev=34/48, Ind=0, Metall=0, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W25(13,11) (Bev=34/55, Ind=2, Metall=5, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W26(4,16,15) (Bev=58/64, Ind=0, Metall=8, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W27(3,34,24) (Bev=57/73, Ind=0, Metall=1, Minen=3, I-Schiffe=0, P-Schiffe=0)
+   F1[---] = 0
+
+W28(9,18,4) (Bev=23/27, Ind=0, Metall=8, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W29(6,20,12) [ZAPHOD] (Bev=50/100, Ind=30, Metall=30, Minen=2, I-Schiffe=1, P-Schiffe=1, Besitz seit 1)
+   F8[ZAPHOD] = 0
+   F10[ZAPHOD] = 0
+   F9[ZAPHOD] = 0
+   F5[ZAPHOD] = 0
+   F7[ZAPHOD] = 0
+
+W30(31,1,11) (Bev=18/21, Ind=0, Metall=1, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W31(7,30,12) (Bev=23/63, Ind=0, Metall=6, Minen=1, I-Schiffe=0, P-Schiffe=0)
+
+W32(18,8) (Bev=40/52, Ind=0, Metall=2, Minen=4, I-Schiffe=0, P-Schiffe=0)
+
+W33(14,21,19) (Bev=10/32, Ind=0, Metall=7, Minen=2, I-Schiffe=0, P-Schiffe=0)
+
+W34(24,27,22) (Bev=54/93, Ind=0, Metall=1, Minen=3, I-Schiffe=0, P-Schiffe=0)
+

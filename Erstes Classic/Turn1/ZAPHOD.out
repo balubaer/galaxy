@@ -1,0 +1,18 @@
+Infos zu Spieler: ZAPHOD Runde: 2 
+Punkte: undefined | Welten: 3 | Flotten: 5 | Schiffe auf Flotten: 13 | D-Schiffe: 0
+Verbündete: ()
+
+W12(31,2,29,8) [ZAPHOD] (Bev=30/53, Ind=0, Metall=3, Minen=1, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F9[ZAPHOD] = 3
+   >> Welt erobert von [ZAPHOD]
+
+W20(5,7,29) [ZAPHOD] (Bev=37/58, Ind=0, Metall=9, Minen=4, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+   F10[ZAPHOD] = 3
+   >> Welt erobert von [ZAPHOD]
+
+W29(6,20,12) [ZAPHOD] (Bev=55/100, Ind=30, Metall=2, Minen=2, I-Schiffe=15, P-Schiffe=4, Besitz seit 2)
+   F8[ZAPHOD] = 1
+   F5[ZAPHOD] = 3
+   F7[ZAPHOD] = 3
+   (F10[ZAPHOD]-->W20 F9[ZAPHOD]-->W12 )
+
