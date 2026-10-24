@@ -5,6 +5,20 @@
   "projectType": "application",
   "tags": [],
   "targets": {
+    "build": {
+      "inputs": [
+        "production",
+        "^production",
+        {
+          "externalDependencies": [
+            "webpack-cli"
+          ]
+        },
+        {
+          "runtime": "git rev-parse --short HEAD"
+        }
+      ]
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
