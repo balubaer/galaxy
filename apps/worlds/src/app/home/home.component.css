@@ -122,6 +122,33 @@ textarea {
   max-width: 100%;
 }
 
+/* Ältere Runde angewählt: Karte links, die Runde danach rechts daneben. */
+.map-column.comparing {
+  flex-basis: calc(1500px + 1em);
+}
+
+.map-compare {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.map-pane {
+  flex: 0 1 750px;
+  max-width: 100%;
+}
+
+.map-pane[hidden] {
+  display: none;
+}
+
+.map-label {
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  margin-bottom: 0.3em;
+}
+
 .command-column {
   flex: 1 1 420px;
   min-width: 0;
@@ -139,6 +166,7 @@ textarea {
   }
 
   .map-column,
+  .map-column.comparing,
   .command-column {
     flex: none;
     width: 100%;

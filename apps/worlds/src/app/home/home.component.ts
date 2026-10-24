@@ -70,6 +70,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   nodes: any;
   links: any;
   hiddenLinks: any;
+  /** Vergleich: die Runde nach der angewählten älteren Runde, rechts neben der Karte. */
+  prevTurnData: RespondTurnData | null = null;
+  private prevTurnDataSubscription: Subscription | null = null;
+  /** Überträgt die Positionen der Karte links auf die Vergleichskarte und zeichnet sie. */
+  private renderPrevMap: (() => void) | null = null;
   /** Popup mit den gespeicherten Darstellungsflächen; null = geschlossen. */
   savedLayouts: SavedLayout[] | null = null;
   force: any;
@@ -159,8 +164,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteGraf() {
-    const svgv7 = d3.select('svg#v7');
+  deleteGraf(selector = 'svg#v7') {
+    const svgv7 = d3.select(selector);
     const dellines = svgv7.selectAll('line');
     dellines.remove();
     const delnodes = svgv7.selectAll('.nodes');
@@ -218,9 +223,76 @@ export class HomeComponent implements OnInit, OnDestroy {
       th.force.force('center_force', d3.forceCenter(width / 2, height / 2));
     }
 
-    th.links = svgv7
+    const map = this.drawMap(svgv7, this.turnData, width, height);
+    th.links = map.links;
+    th.hiddenLinks = map.hiddenLinks;
+    th.nodes = map.nodes;
+
+    const drag_handler = d3
+      .drag()
+      .on('start', drag_start)
+      .on('drag', drag_drag)
+      .on('end', drag_end);
+
+    drag_handler(th.nodes);
+
+    th.nodes.on('click', clicked);
+
+    function clicked(this: any, event, d) {
+      if (th.routePlan) {
+        // Routenplanung: Klick wählt die nächste Welt der Route, die Auswahl bleibt.
+        if (!event.defaultPrevented) {
+          th.routePlan = extendRoute(th.routePlan, th.turnData.links, d.id);
+          th.highlightRoute();
+        }
+        return;
+      }
+      if (event.defaultPrevented) return; // dragged
+
+      // Erneuter Klick hebt die Auswahl auf, eine andere Welt ersetzt sie.
+      th.node = th.node?.id === d.id ? undefined : d;
+      th.highlightRoute();
+    }
+
+    th.force.on('tick', function () {
+      keepNodesInArea(th.turnData.nodes, width, height, margin);
+      map.render();
+      th.renderPrevMap?.();
+    });
+
+    function drag_start(d) {
+      if (!d.active) th.force.alphaTarget(0.3).restart();
+      d.subject.fx = d.subject.x;
+      d.subject.fy = d.subject.y;
+    }
+
+    function drag_drag(d) {
+      d.subject.fx = clampToArea(d.x, width, margin);
+      d.subject.fy = clampToArea(d.y, height, margin);
+    }
+
+    function drag_end(d) {
+      if (!d.active) th.force.alphaTarget(0);
+      if (th.fixEnabled === false) {
+        d.subject.fx = null;
+        d.subject.fy = null;
+      }
+    }
+    th.force.nodes(this.turnData.nodes);
+    th.force.force('link').links(this.turnData.links);
+    // Das Ringlayout ist schon fertig verteilt, die Simulation braucht nur wenig Energie.
+    th.force.alpha(hasSavedLayout ? 1 : 0.3).restart();
+    this.highlightRoute();
+  }
+
+  /**
+   * Zeichnet Verbindungen, Arme, Welten, Flotten und InfoBoxen einer Runde in eine
+   * Darstellungsfläche; render() setzt alles auf die aktuellen Positionen der Welten.
+   */
+  private drawMap(svg: any, data: RespondTurnData, width: number, height: number) {
+    const links = svg
       .selectAll('line')
-      .data(this.turnData.links)
+      .data(data.links)
       .enter()
       .append('line')
       .style('stroke', '#999');
@@ -228,16 +300,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Gestrichelte Arme zu Welten außerhalb des Distanzlevels (als path, damit die
     // Routenmarkierung über 'line' sie nicht erfasst).
     const stubLength = 22;
-    const nodeById = new Map(this.turnData.nodes.map((n) => [n.id, n]));
+    const nodeById = new Map(data.nodes.map((n) => [n.id, n]));
     const neighborIds = new Map<string, string[]>();
-    for (const link of this.turnData.links) {
+    for (const link of data.links) {
       const source = idOf(link.source);
       const target = idOf(link.target);
       neighborIds.set(source, [...(neighborIds.get(source) ?? []), target]);
       neighborIds.set(target, [...(neighborIds.get(target) ?? []), source]);
     }
     const hiddenByWorld = new Map<string, string[]>();
-    for (const link of this.turnData.hiddenLinks ?? []) {
+    for (const link of data.hiddenLinks ?? []) {
       if (nodeById.has(link.source)) {
         hiddenByWorld.set(link.source, [...(hiddenByWorld.get(link.source) ?? []), link.target]);
       }
@@ -245,20 +317,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     const stubData = [...hiddenByWorld].flatMap(([world, targets]) =>
       targets.map((target, index) => ({ world, target, index, count: targets.length }))
     );
-    th.hiddenLinks = svgv7
+    const hiddenLinks = svg
       .selectAll('.hidden-link')
       .data(stubData)
       .enter()
       .append('g')
       .attr('class', 'hidden-link');
-    th.hiddenLinks.append('title').text((d) => `${d.world} – ${d.target} (außerhalb des Distanzlevels)`);
-    th.hiddenLinks
+    hiddenLinks.append('title').text((d) => `${d.world} – ${d.target} (außerhalb des Distanzlevels)`);
+    hiddenLinks
       .append('path')
       .style('stroke', '#999')
       .style('stroke-width', 1)
       .style('stroke-dasharray', '3,2')
       .style('fill', 'none');
-    th.hiddenLinks
+    hiddenLinks
       .append('text')
       .attr('font-family', 'sans-serif')
       .attr('font-size', 5)
@@ -267,14 +339,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('fill', '#777')
       .text((d) => d.target);
 
-    th.nodes = svgv7
+    const nodes = svg
       .selectAll('.nodes')
-      .data(this.turnData.nodes)
+      .data(data.nodes)
       .enter()
       .append('g')
       .attr('class', 'nodes');
 
-    th.nodes
+    nodes
       .append('circle')
       .attr('r', 10)
       .style('fill', function (d) {
@@ -282,7 +354,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
 
     // Flotten als kleine Ellipsen rund um die Welt (Position wie in der Detailansicht, verkleinert).
-    th.nodes.each(function (this: SVGGElement, d: any) {
+    nodes.each(function (this: SVGGElement, d: any) {
       const group = d3.select(this);
       for (const fleet of d.data?.fleets ?? []) {
         const fleetGroup = group
@@ -309,15 +381,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    const drag_handler = d3
-      .drag()
-      .on('start', drag_start)
-      .on('drag', drag_drag)
-      .on('end', drag_end);
-
-    drag_handler(th.nodes);
-
-    th.nodes
+    nodes
       .append('text')
       .attr('dy', 3)
       .attr('dx', 0)
@@ -329,7 +393,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .text((d) => d.id);
 
     // Classic Game: InfoBox mit den Weltenwerten unterhalb der Flotten.
-    th.nodes.each(function (this: SVGGElement, d: any) {
+    nodes.each(function (this: SVGGElement, d: any) {
       const info = d.data?.classic;
       if (!info || info.blackHole) {
         return;
@@ -371,43 +435,26 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
     });
 
-    th.nodes.on('click', clicked);
-
-    function clicked(this: any, event, d) {
-      if (th.routePlan) {
-        // Routenplanung: Klick wählt die nächste Welt der Route, die Auswahl bleibt.
-        if (!event.defaultPrevented) {
-          th.routePlan = extendRoute(th.routePlan, th.turnData.links, d.id);
-          th.highlightRoute();
-        }
-        return;
-      }
-      if (event.defaultPrevented) return; // dragged
-
-      // Erneuter Klick hebt die Auswahl auf, eine andere Welt ersetzt sie.
-      th.node = th.node?.id === d.id ? undefined : d;
-      th.highlightRoute();
-    }
-
-    th.force.on('tick', function () {
-      keepNodesInArea(th.turnData.nodes, width, height, margin);
-      th.links
+    // Vor der Simulation sind die Enden der Verbindungen noch Welten-Ids.
+    const at = (end: any) => (typeof end === 'string' ? nodeById.get(end) : end);
+    const render = () => {
+      links
         .attr('x1', function (d) {
-          return d.source.x;
+          return at(d.source)?.x;
         })
         .attr('y1', function (d) {
-          return d.source.y;
+          return at(d.source)?.y;
         })
         .attr('x2', function (d) {
-          return d.target.x;
+          return at(d.target)?.x;
         })
         .attr('y2', function (d) {
-          return d.target.y;
+          return at(d.target)?.y;
         });
 
-      th.nodes.attr('transform', (d) => `translate(${d.x},${d.y})`);
+      nodes.attr('transform', (d) => `translate(${d.x},${d.y})`);
 
-      th.hiddenLinks.each(function (this: SVGGElement, d: any) {
+      hiddenLinks.each(function (this: SVGGElement, d: any) {
         const world = nodeById.get(d.world);
         const neighbors = (neighborIds.get(d.world) ?? [])
           .map((id) => nodeById.get(id))
@@ -423,37 +470,82 @@ export class HomeComponent implements OnInit, OnDestroy {
           .attr('x', world.x + Math.cos(angle) * (stubLength + 5))
           .attr('y', world.y + Math.sin(angle) * (stubLength + 5));
       });
-    });
+    };
+    return { links, hiddenLinks, nodes, render };
+  }
 
-    function drag_start(d) {
-      if (!d.active) th.force.alphaTarget(0.3).restart();
-      d.subject.fx = d.subject.x;
-      d.subject.fy = d.subject.y;
+  /** Runde nach der angewählten älteren Runde; null, wenn nicht verglichen wird. */
+  get nextRound(): number | null {
+    return this.changeround < this.round ? this.changeround + 1 : null;
+  }
+
+  /** Lädt die Runde danach für die Vergleichskarte rechts (gleiche Welt, gleiches Distanzlevel). */
+  private loadPrevMap(worldName: string) {
+    this.prevTurnDataSubscription?.unsubscribe();
+    this.prevTurnDataSubscription = null;
+    this.prevTurnData = null;
+    this.renderPrevMap = null;
+    this.deleteGraf('svg#v7prev');
+    const nextRound = this.nextRound;
+    if (nextRound === null) {
+      return;
     }
+    const request: RequestTurnDataOnlyPlayerAndRound = {
+      playerName: this.currentUser.username,
+      round: nextRound,
+      worldName,
+      distanceLevelHomes: this.distanceLevelHomes,
+    };
+    this.prevTurnDataSubscription = this.gamePlayService
+      .getTurnDataOnlyPlayerAndRound(request)
+      .subscribe((aTurnData) => {
+        this.prevTurnData = aTurnData;
+        this.drawPrevGraf(worldName);
+      });
+  }
 
-    function drag_drag(d) {
-      d.subject.fx = clampToArea(d.x, width, margin);
-      d.subject.fy = clampToArea(d.y, height, margin);
-    }
-
-    function drag_end(d) {
-      if (!d.active) th.force.alphaTarget(0);
-      if (th.fixEnabled === false) {
-        d.subject.fx = null;
-        d.subject.fy = null;
+  /**
+   * Zeichnet die Vergleichskarte nur zum Ansehen. Welten, die auch links zu sehen sind,
+   * stehen an derselben Stelle und folgen dort jedem Verschieben; die übrigen liegen auf Ringen.
+   */
+  private drawPrevGraf(worldName: string) {
+    const width = 500;
+    const height = 500;
+    const data = this.prevTurnData;
+    const svg = d3.select('svg#v7prev').style('background-color', 'white');
+    this.applyZoom();
+    applyRingLayout(data.nodes, data.links, worldName, width / 2, height / 2, width / 2 - 30);
+    const map = this.drawMap(svg, data, width, height);
+    this.renderPrevMap = () => {
+      const current = new Map(this.turnData.nodes.map((n) => [n.id, n]));
+      for (const node of data.nodes) {
+        const same = current.get(node.id);
+        if (same?.x !== undefined && same?.y !== undefined) {
+          node.x = same.x;
+          node.y = same.y;
+        }
       }
+      map.render();
+    };
+    this.renderPrevMap();
+    // Die Vergleichskarte wird erst nach diesem Durchlauf eingeblendet.
+    setTimeout(() => this.syncPrevScroll());
+  }
+
+  /** Die Vergleichskarte zeigt denselben Ausschnitt wie die Karte links. */
+  syncPrevScroll() {
+    const box = document.querySelector<HTMLElement>('.graph-scroll');
+    const prev = document.querySelector<HTMLElement>('.prev-scroll');
+    if (box && prev) {
+      prev.scrollLeft = box.scrollLeft;
+      prev.scrollTop = box.scrollTop;
     }
-    th.force.nodes(this.turnData.nodes);
-    th.force.force('link').links(this.turnData.links);
-    // Das Ringlayout ist schon fertig verteilt, die Simulation braucht nur wenig Energie.
-    th.force.alpha(hasSavedLayout ? 1 : 0.3).restart();
-    this.highlightRoute();
   }
 
   /** Zoom über die Größe der SVG-Fläche; der Rahmen (graph-scroll) scrollt. */
   applyZoom() {
     const size = 750 * this.zoom;
-    d3.select('svg#v7')
+    d3.selectAll('svg#v7, svg#v7prev')
       .attr('viewBox', '0 0 500 500')
       .attr('width', size)
       .attr('height', size)
@@ -462,11 +554,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   /** Scrollt den Rahmen so, dass die Mitte der Darstellungsfläche sichtbar ist. */
   scrollToCenter() {
-    const box = document.querySelector<HTMLElement>('.graph-scroll');
-    if (box) {
+    document.querySelectorAll<HTMLElement>('.graph-scroll').forEach((box) => {
       box.scrollLeft = (box.scrollWidth - box.clientWidth) / 2;
       box.scrollTop = (box.scrollHeight - box.clientHeight) / 2;
-    }
+    });
   }
 
   onZoomChange(value: string) {
@@ -486,6 +577,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       box.scrollLeft = center.x * newZoom - box.clientWidth / 2;
       box.scrollTop = center.y * newZoom - box.clientHeight / 2;
     }
+    this.syncPrevScroll();
   }
 
   highlightRoute() {
@@ -579,36 +671,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.subscriptionsTurnData.unsubscribe();
       this.subscriptionsTurnData = null;
     }
+    this.prevTurnDataSubscription?.unsubscribe();
   }
 
+  /** Zeigt die Karte der Runde aRound für die gewählte Welt (Select W). */
   readNewTurnDataWithRound(aRound: number) {
-    this.routePlan = null;
-    if (this.gamePrefSubsription !== null) {
-      this.gamePrefSubsription.unsubscribe();
-      this.gamePrefSubsription = null;
-    }
-    const request: RequestTurnDataOnlyPlayerAndRound = {
-      playerName: this.currentUser.username,
-      round: this.changeround,
-      worldName: `W${this.selectWorld}`,
-      distanceLevelHomes: this.distanceLevelHomes,
-    };
-
-    if (this.subscriptionsTurnData !== null) {
-      this.subscriptionsTurnData.unsubscribe();
-      this.subscriptionsTurnData = null;
-    }
-    this.turnData$ =
-      this.gamePlayService.getTurnDataOnlyPlayerAndRound(request);
-    this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
-      this.turnCommandTxt = aTurnData.turnCommanTxt;
-      if (this.changeround === this.round) {
-        const element = this.form.get('Commands');
-        if (element) {
-          element.setValue(aTurnData.turnCommanTxt);
-        }
-      }
-    });
+    this.readNewTurnDataWithRoundAndWorldName(aRound, `W${this.selectWorld}`);
   }
 
   readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string, aSaveKey?: string) {
@@ -637,6 +705,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       const hasSavedLayout = this.applySavedLayout(aWorldName, aSaveKey);
       this.deleteGraf();
       this.initGraf(hasSavedLayout);
+      this.loadPrevMap(aWorldName);
       if (this.changeround === this.round) {
         this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
       }

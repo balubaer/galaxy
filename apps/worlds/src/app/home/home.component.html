@@ -2,7 +2,7 @@
   <div class="game-end"><b>Das Spiel ist beendet. Sieger: {{ winner }}</b></div>
 }
 <div class="main-layout">
-<div class="map-column">
+<div class="map-column" [class.comparing]="prevTurnData">
 @if (turnData) {
   <div class="container">
     <table id="table1">
@@ -236,8 +236,22 @@
     </table>
   </div>
 }
-<div class="graph-scroll">
-  <svg id="v7" width="750" height="750"></svg><!--graph container-->
+<div class="map-compare">
+  <div class="map-pane">
+    @if (changeround < round) {
+      <div class="map-label">Runde {{ changeround + 1 }}</div>
+    }
+    <div class="graph-scroll" (scroll)="syncPrevScroll()">
+      <svg id="v7" width="750" height="750"></svg><!--graph container-->
+    </div>
+  </div>
+  <!-- Vergleich: rechts die Runde nach der angewählten älteren Runde -->
+  <div class="map-pane" [hidden]="!prevTurnData">
+    <div class="map-label">Runde {{ changeround + 2 }} (Runde danach)</div>
+    <div class="graph-scroll prev-scroll">
+      <svg id="v7prev" width="750" height="750"></svg>
+    </div>
+  </div>
 </div>
 <div class="container">
   <button mat-stroked-button color="primary" class="button" (click)="openSavedLayouts()">
@@ -369,7 +383,7 @@
 
 </div>
 @if (turnData) {
-  <div class="command-column">
+  <div class="command-column" [hidden]="ishidden">
     @if (!node && !ishidden) {
       <div class="command-hint">
         Wähle eine Welt auf der Karte aus, um Befehle abzusetzen.
