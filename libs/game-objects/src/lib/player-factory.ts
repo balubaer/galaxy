@@ -19,7 +19,8 @@ export class PlayerFactory {
         this.worldDice = new Dice();
         this.fleetDice = new Dice();
         this.playerDice = new Dice();
-        this.playerNameArray = aPlayerNameArray;
+        // Kopie: Die Namen werden beim Verteilen entfernt, die Spielerliste der Gamepref muss erhalten bleiben.
+        this.playerNameArray = [...aPlayerNameArray];
         this.distanceLevelHomes = 0;
         this.homeWorldsDict = new Map();
     }
