@@ -5,6 +5,42 @@
   <svg id="v7" width="750" height="750"></svg><!--graph container-->
 </div>
 <div class="container">
+  <button mat-stroked-button color="primary" class="button" (click)="openSavedLayouts()">
+    Speicherungen
+  </button>
+</div>
+@if (savedLayouts) {
+  <div class="popup-backdrop" (click)="closeSavedLayouts()">
+    <div class="popup" role="dialog" aria-label="Gespeicherte Darstellungsflächen" (click)="$event.stopPropagation()">
+      <h4>Gespeicherte Darstellungsflächen</h4>
+      @if (savedLayouts.length === 0) {
+        <p>Noch keine Speicherungen. Mit „save“ wird die aktuelle Darstellung gesichert.</p>
+      } @else {
+        <table class="popup-table">
+          <tr>
+            <th>Runde</th>
+            <th>Welt</th>
+            <th>Distanzlevel</th>
+            <th></th>
+          </tr>
+          @for (save of savedLayouts; track save.key) {
+            <tr>
+              <td>{{ save.round + 1 }}</td>
+              <td>W{{ save.world }}</td>
+              <td>{{ save.distanceLevel }}</td>
+              <td>
+                <button type="button" (click)="loadSavedLayout(save)">anzeigen</button>
+                <button type="button" (click)="deleteSavedLayout(save)">löschen</button>
+              </td>
+            </tr>
+          }
+        </table>
+      }
+      <button type="button" (click)="closeSavedLayouts()">schließen</button>
+    </div>
+  </div>
+}
+<div class="container">
   <table id="table1">
     <tr>
       <td>

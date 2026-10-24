@@ -28,6 +28,7 @@ import {
 } from '../command-table/command-options';
 import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
+import { listSavedLayouts, parseSaveKey, SavedLayout } from './saved-layouts';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -68,6 +69,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   nodes: any;
   links: any;
   hiddenLinks: any;
+  /** Popup mit den gespeicherten Darstellungsflächen; null = geschlossen. */
+  savedLayouts: SavedLayout[] | null = null;
   force: any;
     
   fixEnabled = false;
@@ -587,7 +590,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string) {
+  readNewTurnDataWithRoundAndWorldName(aRound: number, aWorldName: string, aSaveKey?: string) {
     this.routePlan = null;
     if (this.gamePrefSubsription !== null) {
       this.gamePrefSubsription.unsubscribe();
@@ -610,7 +613,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
       this.turnCommandTxt = aTurnData.turnCommanTxt;
       this.turnData = aTurnData;
-      this.applySavedLayout(aWorldName);
+      this.applySavedLayout(aWorldName, aSaveKey);
       this.deleteGraf();
       this.initGraf();
       if (this.changeround === this.round) {
@@ -670,29 +673,36 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  private storageKeys(): string[] {
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      keys.push(localStorage.key(i) ?? '');
+    }
+    return keys;
+  }
+
   /** Andere Saves des Benutzers: gleiche Runde zuerst, dann das nächstliegende Distanzlevel. */
   private otherSaveKeys(ownKey: string): string[] {
-    const pattern = /^R(\d+)W(\d+)D(\d+)\.(.+)$/;
-    const keys: { key: string; rank: number }[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i) ?? '';
-      const match = pattern.exec(key);
-      if (match && key !== ownKey && match[4] === this.currentUser.username) {
-        const sameRound = +match[1] === this.round ? 0 : 1000;
-        keys.push({ key, rank: sameRound + Math.abs(+match[3] - this.distanceLevelHomes) });
-      }
-    }
-    return keys.sort((a, b) => a.rank - b.rank).map((k) => k.key);
+    return listSavedLayouts(this.storageKeys(), this.currentUser.username)
+      .filter((save) => save.key !== ownKey)
+      .map((save) => ({
+        key: save.key,
+        rank: (save.round === this.round ? 0 : 1000) + Math.abs(save.distanceLevel - this.distanceLevelHomes),
+      }))
+      .sort((a, b) => a.rank - b.rank)
+      .map((k) => k.key);
   }
 
   /**
-   * Übernimmt gesicherte Positionen ("save"). Zuerst gilt der eigene Save dieser Ansicht;
-   * Welten, die dort fehlen, bekommen ihre Position aus Saves anderer Distanzlevel.
+   * Übernimmt gesicherte Positionen ("save"). Zuerst gilt ein im Popup gewählter Save,
+   * dann der eigene Save dieser Ansicht; Welten, die dort fehlen, bekommen ihre Position
+   * aus Saves anderer Distanzlevel.
    */
-  private applySavedLayout(worldName: string) {
+  private applySavedLayout(worldName: string, preferredKey?: string) {
     const ownKey = this.layoutKey(worldName);
     const pending = new Map(this.turnData.nodes.map((n) => [n.id, n]));
-    for (const key of [ownKey, ...this.otherSaveKeys(ownKey)]) {
+    const keys = [...new Set([preferredKey ?? ownKey, ownKey, ...this.otherSaveKeys(ownKey)])];
+    for (const key of keys) {
       if (pending.size === 0) {
         break;
       }
@@ -706,6 +716,29 @@ export class HomeComponent implements OnInit, OnDestroy {
           pending.delete(old.id);
         }
       }
+    }
+  }
+
+  openSavedLayouts() {
+    this.savedLayouts = listSavedLayouts(this.storageKeys(), this.currentUser.username);
+  }
+
+  closeSavedLayouts() {
+    this.savedLayouts = null;
+  }
+
+  /** Zeigt die Welt und das Distanzlevel eines Saves mit dessen Positionen an. */
+  loadSavedLayout(save: SavedLayout) {
+    this.selectWorld = save.world;
+    this.distanceLevelHomes = save.distanceLevel;
+    this.closeSavedLayouts();
+    this.readNewTurnDataWithRoundAndWorldName(this.changeround, `W${save.world}`, save.key);
+  }
+
+  deleteSavedLayout(save: SavedLayout) {
+    if (confirm(`Speicherung ${save.key} löschen?`)) {
+      localStorage.removeItem(save.key);
+      this.openSavedLayouts();
     }
   }
 
