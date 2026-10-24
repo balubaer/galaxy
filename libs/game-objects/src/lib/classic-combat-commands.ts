@@ -116,6 +116,7 @@ export class ClassicFire extends Command implements ExecuteCommand {
         const shooterName = this.shooter instanceof Fleet ? this.shooter.name() : `${this.shooter}-Schiffe ${this.world.name}`;
         if (this.shooter instanceof Fleet) {
             this.shooter.fired = true;
+            this.shooter.firedBy = this.player;
         }
         const shots = this.shooter instanceof Fleet
             ? fleetShots(this.shooter)
@@ -159,11 +160,24 @@ export class ResolveConditionalFire extends Command implements ExecuteCommand {
     }
 }
 
-/** FaaPbb IaaPbb PaaPbb: ein Schiff erkundet eine Nachbarwelt und verglüht dabei. */
+/**
+ * FaaPbb IaaPbb PaaPbb: ein Schiff erkundet eine Nachbarwelt und verglüht dabei.
+ * Der Befehl wird beim Feuern nur geprüft und vorgemerkt; das Schiff verglüht erst nach allem Feuer und
+ * nach den Flugbefehlen (ResolveProbes). So feuert eine Flotte unabhängig von der Befehlsreihenfolge mit
+ * allen Schiffen, mit denen sie die Runde begonnen hat.
+ */
 export class ClassicProbe extends Command implements ExecuteCommand {
     constructor(private world: World | null, private source: Shooter | null, private target: World | null,
-        aString: string, aPlayer: Player) {
+        private accepted: Array<ClassicProbe>, aString: string, aPlayer: Player) {
         super(aString, aPlayer, TurnPhase.Combat);
+    }
+
+    private shipsAtSource(): number {
+        return this.source instanceof Fleet ? this.source.ships : this.source === 'I' ? this.world.iShips : this.world.pShips;
+    }
+
+    private sameSource(other: ClassicProbe): boolean {
+        return other.source === this.source && (this.source instanceof Fleet || other.world === this.world);
     }
 
     isValid(): boolean {
@@ -183,8 +197,9 @@ export class ClassicProbe extends Command implements ExecuteCommand {
         if (this.world.hasConnectionToWorld(this.target) === false) {
             return this.fail(NoConnection_Error);
         }
-        const ships = this.source instanceof Fleet ? this.source.ships : this.source === 'I' ? this.world.iShips : this.world.pShips;
-        if (ships < 1) {
+        // Jede Sonde kostet ein Schiff, auch die schon vorgemerkten derselben Flotte bzw. Gruppe.
+        const pending = this.accepted.filter(probe => this.sameSource(probe)).length;
+        if (this.shipsAtSource() < pending + 1) {
             return this.fail(NotEnoughShips_Error);
         }
         return true;
@@ -192,15 +207,36 @@ export class ClassicProbe extends Command implements ExecuteCommand {
 
     executeCommand() {
         if (this.isValid()) {
-            if (this.source instanceof Fleet) {
-                this.source.ships -= 1;
-                this.source.metal = Math.min(this.source.metal, this.source.ships);
-            } else if (this.source === 'I') {
-                this.world.iShips -= 1;
-            } else {
-                this.world.pShips -= 1;
+            this.accepted.push(this);
+        }
+    }
+
+    /** Das Schiff verglüht, der Spieler bekommt einen Bericht der Zielwelt. */
+    launch() {
+        if (this.source instanceof Fleet) {
+            if (this.source.ships < 1) {
+                return;
             }
-            this.target.addReportPlayer(this.player);
+            this.source.ships -= 1;
+            this.source.metal = Math.min(this.source.metal, this.source.ships);
+        } else if (this.source === 'I') {
+            this.world.iShips = Math.max(0, this.world.iShips - 1);
+        } else {
+            this.world.pShips = Math.max(0, this.world.pShips - 1);
+        }
+        this.target.addReportPlayer(this.player);
+    }
+}
+
+/** Startet alle vorgemerkten Sonden, nach allem Feuer und allen Flugbefehlen. */
+export class ResolveProbes extends Command implements ExecuteCommand {
+    constructor(private probes: Array<ClassicProbe>) {
+        super('', null, TurnPhase.Movement);
+    }
+
+    executeCommand() {
+        for (const probe of this.probes) {
+            probe.launch();
         }
     }
 }
@@ -259,6 +295,7 @@ export class DropPbb extends Command implements ExecuteCommand {
     executeCommand() {
         if (this.isValid()) {
             this.fleet.fired = true;
+            this.fleet.firedBy = this.player;
             this.fleet.firesTo = `PBB auf ${this.world.name}`;
             this.world.pbbDrops.push(this.fleet);
             this.world.addReportPlayer(this.world.player);

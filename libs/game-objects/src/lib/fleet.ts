@@ -29,6 +29,8 @@ export class Fleet implements NumberKey {
     fired: boolean;
     firesTo: string;
     firesToCommand: string;
+    /** Spieler, der mit der Flotte gefeuert hat (sie kann danach erobert werden). */
+    firedBy: Player | null = null;
     moved: boolean;
     /** Classic Game: geladenes Metall. */
     metal = 0;
@@ -112,7 +114,12 @@ export class Fleet implements NumberKey {
             infoArray.push('PBB');
         }
         if (this.fired === true) {
-            infoArray.push(`feuert auf ${this.firesTo}`);
+            if (this.firedBy !== null && this.firedBy !== this.player) {
+                // Flotte hat in dieser Runde den Besitzer gewechselt: gefeuert hat noch der vorige.
+                infoArray.push(`feuerte als ${this.firedBy.stringName()} auf ${this.firesTo}`);
+            } else {
+                infoArray.push(`feuert auf ${this.firesTo}`);
+            }
         }
 
         if (infoArray.length !== 0) {

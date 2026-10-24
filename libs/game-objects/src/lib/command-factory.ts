@@ -10,7 +10,7 @@ import {
     BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld,
     PlunderWorld
 } from './classic-commands';
-import { ClassicFire, ClassicProbe, BuildPbb, DropPbb, ResolveConditionalFire, Shooter, FireTarget } from './classic-combat-commands';
+import { ClassicFire, ClassicProbe, BuildPbb, DropPbb, ResolveConditionalFire, ResolveProbes, Shooter, FireTarget } from './classic-combat-commands';
 import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
 
 export interface CommandErrorEntry {
@@ -33,6 +33,8 @@ export class CommandFactory {
     gameType: GameType | null = null;
     /** Bedingte Feuerbefehle dieser Runde (Classic), werden nach allem anderen Feuer ausgelöst. */
     conditionalFireOrders: Array<ClassicFire> = [];
+    /** Angenommene Sonden dieser Runde (Classic), verglühen nach allem Feuer und allen Flugbefehlen. */
+    probeOrders: Array<ClassicProbe> = [];
     /** Abgelehnte Befehle pro Spieler, für den Bericht. */
     commandErrors: Map<string, Array<CommandErrorEntry>> = new Map();
 
@@ -480,6 +482,7 @@ export class CommandFactory {
                     commandArray.push(new BuildDefaultIShips(this.worlds, player) as Command);
                 }
                 commandArray.push(new ResolveConditionalFire(this.conditionalFireOrders) as Command);
+                commandArray.push(new ResolveProbes(this.probeOrders) as Command);
             }
             if (this.coreGame) {
                 for (const aPlayerName of this.allPlayerDict.keys()) {
@@ -582,13 +585,13 @@ export class CommandFactory {
                     return null;
                 }
                 const found = this.fleetAndWorld(numbers[0]);
-                return new ClassicProbe(found.homeWorld, found.fleet, worldWithNumber(this.worlds, numbers[1]), text, player);
+                return new ClassicProbe(found.homeWorld, found.fleet, worldWithNumber(this.worlds, numbers[1]), this.probeOrders, text, player);
             }
             case 'IP':
             case 'PP':
                 return numbers.length === 2
                     ? new ClassicProbe(worldWithNumber(this.worlds, numbers[0]), this.commandChars.charAt(0) as 'I' | 'P',
-                        worldWithNumber(this.worlds, numbers[1]), text, player)
+                        worldWithNumber(this.worlds, numbers[1]), this.probeOrders, text, player)
                     : null;
             case 'WX':
                 return numbers.length === 1 ? new PlunderWorld(worldWithNumber(this.worlds, numbers[0]), text, player) : null;

@@ -272,6 +272,53 @@ describe('Classic Hinterhalt, Schwarze Löcher, Sonden', () => {
   });
 });
 
+describe('Classic Befehlsreihenfolge', () => {
+  function shootWithProbes(commands: string) {
+    const s = setup();
+    noBuild(s);
+    s.worlds[0].iShips = 1; s.worlds[0].pShips = 0; s.worlds[0].industry = 5;
+    place(s, s.fleets[5], s.worlds[0], 8);
+    const f = run(s, { B: commands });
+    endTurn(s);
+    return { s, f };
+  }
+
+  it('Sonden verringern die Schüsse derselben Runde nicht, egal in welcher Reihenfolge', () => {
+    const before = shootWithProbes('F6P2 F6P3 F6AI');
+    const after = shootWithProbes('F6AI F6P2 F6P3');
+    for (const { s, f } of [before, after]) {
+      expect(errorsOf(f, 'B')).toEqual([]);
+      // 8 Schuss -> 4 Treffer: 1 I-Schiff und 3 Industrie; danach verglühen 2 Schiffe als Sonden
+      expect(s.worlds[0].industry).toBe(2);
+      expect(s.fleets[5].ships).toBe(6);
+      expect(s.worlds[1].reportPlayers).toContain(s.b);
+    }
+  });
+
+  it('mehr Sonden als Schiffe werden abgelehnt, auch über mehrere Befehle', () => {
+    const s = setup();
+    s.fleets[0].ships = 2;
+    const f = run(s, { A: 'F1P2 F1P3 F1W2' });
+    expect(errorsOf(f, 'A')).toEqual([]);
+    const t = setup();
+    t.fleets[0].ships = 1;
+    expect(errorsOf(run(t, { A: 'F1P2 F1P3' }), 'A')).toEqual([8]);
+  });
+
+  it('Bericht: eine nach dem Feuern übernommene Flotte zeigt, wer gefeuert hat', () => {
+    const s = setup();
+    noBuild(s);
+    s.worlds[1].player = s.b; s.worlds[1].pShips = 2;
+    place(s, s.fleets[0], s.worlds[1], 3);
+    place(s, s.fleets[5], s.worlds[1], 7);
+    run(s, { A: 'F1AF6', B: 'F6AF1 P2AF1' });
+    endTurn(s);
+    expect(s.fleets[0].player).toBe(s.b);
+    expect(s.fleets[0].description()).toBe('F1[B] = 0 (feuerte als [A] auf F6[B])');
+    expect(s.fleets[5].description()).toBe('F6[B] = 6 (feuert auf F1[A])');
+  });
+});
+
 describe('Classic PBB', () => {
   it('Bau am Rundenende mit 26 Schiffen kostet 25, mit weniger abgelehnt', () => {
     const s = setup();
