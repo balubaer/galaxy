@@ -99,3 +99,68 @@ textarea {
   width: auto;
   padding: 0.2em 0.6em;
 }
+
+/* Darstellungsfläche und Befehle nebeneinander, wenn der Platz reicht.
+   Home bricht dafür aus der schmalen Bootstrap-Spalte des App-Rahmens aus. */
+:host {
+  --home-width: min(1550px, calc(100vw - 32px));
+  display: block;
+  width: var(--home-width);
+  margin-left: calc(50% - var(--home-width) / 2);
+}
+
+.main-layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1em;
+}
+
+.map-column {
+  flex: 0 1 750px;
+  max-width: 100%;
+}
+
+.command-column {
+  flex: 1 1 420px;
+  min-width: 0;
+  max-width: 750px;
+}
+
+.command-column textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .map-column,
+  .command-column {
+    flex: none;
+    width: 100%;
+  }
+
+  div.container,
+  table#table1,
+  table#table2 {
+    width: 100%;
+  }
+
+  /* Zeilen umbrechen statt die Seite breiter als das Display zu machen */
+  table#table1 > tr,
+  table#table1 > tbody > tr,
+  tr#tr2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  table#table1 td {
+    width: auto;
+  }
+}

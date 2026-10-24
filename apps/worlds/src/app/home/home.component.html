@@ -1,6 +1,236 @@
 @if (gameFinished) {
   <div class="game-end"><b>Das Spiel ist beendet. Sieger: {{ winner }}</b></div>
 }
+<div class="main-layout">
+<div class="map-column">
+@if (turnData) {
+  <div class="container">
+    <table id="table1">
+      <tr>
+        <h2>
+          Hi {{ currentUser.username }},du bist in Runde "{{ round + 1 }}"
+        </h2>
+      </tr>
+    </table>
+  </div>
+  <div class="container">
+    <table id="table1">
+      <tr>
+        <pre>Punkte: {{ turnData.points }}</pre>
+      </tr>
+    </table>
+  </div>
+  <div class="container">
+    <table id="table1">
+      <tr>
+        <td>
+          <svg class="world" width="200" height="200">
+            @if (node) {
+              <g [attr.transform]="'translate(100,100)'">
+                <circle
+                  [attr.r]="50"
+                  [attr.fill]="node.data?.backgroundColor"
+                ></circle>
+                @if (!node.data?.classic) {
+                  <circle
+                    [attr.r]="15"
+                    fill="black"
+                    [attr.cx]="30"
+                    [attr.cy]="30"
+                  ></circle>
+                  <text
+                    alignment-baseline="central"
+                    text-anchor="middle"
+                    [attr.x]="30"
+                    [attr.y]="30"
+                    fill="white"
+                    >
+                    {{ node.data.dships }}
+                  </text>
+                }
+                >
+                <text
+                  [attr.fill]="node.data?.fontColor"
+                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                  alignment-baseline="central"
+                  text-anchor="middle"
+                  >
+                  {{ node.label }}
+                </text>
+                @for (fleet of node.data.fleets; track fleet) {
+                  <g>
+                    <title>{{ fleetInfo(fleet) }}</title>
+                    <ellipse
+                      [attr.stroke]="fleet.pbb ? 'red' : 'none'"
+                      stroke-width="2"
+                      [attr.fill]="fleet.backgroundColor"
+                      [attr.cx]="fleet.x"
+                      [attr.cy]="fleet.y"
+                      rx="30"
+                      ry="10"
+                      />
+                    <text
+                      [attr.fill]="fleet.fontColor"
+                      font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                      alignment-baseline="central"
+                      text-anchor="middle"
+                      [attr.x]="fleet.x"
+                      [attr.y]="fleet.y"
+                      >
+                      {{ fleet.label }}
+                    </text>
+                  </g>
+                }
+              </g>
+            }
+          </svg>
+        </td>
+        @if (node?.data?.classic; as classic) {
+          <td class="classic-info">
+            <b>{{ node.label }}</b>
+            @if (classic.blackHole) {
+              <div>Schwarzes Loch</div>
+            } @else {
+              <table>
+                <tr><td>Bevölkerung</td><td>{{ classic.population }} / {{ classic.populationLimit }}</td></tr>
+                <tr><td>Industrie</td><td>{{ classic.industry }}</td></tr>
+                <tr><td>Metall</td><td>{{ classic.metal }}</td></tr>
+                <tr><td>Minen</td><td>{{ classic.mines }}</td></tr>
+                <tr><td>I-Schiffe</td><td>{{ classic.iShips }}</td></tr>
+                <tr><td>P-Schiffe</td><td>{{ classic.pShips }}</td></tr>
+                <tr><td>Runden im Besitz</td><td>{{ classic.turnsOwned }}</td></tr>
+                @if (classic.plunderCount > 0) {
+                  <tr>
+                    <td>Geplündert</td>
+                    <td>
+                      {{ classic.plunderCount }}×@if (classic.plunderRecovery > 0) {, unproduktiv noch {{ classic.plunderRecovery }} Runden}
+                    </td>
+                  </tr>
+                }
+              </table>
+            }
+          </td>
+        }
+        <td>
+          <svg class="world" width="200" height="200">
+            <g transform="translate(0,20)">
+              <circle
+                id="canvas1-oval"
+                stroke="none"
+                fill="rgb(146, 146, 146)"
+                cx="40"
+                cy="39"
+                r="25"
+                />
+              <text
+                fill="rgb(255, 255, 255)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="14"
+                x="28.89"
+                y="13.5"
+                text-anchor="middle"
+                >
+                <tspan x="39" y="42.5">Wx</tspan>
+              </text>
+              <text
+                fill="rgb(0, 0, 0)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="14"
+                x="77"
+                y="14"
+                >
+                <tspan x="77" y="43">Welt x</tspan>
+              </text>
+              <circle
+                id="canvas1-oval2"
+                [attr.visibility]="isClassic ? 'hidden' : 'visible'"
+                stroke="none"
+                fill="rgb(0, 0, 0)"
+                cx="39"
+                cy="87"
+                r="10"
+                />
+              <text
+                fill="rgb(255, 255, 255)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="13"
+                x="35.63"
+                y="77"
+                text-anchor="middle"
+                >
+                <tspan x="39" y="91" [attr.visibility]="isClassic ? 'hidden' : 'visible'">x</tspan>
+              </text>
+              <text
+                fill="rgb(0, 0, 0)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="14"
+                x="77"
+                y="62"
+                >
+                <tspan x="77" y="91">{{ isClassic ? 'Kasten: Welt-Werte' : 'Anzahl D Schiffe x' }}</tspan>
+              </text>
+              <ellipse
+                id="canvas1-oval3"
+                stroke="none"
+                fill="rgb(146, 146, 146)"
+                cx="39.5"
+                cy="129"
+                rx="17.5"
+                ry="11"
+                />
+              <text
+                fill="rgb(255, 255, 255)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="10"
+                x="29.04"
+                y="104"
+                text-anchor="middle"
+                >
+                <tspan x="40" y="132">Fx=y</tspan>
+              </text>
+              <text
+                fill="rgb(0, 0, 0)"
+                font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                font-size="14"
+                x="77"
+                y="104"
+                >
+                <tspan x="77" y="125">Flotte x mit</tspan>
+                <tspan x="77" y="141.39">Anzahl Schiffen y</tspan>
+                @if (isClassic) {
+                  <tspan x="77" y="157.78">rot umrandet: mit PBB</tspan>
+                }
+              </text>
+            </g>
+          </svg>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="container2">
+    <table id="table2">
+      <tr id="tr2">
+        @for (aPlayerColor of playercolor$ | async; track aPlayerColor) {
+          <td id="td2">
+            <svg class="world" width="80" height="80">
+              <g transform="translate(40,40)">
+                <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
+                <text
+                  [attr.fill]="aPlayerColor.fontColor"
+                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                  alignment-baseline="central"
+                  text-anchor="middle"
+                  >
+                  {{ aPlayerColor.playername }}
+                </text>
+              </g>
+            </svg>
+          </td>
+        }
+      </tr>
+    </table>
+  </div>
+}
 <div class="graph-scroll">
   <svg id="v7" width="750" height="750"></svg><!--graph container-->
 </div>
@@ -132,202 +362,9 @@
 </table>
 </div>
 
-@if (turnData$ | async; as turnData) {
-  <div>
-    <div class="container">
-      <table id="table1">
-        <tr>
-          <pre>Punkte: {{ turnData.points }}</pre>
-        </tr>
-      </table>
-    </div>
-    <div class="container">
-      <table id="table1">
-        <tr>
-          <td>
-            <svg class="world" width="200" height="200">
-              @if (node) {
-                <g [attr.transform]="'translate(100,100)'">
-                  <circle
-                    [attr.r]="50"
-                    [attr.fill]="node.data?.backgroundColor"
-                  ></circle>
-                  @if (!node.data?.classic) {
-                    <circle
-                      [attr.r]="15"
-                      fill="black"
-                      [attr.cx]="30"
-                      [attr.cy]="30"
-                    ></circle>
-                    <text
-                      alignment-baseline="central"
-                      text-anchor="middle"
-                      [attr.x]="30"
-                      [attr.y]="30"
-                      fill="white"
-                      >
-                      {{ node.data.dships }}
-                    </text>
-                  }
-                  >
-                  <text
-                    [attr.fill]="node.data?.fontColor"
-                    font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                    alignment-baseline="central"
-                    text-anchor="middle"
-                    >
-                    {{ node.label }}
-                  </text>
-                  @for (fleet of node.data.fleets; track fleet) {
-                    <g>
-                      <title>{{ fleetInfo(fleet) }}</title>
-                      <ellipse
-                        [attr.stroke]="fleet.pbb ? 'red' : 'none'"
-                        stroke-width="2"
-                        [attr.fill]="fleet.backgroundColor"
-                        [attr.cx]="fleet.x"
-                        [attr.cy]="fleet.y"
-                        rx="30"
-                        ry="10"
-                        />
-                      <text
-                        [attr.fill]="fleet.fontColor"
-                        font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                        alignment-baseline="central"
-                        text-anchor="middle"
-                        [attr.x]="fleet.x"
-                        [attr.y]="fleet.y"
-                        >
-                        {{ fleet.label }}
-                      </text>
-                    </g>
-                  }
-                </g>
-              }
-            </svg>
-          </td>
-          @if (node?.data?.classic; as classic) {
-            <td class="classic-info">
-              <b>{{ node.label }}</b>
-              @if (classic.blackHole) {
-                <div>Schwarzes Loch</div>
-              } @else {
-                <table>
-                  <tr><td>Bevölkerung</td><td>{{ classic.population }} / {{ classic.populationLimit }}</td></tr>
-                  <tr><td>Industrie</td><td>{{ classic.industry }}</td></tr>
-                  <tr><td>Metall</td><td>{{ classic.metal }}</td></tr>
-                  <tr><td>Minen</td><td>{{ classic.mines }}</td></tr>
-                  <tr><td>I-Schiffe</td><td>{{ classic.iShips }}</td></tr>
-                  <tr><td>P-Schiffe</td><td>{{ classic.pShips }}</td></tr>
-                  <tr><td>Runden im Besitz</td><td>{{ classic.turnsOwned }}</td></tr>
-                  @if (classic.plunderCount > 0) {
-                    <tr>
-                      <td>Geplündert</td>
-                      <td>
-                        {{ classic.plunderCount }}×@if (classic.plunderRecovery > 0) {, unproduktiv noch {{ classic.plunderRecovery }} Runden}
-                      </td>
-                    </tr>
-                  }
-                </table>
-              }
-            </td>
-          }
-          <td>
-            <svg class="world" width="200" height="200">
-              <g transform="translate(0,20)">
-                <circle
-                  id="canvas1-oval"
-                  stroke="none"
-                  fill="rgb(146, 146, 146)"
-                  cx="40"
-                  cy="39"
-                  r="25"
-                  />
-                <text
-                  fill="rgb(255, 255, 255)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="14"
-                  x="28.89"
-                  y="13.5"
-                  text-anchor="middle"
-                  >
-                  <tspan x="39" y="42.5">Wx</tspan>
-                </text>
-                <text
-                  fill="rgb(0, 0, 0)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="14"
-                  x="77"
-                  y="14"
-                  >
-                  <tspan x="77" y="43">Welt x</tspan>
-                </text>
-                <circle
-                  id="canvas1-oval2"
-                  [attr.visibility]="isClassic ? 'hidden' : 'visible'"
-                  stroke="none"
-                  fill="rgb(0, 0, 0)"
-                  cx="39"
-                  cy="87"
-                  r="10"
-                  />
-                <text
-                  fill="rgb(255, 255, 255)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="13"
-                  x="35.63"
-                  y="77"
-                  text-anchor="middle"
-                  >
-                  <tspan x="39" y="91" [attr.visibility]="isClassic ? 'hidden' : 'visible'">x</tspan>
-                </text>
-                <text
-                  fill="rgb(0, 0, 0)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="14"
-                  x="77"
-                  y="62"
-                  >
-                  <tspan x="77" y="91">{{ isClassic ? 'Kasten: Welt-Werte' : 'Anzahl D Schiffe x' }}</tspan>
-                </text>
-                <ellipse
-                  id="canvas1-oval3"
-                  stroke="none"
-                  fill="rgb(146, 146, 146)"
-                  cx="39.5"
-                  cy="129"
-                  rx="17.5"
-                  ry="11"
-                  />
-                <text
-                  fill="rgb(255, 255, 255)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="10"
-                  x="29.04"
-                  y="104"
-                  text-anchor="middle"
-                  >
-                  <tspan x="40" y="132">Fx=y</tspan>
-                </text>
-                <text
-                  fill="rgb(0, 0, 0)"
-                  font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                  font-size="14"
-                  x="77"
-                  y="104"
-                  >
-                  <tspan x="77" y="125">Flotte x mit</tspan>
-                  <tspan x="77" y="141.39">Anzahl Schiffen y</tspan>
-                  @if (isClassic) {
-                    <tspan x="77" y="157.78">rot umrandet: mit PBB</tspan>
-                  }
-                </text>
-              </g>
-            </svg>
-          </td>
-        </tr>
-      </table>
-    </div>
+</div>
+@if (turnData) {
+  <div class="command-column">
     <galaxy-command-table
       [hidden]="ishidden"
       [node]="node"
@@ -352,40 +389,12 @@
       ></textarea>
       <button>Speichern</button>
     </form>
-    <br />
-    <div class="container">
-      <table id="table1">
-        <tr>
-          <h2>
-            Hi {{ currentUser.username }},du bist in Runde "{{ round + 1 }}"
-          </h2>
-        </tr>
-      </table>
-    </div>
-    <div class="container2">
-      <table id="table2">
-        <tr id="tr2">
-          @for (aPlayerColor of playercolor$ | async; track aPlayerColor) {
-            <td id="td2">
-              <svg class="world" width="80" height="80">
-                <g transform="translate(40,40)">
-                  <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
-                  <text
-                    [attr.fill]="aPlayerColor.fontColor"
-                    font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
-                    alignment-baseline="central"
-                    text-anchor="middle"
-                    >
-                    {{ aPlayerColor.playername }}
-                  </text>
-                </g>
-              </svg>
-            </td>
-          }
-        </tr>
-      </table>
-    </div>
-    <br />
+  </div>
+}
+</div>
+
+@if (turnData$ | async; as turnData) {
+  <div>
     @if (turnData$ | async; as turnData) {
       <div>
         <pre>{{ turnData.turnDataTxt }}</pre>

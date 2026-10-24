@@ -1,6 +1,8 @@
 .command-table {
-  width: 750px;
-  margin: 1em auto;
+  width: 100%;
+  max-width: 750px;
+  box-sizing: border-box;
+  margin: 0 auto 1em;
   text-align: left;
 }
 .count {
