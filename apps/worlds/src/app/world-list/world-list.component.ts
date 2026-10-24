@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, Subject } from 'rxjs';
+import { clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import * as d3 from 'd3';
 
 @Component({
@@ -66,6 +67,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
     if (this.nodes.length > 0 && this.links.length > 0) {
       const width = 300;
       const height = 225;
+      // Welten bleiben mit ihrem Kreis (r = 5) vollständig in der Darstellungsfläche.
+      const margin = 5;
 
       const svg = d3
         .select('svg#v6')
@@ -125,6 +128,7 @@ export class WorldListComponent implements OnInit, OnDestroy {
       }
 
       force.on('tick', function () {
+        keepNodesInArea(th.nodes, width, height, margin);
         links
           .attr('x1', function (d) {
             return d.source.x;
@@ -169,8 +173,8 @@ export class WorldListComponent implements OnInit, OnDestroy {
 
       // eslint-disable-next-line no-inner-declarations
       function drag_drag(d) {
-        d.subject.fx = d.x;
-        d.subject.fy = d.y;
+        d.subject.fx = clampToArea(d.x, width, margin);
+        d.subject.fy = clampToArea(d.y, height, margin);
       }
 
       // eslint-disable-next-line no-inner-declarations

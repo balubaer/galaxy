@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Login } from '@galaxy/api-interfaces';
 import { RespondTurnData } from '@galaxy/game-objects';
+import { clampToArea, keepNodesInArea } from '../../_helpers/graph-bounds';
 import * as d3 from 'd3';
 
 @Component({
@@ -39,6 +40,8 @@ export class ShowMapDetailComponent implements OnInit {
 
     const width = 500;
     const height = 500;
+    // Welten bleiben mit ihrem Kreis (r = 10) vollständig in der Darstellungsfläche.
+    const margin = 10;
     const svgv7 = d3.select("svg#v7")
       .attr("viewBox", "0 0 " + width + " " + height)
       .attr("width", "750px")
@@ -101,6 +104,7 @@ export class ShowMapDetailComponent implements OnInit {
     }
 
     th.force.on("tick", function () {
+      keepNodesInArea(th.turnData.nodes, width, height, margin);
       th.links
         .attr("x1", function (d) { return d.source.x; })
         .attr("y1", function (d) { return d.source.y; })
@@ -119,8 +123,8 @@ export class ShowMapDetailComponent implements OnInit {
     }
 
     function drag_drag(d) {
-      d.subject.fx = d.x;
-      d.subject.fy = d.y;
+      d.subject.fx = clampToArea(d.x, width, margin);
+      d.subject.fy = clampToArea(d.y, height, margin);
     }
 
     function drag_end(d) {

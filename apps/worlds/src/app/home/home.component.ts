@@ -26,6 +26,7 @@ import {
   routeCommand,
   routeWorlds,
 } from '../command-table/command-options';
+import { clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -167,6 +168,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const width = 500;
     const height = 500;
+    // Welten bleiben mit ihrem Kreis (r = 10) vollständig in der Darstellungsfläche.
+    const margin = 10;
     const svgv7 = d3
       .select('svg#v7')
       .style('background-color', 'white');
@@ -315,6 +318,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     th.force.on('tick', function () {
+      keepNodesInArea(th.turnData.nodes, width, height, margin);
       th.links
         .attr('x1', function (d) {
           return d.source.x;
@@ -339,8 +343,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     function drag_drag(d) {
-      d.subject.fx = d.x;
-      d.subject.fy = d.y;
+      d.subject.fx = clampToArea(d.x, width, margin);
+      d.subject.fy = clampToArea(d.y, height, margin);
     }
 
     function drag_end(d) {
