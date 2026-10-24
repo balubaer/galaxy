@@ -1,20 +1,23 @@
 Infos zu Spieler: ZAPHOD Runde: 6 
-Punkte: undefined | Welten: 6 | Flotten: 4 | Schiffe auf Flotten: 11 | D-Schiffe: 0
-Verbündete: ()
+Punkte: 330 | Charakter: Emperor
+Welten: 6 | Bevölkerung: 368 | Industrie: 30 | Minen: 14
+Metall auf Welten: 50 | Metall auf Flotten: 11
+Flotten: 4 | Schiffe auf Flotten: 11 | I-Schiffe: 23 | P-Schiffe: 8
+Verbündete: () | Loader: ()
 
 W5(20,1) [ZAPHOD] (Bev=71/86, Ind=0, Metall=4, Minen=1, I-Schiffe=0, P-Schiffe=1, Besitz seit 2)
    (F9[ZAPHOD]-->W20 )
 
-W6(23,29,13) [MARVIN] (Bev=30/30, Ind=1, Metall=12, Minen=4, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
+W6(23,29,13) [MARVIN] (Bev=30/30, Ind=0, Metall=12, Minen=4, I-Schiffe=0, P-Schiffe=0, Besitz seit 1)
    F12[MARVIN] = 5 (feuert auf I-Schiffe und Industrie W6)
-   >> Beschuss durch [MARVIN]: 1 I-Schiffe und 1 Industrie zerstört
+   >> Beschuss durch [MARVIN]: 1 I-Schiffe und 2 Industrie zerstört
    >> Welt erobert von [MARVIN], vorher [ZAPHOD]
 
 W7(31,20,21) [ZAPHOD] (Bev=73/73, Ind=0, Metall=14, Minen=2, I-Schiffe=0, P-Schiffe=1, Besitz seit 4)
    (F10[ZAPHOD]-->W20 )
 
 W12(31,2,29,8) [MARVIN] (Bev=46/53, Ind=0, Metall=2, Minen=1, I-Schiffe=0, P-Schiffe=2, Besitz seit 3)
-   F7[MARVIN] = 0 (feuert auf F4[MARVIN])
+   F7[MARVIN] = 0 (feuerte als [ZAPHOD] auf F4[MARVIN])
    F4[MARVIN] = 6 (feuert auf F7[ZAPHOD])
    F6[MARVIN] = 9 (Metall=2)
    >> P-Schiffe W12 feuern auf F7[ZAPHOD]
