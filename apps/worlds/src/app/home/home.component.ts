@@ -28,6 +28,7 @@ import {
 } from '../command-table/command-options';
 import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
+import { applyRingLayout } from '../_helpers/ring-layout';
 import { listSavedLayouts, parseSaveKey, SavedLayout } from './saved-layouts';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
@@ -132,8 +133,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.homeWorldName = aTurnData.homeWorldName;
       this.selectWorld = +extractNumberString(aTurnData.homeWorldName);
       this.turnData = aTurnData;
-      this.applySavedLayout(aTurnData.homeWorldName);
-      this.initGraf();
+      this.initGraf(this.applySavedLayout(aTurnData.homeWorldName));
     });
 
     this.gamePref$ = this.gamePrefService.getGamePref();
@@ -168,7 +168,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     svgv7.selectAll('.hidden-link').remove();
   }
 
-  initGraf() {
+  /** Zeichnet die Karte; ohne Sicherung werden die Welten auf Ringen um die gewählte Welt verteilt. */
+  initGraf(hasSavedLayout: boolean) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const th = this;
 
@@ -194,9 +195,26 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
 
     th.force.force('charge_force', d3.forceManyBody());
+    const centerId = `W${this.selectWorld}`;
+    if (!hasSavedLayout) {
+      // Ohne Sicherung: Ringe nach Sprüngen zur gewählten Welt über die ganze Fläche,
+      // die Simulation glättet nur noch die Abstände und hält die Welten auf ihrem Ring.
+      // Platz am Rand für Flotten und InfoBox der äußeren Welten.
+      const maxRadius = width / 2 - 30;
+      const depths = applyRingLayout(this.turnData.nodes, this.turnData.links, centerId, width / 2, height / 2, maxRadius);
+      const maxRing = Math.max(1, ...depths.values());
+      const spacing = maxRadius / maxRing;
+      th.force.force('link').distance(spacing).strength(0.1);
+      th.force.force('charge_force').strength(-spacing).distanceMax(spacing * 2);
+      th.force.force('collide', d3.forceCollide(18));
+      th.force.force(
+        'ring',
+        d3.forceRadial((d) => ((depths.get(d.id) ?? maxRing) / maxRing) * maxRadius, width / 2, height / 2).strength(0.6)
+      );
+    }
     // Die gewählte Welt (Select W) liegt in der Mitte der Darstellungsfläche und hält das
     // Netz dort; nur wenn sie fehlt, zentriert die Simulation das Netz als Ganzes.
-    if (!centerOnWorld(this.turnData.nodes, `W${this.selectWorld}`, width / 2, height / 2)) {
+    if (!centerOnWorld(this.turnData.nodes, centerId, width / 2, height / 2)) {
       th.force.force('center_force', d3.forceCenter(width / 2, height / 2));
     }
 
@@ -427,7 +445,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     th.force.nodes(this.turnData.nodes);
     th.force.force('link').links(this.turnData.links);
-    th.force.alpha(1).restart();
+    // Das Ringlayout ist schon fertig verteilt, die Simulation braucht nur wenig Energie.
+    th.force.alpha(hasSavedLayout ? 1 : 0.3).restart();
     this.highlightRoute();
   }
 
@@ -615,9 +634,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
       this.turnCommandTxt = aTurnData.turnCommanTxt;
       this.turnData = aTurnData;
-      this.applySavedLayout(aWorldName, aSaveKey);
+      const hasSavedLayout = this.applySavedLayout(aWorldName, aSaveKey);
       this.deleteGraf();
-      this.initGraf();
+      this.initGraf(hasSavedLayout);
       if (this.changeround === this.round) {
         this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
       }
@@ -698,9 +717,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * Übernimmt gesicherte Positionen ("save"). Zuerst gilt ein im Popup gewählter Save,
    * dann der eigene Save dieser Ansicht; Welten, die dort fehlen, bekommen ihre Position
-   * aus Saves anderer Distanzlevel.
+   * aus Saves anderer Distanzlevel. Liefert, ob mindestens eine Welt eine Position bekam.
    */
-  private applySavedLayout(worldName: string, preferredKey?: string) {
+  private applySavedLayout(worldName: string, preferredKey?: string): boolean {
     const ownKey = this.layoutKey(worldName);
     const pending = new Map(this.turnData.nodes.map((n) => [n.id, n]));
     const keys = [...new Set([preferredKey ?? ownKey, ownKey, ...this.otherSaveKeys(ownKey)])];
@@ -719,6 +738,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       }
     }
+    return pending.size < this.turnData.nodes.length;
   }
 
   openSavedLayouts() {
