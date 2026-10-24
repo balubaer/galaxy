@@ -254,14 +254,21 @@ export class HomeComponent implements OnInit, OnDestroy {
       th.highlightRoute();
     }
 
-    th.force.on('tick', function () {
+    function render() {
       keepNodesInArea(th.turnData.nodes, width, height, margin);
       map.render();
       th.renderPrevMap?.();
-    });
+    }
+    th.force.on('tick', render);
 
+    // Mit Fix läuft keine Simulation: nur die gezogene Welt bewegt sich, alle anderen
+    // (auch ohne Sicherung) bleiben, wo sie sind.
     function drag_start(d) {
-      if (!d.active) th.force.alphaTarget(0.3).restart();
+      if (th.fixEnabled) {
+        th.force.stop();
+      } else if (!d.active) {
+        th.force.alphaTarget(0.3).restart();
+      }
       d.subject.fx = d.subject.x;
       d.subject.fy = d.subject.y;
     }
@@ -269,10 +276,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     function drag_drag(d) {
       d.subject.fx = clampToArea(d.x, width, margin);
       d.subject.fy = clampToArea(d.y, height, margin);
+      if (th.fixEnabled) {
+        d.subject.x = d.subject.fx;
+        d.subject.y = d.subject.fy;
+        render();
+      }
     }
 
     function drag_end(d) {
-      if (!d.active) th.force.alphaTarget(0);
+      if (!d.active && !th.fixEnabled) th.force.alphaTarget(0);
       if (th.fixEnabled === false) {
         d.subject.fx = null;
         d.subject.fy = null;
@@ -281,7 +293,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     th.force.nodes(this.turnData.nodes);
     th.force.force('link').links(this.turnData.links);
     // Das Ringlayout ist schon fertig verteilt, die Simulation braucht nur wenig Energie.
-    th.force.alpha(hasSavedLayout ? 1 : 0.3).restart();
+    th.force.alpha(hasSavedLayout ? 1 : 0.3);
+    if (th.fixEnabled) {
+      // Mit Fix bewegt sich nichts sichtbar: Endzustand sofort berechnen und anhalten.
+      th.force.stop();
+      th.force.tick(300);
+      render();
+    } else {
+      th.force.restart();
+    }
     this.highlightRoute();
   }
 
@@ -539,6 +559,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (box && prev) {
       prev.scrollLeft = box.scrollLeft;
       prev.scrollTop = box.scrollTop;
+    }
+  }
+
+  /** Fix an: Simulation anhalten, damit keine Welt mehr von Kräften verschoben wird. */
+  toggleFix() {
+    this.fixEnabled = !this.fixEnabled;
+    if (this.fixEnabled) {
+      this.force?.stop();
     }
   }
 
