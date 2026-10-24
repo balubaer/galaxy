@@ -32,3 +32,4 @@ export * from './lib/classic-log';
 export * from './lib/classic-combat';
 export * from './lib/classic-combat-commands';
 export * from './lib/classic-scoring';
+export * from './lib/output-player-statistic-classic-game';

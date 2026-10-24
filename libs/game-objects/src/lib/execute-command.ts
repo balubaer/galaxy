@@ -8,6 +8,7 @@ import { CommandFactory, CommandErrorEntry } from './command-factory';
 import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { FinalPhaseClassicGame } from './final-phase-classic-game';
 import { OutputPlyerStatisticCoreGame } from './output-plyer-statistic-core-game';
+import { OutputPlayerStatisticClassicGame } from './output-player-statistic-classic-game';
 import { NodesAndLinks } from './nodes-and-links.interface';
 import { PersistenceGrafManager } from './persistence-graf-manager';
 
@@ -70,7 +71,9 @@ export class ExecuteCommand {
         for (const playerName of this.allPlayerDict.keys()) {
             const player = this.allPlayerDict.get(playerName);
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1} \n`;
-            const outPutStatistic = new OutputPlyerStatisticCoreGame(this.worlds, player);
+            const outPutStatistic = gameTypeOf(this.gamePref) === 'classic'
+                ? new OutputPlayerStatisticClassicGame(this.worlds, player)
+                : new OutputPlyerStatisticCoreGame(this.worlds, player);
             outPutStatistic.calculateStatistic();
             outPutString += `${outPutStatistic.description()}\n`;
             outPutString += this.createEndString();

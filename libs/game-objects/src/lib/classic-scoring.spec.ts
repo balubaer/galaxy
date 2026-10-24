@@ -1,3 +1,5 @@
+import { OutputPlayerStatisticClassicGame } from './output-player-statistic-classic-game';
+import { ExecuteCommand } from './execute-command';
 import { World } from './world';
 import { Player } from './player';
 import { Fleet } from './fleet';
@@ -186,5 +188,37 @@ describe('Classic Strafen', () => {
     const persist = new PersistenceManager(s.worlds).createWorldsPersist();
     const loaded = new PersistenceManager([]).createWorldsWithWorldsPersist(JSON.parse(JSON.stringify(persist)));
     expect([loaded[0].plunderCount, loaded[0].plunderRecovery]).toEqual([2, 1]);
+  });
+});
+
+describe('Classic Bericht', () => {
+  it('Statistik nennt Punkte, Charakter, Wirtschaft, Flotten, Verbündete und Loader', () => {
+    const s = setup();
+    s.a.points = 37;
+    s.fleets[0].ships = 6; s.fleets[0].metal = 2; s.fleets[1].ships = 30; s.fleets[1].pbb = true;
+    s.a.allies.add(s.b); s.a.loaders.add(s.b);
+    const statistic = new OutputPlayerStatisticClassicGame(s.worlds, s.a);
+    statistic.calculateStatistic();
+    const text = statistic.description();
+    expect(text).toContain('Punkte: 37 | Charakter: Emperor');
+    expect(text).toContain('Welten: 1 | Bevölkerung: 50 | Industrie: 30 | Minen: 2');
+    expect(text).toContain('Metall auf Welten: 30 | Metall auf Flotten: 2');
+    expect(text).toContain('Flotten: 5 | Schiffe auf Flotten: 36 | I-Schiffe: 1 | P-Schiffe: 1 | PBB: 1');
+    expect(text).toContain('Verbündete: (B) | Loader: (B)');
+  });
+
+  it('Rundenbericht eines Classic Games enthält die Statistik', () => {
+    const s = setup();
+    const pref: GamePref = {
+      gameType: 'classic', distanceLevelHomes: 1, fleetCount: 6, fleetsOnHomeWorld: 5, worldCount: 3,
+      playName: 'T', player: ['A', 'B'], startShipCount: 0, round: 0
+    };
+    const execute = new ExecuteCommand(pref, new Map([['A', 'green'], ['B', 'blue']]), new Map([['A', 'white'], ['B', 'white']]));
+    execute.createEnvironment(new PersistenceManager(s.worlds).createWorldsPersist());
+    execute.start(new Map([['A', 'W1B6F1']]));
+    const out = execute.generateOutput().get('A');
+    expect(out).toContain('Charakter: Emperor');
+    expect(out).toContain('Bev=');
+    expect(out).toContain('F1[A] = 6');
   });
 });

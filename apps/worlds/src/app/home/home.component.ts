@@ -27,6 +27,21 @@ import {
   routeWorlds,
 } from '../command-table/command-options';
 
+/** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
+export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
+  const parts = [fleet.label ?? ''];
+  if (fleet.metal) {
+    parts.push(`Metall ${fleet.metal}`);
+  }
+  if (fleet.pbb) {
+    parts.push('PBB');
+  }
+  if (fleet.atPeace) {
+    parts.push('At Peace');
+  }
+  return parts.join(', ');
+}
+
 @Component({
     selector: 'galaxy-home',
     templateUrl: 'home.component.html',
@@ -65,6 +80,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   ownColor = '';
   /** Namen der anderen Spieler, für Geschenke und Beziehungen im Classic Game. */
   otherPlayerNames: string[] = [];
+  /** Classic Game: Legende und Flotten-Infos zeigen Wirtschaft statt D-Schiffen. */
+  isClassic = false;
+  readonly fleetInfo = fleetInfo;
   routePlan: RoutePlan | null = null;
 
   ishidden = false;
@@ -131,6 +149,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.changeround = aGamePref.round;
       this.gameFinished = aGamePref.finished === true;
       this.winner = aGamePref.winner ?? '';
+      this.isClassic = aGamePref.gameType === 'classic';
     });
   }
 
@@ -197,12 +216,15 @@ export class HomeComponent implements OnInit, OnDestroy {
           .append('g')
           .attr('class', 'fleet')
           .attr('transform', `translate(${fleet.x * 0.3},${fleet.y * 0.3})`);
-        fleetGroup.append('title').text(`${d.id}: ${fleet.label}`);
+        fleetGroup.append('title').text(`${d.id}: ${fleetInfo(fleet)}`);
         fleetGroup
           .append('ellipse')
           .attr('rx', 8)
           .attr('ry', 3.5)
-          .style('fill', fleet.backgroundColor);
+          .style('fill', fleet.backgroundColor)
+          // Flotten mit PBB sind für alle erkennbar: roter Rand.
+          .style('stroke', fleet.pbb ? 'red' : 'none')
+          .style('stroke-width', fleet.pbb ? 0.8 : 0);
         fleetGroup
           .append('text')
           .attr('dy', 1.5)

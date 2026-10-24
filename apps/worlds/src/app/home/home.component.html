@@ -144,8 +144,10 @@
                   </text>
                   @for (fleet of node.data.fleets; track fleet) {
                     <g>
+                      <title>{{ fleetInfo(fleet) }}</title>
                       <ellipse
-                        stroke="none"
+                        [attr.stroke]="fleet.pbb ? 'red' : 'none'"
+                        stroke-width="2"
                         [attr.fill]="fleet.backgroundColor"
                         [attr.cx]="fleet.x"
                         [attr.cy]="fleet.y"
@@ -226,6 +228,7 @@
                 </text>
                 <circle
                   id="canvas1-oval2"
+                  [attr.visibility]="isClassic ? 'hidden' : 'visible'"
                   stroke="none"
                   fill="rgb(0, 0, 0)"
                   cx="39"
@@ -240,7 +243,7 @@
                   y="77"
                   text-anchor="middle"
                   >
-                  <tspan x="39" y="91">x</tspan>
+                  <tspan x="39" y="91" [attr.visibility]="isClassic ? 'hidden' : 'visible'">x</tspan>
                 </text>
                 <text
                   fill="rgb(0, 0, 0)"
@@ -249,7 +252,7 @@
                   x="77"
                   y="62"
                   >
-                  <tspan x="77" y="91">Anzahl D Schiffe x</tspan>
+                  <tspan x="77" y="91">{{ isClassic ? 'Kasten: Welt-Werte' : 'Anzahl D Schiffe x' }}</tspan>
                 </text>
                 <ellipse
                   id="canvas1-oval3"
@@ -279,6 +282,9 @@
                   >
                   <tspan x="77" y="125">Flotte x mit</tspan>
                   <tspan x="77" y="141.39">Anzahl Schiffen y</tspan>
+                  @if (isClassic) {
+                    <tspan x="77" y="157.78">rot umrandet: mit PBB</tspan>
+                  }
                 </text>
               </g>
             </svg>

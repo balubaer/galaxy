@@ -1,4 +1,5 @@
-import { GamePref } from './game-pref.interface';
+import { GamePref, gameTypeOf } from './game-pref.interface';
+import { OutputPlayerStatisticClassicGame } from './output-player-statistic-classic-game';
 import { World } from './world';
 import { PersistenceManager } from './persistence-manager';
 import { WorldsPersist } from './worlds-persist.interface';
@@ -31,6 +32,11 @@ export class OutPutLists {
 
             let outPutString = `Infos zu Spieler: ${playerName} Runde: ${this.gamePref.round + 1}\n\n`;
             const player = this.allPlayerDict.get(playerName);
+            if (gameTypeOf(this.gamePref) === 'classic') {
+                const statistic = new OutputPlayerStatisticClassicGame(this.worlds, player);
+                statistic.calculateStatistic();
+                outPutString += `${statistic.description()}\n`;
+            }
 
             for (const world of this.worlds) {
                 if (isWorldOutPutForPlayer(player, world)) {
