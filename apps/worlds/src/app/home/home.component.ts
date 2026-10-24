@@ -306,6 +306,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('font-family', 'sans-serif')
       .attr('font-size', 7)
       .attr('text-anchor', 'middle')
+      // Schwarze Löcher liefern weiße Schrift.
+      .attr('fill', (d) => d.data?.fontColor ?? 'black')
       .text((d) => d.id);
 
     // Classic Game: InfoBox mit den Weltenwerten unterhalb der Flotten.
