@@ -9,6 +9,7 @@ import {
     UnloadMetal, JettisonMetal, LoadMetal, BuildShips, BuildIndustry, RaisePopulationLimit, ScrapIShips, MigratePopulation,
     BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld
 } from './classic-commands';
+import { ClassicFire, ClassicProbe, BuildPbb, DropPbb, ResolveConditionalFire, Shooter, FireTarget } from './classic-combat-commands';
 import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
 
 export interface CommandErrorEntry {
@@ -29,6 +30,8 @@ export class CommandFactory {
     allPlayerDict: Map<string, Player>;
     /** Spieltyp, nach dessen Regeln Befehle ausgeführt werden; null führt nichts aus (nur Parser). */
     gameType: GameType | null = null;
+    /** Bedingte Feuerbefehle dieser Runde (Classic), werden nach allem anderen Feuer ausgelöst. */
+    conditionalFireOrders: Array<ClassicFire> = [];
     /** Abgelehnte Befehle pro Spieler, für den Bericht. */
     commandErrors: Map<string, Array<CommandErrorEntry>> = new Map();
 
@@ -475,6 +478,7 @@ export class CommandFactory {
                     const player = this.allPlayerDict.get(aPlayerName);
                     commandArray.push(new BuildDefaultIShips(this.worlds, player) as Command);
                 }
+                commandArray.push(new ResolveConditionalFire(this.conditionalFireOrders) as Command);
             }
             if (this.coreGame) {
                 for (const aPlayerName of this.allPlayerDict.keys()) {
@@ -546,6 +550,54 @@ export class CommandFactory {
         }
 
         switch (this.commandChars) {
+            case 'FAF':
+            case 'FCF':
+            case 'FAI':
+            case 'FAP':
+            case 'FAH':
+            case 'FCI':
+            case 'FCP':
+            case 'FCH': {
+                const expected = this.commandChars.charAt(2) === 'F' ? 2 : 1;
+                if (numbers.length !== expected) {
+                    return null;
+                }
+                const found = this.fleetAndWorld(numbers[0]);
+                const target: FireTarget = expected === 2
+                    ? this.fleetAndWorld(numbers[1]).fleet
+                    : this.commandChars.charAt(2) as 'I' | 'P' | 'H';
+                return this.fireCommand(found.homeWorld, found.fleet, target, this.commandChars.charAt(1) === 'C');
+            }
+            case 'IAF':
+            case 'PAF':
+            case 'ICF':
+            case 'PCF':
+                return numbers.length === 2
+                    ? this.fireCommand(worldWithNumber(this.worlds, numbers[0]), this.commandChars.charAt(0) as 'I' | 'P',
+                        this.fleetAndWorld(numbers[1]).fleet, this.commandChars.charAt(1) === 'C')
+                    : null;
+            case 'FP': {
+                if (numbers.length !== 2) {
+                    return null;
+                }
+                const found = this.fleetAndWorld(numbers[0]);
+                return new ClassicProbe(found.homeWorld, found.fleet, worldWithNumber(this.worlds, numbers[1]), text, player);
+            }
+            case 'IP':
+            case 'PP':
+                return numbers.length === 2
+                    ? new ClassicProbe(worldWithNumber(this.worlds, numbers[0]), this.commandChars.charAt(0) as 'I' | 'P',
+                        worldWithNumber(this.worlds, numbers[1]), text, player)
+                    : null;
+            case 'FB':
+                return numbers.length === 1 ? new BuildPbb(this.fleetAndWorld(numbers[0]).fleet, text, player) : null;
+            case 'FD': {
+                if (numbers.length !== 1) {
+                    return null;
+                }
+                const found = this.fleetAndWorld(numbers[0]);
+                return new DropPbb(found.fleet, found.homeWorld, text, player);
+            }
             case 'FQ':
             case 'FX':
                 return numbers.length === 1
@@ -617,6 +669,14 @@ export class CommandFactory {
             default:
                 return undefined;
         }
+    }
+
+    private fireCommand(world: World, shooter: Shooter, target: FireTarget, conditional: boolean): ClassicFire {
+        const command = new ClassicFire(world, shooter, target, conditional, this.processCommand, this.commandPlayer);
+        if (conditional) {
+            this.conditionalFireOrders.push(command);
+        }
+        return command;
     }
 
     isBuildFleetShipCommand(): boolean {

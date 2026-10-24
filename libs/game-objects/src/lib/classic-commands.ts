@@ -6,7 +6,7 @@ import {
     FleetNotFound_Error, FleetNotOwned_Error, WorldNotFound_Error, WorldNotOwned_Error, FleetNotOnWorld_Error,
     NotEnoughIndustry_Error, NotEnoughMetal_Error, NotEnoughPopulation_Error, NotEnoughShips_Error, FleetNoCapacity_Error,
     LoadNotAllowed_Error, AlreadyMigrating_Error, InvalidAmount_Error, NoConnection_Error, PlayerNotFound_Error,
-    GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error
+    GiftLimit_Error, GiftNotPossible_Error, GiftToSelf_Error, WorldGiftNotPossible_Error
 } from './error';
 import { classicLog } from './classic-log';
 import { buildBudget, spendIndustry, industryBuildCost, scrapIShipsPerIndustry, CLASSIC_BUILD_COST } from './classic-economy';
@@ -482,7 +482,7 @@ export class GiveFleet extends GiftCommand implements ExecuteCommand {
             return this.fail(FleetNotOwned_Error);
         }
         // Eine verschenkte Flotte darf in derselben Runde weder fliegen noch feuern.
-        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired) {
+        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired || this.fleet.conditionalFire) {
             return this.fail(GiftNotPossible_Error);
         }
         return this.isValidRecipientAndLimit();
@@ -509,6 +509,10 @@ export class GiveWorld extends GiftCommand implements ExecuteCommand {
         }
         if (this.isOwnedByCommandPlayer(this.world.player) === false) {
             return this.fail(WorldNotOwned_Error);
+        }
+        // Mit den I- oder P-Schiffen einer verschenkten Welt darf in derselben Runde nicht gefeuert werden.
+        if (this.world.iShipsFired || this.world.pShipsFired) {
+            return this.fail(WorldGiftNotPossible_Error);
         }
         return this.isValidRecipientAndLimit();
     }

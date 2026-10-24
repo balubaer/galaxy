@@ -406,3 +406,79 @@ describe('Classic Game: M3', () => {
     expect(all.filter((c) => /^[IP]\d|G=|Q$|^[ANLX]=/.test(c))).toEqual([]);
   });
 });
+
+describe('Classic Game: M4 Kampf', () => {
+  const classicData = (owner: string, iShips = 3, pShips = 2) => ({
+    dships: 0,
+    backgroundColor: owner,
+    classic: {
+      blackHole: false,
+      population: 50,
+      populationLimit: 100,
+      industry: 30,
+      metal: 30,
+      mines: 2,
+      turnsOwned: 1,
+      iShips,
+      pShips,
+    },
+    fleets: [
+      { label: 'F9=30', backgroundColor: OWN, metal: 0 },
+      { label: 'F5=4', backgroundColor: OWN, metal: 0, pbb: true },
+      { label: 'F20=3', backgroundColor: 'blue', metal: 0 },
+    ],
+  });
+  const ownWorld: Node = { id: 'W1', data: classicData(OWN) };
+  const enemyWorld: Node = { id: 'W1', data: classicData('blue') };
+
+  const commandsAt = (n: Node, selected: string[] = []) =>
+    buildCommandGroups(n, links, OWN, 1, selected).flatMap((g) =>
+      g.rows.flatMap((r) => r.options.map((o) => o.command)),
+    );
+
+  it('offers ground fire and its conditional variants only on a foreign world', () => {
+    const enemy = commandsAt(enemyWorld);
+    expect(enemy).toEqual(
+      expect.arrayContaining(['F9AI', 'F9AP', 'F9AH', 'F9CI', 'F9CP', 'F9CH', 'F9AF20', 'F9CF20']),
+    );
+    const own = commandsAt(ownWorld);
+    expect(own.filter((c) => /^F\d+[AC][IPH]$/.test(c))).toEqual([]);
+    expect(own).toContain('F9CF20');
+  });
+
+  it('offers I- and P-ship fire on an own world', () => {
+    const own = commandsAt(ownWorld);
+    expect(own).toEqual(expect.arrayContaining(['I1AF20', 'I1CF20', 'P1AF20', 'P1CF20']));
+    const noHome: Node = { id: 'W1', data: classicData(OWN, 0, 0) };
+    expect(commandsAt(noHome).filter((c) => /^[IP]1[AC]F/.test(c))).toEqual([]);
+  });
+
+  it('offers probes from fleets and home ships to neighbour worlds', () => {
+    const own = commandsAt(ownWorld);
+    expect(own).toEqual(expect.arrayContaining(['F9P7', 'F9P6', 'I1P7', 'P1P6']));
+    expect(commandsAt(enemyWorld).filter((c) => /^[IP]1P/.test(c))).toEqual([]);
+  });
+
+  it('offers building a PBB with at least 26 ships and dropping a carried PBB', () => {
+    const own = commandsAt(ownWorld);
+    expect(own).toContain('F9B');
+    expect(own).not.toContain('F5B');
+    expect(own).toContain('F5D');
+    expect(own).not.toContain('F9D');
+  });
+
+  it('a fleet has only one action: fire, conditional fire, PBB drop, move or gift', () => {
+    expect(commandsConflict('F9AI', 'F9CF20')).toBe(true);
+    expect(commandsConflict('F5D', 'F5W7')).toBe(true);
+    expect(commandsConflict('F9CH', 'F9G=MARVIN')).toBe(true);
+    expect(commandsConflict('F9P7', 'F9W7')).toBe(false);
+    expect(commandsConflict('F9B', 'F9W7')).toBe(false);
+    expect(commandsConflict('I1AF20', 'I1CF20')).toBe(true);
+    expect(commandsConflict('I1AF20', 'P1AF20')).toBe(false);
+  });
+
+  it('reports fire and probes of an emptied fleet as broken', () => {
+    expect(brokenCommands(ownWorld, OWN, ['F5T4I', 'F5AF20'])).toEqual(['F5AF20']);
+    expect(brokenCommands(ownWorld, OWN, ['F5T4I', 'F5P7'])).toEqual(['F5P7']);
+  });
+});

@@ -6,4 +6,5 @@ export interface FleetPersist {
     // Classic Game, fehlt bei Core Games.
     metal?: number;
     atPeace?: boolean;
+    pbb?: boolean;
 }

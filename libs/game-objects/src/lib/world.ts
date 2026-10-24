@@ -76,6 +76,16 @@ export class World implements NumberKey {
     /** Geschenk dieser Runde an einen anderen Spieler, wird am Rundenende vollzogen. */
     giftTo: Player | null = null;
 
+    // Rundenzustand des Classic-Kampfs, wird nicht gespeichert und am Rundenende zurückgesetzt.
+    iShipsFired = false;
+    pShipsFired = false;
+    /** Beschuss von I-Schiffen/Industrie (I), P-Schiffen/Bevölkerung (P) oder I- und P-Schiffen (H). */
+    groundShots: Array<{ player: Player; shots: number; target: 'I' | 'P' | 'H' }> = [];
+    /** Angriffe dieser Runde auf dieser Welt (für bedingtes Feuern). */
+    attacks: Array<{ attacker: Player; victim: Player }> = [];
+    /** Flotten, die hier eine PBB abwerfen. */
+    pbbDrops: Array<Fleet> = [];
+
     ambushOff: boolean;
     hitAmbuschFleets: Array<Fleet>;
     hitedShotsDShips = 0;
@@ -180,6 +190,9 @@ export class World implements NumberKey {
         ];
         if (this.player !== null) {
             parts.push(`Besitz seit ${this.turnsOwned}`);
+        }
+        if (this.dShipsAmbush && this.hitAmbuschFleets.length > 0) {
+            parts.push(`Hinterhalt: {${this.hitAmbuschFleets.map(f => f.name()).join(', ')}}`);
         }
         return createBracketAndCommarStringWithStringArray(parts);
     }

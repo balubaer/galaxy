@@ -74,6 +74,7 @@ export class PersistenceGrafManager {
                     label: `F${fleet.number}=${fleet.ships}`,
                     metal: fleet.metal,
                     atPeace: fleet.atPeace,
+                    pbb: fleet.pbb,
                     fontColor: this.getFontColorWithPlayer(fleet.player)
                 }
             )

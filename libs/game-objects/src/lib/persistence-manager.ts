@@ -145,6 +145,9 @@ export class PersistenceManager {
         if (aFleet.atPeace) {
             result.atPeace = true;
         }
+        if (aFleet.pbb) {
+            result.pbb = true;
+        }
         return result;
     }
 
@@ -243,6 +246,7 @@ export class PersistenceManager {
             fleet.moved = fleetPersist.moved;
             fleet.metal = fleetPersist.metal ?? 0;
             fleet.atPeace = fleetPersist.atPeace ?? false;
+            fleet.pbb = fleetPersist.pbb ?? false;
             this.fleetDict.set(fleetPersist.number, fleet);
         }
     }

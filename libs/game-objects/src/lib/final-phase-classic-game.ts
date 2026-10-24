@@ -2,6 +2,9 @@ import { FinalPhaseCoreGame } from './final-phase-core-game';
 import { World } from './world';
 import { Player } from './player';
 import { classicLog } from './classic-log';
+import { Fleet } from './fleet';
+import { ambushDamage, applyGroundShots, destroyShips, dropPbb, resetCombatTurn } from './classic-combat';
+import { PBB_MIN_SHIPS, PBB_SHIP_COST } from './classic-combat-commands';
 import { CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
 
 /**
@@ -10,6 +13,100 @@ import { CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn 
  */
 export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
     private ownerAtStart: Map<World, Player> = new Map();
+
+    constructor(worlds: Array<World>, allPlayerDict: Map<string, Player>, private random: () => number = Math.random) {
+        super(worlds, allPlayerDict);
+    }
+
+    /**
+     * Kampfergebnisse: Schüsse auf Flotten (beladene Schiffe fallen schneller, fliegende nehmen halben Schaden),
+     * Beschuss des Bodens und abgeworfene PBBs (nur wenn die Flotte den Kampf überlebt).
+     */
+    override checkFireResults(world: World) {
+        for (const fleet of world.fleets) {
+            if (fleet.incomingShots.length > 0) {
+                const lost = destroyShips(fleet, fleet.incomingShots, fleet.fleetMovements.length > 0);
+                if (lost > 0) {
+                    world.addEvent(`${fleet.name()} verliert ${lost} Schiffe`);
+                }
+            }
+        }
+        for (const attack of world.groundShots) {
+            const owner = world.player;
+            const text = applyGroundShots(world, attack.shots, attack.target);
+            world.addReportPlayer(owner);
+            world.addEvent(`Beschuss durch ${attack.player.stringName()}: ${text}`);
+        }
+        for (const fleet of world.pbbDrops) {
+            if (fleet.ships > 0 && fleet.pbb) {
+                dropPbb(world);
+                world.addEvent(`PBB von ${fleet.name()} zerstört alles Leben auf ${world.name}`);
+            }
+            fleet.pbb = false;
+        }
+        for (const fleet of world.fleets) {
+            if (fleet.ships === 0 && fleet.pbb) {
+                // Eine zerstörte Flotte verliert ihre PBB.
+                fleet.pbb = false;
+            }
+        }
+    }
+
+    /** Hinterhalt durch I- und P-Schiffe, die in dieser Runde nicht gefeuert haben (volle Stärke). */
+    override getFirePowerForAmbushworld(world: World): number {
+        const shooters = (world.iShipsFired ? 0 : world.iShips) + (world.pShipsFired ? 0 : world.pShips);
+        if (shooters > 0) {
+            world.dShipsAmbush = true;
+        }
+        return shooters;
+    }
+
+    override applyAmbushDamage(fleet: Fleet, shooters: number) {
+        ambushDamage(fleet, shooters);
+        if (fleet.ships === 0) {
+            fleet.pbb = false;
+        }
+    }
+
+    /** Schwarzes Loch: Schiffe und Metall sind verloren, der leere Schlüssel taucht auf einer zufälligen Welt auf. */
+    override afterFleetArrived(fleet: Fleet, world: World): boolean {
+        if (world.blackHole === false) {
+            return false;
+        }
+        world.addReportPlayer(fleet.player);
+        world.addEvent(`${fleet.name()} ist im Schwarzen Loch verschwunden (${fleet.ships} Schiffe)`);
+        fleet.ships = 0;
+        fleet.metal = 0;
+        fleet.pbb = false;
+        const safeWorlds = this.worlds.filter(w => w.blackHole === false);
+        if (safeWorlds.length > 0) {
+            world.fleets.splice(world.fleets.indexOf(fleet), 1);
+            safeWorlds[Math.floor(this.random() * safeWorlds.length)].fleets.push(fleet);
+        }
+        return true;
+    }
+
+    /** Wechselt eine Flotte den Besitzer, verschwindet ihre PBB. */
+    override changeFleetOwner(world: World, fleet: Fleet, player: Player) {
+        if (fleet.player !== player) {
+            fleet.pbb = false;
+        }
+        super.changeFleetOwner(world, fleet, player);
+    }
+
+    /** PBB-Bau am Rundenende, wenn die Flotte noch dem Besteller gehört und genug Schiffe hat. */
+    buildPbbs() {
+        for (const world of this.worlds) {
+            for (const fleet of world.fleets) {
+                if (fleet.buildPbbBy !== null && fleet.player === fleet.buildPbbBy && fleet.ships >= PBB_MIN_SHIPS) {
+                    fleet.ships -= PBB_SHIP_COST;
+                    fleet.metal = Math.min(fleet.metal, fleet.ships);
+                    fleet.pbb = true;
+                    world.addEvent(`${fleet.name()} hat eine PBB gebaut`);
+                }
+            }
+        }
+    }
 
     // Punkte gibt es im Classic Game je nach Charakter, nicht pauschal je Welt.
     override calculatePoints(world: World) {
@@ -21,9 +118,11 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             this.ownerAtStart.set(world, world.player);
         }
         super.doFinal();
+        this.buildPbbs();
         this.completeGifts();
         for (const world of this.worlds) {
             this.endEconomy(world);
+            resetCombatTurn(world);
         }
         for (const player of this.allPlayerDict.values()) {
             player.giftsThisTurn = 0;

@@ -120,7 +120,8 @@ export class FinalPhaseCoreGame {
         let result = false;
         if (this.isAmbushFromMovementCount(movementCount, passingFleet.fleetMovements.length)) {
             if ((ambushFleet.number === passingFleet.number) === false) {
-                if (ambushFleet.fired === false && ambushFleet.fleetMovements.length === 0 && ambushFleet.ships > 0) {
+                if (ambushFleet.fired === false && ambushFleet.conditionalFire === false
+                    && ambushFleet.fleetMovements.length === 0 && ambushFleet.ships > 0) {
                     const ambushPlayer = ambushFleet.player;
                     const passingFleetPlayer = passingFleet.player;
 
@@ -135,6 +136,19 @@ export class FinalPhaseCoreGame {
             }
         }
         return result;
+    }
+
+    /** Hinterhalt: jeder feuernde Schütze zerstört ein Schiff. */
+    applyAmbushDamage(fleet: Fleet, shooters: number) {
+        fleet.ships -= shooters;
+        if (fleet.ships < 0) {
+            fleet.ships = 0;
+        }
+    }
+
+    /** Nach jedem Flugschritt; true beendet den Flug der Flotte (im Core Game nie). */
+    afterFleetArrived(fleet: Fleet, world: World): boolean {
+        return false;
     }
 
     getFirePowerForAmbushworld(world: World): number {
@@ -177,20 +191,18 @@ export class FinalPhaseCoreGame {
                                 toworld.fleets.push(fleet)
                                 fleetMovement.isMovementDone = true;
 
+                                if (this.afterFleetArrived(fleet, toworld)) {
+                                    break;
+                                }
+
                                 if (this.isAmbushworld(toworld, fleet, movementCount)) {
                                     const firePower = this.getFirePowerForAmbushworld(toworld);
-                                    fleet.ships -= firePower
-                                    if (fleet.ships < 0) {
-                                        fleet.ships = 0;
-                                    }
+                                    this.applyAmbushDamage(fleet, firePower);
                                     toworld.addHitAmbushFleets(fleet);
                                 }
                                 for (const fleetFromworld of toworld.fleets) {
                                     if (this.isAmbushFleet(toworld, fleetFromworld, fleet, movementCount)) {
-                                        fleet.ships -= fleetFromworld.ships;
-                                        if (fleet.ships < 0) {
-                                            fleet.ships = 0;
-                                        }
+                                        this.applyAmbushDamage(fleet, fleetFromworld.ships);
                                         fleetFromworld.addHitAmbushFleets(fleet);
                                         fleetFromworld.ambush = true;
                                     }

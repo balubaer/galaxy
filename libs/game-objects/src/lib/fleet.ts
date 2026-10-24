@@ -37,6 +37,15 @@ export class Fleet implements NumberKey {
     /** Classic Game: Geschenk dieser Runde (Empfänger und Geber), wird am Rundenende vollzogen. */
     giftTo: Player | null = null;
     giftFrom: Player | null = null;
+    /** Classic Game: Flotte trägt eine Planet Buster Bomb (wird gespeichert). */
+    pbb = false;
+    // Rundenzustand des Classic-Kampfs, wird nicht gespeichert.
+    /** Schüsse auf diese Flotte, je feuernder Flotte bzw. Gruppe einzeln (Rundung je Feuernder). */
+    incomingShots: Array<number> = [];
+    /** Bedingter Feuerbefehl: zählt als Aktion (kein Flug, kein Hinterhalt), auch wenn er nicht ausgelöst wird. */
+    conditionalFire = false;
+    /** PBB soll am Rundenende gebaut werden (von diesem Spieler). */
+    buildPbbBy: Player | null = null;
     /** FaaS: Flotte soll ausdrücklich nur aus dem Hinterhalt feuern (nur für den Bericht). */
     standBy = false;
     hitAmbuschFleets: Array<Fleet> = null;
@@ -98,6 +107,9 @@ export class Fleet implements NumberKey {
         }
         if (this.atPeace === true) {
             infoArray.push('At Peace');
+        }
+        if (this.pbb === true) {
+            infoArray.push('PBB');
         }
         if (this.fired === true) {
             infoArray.push(`feuert auf ${this.firesTo}`);

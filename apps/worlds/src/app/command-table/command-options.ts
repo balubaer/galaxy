@@ -1,5 +1,7 @@
 import { Edge, Node } from '@galaxy/api-interfaces';
 import {
+  PBB_MIN_SHIPS,
+  PBB_SHIP_COST,
   CLASSIC_BUILD_COST,
   CLASSIC_EMPEROR_INDUSTRY_COST,
   CLASSIC_EMPEROR_SCRAP_I_SHIPS,
@@ -31,6 +33,8 @@ interface WorldFleet {
   /** Classic Game: geladenes Metall. */
   metal: number;
   atPeace: boolean;
+  /** Classic Game: Flotte trägt eine PBB. */
+  pbb: boolean;
 }
 
 /** Classic-Werte einer Welt, wie sie das Backend in node.data.classic liefert. */
@@ -49,7 +53,7 @@ export function idOf(end: unknown): string {
 }
 
 function readFleets(node: Node, ownColor: string): WorldFleet[] {
-  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number; atPeace?: boolean }> =
+  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number; atPeace?: boolean; pbb?: boolean }> =
     node.data?.fleets ?? [];
   const result: WorldFleet[] = [];
   for (const fleet of fleets) {
@@ -61,6 +65,7 @@ function readFleets(node: Node, ownColor: string): WorldFleet[] {
         own: fleet.backgroundColor === ownColor,
         metal: fleet.metal ?? 0,
         atPeace: fleet.atPeace ?? false,
+        pbb: fleet.pbb ?? false,
       });
     }
   }
@@ -307,10 +312,52 @@ export function buildCommandGroups(
         ...(!isOwnWorld && dships > 0
           ? [opt(`F${f.number}AD`, 'auf D-Schiffe')]
           : []),
+        ...(classic && !classic.blackHole && !isOwnWorld
+          ? [
+              opt(`F${f.number}AI`, 'auf I-Schiffe/Industrie'),
+              opt(`F${f.number}AP`, 'auf P-Schiffe/Bevölkerung'),
+              opt(`F${f.number}AH`, 'auf I- und P-Schiffe'),
+            ]
+          : []),
+        ...(classic && f.pbb ? [opt(`F${f.number}D`, 'PBB abwerfen')] : []),
         opt(`F${f.number}S`, 'Bereithalten (Hinterhalt)'),
       ],
     }))
     .filter((row) => row.options.length > 0);
+  if (classic && !classic.blackHole) {
+    // Bedingt: feuert nur, wenn der Gegner hier in dieser Runde selbst angreift.
+    for (const f of movable) {
+      const options = [
+        ...enemyFleets.map((e) => opt(`F${f.number}CF${e.number}`, `auf F${e.number}`)),
+        ...(!isOwnWorld
+          ? [
+              opt(`F${f.number}CI`, 'auf I-Schiffe/Industrie'),
+              opt(`F${f.number}CP`, 'auf P-Schiffe/Bevölkerung'),
+              opt(`F${f.number}CH`, 'auf I- und P-Schiffe'),
+            ]
+          : []),
+      ];
+      if (options.length > 0) {
+        fireRows.push({ label: `Flotte ${f.number} bedingt`, options });
+      }
+    }
+    if (isOwnWorld) {
+      for (const [kind, label, ships] of [
+        ['I', 'I-Schiffe feuern', projected.i],
+        ['P', 'P-Schiffe feuern', projected.p],
+      ] as Array<[string, string, number]>) {
+        if (ships > 0) {
+          fireRows.push({
+            label,
+            options: enemyFleets.flatMap((e) => [
+              opt(`${kind}${world}AF${e.number}`, `auf F${e.number}`),
+              opt(`${kind}${world}CF${e.number}`, `bedingt auf F${e.number}`),
+            ]),
+          });
+        }
+      }
+    }
+  }
   if (isOwnWorld && dships > 0) {
     fireRows.push({
       label: 'D-Schiffe feuern',
@@ -462,6 +509,38 @@ export function buildCommandGroups(
   }
 
   if (classic && !classic.blackHole) {
+    const probeTargets = targets.map((t) => ({ id: t, number: t.replace(/^W/, '') }));
+    add('Sonden', [
+      ...movable
+        .filter((f) => f.ships > 0)
+        .map((f) => ({
+          label: `Flotte ${f.number}`,
+          options: probeTargets.map((t) => opt(`F${f.number}P${t.number}`, `→ ${t.id}`)),
+        })),
+      ...(isOwnWorld
+        ? ([
+            ['I', 'I-Schiff', projected.i],
+            ['P', 'P-Schiff', projected.p],
+          ] as Array<[string, string, number]>)
+            .filter(([, , ships]) => ships > 0)
+            .map(([kind, label]) => ({
+              label,
+              options: probeTargets.map((t) => opt(`${kind}${world}P${t.number}`, `→ ${t.id}`)),
+            }))
+        : []),
+    ].filter((row) => row.options.length > 0));
+    add(
+      'PBB',
+      ownFleets
+        .filter((f) => !f.pbb && (f.ships >= PBB_MIN_SHIPS || selected.includes(`F${f.number}B`)))
+        .map((f) => ({
+          label: `Flotte ${f.number} (${f.ships})`,
+          options: [opt(`F${f.number}B`, `PBB bauen (kostet ${PBB_SHIP_COST} Schiffe)`)],
+        })),
+    );
+  }
+
+  if (classic && !classic.blackHole) {
     add(
       'At Peace',
       ownFleets.map((f) => ({
@@ -537,7 +616,7 @@ export function brokenCommands(
     projected.fleets.filter((f) => f.own && f.ships === 0).map((f) => f.number),
   );
   const emptyActing = selected.filter((c) => {
-    const match = /^F(\d+)(?:W|AF|AD)/.exec(c);
+    const match = /^F(\d+)(?:W|A[FDIPH]|C[FIPH]|D$|P\d)/.exec(c);
     return match !== null && empty.has(+match[1]);
   });
   return [...projected.failed, ...emptyActing];
@@ -550,7 +629,7 @@ export function splitCommands(text: string): string[] {
 
 /** Flotte, die der Befehl verwendet, wenn er ihre einmalige Aktion braucht (bewegen/feuern/bereithalten). */
 function actingFleet(command: string): string | null {
-  const match = /^(F\d+)(?:W|AF|AD|S|G=)/.exec(command);
+  const match = /^(F\d+)(?:W|A[FDIPH]|C[FIPH]|S|G=|D$)/.exec(command);
   return match ? match[1] : null;
 }
 
@@ -574,6 +653,12 @@ export function commandsConflict(a: string, b: string): boolean {
   const metal = /^F(\d+)([UNJL])\d*$/.exec(a);
   const otherMetal = /^F(\d+)([UNJL])\d*$/.exec(b);
   if (metal && otherMetal && metal[1] === otherMetal[1] && metal[2] === otherMetal[2]) {
+    return true;
+  }
+  // I- bzw. P-Schiffe einer Welt haben pro Runde einen Feuerbefehl.
+  const home = /^([IP]\d+)[AC]F\d+$/.exec(a);
+  const otherHome = /^([IP]\d+)[AC]F\d+$/.exec(b);
+  if (home && otherHome && home[1] === otherHome[1]) {
     return true;
   }
   // Pro Flotte entweder At Peace oder nicht.

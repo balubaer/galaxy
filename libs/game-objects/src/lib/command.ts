@@ -98,7 +98,7 @@ export class MoveCommand extends Command implements ExecuteCommand {
             return this.fail(TooManyWorlds_Error);
         }
         // Eine Flotte darf nur einmal fliegen (der erste Flugbefehl gilt) und nicht fliegen und feuern.
-        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired) {
+        if (this.fleet.fleetMovements.length > 0 || this.fleet.fired || this.fleet.conditionalFire) {
             return this.fail(FleetAlreadyActed_Error);
         }
         if (this.fleet.ships === 0) {
