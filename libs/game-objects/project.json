@@ -1,0 +1,8 @@
+{
+  "name": "game-objects",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/game-objects/src",
+  "tags": ["type:lib"],
+  "targets": {}
+}
