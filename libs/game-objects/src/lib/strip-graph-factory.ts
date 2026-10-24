@@ -40,17 +40,31 @@ export class StripGraphFactory {
       }
     }
 
+    // Verbindungen, deren anderes Ende außerhalb des Distanzlevels liegt, werden
+    // als hiddenLinks (source = sichtbare Welt) mitgeliefert, je Weltenpaar einmal.
+    const shownIds = new Set(nodes.map((node) => node.id));
+    const hiddenLinks: Edge[] = new Array();
+    const hiddenKeys = new Set<string>();
     for (const link of this.graphData.links) {
       const foundSourceWorld = worldWithName(passedWorlds, link.source);
       const foundTargetWorld = worldWithName(passedWorlds, link.target);
       if (foundSourceWorld !== null && foundTargetWorld !== null) {
         links.push(link);
+      } else if (foundSourceWorld !== null || foundTargetWorld !== null) {
+        const shown = foundSourceWorld !== null ? link.source : link.target;
+        const hidden = foundSourceWorld !== null ? link.target : link.source;
+        const key = `${shown}-${hidden}`;
+        if (shownIds.has(shown) && !hiddenKeys.has(key)) {
+          hiddenKeys.add(key);
+          hiddenLinks.push({ source: shown, target: hidden });
+        }
       }
     }
 
     return {
       links: links,
       nodes: nodes,
+      hiddenLinks: hiddenLinks,
     };
   }
 }

@@ -26,4 +26,20 @@ describe('StripGraphFactory', () => {
     expect(dataGraf.nodes.length).toBe(9);
   });
 
+  it('liefert Verbindungen über das Distanzlevel hinaus als hiddenLinks', () => {
+    const dataGraf = new StripGraphFactory('W7', aWorlds, turnDataGraf, 2).getResult();
+    const shown = new Set(dataGraf.nodes.map((node) => node.id));
+    const hiddenLinks = dataGraf.hiddenLinks ?? [];
+    expect(hiddenLinks.length).toBeGreaterThan(0);
+    for (const link of hiddenLinks) {
+      expect(shown.has(link.source)).toBe(true);
+      expect(shown.has(link.target)).toBe(false);
+    }
+    const keys = hiddenLinks.map((link) => `${link.source}-${link.target}`);
+    expect(new Set(keys).size).toBe(keys.length);
+    // Ohne Beschränkung bleibt keine Verbindung verborgen.
+    const all = new StripGraphFactory('W7', aWorlds, turnDataGraf, 99).getResult();
+    expect(all.hiddenLinks).toEqual([]);
+  });
+
 });

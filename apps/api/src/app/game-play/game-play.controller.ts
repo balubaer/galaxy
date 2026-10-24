@@ -144,6 +144,7 @@ export class GamePlayController {
       turnDataTxt: turnDataTxTstring,
       links: dataGraf.links,
       nodes: dataGraf.nodes,
+      hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
     };
     return respondTurnData;
@@ -197,6 +198,7 @@ export class GamePlayController {
       turnDataTxt: turnDataTxTstring,
       links: dataGraf.links,
       nodes: dataGraf.nodes,
+      hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
     };
     return respondTurnData;
