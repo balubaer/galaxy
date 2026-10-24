@@ -26,7 +26,7 @@ import {
   routeCommand,
   routeWorlds,
 } from '../command-table/command-options';
-import { clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
+import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -175,6 +175,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .style('background-color', 'white');
 
     th.applyZoom();
+    th.scrollToCenter();
 
     th.force = d3.forceSimulation();
 
@@ -186,9 +187,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         .distance(15)
     );
 
-    th.force
-      .force('charge_force', d3.forceManyBody())
-      .force('center_force', d3.forceCenter(width / 2, height / 2));
+    th.force.force('charge_force', d3.forceManyBody());
+    // Die gewählte Welt (Select W) liegt in der Mitte der Darstellungsfläche und hält das
+    // Netz dort; nur wenn sie fehlt, zentriert die Simulation das Netz als Ganzes.
+    if (!centerOnWorld(this.turnData.nodes, `W${this.selectWorld}`, width / 2, height / 2)) {
+      th.force.force('center_force', d3.forceCenter(width / 2, height / 2));
+    }
 
     th.links = svgv7
       .selectAll('line')
@@ -368,6 +372,15 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('width', size)
       .attr('height', size)
       .style('max-width', 'none');
+  }
+
+  /** Scrollt den Rahmen so, dass die Mitte der Darstellungsfläche sichtbar ist. */
+  scrollToCenter() {
+    const box = document.querySelector<HTMLElement>('.graph-scroll');
+    if (box) {
+      box.scrollLeft = (box.scrollWidth - box.clientWidth) / 2;
+      box.scrollTop = (box.scrollHeight - box.clientHeight) / 2;
+    }
   }
 
   onZoomChange(value: string) {
