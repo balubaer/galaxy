@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
 import { User } from '@galaxy/api-interfaces';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Observable, Subscription, Subject, forkJoin } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import {
   RespondTurnData,
@@ -30,7 +30,8 @@ import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-b
 import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
 import { applyRingLayout } from '../_helpers/ring-layout';
 import { Box, forceBoxCollide } from '../_helpers/box-collide';
-import { listSavedLayouts, parseSaveKey, SavedLayout } from './saved-layouts';
+import { parseSaveKey, SavedLayout } from './saved-layouts';
+import { LayoutStoreService } from './layout-store.service';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -107,6 +108,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private gamePlayService: GamePlayService,
     private gamePrefService: GameServiceService,
+    private layoutStore: LayoutStoreService,
     private fb: FormBuilder
   ) {
     this.homeWorldName = '';
@@ -136,7 +138,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
     this.turnData$ = this.gamePlayService.getTurnDataOnlyPlayer(request);
-    this.subscriptionsTurnData = this.turnData$.subscribe((aTurnData) => {
+    // Saves vorher mit dem Server abgleichen, damit auch die aus anderen Browsern gelten.
+    this.subscriptionsTurnData = forkJoin([
+      this.turnData$,
+      this.layoutStore.sync(this.currentUser.username),
+    ]).subscribe(([aTurnData]) => {
       this.homeWorldName = aTurnData.homeWorldName;
       this.selectWorld = +extractNumberString(aTurnData.homeWorldName);
       this.turnData = aTurnData;
@@ -537,7 +543,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   /**
    * Zeichnet die Vergleichskarte nur zum Ansehen. Welten, die auch links zu sehen sind,
-   * stehen an derselben Stelle und folgen dort jedem Verschieben; die übrigen liegen auf Ringen.
+   * stehen an derselben Stelle und folgen dort jedem Verschieben; die übrigen bekommen
+   * ihre Position aus der Speicherung, wenn vorhanden, sonst liegen sie auf Ringen.
    */
   private drawPrevGraf(worldName: string) {
     const width = 500;
@@ -546,6 +553,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     const svg = d3.select('svg#v7prev').style('background-color', 'white');
     this.applyZoom();
     applyRingLayout(data.nodes, data.links, worldName, width / 2, height / 2, width / 2 - 30);
+    // Eigene Anordnung der Runde danach zuerst, dann die Saves der nächstliegenden Runden.
+    this.applySavedLayout(worldName, undefined, data.nodes, this.changeround + 1);
     const map = this.drawMap(svg, data, width, height);
     this.renderPrevMap = () => {
       const current = new Map(this.turnData.nodes.map((n) => [n.id, n]));
@@ -789,34 +798,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  private layoutKey(worldName: string): string {
-    return `R${this.round}W${extractNumberString(worldName)}D${this.distanceLevelHomes}.${this.currentUser.username}`;
+  /** Save-Schlüssel der angezeigten Runde (auch ältere Runden haben eigene Anordnungen). */
+  private layoutKey(worldName: string, round = this.changeround): string {
+    return `R${round}W${extractNumberString(worldName)}D${this.distanceLevelHomes}.${this.currentUser.username}`;
   }
 
-  private readSave(key: string): Node[] {
-    try {
-      const saved: RespondTurnData | null = JSON.parse(localStorage.getItem(key) ?? 'null');
-      return saved?.nodes ?? [];
-    } catch {
-      return [];
-    }
-  }
-
-  private storageKeys(): string[] {
-    const keys: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      keys.push(localStorage.key(i) ?? '');
-    }
-    return keys;
-  }
-
-  /** Andere Saves des Benutzers: gleiche Runde zuerst, dann das nächstliegende Distanzlevel. */
-  private otherSaveKeys(ownKey: string): string[] {
-    return listSavedLayouts(this.storageKeys(), this.currentUser.username)
+  /** Andere Saves des Benutzers: nächstliegende Runde zuerst, dann das nächstliegende Distanzlevel. */
+  private otherSaveKeys(ownKey: string, round: number): string[] {
+    return this.layoutStore
+      .list(this.currentUser.username)
       .filter((save) => save.key !== ownKey)
       .map((save) => ({
         key: save.key,
-        rank: (save.round === this.round ? 0 : 1000) + Math.abs(save.distanceLevel - this.distanceLevelHomes),
+        rank: Math.abs(save.round - round) * 1000 + Math.abs(save.distanceLevel - this.distanceLevelHomes),
       }))
       .sort((a, b) => a.rank - b.rank)
       .map((k) => k.key);
@@ -825,19 +819,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   /**
    * Übernimmt gesicherte Positionen ("save"). Zuerst gilt ein im Popup gewählter Save,
    * dann der eigene Save dieser Ansicht; Welten, die dort fehlen, bekommen ihre Position
-   * aus Saves anderer Distanzlevel. Liefert, ob mindestens eine Welt eine Position bekam.
+   * aus Saves anderer Runden und Distanzlevel. Liefert, ob mindestens eine Welt eine Position bekam.
    */
-  private applySavedLayout(worldName: string, preferredKey?: string): boolean {
-    const ownKey = this.layoutKey(worldName);
-    const pending = new Map(this.turnData.nodes.map((n) => [n.id, n]));
-    const keys = [...new Set([preferredKey ?? ownKey, ownKey, ...this.otherSaveKeys(ownKey)])];
+  private applySavedLayout(
+    worldName: string,
+    preferredKey?: string,
+    nodes: Node[] = this.turnData.nodes,
+    round = this.changeround
+  ): boolean {
+    const ownKey = this.layoutKey(worldName, round);
+    const pending = new Map(nodes.map((n) => [n.id, n]));
+    const keys = [...new Set([preferredKey ?? ownKey, ownKey, ...this.otherSaveKeys(ownKey, round)])];
     for (const key of keys) {
       if (pending.size === 0) {
         break;
       }
-      for (const old of this.readSave(key)) {
+      for (const old of this.layoutStore.nodes(key)) {
         const node = pending.get(old.id);
-        if (node && old.fx !== undefined && old.fy !== undefined) {
+        if (node) {
           node.x = old.fx;
           node.y = old.fy;
           node.fx = old.fx;
@@ -846,28 +845,39 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
       }
     }
-    return pending.size < this.turnData.nodes.length;
+    return pending.size < nodes.length;
   }
 
+  /** Zeigt sofort die Saves aus dem Cache und danach den Stand des Servers. */
   openSavedLayouts() {
-    this.savedLayouts = listSavedLayouts(this.storageKeys(), this.currentUser.username);
+    const user = this.currentUser.username;
+    this.savedLayouts = this.layoutStore.list(user);
+    this.subscriptions.add(
+      this.layoutStore.sync(user).subscribe(() => {
+        if (this.savedLayouts) {
+          this.savedLayouts = this.layoutStore.list(user);
+        }
+      })
+    );
   }
 
   closeSavedLayouts() {
     this.savedLayouts = null;
   }
 
-  /** Zeigt die Welt und das Distanzlevel eines Saves mit dessen Positionen an. */
+  /** Zeigt Runde, Welt und Distanzlevel eines Saves mit dessen Positionen an. */
   loadSavedLayout(save: SavedLayout) {
     this.selectWorld = save.world;
     this.distanceLevelHomes = save.distanceLevel;
+    this.changeround = Math.min(save.round, this.round);
+    this.ishidden = this.changeround < this.round;
     this.closeSavedLayouts();
     this.readNewTurnDataWithRoundAndWorldName(this.changeround, `W${save.world}`, save.key);
   }
 
   deleteSavedLayout(save: SavedLayout) {
     if (confirm(`Speicherung ${save.key} löschen?`)) {
-      localStorage.removeItem(save.key);
+      this.layoutStore.delete(this.currentUser.username, save.key);
       this.openSavedLayouts();
     }
   }
@@ -878,7 +888,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       n.fy = n.y;
     }
     const key = this.layoutKey(`W${this.selectWorld}`);
-    localStorage.setItem(key, JSON.stringify(this.turnData));
+    this.layoutStore.save(
+      this.currentUser.username,
+      key,
+      this.turnData.nodes.map((n) => ({ id: n.id, fx: n.x ?? 0, fy: n.y ?? 0 }))
+    );
     this.savedFeedback = true;
     clearTimeout(this.savedFeedbackTimer);
     this.savedFeedbackTimer = setTimeout(() => (this.savedFeedback = false), 2500);
