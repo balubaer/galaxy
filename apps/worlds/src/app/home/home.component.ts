@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AuthenticationService } from '../_services/authentication.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable, Subscription, Subject, forkJoin } from 'rxjs';
@@ -18,20 +18,63 @@ import * as d3 from 'd3';
 import { GameServiceService } from '../game-service.service';
 import {
   addCommand,
-  canExtendRoute,
+  checkCommand,
   extendRoute,
   idOf,
+  MAX_ROUTE_STEPS,
   removeCommand,
+  replaceCommands,
   RoutePlan,
   routeCommand,
   routeWorlds,
+  splitCommands,
 } from '../command-table/command-options';
+import {
+  commandPath,
+  commandWorld,
+  describeCommand,
+  fleetWorld,
+  reachableWorlds,
+  shortestRoute,
+} from '../command-table/command-describe';
+import { CommandPanelComponent } from '../command-panel/command-panel.component';
 import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
 import { applyRingLayout } from '../_helpers/ring-layout';
 import { Box, forceBoxCollide } from '../_helpers/box-collide';
 import { parseSaveKey, SavedLayout } from './saved-layouts';
 import { LayoutStoreService } from './layout-store.service';
+
+/** Steuerungsart der Befehle: klassische Tabelle oder Kommandopult mit Maussteuerung. */
+export type ControlMode = 'classic' | 'modern';
+
+const CONTROL_MODE_KEY = 'galaxy.controlMode';
+
+function loadControlMode(): ControlMode {
+  try {
+    return localStorage.getItem(CONTROL_MODE_KEY) === 'modern' ? 'modern' : 'classic';
+  } catch {
+    return 'classic';
+  }
+}
+
+/** Geplanter Befehl, den die moderne Steuerung als Pfeil auf der Karte zeigt. */
+interface OrderArrow {
+  command: string;
+  kind: 'move' | 'probe' | 'migration' | 'fire';
+  /** Welten des Wegs, beginnend beim Start. */
+  worlds: string[];
+  fromFleet?: number;
+  toFleet?: number;
+  label: string;
+}
+
+const ORDER_COLORS: Record<OrderArrow['kind'], string> = {
+  move: '#1976d2',
+  probe: '#8e24aa',
+  migration: '#2e7d32',
+  fire: '#c62828',
+};
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
 export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
@@ -100,6 +143,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   routePlan: RoutePlan | null = null;
 
   ishidden = false;
+  controlMode: ControlMode = loadControlMode();
+  @ViewChild(CommandPanelComponent) panel?: CommandPanelComponent;
+  /** Befehl, über dem im Kommandopult die Maus steht. */
+  hoveredCommand: string | null = null;
+  /** Rückmeldung der Maussteuerung auf der Karte. */
+  mapHint = '';
+  private mapHintTimer: ReturnType<typeof setTimeout> | undefined;
+  private orderArrows: OrderArrow[] = [];
+  readonly maxRouteSteps = MAX_ROUTE_STEPS;
   /** Kurze Rückmeldung nach „Anordnung speichern“. */
   savedFeedback = false;
   private savedFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
@@ -158,7 +210,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.otherPlayerNames = colors
           .map((c) => c.playername)
           .filter((name) => name !== this.currentUser.username);
+        this.updateModernMap();
       })
+    );
+    this.subscriptions.add(
+      this.form.get('Commands')!.valueChanges.subscribe((text: string) => this.updateOrders(text))
     );
 
     this.subscriptions.add(this.form.valueChanges.subscribe(console.log));
@@ -179,6 +235,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const delnodes = svgv7.selectAll('.nodes');
     delnodes.remove();
     svgv7.selectAll('.hidden-link').remove();
+    svgv7.selectAll('g.orders').remove();
   }
 
   /** Zeichnet die Karte; ohne Sicherung werden die Welten auf Ringen um die gewählte Welt verteilt. */
@@ -275,6 +332,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       keepNodesInArea(th.turnData.nodes, width, height, margin);
       map.render();
       th.renderPrevMap?.();
+      th.renderOrders();
     }
     th.force.on('tick', render);
 
@@ -320,6 +378,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       th.force.restart();
     }
     this.highlightRoute();
+    this.updateModernMap();
   }
 
   /**
@@ -397,6 +456,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         const fleetGroup = group
           .append('g')
           .attr('class', 'fleet')
+          // Für die Maussteuerung: Nummer und Farbe des Besitzers.
+          .attr('data-fleet', /^F(\d+)=/.exec(fleet.label ?? '')?.[1] ?? null)
+          .attr('data-color', fleet.backgroundColor ?? null)
           .attr('transform', `translate(${fleet.x * 0.3},${fleet.y * 0.3})`);
         fleetGroup.append('title').text(`${d.id}: ${fleetInfo(fleet)}`);
         fleetGroup
@@ -638,7 +700,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       )
       .style('stroke-width', (d: any) =>
         d.id === this.node?.id || worlds.includes(d.id) ? 3 : null
-      );
+      )
+      .style('stroke-dasharray', null);
     const inRoute = (d: any) => {
       const from = worlds.indexOf(idOf(d.source));
       return from >= 0 && worlds[from + 1] === idOf(d.target);
@@ -673,6 +736,368 @@ export class HomeComponent implements OnInit, OnDestroy {
   onRouteCancelled() {
     this.routePlan = null;
     this.highlightRoute();
+  }
+
+  routeText(): string {
+    return this.routePlan ? routeCommand(this.routePlan) : '';
+  }
+
+  get modern(): boolean {
+    return this.controlMode === 'modern';
+  }
+
+  /** Die Maussteuerung auf der Karte gibt es nur in der aktuellen Runde, in der Befehle möglich sind. */
+  private get mapControlActive(): boolean {
+    return this.modern && !!this.turnData && this.changeround === this.round;
+  }
+
+  setControlMode(mode: ControlMode) {
+    this.controlMode = mode;
+    try {
+      localStorage.setItem(CONTROL_MODE_KEY, mode);
+    } catch {
+      // Ohne Speicher gilt die Wahl nur bis zum Neuladen.
+    }
+    this.onRouteCancelled();
+    this.hoveredCommand = null;
+    this.updateModernMap();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.routePlan) {
+      this.onRouteCancelled();
+    }
+  }
+
+  private showMapHint(text: string) {
+    this.mapHint = text;
+    clearTimeout(this.mapHintTimer);
+    this.mapHintTimer = setTimeout(() => (this.mapHint = ''), 4000);
+  }
+
+  /** Eigene Flotten auf der Karte ziehbar machen (moderne Steuerung) und Befehlspfeile zeichnen. */
+  updateModernMap() {
+    const fleets = d3.select('svg#v7').selectAll<SVGGElement, Node>('g.fleet');
+    fleets.on('.drag', null).on('click.fleet', null).style('cursor', null);
+    if (this.mapControlActive && this.ownColor) {
+      const ownColor = this.ownColor;
+      fleets
+        .filter(function (this: SVGGElement) {
+          return this.getAttribute('data-color') === ownColor;
+        })
+        .style('cursor', 'grab')
+        // Der Klick auf eine eigene Flotte wählt sie aus, nicht die Welt ab.
+        .on('click.fleet', (event: MouseEvent) => event.stopPropagation())
+        .call(this.fleetDrag());
+    }
+    this.updateOrders();
+  }
+
+  /** Welt unter dem Mauszeiger (Koordinaten der Darstellungsfläche). */
+  private worldAt(x: number, y: number): Node | undefined {
+    let best: Node | undefined;
+    let bestDistance = 16;
+    for (const node of this.turnData?.nodes ?? []) {
+      const distance = Math.hypot((node.x ?? 0) - x, (node.y ?? 0) - y);
+      if (distance < bestDistance) {
+        best = node;
+        bestDistance = distance;
+      }
+    }
+    return best;
+  }
+
+  /** Während des Ziehens: erreichbare Welten grün, die Welt unter dem Zeiger orange. */
+  private markReachable(reach: Map<string, number>, hover: string | null) {
+    d3.select('svg#v7')
+      .selectAll('.nodes circle')
+      .style('stroke', (d: any) =>
+        d.id === hover ? (reach.has(d.id) ? '#ff9800' : '#9e9e9e') : reach.has(d.id) ? '#2e7d32' : null
+      )
+      .style('stroke-width', (d: any) => (d.id === hover ? 4 : reach.has(d.id) ? (reach.get(d.id) === 1 ? 3 : 2) : null))
+      .style('stroke-dasharray', (d: any) => ((reach.get(d.id) ?? 1) > 1 && d.id !== hover ? '3,2' : null));
+  }
+
+  /**
+   * Eigene Flotte auf der Karte ziehen: auf eine Welt = Flug (kürzester Weg, bis 3 Sprünge),
+   * auf eine fremde Flotte derselben Welt = Feuern, auf eine eigene = Transfer. Klick = Flotte im Pult.
+   */
+  private fleetDrag() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const th = this;
+    let line: any = null;
+    let start = { x: 0, y: 0 };
+    let reach = new Map<string, number>();
+    return d3
+      .drag<SVGGElement, any>()
+      .container(() => d3.select('svg#v7').node() as SVGSVGElement)
+      .subject((event: any) => ({ x: event.x, y: event.y }))
+      .on('start', function (this: SVGGElement, event: any, d: any) {
+        start = { x: event.x, y: event.y };
+        reach = reachableWorlds(th.turnData.links, d.id);
+        line = th
+          .ordersLayer()
+          .append('line')
+          .attr('class', 'drag-line')
+          .attr('x1', start.x)
+          .attr('y1', start.y)
+          .attr('x2', start.x)
+          .attr('y2', start.y)
+          .style('stroke', ORDER_COLORS.move)
+          .style('stroke-width', 2)
+          .style('stroke-dasharray', '4,3')
+          .attr('marker-end', 'url(#order-arrow-move)');
+      })
+      .on('drag', function (event: any) {
+        line?.attr('x2', event.x).attr('y2', event.y);
+        if (Math.hypot(event.x - start.x, event.y - start.y) > 4) {
+          th.markReachable(reach, th.worldAt(event.x, event.y)?.id ?? null);
+        }
+      })
+      .on('end', function (this: SVGGElement, event: any, d: any) {
+        line?.remove();
+        line = null;
+        const fleet = +(this.getAttribute('data-fleet') ?? 0);
+        th.node = d;
+        th.highlightRoute();
+        if (Math.hypot(event.x - start.x, event.y - start.y) <= 4) {
+          th.withPanel((panel) => panel.focusFleet(fleet));
+        } else {
+          th.dropFleetOnMap(fleet, d, event);
+        }
+      });
+  }
+
+  /** Das Pult zeigt erst nach dem nächsten Durchlauf die neu gewählte Welt. */
+  private withPanel(action: (panel: CommandPanelComponent) => void) {
+    setTimeout(() => this.panel && action(this.panel));
+  }
+
+  private dropFleetOnMap(fleet: number, world: Node, event: any) {
+    const source = event.sourceEvent;
+    const point = source?.changedTouches?.[0] ?? source;
+    const element = point ? document.elementFromPoint(point.clientX, point.clientY) : null;
+    const fleetElement = element?.closest('g.fleet') as SVGGElement | null;
+    if (fleetElement && (d3.select(fleetElement).datum() as Node)?.id === world.id) {
+      const other = +(fleetElement.getAttribute('data-fleet') ?? 0);
+      if (other !== fleet) {
+        if (fleetElement.getAttribute('data-color') === this.ownColor) {
+          this.withPanel((panel) => panel.openTransfer(fleet, other));
+        } else {
+          this.applyMapCommand(world, `F${fleet}AF${other}`);
+        }
+        return;
+      }
+    }
+    const target = this.worldAt(event.x, event.y);
+    if (!target || target.id === world.id) {
+      this.showMapHint('Flotte auf eine Welt (Flug), eine fremde Flotte (Feuern) oder eine eigene Flotte (Transfer) ziehen.');
+      return;
+    }
+    const path = shortestRoute(this.turnData.links, world.id, target.id);
+    if (!path) {
+      this.showMapHint(`${target.id} ist von ${world.id} aus nicht in ${MAX_ROUTE_STEPS} Sprüngen erreichbar.`);
+      return;
+    }
+    this.applyMapCommand(world, `F${fleet}${path.join('')}`);
+  }
+
+  /** Prüft einen Befehl von der Karte wie die Buttons und trägt ihn ein. */
+  private applyMapCommand(world: Node, command: string) {
+    const selected = splitCommands(this.form.value.Commands);
+    const check = checkCommand(world, this.turnData.links, this.ownColor, 1, selected, this.otherPlayerNames, command);
+    if (!check.ok) {
+      this.showMapHint(check.reason ?? `${command} ist nicht möglich.`);
+      return;
+    }
+    this.onCommandReplaced({ command, replaces: check.replaces });
+    const replaced = check.replaces.length > 0 ? ` (ersetzt ${check.replaces.join(', ')})` : '';
+    this.showMapHint(`✓ ${describeCommand(command).text}${replaced}`);
+  }
+
+  onCommandReplaced(event: { command: string; replaces: string[] }) {
+    const element = this.form.get('Commands');
+    if (element) {
+      element.setValue(replaceCommands(element.value ?? '', event.command, event.replaces));
+      this.onSubmit();
+    }
+  }
+
+  onCommandHovered(command: string | null) {
+    this.hoveredCommand = command;
+    this.renderOrders();
+  }
+
+  /** Welt aus dem Pult anzeigen; liegt sie nicht auf der Karte, wird die Karte um sie geladen. */
+  onWorldRequested(worldId: string) {
+    const node = this.turnData?.nodes.find((n) => n.id === worldId);
+    if (node) {
+      this.node = node;
+      this.highlightRoute();
+    } else {
+      this.selectWorld = +extractNumberString(worldId);
+      this.pressViewWorld();
+    }
+  }
+
+  /** Ebene für Befehlspfeile über der Karte (fängt keine Mausereignisse ab). */
+  private ordersLayer() {
+    const svg = d3.select('svg#v7');
+    if (svg.select('defs.order-defs').empty()) {
+      const defs = svg.append('defs').attr('class', 'order-defs');
+      for (const [kind, color] of Object.entries(ORDER_COLORS)) {
+        defs
+          .append('marker')
+          .attr('id', `order-arrow-${kind}`)
+          .attr('viewBox', '0 0 10 10')
+          .attr('refX', 8)
+          .attr('refY', 5)
+          .attr('markerWidth', 4)
+          .attr('markerHeight', 4)
+          .attr('orient', 'auto-start-reverse')
+          .append('path')
+          .attr('d', 'M0,0L10,5L0,10z')
+          .style('fill', color);
+      }
+    }
+    let layer = svg.select<SVGGElement>('g.orders');
+    if (layer.empty()) {
+      layer = svg.append('g').attr('class', 'orders').style('pointer-events', 'none');
+    }
+    return layer.raise();
+  }
+
+  /** Liest die geplanten Flüge, Sonden, Migrationen und Feuerbefehle aus dem Befehlstext. */
+  updateOrders(text: string = this.form.value.Commands) {
+    const nodes = this.turnData?.nodes ?? [];
+    const commands = this.mapControlActive ? splitCommands(text) : [];
+    this.orderArrows = [];
+    for (const command of commands) {
+      const fire = /^(?:F(\d+)|[DIP](\d+))[AC]F(\d+)$/.exec(command);
+      if (fire) {
+        const world = fire[1] ? fleetWorld(nodes, +fire[1]) : `W${fire[2]}`;
+        if (world) {
+          this.orderArrows.push({
+            command,
+            kind: 'fire',
+            worlds: [world],
+            fromFleet: fire[1] ? +fire[1] : undefined,
+            toFleet: +fire[3],
+            label: '',
+          });
+        }
+        continue;
+      }
+      const worlds = commandPath(command, nodes);
+      if (worlds.length >= 2) {
+        const category = describeCommand(command).category;
+        const kind = category === 'move' ? 'move' : category === 'probe' ? 'probe' : 'migration';
+        const fleet = /^F(\d+)/.exec(command);
+        const migrants = /^P\d+M(\d+)/.exec(command);
+        this.orderArrows.push({
+          command,
+          kind,
+          worlds,
+          fromFleet: fleet ? +fleet[1] : undefined,
+          label: fleet ? `F${fleet[1]}` : migrants ? `${migrants[1]} Bev.` : 'Sonde',
+        });
+      }
+    }
+    this.renderOrders();
+  }
+
+  /** Zeichnet die Befehlspfeile an den aktuellen Positionen der Welten. */
+  renderOrders() {
+    const svg = d3.select('svg#v7');
+    if (!this.mapControlActive) {
+      svg.selectAll('g.orders, defs.order-defs').remove();
+      return;
+    }
+    const layer = this.ordersLayer();
+    const byId = new Map((this.turnData?.nodes ?? []).map((n) => [n.id, n]));
+    const fleetPosition = (fleet: number | undefined) => {
+      for (const node of byId.values()) {
+        const found = (node.data?.fleets ?? []).find((f: any) => new RegExp(`^F${fleet}=`).test(f.label ?? ''));
+        if (found) {
+          return { x: (node.x ?? 0) + found.x * 0.3, y: (node.y ?? 0) + found.y * 0.3 };
+        }
+      }
+      return undefined;
+    };
+    const hovered = this.hoveredCommand;
+    const arrows = layer
+      .selectAll<SVGGElement, OrderArrow>('g.order')
+      .data(this.orderArrows, (d: OrderArrow) => d.command);
+    arrows.exit().remove();
+    const entered = arrows.enter().append('g').attr('class', 'order');
+    entered.append('path').style('fill', 'none');
+    entered
+      .append('text')
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', 5)
+      .attr('font-weight', 'bold')
+      .attr('text-anchor', 'middle')
+      .style('paint-order', 'stroke')
+      .style('stroke', 'white')
+      .style('stroke-width', 1.5);
+    entered
+      .merge(arrows)
+      .style('opacity', (d) => (hovered && d.command !== hovered ? 0.25 : 1))
+      .each(function (this: SVGGElement, d) {
+        const group = d3.select(this);
+        const points: Array<{ x: number; y: number }> = [];
+        if (d.kind === 'fire') {
+          const world = byId.get(d.worlds[0]);
+          const from = d.fromFleet !== undefined ? fleetPosition(d.fromFleet) : world && { x: world.x ?? 0, y: world.y ?? 0 };
+          const to = fleetPosition(d.toFleet);
+          if (from && to) {
+            points.push(from, to);
+          }
+        } else {
+          const start = d.fromFleet !== undefined ? fleetPosition(d.fromFleet) : undefined;
+          for (const id of d.worlds) {
+            const world = byId.get(id);
+            if (!world) {
+              break; // Ziel außerhalb der Karte: Pfeil endet an der letzten sichtbaren Welt.
+            }
+            points.push({ x: world.x ?? 0, y: world.y ?? 0 });
+          }
+          if (start && points.length > 0) {
+            points[0] = start;
+          }
+        }
+        const width = (d.kind === 'move' ? 1.6 : 1.2) * (d.command === hovered ? 2 : 1);
+        group
+          .select('path')
+          .attr('d', points.length >= 2 ? curvedPath(points, d.kind === 'fire' ? 0 : 11) : null)
+          .style('stroke', ORDER_COLORS[d.kind])
+          .style('stroke-width', width)
+          .style('stroke-dasharray', d.kind === 'probe' ? '2,2' : d.kind === 'migration' ? '4,2' : null)
+          .attr('marker-end', `url(#order-arrow-${d.kind})`);
+        const labelAt = points.length >= 2 ? curveMiddle(points[0], points[1]) : null;
+        group
+          .select('text')
+          .attr('x', labelAt?.x ?? 0)
+          .attr('y', labelAt?.y ?? 0)
+          .style('fill', ORDER_COLORS[d.kind])
+          .text(labelAt ? d.label : '');
+      });
+    // Befehl ohne Pfeil (z. B. Transfer, Bauen): Ring um seine Welt.
+    const hoverWorld = hovered ? byId.get(commandWorld(hovered, this.turnData?.nodes ?? []) ?? '') : undefined;
+    const ring = layer.selectAll<SVGCircleElement, Node>('circle.hover-ring').data(hoverWorld ? [hoverWorld] : []);
+    ring.exit().remove();
+    ring
+      .enter()
+      .append('circle')
+      .attr('class', 'hover-ring')
+      .attr('r', 15)
+      .style('fill', 'none')
+      .style('stroke', '#ff9800')
+      .style('stroke-width', 2.5)
+      .merge(ring)
+      .attr('cx', (d) => d.x ?? 0)
+      .attr('cy', (d) => d.y ?? 0);
   }
 
   /** Das Befehlsfeld wächst mit der Zahl der Zeilen (mindestens 5). */
@@ -720,7 +1145,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.subscriptionsTurnData = null;
     }
     this.prevTurnDataSubscription?.unsubscribe();
+    this.subscriptions.unsubscribe();
     clearTimeout(this.savedFeedbackTimer);
+    clearTimeout(this.mapHintTimer);
   }
 
   /** Zeigt die Karte der Runde aRound für die gewählte Welt (Select W). */
@@ -898,4 +1325,37 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.savedFeedbackTimer = setTimeout(() => (this.savedFeedback = false), 2500);
   }
 
+}
+
+/** Weg durch die Punkte, jeder Abschnitt leicht gebogen, damit er neben der Verbindungslinie liegt. */
+function curvedPath(points: Array<{ x: number; y: number }>, endGap: number): string {
+  let d = `M${points[0].x},${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const from = points[i - 1];
+    let to = points[i];
+    if (i === points.length - 1 && endGap > 0) {
+      // Pfeilspitze am Rand der Zielwelt statt in ihrer Mitte.
+      const length = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+      const gap = Math.min(endGap, length / 2);
+      to = { x: to.x - ((to.x - from.x) / length) * gap, y: to.y - ((to.y - from.y) / length) * gap };
+    }
+    const control = curveControl(from, to);
+    d += `Q${control.x},${control.y} ${to.x},${to.y}`;
+  }
+  return d;
+}
+
+function curveControl(from: { x: number; y: number }, to: { x: number; y: number }) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  return { x: (from.x + to.x) / 2 - dy * 0.15, y: (from.y + to.y) / 2 + dx * 0.15 };
+}
+
+/** Punkt in der Mitte der Kurve (Bezier bei t = 0,5). */
+function curveMiddle(from: { x: number; y: number }, to: { x: number; y: number }) {
+  const control = curveControl(from, to);
+  return {
+    x: 0.25 * from.x + 0.5 * control.x + 0.25 * to.x,
+    y: 0.25 * from.y + 0.5 * control.y + 0.25 * to.y - 2,
+  };
 }

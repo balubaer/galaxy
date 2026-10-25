@@ -136,6 +136,72 @@ textarea {
 .map-pane {
   flex: 0 1 750px;
   max-width: 100%;
+  position: relative;
+}
+
+/* Moderne Steuerung: Routenplanung und Rückmeldungen schweben über der Karte. */
+.map-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  max-width: calc(100% - 24px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  background: rgba(33, 33, 33, 0.88);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.4em 0.8em;
+  font-size: 0.9em;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.mode-switch {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0.6em;
+}
+
+.mode-label {
+  margin-right: 0.6em;
+  font-weight: bold;
+}
+
+.mode-switch button {
+  border: 1px solid #1976d2;
+  background: #fff;
+  color: #1976d2;
+  padding: 0.3em 0.9em;
+  cursor: pointer;
+}
+
+.mode-switch button:first-of-type {
+  border-radius: 999px 0 0 999px;
+}
+
+.mode-switch button:last-of-type {
+  border-radius: 0 999px 999px 0;
+  margin-left: -1px;
+}
+
+.mode-switch button.on {
+  background: #1976d2;
+  color: #fff;
+}
+
+.command-hint.compact {
+  min-height: 0;
+  font-size: 1.1em;
+  padding: 1em;
+}
+
+.command-text summary {
+  cursor: pointer;
+  margin-bottom: 0.3em;
 }
 
 .map-pane[hidden] {

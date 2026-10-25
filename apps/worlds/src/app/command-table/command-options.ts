@@ -14,11 +14,37 @@ export interface CommandOption {
   insufficient?: boolean;
 }
 
+/** Art einer Befehlszeile, damit die moderne Steuerung sie Flotten und Welten zuordnen kann. */
+export type CommandKind =
+  | 'move'
+  | 'fire'
+  | 'conditional'
+  | 'homeFire'
+  | 'dFire'
+  | 'transfer'
+  | 'dTransfer'
+  | 'toWorld'
+  | 'homeTransfer'
+  | 'build'
+  | 'industry'
+  | 'migration'
+  | 'metal'
+  | 'probe'
+  | 'homeProbe'
+  | 'pbb'
+  | 'plunder'
+  | 'peace'
+  | 'gift'
+  | 'worldGift'
+  | 'relation'
+  | 'ambush';
+
 export interface CommandRow {
   label: string;
   options: CommandOption[];
-  /** Bei Bewegungszeilen: Nummer der Flotte (für die Routenplanung). */
+  /** Nummer der Flotte, um die es in der Zeile geht (Routenplanung, moderne Steuerung). */
   fleet?: number;
+  kind?: CommandKind;
 }
 
 export interface CommandGroup {
@@ -26,7 +52,7 @@ export interface CommandGroup {
   rows: CommandRow[];
 }
 
-interface WorldFleet {
+export interface WorldFleet {
   number: number;
   ships: number;
   own: boolean;
@@ -38,7 +64,7 @@ interface WorldFleet {
 }
 
 /** Classic-Werte einer Welt, wie sie das Backend in node.data.classic liefert. */
-interface ClassicInfo {
+export interface ClassicInfo {
   blackHole: boolean;
   population: number;
   industry: number;
@@ -191,24 +217,31 @@ export function remainingIndustry(
   world: string,
   selected: string[],
 ): number {
-  let spent = 0;
-  for (const command of selected) {
-    const ships = new RegExp(`^W${world}B(\\d+)(?:I|P|F\\d+)$`).exec(command);
-    const industry = new RegExp(`^W${world}I(\\d+)I$`).exec(command);
-    const limit = new RegExp(`^W${world}I(\\d+)L$`).exec(command);
-    const migrate = new RegExp(`^P${world}M(\\d+)W\\d+$`).exec(command);
-    if (ships) {
-      spent += +ships[1];
-    } else if (industry) {
-      spent += +industry[1] * CLASSIC_EMPEROR_INDUSTRY_COST;
-    } else if (limit) {
-      spent += +limit[1] * CLASSIC_BUILD_COST;
-    } else if (migrate) {
-      spent += +migrate[1];
-    }
+  const spent = selected.reduce((sum, command) => sum + industryCost(command, world), 0);
+  return Math.max(0, usableIndustry(info) - spent);
+}
+
+/** Nutzbar ist das Kleinste aus Industrie, Metall und Bevölkerung. */
+export function usableIndustry(info: ClassicInfo): number {
+  return Math.min(info.industry, info.metal, info.population);
+}
+
+/** Industrie, die ein Befehl auf dieser Welt verbraucht (0, wenn er keine braucht). */
+export function industryCost(command: string, world: string): number {
+  const ships = new RegExp(`^W${world}B(\\d+)(?:I|P|F\\d+)$`).exec(command);
+  const industry = new RegExp(`^W${world}I(\\d+)I$`).exec(command);
+  const limit = new RegExp(`^W${world}I(\\d+)L$`).exec(command);
+  const migrate = new RegExp(`^P${world}M(\\d+)W\\d+$`).exec(command);
+  if (ships) {
+    return +ships[1];
+  } else if (industry) {
+    return +industry[1] * CLASSIC_EMPEROR_INDUSTRY_COST;
+  } else if (limit) {
+    return +limit[1] * CLASSIC_BUILD_COST;
+  } else if (migrate) {
+    return +migrate[1];
   }
-  const usable = Math.min(info.industry, info.metal, info.population);
-  return Math.max(0, usable - spent);
+  return 0;
 }
 
 /** I-Schiffe, die nach den gewählten Verschrott-Befehlen (WaaSxx) noch übrig sind. */
@@ -300,6 +333,7 @@ export function buildCommandGroups(
     movable.map((f) => ({
       label: `Flotte ${f.number} (${f.ships})`,
       fleet: f.number,
+      kind: 'move' as const,
       options: targets.map((t) => opt(`F${f.number}${t}`, `→ ${t}`)),
     })),
   );
@@ -307,6 +341,8 @@ export function buildCommandGroups(
   const fireRows: CommandRow[] = movable
     .map((f) => ({
       label: `Flotte ${f.number} feuert`,
+      fleet: f.number,
+      kind: 'fire' as CommandKind,
       options: [
         ...enemyFleets.map((e) =>
           opt(`F${f.number}AF${e.number}`, `auf F${e.number}`),
@@ -340,7 +376,7 @@ export function buildCommandGroups(
           : []),
       ];
       if (options.length > 0) {
-        fireRows.push({ label: `Flotte ${f.number} bedingt`, options });
+        fireRows.push({ label: `Flotte ${f.number} bedingt`, fleet: f.number, kind: 'conditional', options });
       }
     }
     if (isOwnWorld) {
@@ -351,6 +387,7 @@ export function buildCommandGroups(
         if (ships > 0) {
           fireRows.push({
             label,
+            kind: 'homeFire',
             options: enemyFleets.flatMap((e) => [
               opt(`${kind}${world}AF${e.number}`, `auf F${e.number}`),
               opt(`${kind}${world}CF${e.number}`, `bedingt auf F${e.number}`),
@@ -363,6 +400,7 @@ export function buildCommandGroups(
   if (isOwnWorld && dships > 0) {
     fireRows.push({
       label: 'D-Schiffe feuern',
+      kind: 'dFire',
       options: enemyFleets.map((e) =>
         opt(`D${world}AF${e.number}`, `auf F${e.number}`),
       ),
@@ -390,12 +428,13 @@ export function buildCommandGroups(
         : []),
     ];
     if (options.length > 0) {
-      transferRows.push({ label: `Flotte ${from.number}`, options });
+      transferRows.push({ label: `Flotte ${from.number}`, fleet: from.number, kind: 'transfer', options });
     }
   }
   if (isOwnWorld && dships > 0 && ownFleets.length > 0) {
     transferRows.push({
       label: 'D-Schiffe',
+      kind: 'dTransfer',
       options: ownFleets.flatMap((to) =>
         counted((n) =>
           transferOpt(`D${world}T${n}F${to.number}`, `${n} → F${to.number}`, dships, n),
@@ -407,6 +446,8 @@ export function buildCommandGroups(
     for (const from of movable) {
       transferRows.push({
         label: `Flotte ${from.number} → Welt`,
+        fleet: from.number,
+        kind: 'toWorld',
         options: [
           ...counted((n) => transferOpt(`F${from.number}T${n}I`, `${n} → I-Schiffe`, from.ships, n)),
           ...counted((n) => transferOpt(`F${from.number}T${n}P`, `${n} → P-Schiffe`, from.ships, n)),
@@ -420,6 +461,7 @@ export function buildCommandGroups(
       const other = kind === 'I' ? 'P' : 'I';
       transferRows.push({
         label,
+        kind: 'homeTransfer',
         options: [
           ...ownFleets.flatMap((to) =>
             counted((n) =>
@@ -449,6 +491,7 @@ export function buildCommandGroups(
       add('Bauen', [
         {
           label: `Schiffe (Industrie übrig: ${remaining})`,
+          kind: 'build',
           options: [
             ...counted((n) => buildOpt(`W${world}B${n}I`, `${n} → I-Schiffe`, n)),
             ...counted((n) => buildOpt(`W${world}B${n}P`, `${n} → P-Schiffe`, n)),
@@ -459,6 +502,7 @@ export function buildCommandGroups(
         },
         {
           label: 'Industrie / Limit',
+          kind: 'industry',
           options: [
             ...counted((n) =>
               buildOpt(`W${world}I${n}I`, `${n} Industrie bauen`, n * CLASSIC_EMPEROR_INDUSTRY_COST),
@@ -477,6 +521,7 @@ export function buildCommandGroups(
         },
         {
           label: 'Migration',
+          kind: 'migration',
           options: targets.flatMap((t) =>
             counted((n) => buildOpt(`P${world}M${n}W${t.replace(/^W/, '')}`, `${n} → ${t}`, n)),
           ),
@@ -489,6 +534,8 @@ export function buildCommandGroups(
         .filter((f) => f.ships > 0 || f.metal > 0 || hasSelected(f.number))
         .map((f) => ({
           label: `Flotte ${f.number} (Metall ${f.metal})`,
+          fleet: f.number,
+          kind: 'metal' as CommandKind,
           options: [
             ...(f.metal > 0
               ? [
@@ -517,6 +564,8 @@ export function buildCommandGroups(
         .filter((f) => f.ships > 0)
         .map((f) => ({
           label: `Flotte ${f.number}`,
+          fleet: f.number,
+          kind: 'probe' as CommandKind,
           options: probeTargets.map((t) => opt(`F${f.number}P${t.number}`, `→ ${t.id}`)),
         })),
       ...(isOwnWorld
@@ -527,6 +576,7 @@ export function buildCommandGroups(
             .filter(([, , ships]) => ships > 0)
             .map(([kind, label]) => ({
               label,
+              kind: 'homeProbe' as CommandKind,
               options: probeTargets.map((t) => opt(`${kind}${world}P${t.number}`, `→ ${t.id}`)),
             }))
         : []),
@@ -537,6 +587,8 @@ export function buildCommandGroups(
         .filter((f) => !f.pbb && (f.ships >= PBB_MIN_SHIPS || selected.includes(`F${f.number}B`)))
         .map((f) => ({
           label: `Flotte ${f.number} (${f.ships})`,
+          fleet: f.number,
+          kind: 'pbb' as CommandKind,
           options: [opt(`F${f.number}B`, `PBB bauen (kostet ${PBB_SHIP_COST} Schiffe)`)],
         })),
     );
@@ -546,6 +598,7 @@ export function buildCommandGroups(
     add('Plündern', [
       {
         label: `Welt ${world}`,
+        kind: 'plunder',
         options: [opt(`W${world}X`, 'Plündern (−5 Punkte, 3 Runden unproduktiv)')],
       },
     ]);
@@ -556,6 +609,8 @@ export function buildCommandGroups(
       'At Peace',
       ownFleets.map((f) => ({
         label: `Flotte ${f.number}${f.atPeace ? ' (At Peace)' : ''}`,
+        fleet: f.number,
+        kind: 'peace' as CommandKind,
         options: [
           opt(`F${f.number}Q`, 'At Peace'),
           opt(`F${f.number}X`, 'nicht At Peace'),
@@ -567,12 +622,15 @@ export function buildCommandGroups(
       [
         ...ownFleets.map((f) => ({
           label: `Flotte ${f.number}`,
+          fleet: f.number,
+          kind: 'gift' as CommandKind,
           options: players.map((p) => opt(`F${f.number}G=${p}`, `an ${p}`)),
         })),
         ...(isOwnWorld
           ? [
               {
                 label: `Welt ${world}`,
+                kind: 'worldGift' as CommandKind,
                 options: players.map((p) => opt(`W${world}G=${p}`, `an ${p}`)),
               },
             ]
@@ -583,6 +641,7 @@ export function buildCommandGroups(
       'Beziehungen',
       players.map((p) => ({
         label: p,
+        kind: 'relation' as CommandKind,
         options: [
           opt(`A=${p}`, 'Verbündeter'),
           opt(`N=${p}`, 'kein Verbündeter'),
@@ -597,6 +656,7 @@ export function buildCommandGroups(
     add('Hinterhalt aus', [
       {
         label: 'Zurückhalten',
+        kind: 'ambush',
         options: [opt(`Z${world}`, `Welt ${world}`), opt('Z', 'alle Welten')],
       },
     ]);
@@ -631,6 +691,39 @@ export function brokenCommands(
     return match !== null && empty.has(+match[1]);
   });
   return [...projected.failed, ...emptyActing];
+}
+
+/** Stand einer Welt nach den gewählten Transfers und Bauaufträgen (für die moderne Steuerung). */
+export interface WorldProjection {
+  world: string;
+  isOwnWorld: boolean;
+  classic: ClassicInfo | null;
+  /** Flotten vor den gewählten Befehlen. */
+  before: WorldFleet[];
+  fleets: WorldFleet[];
+  dships: number;
+  iShips: number;
+  pShips: number;
+}
+
+export function projectWorld(node: Node, ownColor: string, selected: string[]): WorldProjection {
+  const world = node.id.replace(/^W/, '');
+  const classic: ClassicInfo | null = node.data?.classic ?? null;
+  const before = readFleets(node, ownColor);
+  const projected = applyTransfers(before, node.data?.dships ?? 0, world, selected, {
+    i: classic?.iShips ?? 0,
+    p: classic?.pShips ?? 0,
+  });
+  return {
+    world,
+    isOwnWorld: node.data?.backgroundColor === ownColor,
+    classic,
+    before,
+    fleets: projected.fleets,
+    dships: projected.dships,
+    iShips: projected.i,
+    pShips: projected.p,
+  };
 }
 
 /** Befehle, die im Text stehen (getrennt durch Leerzeichen/Zeilenumbrüche). */
@@ -706,6 +799,59 @@ export function isDisabled(command: string, selected: string[]): boolean {
     !selected.includes(command) &&
     (selected.some((s) => commandsConflict(command, s)) ||
       (isGift(command) && selected.filter(isGift).length >= MAX_GIFTS))
+  );
+}
+
+export interface CommandCheck {
+  ok: boolean;
+  /** Gewählte Befehle, die dem neuen widersprechen und durch ihn ersetzt werden. */
+  replaces: string[];
+  reason?: string;
+}
+
+/**
+ * Prüft einen Befehl, der per Drag & Drop entsteht, nach denselben Regeln wie die Buttons.
+ * Widersprechende Befehle (z. B. ein anderer Flug derselben Flotte) zählen nicht, sie werden ersetzt.
+ */
+export function checkCommand(
+  node: Node,
+  links: Edge[],
+  ownColor: string,
+  count: number,
+  selected: string[],
+  players: string[],
+  command: string,
+): CommandCheck {
+  if (selected.includes(command)) {
+    return { ok: true, replaces: [] };
+  }
+  const replaces = selected.filter((s) => commandsConflict(command, s));
+  const rest = selected.filter((s) => !replaces.includes(s));
+  const rows = buildCommandGroups(node, links, ownColor, count, rest, players).flatMap((g) => g.rows);
+  // Mehrschritt-Flüge stehen nicht als Button da: Es reicht, dass die Flotte hier fliegen kann.
+  const multiStep = /^F(\d+)(?:W\d+){2,}$/.exec(command);
+  const option = multiStep
+    ? rows.some((r) => r.kind === 'move' && r.fleet === +multiStep[1])
+      ? { command, label: command }
+      : undefined
+    : rows.flatMap((r) => r.options).find((o) => o.command === command);
+  if (!option) {
+    return { ok: false, replaces, reason: `${command} ist hier nicht möglich.` };
+  }
+  if (option.insufficient) {
+    return { ok: false, replaces, reason: `Für ${command} reicht der Vorrat nicht.` };
+  }
+  if (isDisabled(command, rest)) {
+    return { ok: false, replaces, reason: `Höchstens ${MAX_GIFTS} Geschenke pro Runde.` };
+  }
+  return { ok: true, replaces };
+}
+
+/** Ersetzt widersprechende Befehle durch den neuen. */
+export function replaceCommands(text: string, command: string, replaces: string[]): string {
+  return addCommand(
+    replaces.reduce((current, old) => removeCommand(current, old), text),
+    command,
   );
 }
 

@@ -244,6 +244,16 @@
     <div class="graph-scroll" (scroll)="syncPrevScroll()">
       <svg id="v7" width="750" height="750"></svg><!--graph container-->
     </div>
+    @if (modern && routePlan) {
+      <div class="map-bar" role="status">
+        <span>Route <strong>{{ routeText() }}</strong> – Welten anklicken (max. {{ maxRouteSteps }} Sprünge)</span>
+        <button type="button" class="button" (click)="onRouteStepBack()" [disabled]="routePlan.path.length === 0">Zurück</button>
+        <button type="button" class="button primary" (click)="onRouteConfirmed()" [disabled]="routePlan.path.length === 0">Übernehmen</button>
+        <button type="button" class="button" (click)="onRouteCancelled()">Abbrechen (Esc)</button>
+      </div>
+    } @else if (mapHint) {
+      <div class="map-bar" role="status">{{ mapHint }}</div>
+    }
   </div>
   <!-- Vergleich: rechts die Runde nach der angewählten älteren Runde -->
   <div class="map-pane" [hidden]="!prevTurnData">
@@ -426,35 +436,86 @@
 </div>
 @if (turnData) {
   <div class="command-column" [hidden]="ishidden">
+    <div class="mode-switch" role="radiogroup" aria-label="Steuerung der Befehle">
+      <span class="mode-label">Steuerung</span>
+      <button
+        type="button"
+        role="radio"
+        [class.on]="!modern"
+        [attr.aria-checked]="!modern"
+        (click)="setControlMode('classic')"
+        title="Befehle als Tabelle mit Buttons und Textfeld"
+      >
+        ☰ Klassisch
+      </button>
+      <button
+        type="button"
+        role="radio"
+        [class.on]="modern"
+        [attr.aria-checked]="modern"
+        (click)="setControlMode('modern')"
+        title="Kommandopult mit Flottenkarten, Drag &amp; Drop und Befehlspfeilen auf der Karte"
+      >
+        ✦ Modern
+      </button>
+    </div>
     @if (!node && !ishidden) {
-      <div class="command-hint">
-        Wähle eine Welt auf der Karte aus, um Befehle abzusetzen.
+      <div class="command-hint" [class.compact]="modern">
+        @if (modern) {
+          Wähle eine Welt auf der Karte – oder ziehe eine eigene Flotte direkt auf ein Ziel.
+        } @else {
+          Wähle eine Welt auf der Karte aus, um Befehle abzusetzen.
+        }
       </div>
     }
-    <galaxy-command-table
-      [hidden]="ishidden"
-      [node]="node"
-      [links]="turnData.links"
-      [ownColor]="ownColor"
-      [players]="otherPlayerNames"
-      [commandText]="form.value.Commands"
-      [readonly]="ishidden"
-      [routePlan]="routePlan"
-      (routeStarted)="onRouteStarted($event)"
-      (routeStepBack)="onRouteStepBack()"
-      (routeConfirmed)="onRouteConfirmed()"
-      (routeCancelled)="onRouteCancelled()"
-      (commandToggled)="onCommandToggled($event)"
-    ></galaxy-command-table>
-    <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <textarea
-        name="Text1"
-        cols="40"
-        [rows]="commandRows"
-        formControlName="Commands"
-      ></textarea>
-      <button>Speichern</button>
-    </form>
+    @if (modern) {
+      <galaxy-command-panel
+        [node]="node"
+        [links]="turnData.links"
+        [nodes]="turnData.nodes"
+        [ownColor]="ownColor"
+        [players]="otherPlayerNames"
+        [commandText]="form.value.Commands"
+        [readonly]="ishidden"
+        [routePlan]="routePlan"
+        (routeStarted)="onRouteStarted($event)"
+        (routeStepBack)="onRouteStepBack()"
+        (routeConfirmed)="onRouteConfirmed()"
+        (routeCancelled)="onRouteCancelled()"
+        (commandToggled)="onCommandToggled($event)"
+        (commandReplaced)="onCommandReplaced($event)"
+        (commandHovered)="onCommandHovered($event)"
+        (worldRequested)="onWorldRequested($event)"
+      ></galaxy-command-panel>
+    } @else {
+      <galaxy-command-table
+        [hidden]="ishidden"
+        [node]="node"
+        [links]="turnData.links"
+        [ownColor]="ownColor"
+        [players]="otherPlayerNames"
+        [commandText]="form.value.Commands"
+        [readonly]="ishidden"
+        [routePlan]="routePlan"
+        (routeStarted)="onRouteStarted($event)"
+        (routeStepBack)="onRouteStepBack()"
+        (routeConfirmed)="onRouteConfirmed()"
+        (routeCancelled)="onRouteCancelled()"
+        (commandToggled)="onCommandToggled($event)"
+      ></galaxy-command-table>
+    }
+    <details class="command-text" [open]="!modern">
+      <summary>Befehlstext</summary>
+      <form [hidden]="ishidden" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <textarea
+          name="Text1"
+          cols="40"
+          [rows]="commandRows"
+          formControlName="Commands"
+        ></textarea>
+        <button>Speichern</button>
+      </form>
+    </details>
   </div>
 }
 </div>

@@ -1,0 +1,401 @@
+<ng-template #amountSlider>
+  <div class="amount">
+    <span class="amount-label">Menge</span>
+    <input
+      type="range"
+      min="1"
+      [max]="amountMax()"
+      [value]="amount"
+      (input)="setAmount($any($event.target).value)"
+      aria-label="Menge"
+    />
+    <button type="button" class="step" (click)="setAmount(amount - 1)" aria-label="weniger">−</button>
+    <input
+      type="number"
+      min="1"
+      class="amount-number"
+      [value]="amount"
+      (input)="setAmount($any($event.target).value)"
+      aria-label="Menge als Zahl"
+    />
+    <button type="button" class="step" (click)="setAmount(amount + 1)" aria-label="mehr">+</button>
+  </div>
+</ng-template>
+
+<ng-template #optionRows let-rows>
+  @for (row of rows; track row.label) {
+    <div class="opt-row">
+      <span class="row-label">{{ row.label }}</span>
+      <div class="opts" [class.segmented]="isSegmented(row)">
+        @for (option of row.options; track option.command) {
+          <button
+            type="button"
+            class="opt"
+            [class.selected]="isSelected(option)"
+            [class.broken]="isBroken(option.command)"
+            [attr.aria-pressed]="isSelected(option)"
+            [disabled]="isOptionDisabled(option)"
+            [title]="option.insufficient ? option.command + ' – Vorrat reicht nicht' : option.command"
+            (click)="press(option)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</ng-template>
+
+<div class="panel" [class.readonly]="readonly">
+  @if (node && projection) {
+    @let p = projection;
+    <header class="world-head">
+      <span class="world-dot" [style.background]="node.data?.backgroundColor">
+        <span [style.color]="node.data?.fontColor ?? 'black'">{{ node.id }}</span>
+      </span>
+      <div class="world-title">
+        <h3>Welt {{ node.id }}</h3>
+        <span class="muted">{{ p.isOwnWorld ? 'Eigene Welt' : 'Fremde oder neutrale Welt' }}</span>
+      </div>
+      @if (p.classic && !p.classic.blackHole) {
+        <div class="stats">
+          <span class="stat" title="Bevölkerung / Limit">👥 {{ p.classic.population }}</span>
+          <span class="stat" title="Industrie">🏭 {{ p.classic.industry }}</span>
+          <span class="stat" title="Metall">⛏ {{ p.classic.metal }}</span>
+        </div>
+      }
+    </header>
+
+    <section>
+      <h4>
+        Flotten
+        <span class="hint">Karte anklicken für Aktionen · ziehen für Transfer, Feuern oder Flug</span>
+      </h4>
+      <div class="cards">
+        @for (card of cards; track trackCard(card)) {
+          @let n = card.fleet.number;
+          <div
+            class="card fleet-card"
+            role="button"
+            tabindex="0"
+            [attr.data-fleet-card]="n"
+            [attr.draggable]="!readonly"
+            [class.active]="activeFleet === n"
+            [class.empty]="card.fleet.ships === 0"
+            [class.drop-ok]="dragging && canDrop({ type: 'fleet', fleet: n })"
+            [class.drop-hover]="dropHover === 'fleet' + n"
+            (click)="selectFleet(n)"
+            (keydown.enter)="selectFleet(n)"
+            (dragstart)="onDragStart($event, { type: 'fleet', fleet: n })"
+            (dragend)="onDragEnd()"
+            (dragover)="onDragOver($event, { type: 'fleet', fleet: n })"
+            (dragleave)="onDragLeave({ type: 'fleet', fleet: n })"
+            (drop)="onDrop($event, { type: 'fleet', fleet: n })"
+          >
+            <div class="card-top">
+              <span class="card-name">F{{ n }}</span>
+              <span class="badges">
+                @if (card.fleet.pbb) {
+                  <span class="badge pbb" title="trägt eine PBB">☢</span>
+                }
+                @if (card.fleet.atPeace) {
+                  <span class="badge" title="At Peace">☮</span>
+                }
+                @if (card.fleet.metal > 0) {
+                  <span class="badge" title="geladenes Metall">⛏{{ card.fleet.metal }}</span>
+                }
+              </span>
+            </div>
+            <div class="ships">
+              {{ card.fleet.ships }}
+              @if (card.fleet.ships !== card.shipsBefore) {
+                <span class="before" title="vor Transfers und Bauaufträgen">{{ card.shipsBefore }}</span>
+              }
+            </div>
+            <div class="ships-label">Schiffe</div>
+            <div class="card-orders">
+              @for (command of card.commands; track command) {
+                @let d = describe(command);
+                <span class="order cat-{{ d.category }}" [class.broken]="isBroken(command)" [title]="d.text">
+                  {{ d.icon }} {{ shortText(d.text) }}
+                </span>
+              } @empty {
+                <span class="idle">wartet auf Befehle</span>
+              }
+            </div>
+          </div>
+        }
+        @for (tile of stock; track tile.type) {
+          <div
+            class="card stock-card"
+            [attr.draggable]="!readonly && tile.ships > 0"
+            [class.drop-ok]="dragging && canDrop({ type: tile.type })"
+            [class.drop-hover]="dropHover === tile.type"
+            [title]="'Auf eine Flotte ziehen, um Schiffe abzugeben' + (tile.type !== 'D' ? ', auf den anderen Vorrat zum Umwandeln' : '')"
+            (dragstart)="onDragStart($event, { type: tile.type })"
+            (dragend)="onDragEnd()"
+            (dragover)="onDragOver($event, { type: tile.type })"
+            (dragleave)="onDragLeave({ type: tile.type })"
+            (drop)="onDrop($event, { type: tile.type })"
+          >
+            <div class="card-top"><span class="card-name">{{ tile.label }}</span></div>
+            <div class="ships">
+              {{ tile.ships }}
+              @if (tile.ships !== tile.before) {
+                <span class="before">{{ tile.before }}</span>
+              }
+            </div>
+            <div class="ships-label">Vorrat der Welt</div>
+          </div>
+        }
+        @if (cards.length === 0 && stock.length === 0) {
+          <p class="muted">Hier stehen keine eigenen Flotten.</p>
+        }
+      </div>
+
+      @for (card of cards; track trackCard(card)) {
+        @if (card.fleet.number === activeFleet) {
+          @let n = card.fleet.number;
+          <div class="drawer">
+            <div class="tabs" role="tablist">
+              @for (action of card.actions; track action.key) {
+                <button
+                  type="button"
+                  role="tab"
+                  class="tab"
+                  [class.on]="activeAction === action.key"
+                  [attr.aria-selected]="activeAction === action.key"
+                  (click)="chooseAction(action.key)"
+                >
+                  <span class="tab-icon">{{ action.icon }}</span>{{ action.label }}
+                </button>
+              }
+            </div>
+            @let action = fleetAction(activeAction);
+            @if (action) {
+              @if (action.amount) {
+                <ng-container *ngTemplateOutlet="amountSlider"></ng-container>
+              }
+              @if (action.key === 'move') {
+                <p class="tip">
+                  Ziel anklicken – oder die Flotte auf der Karte direkt auf eine Welt ziehen
+                  (bis {{ maxRouteSteps }} Sprünge, der kürzeste Weg wird gewählt).
+                </p>
+              }
+              @if (action.key === 'fire' && enemies.length > 0) {
+                <p class="tip">Tipp: Flottenkarte auf eine fremde Flotte ziehen oder unten anklicken.</p>
+              }
+              <ng-container *ngTemplateOutlet="optionRows; context: { $implicit: rowsFor(action, n) }"></ng-container>
+              @if (action.key === 'move') {
+                <div class="opt-row">
+                  <span class="row-label">Route</span>
+                  <div class="opts">
+                    @for (route of multiStepRoutes(n); track route) {
+                      <button type="button" class="opt selected" [disabled]="readonly" title="Klicken zum Entfernen" (click)="remove(route)">
+                        {{ route }}
+                      </button>
+                    }
+                    @if (routePlan?.fleet === n) {
+                      <span class="route">
+                        <strong>{{ routeText() }}</strong>
+                        <button type="button" class="opt" (click)="routeStepBack.emit()" [disabled]="routePlan!.path.length === 0">Zurück</button>
+                        <button type="button" class="opt selected" (click)="routeConfirmed.emit()" [disabled]="routePlan!.path.length === 0">Übernehmen</button>
+                        <button type="button" class="opt" (click)="routeCancelled.emit()">Abbrechen</button>
+                      </span>
+                    } @else {
+                      <button type="button" class="opt dashed" [disabled]="isRouteDisabled(n)" (click)="routeStarted.emit(n)">
+                        Route auf der Karte klicken …
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
+      }
+    </section>
+
+    @if (enemies.length > 0) {
+      <section>
+        <h4>Fremde Flotten <span class="hint">eigene Flotte hierher ziehen = feuern</span></h4>
+        <div class="cards">
+          @for (enemy of enemies; track enemy.number) {
+            <button
+              type="button"
+              class="card enemy-card"
+              [class.drop-ok]="dragging && canDrop({ type: 'enemy', fleet: enemy.number })"
+              [class.drop-hover]="dropHover === 'enemy' + enemy.number"
+              [disabled]="readonly || activeFleet === null"
+              [title]="activeFleet !== null ? 'F' + activeFleet + ' feuert auf F' + enemy.number : 'Erst eine eigene Flotte wählen oder hierher ziehen'"
+              (click)="fireAt(enemy.number)"
+              (dragover)="onDragOver($event, { type: 'enemy', fleet: enemy.number })"
+              (dragleave)="onDragLeave({ type: 'enemy', fleet: enemy.number })"
+              (drop)="onDrop($event, { type: 'enemy', fleet: enemy.number })"
+            >
+              <div class="card-top">
+                <span class="card-name">F{{ enemy.number }}</span>
+                @if (enemy.pbb) {
+                  <span class="badge pbb">☢</span>
+                }
+              </div>
+              <div class="ships">{{ enemy.ships }}</div>
+              <div class="ships-label">✸ Ziel</div>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (neighbours.length > 0) {
+      <section>
+        <h4>
+          Nachbarwelten
+          <span class="hint">
+            {{ activeAction === 'move' && activeFleet !== null ? 'anklicken = F' + activeFleet + ' fliegt hin' : 'anklicken = ansehen · Flotte hierher ziehen = fliegen' }}
+          </span>
+        </h4>
+        <div class="neighbours">
+          @for (world of neighbours; track world) {
+            <button
+              type="button"
+              class="neighbour"
+              [class.drop-ok]="dragging && canDrop({ type: 'world', world })"
+              [class.drop-hover]="dropHover === 'world' + world"
+              (click)="neighbourClicked(world)"
+              (dragover)="onDragOver($event, { type: 'world', world })"
+              (dragleave)="onDragLeave({ type: 'world', world })"
+              (drop)="onDrop($event, { type: 'world', world })"
+            >
+              {{ world }}
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    @if (worldActions.length > 0) {
+      <section>
+        <h4>Welt {{ node.id }}</h4>
+        <div class="tabs" role="tablist">
+          @for (action of worldActions; track action.key) {
+            <button
+              type="button"
+              role="tab"
+              class="tab"
+              [class.on]="worldAction === action.key"
+              [attr.aria-selected]="worldAction === action.key"
+              (click)="chooseWorldAction(action.key)"
+            >
+              <span class="tab-icon">{{ action.icon }}</span>{{ action.label }}
+            </button>
+          }
+        </div>
+        @let wAction = worldActionDef(worldAction);
+        @if (wAction) {
+          <div class="drawer">
+            @if (wAction.key === 'build' && budget) {
+              <div class="budget" [title]="'Nutzbar ist das Kleinste aus Industrie, Metall und Bevölkerung'">
+                <div class="budget-head">
+                  <span>Industrie</span>
+                  <strong>{{ budget.remaining }} von {{ budget.usable }} frei</strong>
+                </div>
+                <div class="budget-bar">
+                  @for (segment of budget.segments; track segment.command) {
+                    <button
+                      type="button"
+                      class="segment"
+                      [class.broken]="isBroken(segment.command)"
+                      [style.width.%]="budgetPercent(segment.cost)"
+                      [title]="segment.text + ' (' + segment.cost + ') – klicken zum Entfernen'"
+                      [disabled]="readonly"
+                      (click)="remove(segment.command)"
+                    ></button>
+                  }
+                </div>
+              </div>
+            }
+            @if (wAction.amount) {
+              <ng-container *ngTemplateOutlet="amountSlider"></ng-container>
+            }
+            <ng-container *ngTemplateOutlet="optionRows; context: { $implicit: rowsFor(wAction) }"></ng-container>
+          </div>
+        }
+      </section>
+    }
+  }
+
+  <section class="overview">
+    <h4>
+      Alle Befehle ({{ entries.length }})
+      @if (node) {
+        <label class="filter">
+          <input type="checkbox" [checked]="onlyThisWorld" (change)="onlyThisWorld = !onlyThisWorld" />
+          nur {{ node.id }}
+        </label>
+      }
+    </h4>
+    <ul class="entries">
+      @for (entry of visibleEntries; track entry.command) {
+        <li
+          class="entry cat-{{ entry.description.category }}"
+          [class.broken]="entry.broken"
+          (mouseenter)="commandHovered.emit(entry.command)"
+          (mouseleave)="commandHovered.emit(null)"
+        >
+          <span class="entry-icon">{{ entry.description.icon }}</span>
+          <button
+            type="button"
+            class="entry-text"
+            [disabled]="!entry.world"
+            [title]="entry.command + (entry.broken ? ' – scheitert an fehlenden Schiffen' : '') + (entry.world ? ' · klicken: ' + entry.world + ' zeigen' : '')"
+            (click)="worldRequested.emit(entry.world!)"
+          >
+            {{ entry.description.text }}
+          </button>
+          <code>{{ entry.command }}</code>
+          <button type="button" class="entry-remove" [disabled]="readonly" title="Befehl entfernen" (click)="remove(entry.command)">
+            ×
+          </button>
+        </li>
+      } @empty {
+        <li class="muted">Noch keine Befehle.</li>
+      }
+    </ul>
+  </section>
+
+  @if (dialog) {
+    <div class="dialog-backdrop" (click)="closeDialog()">
+      <div class="dialog" role="dialog" [attr.aria-label]="dialog.title" (click)="$event.stopPropagation()" (keydown.escape)="closeDialog()">
+        <h4>{{ dialog.title }}</h4>
+        @if (dialog.max > 0) {
+          <div class="dialog-value">{{ dialog.value }} <small>von {{ dialog.max }}</small></div>
+          <input
+            type="range"
+            min="1"
+            [max]="dialog.max"
+            [value]="dialog.value"
+            (input)="setDialogValue($any($event.target).value)"
+            aria-label="Anzahl"
+          />
+          <div class="quick">
+            <button type="button" class="opt" (click)="setDialogValue(1)">1</button>
+            <button type="button" class="opt" (click)="setDialogValue(dialog.max / 4)">¼</button>
+            <button type="button" class="opt" (click)="setDialogValue(dialog.max / 2)">½</button>
+            <button type="button" class="opt" (click)="setDialogValue(dialog.max)">alle</button>
+          </div>
+          <div class="dialog-command"><code>{{ dialog.make(dialog.value) }}</code></div>
+        }
+        @if (dialog.error) {
+          <p class="error">{{ dialog.error }}</p>
+        }
+        <div class="dialog-actions">
+          <button type="button" class="opt" (click)="closeDialog()">{{ dialog.max > 0 ? 'Abbrechen' : 'OK' }}</button>
+          @if (dialog.max > 0) {
+            <button type="button" class="opt selected" (click)="confirmDialog()">Übernehmen</button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

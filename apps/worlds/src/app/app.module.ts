@@ -14,6 +14,7 @@ import { AlertComponent } from './_components';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationModule } from './NavigationComponent/navigation.module';
 import { CommandTableComponent } from './command-table/command-table.component';
+import { CommandPanelComponent } from './command-panel/command-panel.component';
 
 @NgModule({ declarations: [
         HomeComponent,
@@ -29,7 +30,8 @@ import { CommandTableComponent } from './command-table/command-table.component';
         //NgxGraphModule,
         BrowserAnimationsModule,
         NavigationModule,
-        CommandTableComponent], providers: [
+        CommandTableComponent,
+        CommandPanelComponent], providers: [
         // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
         {
