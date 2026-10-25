@@ -29,6 +29,7 @@ import {
 import { centerOnWorld, clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
 import { applyRingLayout } from '../_helpers/ring-layout';
+import { Box, forceBoxCollide } from '../_helpers/box-collide';
 import { listSavedLayouts, parseSaveKey, SavedLayout } from './saved-layouts';
 
 /** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
@@ -211,7 +212,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       const spacing = maxRadius / maxRing;
       th.force.force('link').distance(spacing).strength(0.1);
       th.force.force('charge_force').strength(-spacing).distanceMax(spacing * 2);
-      th.force.force('collide', d3.forceCollide(18));
       th.force.force(
         'ring',
         d3.forceRadial((d) => ((depths.get(d.id) ?? maxRing) / maxRing) * maxRadius, width / 2, height / 2).strength(0.6)
@@ -227,6 +227,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     th.links = map.links;
     th.hiddenLinks = map.hiddenLinks;
     th.nodes = map.nodes;
+
+    // Mindestabstand: Welten samt Flotten und InfoBox dürfen sich nicht überdecken.
+    const boxes = new Map<string, Box>();
+    th.nodes.each(function (this: SVGGElement, d: any) {
+      const b = this.getBBox?.();
+      if (b) {
+        boxes.set(d.id, { left: b.x, right: b.x + b.width, top: b.y, bottom: b.y + b.height });
+      }
+    });
+    th.force.force('box_collide', forceBoxCollide((d) => boxes.get(d.id)));
 
     const drag_handler = d3
       .drag()
