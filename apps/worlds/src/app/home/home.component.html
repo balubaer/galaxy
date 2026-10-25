@@ -13,17 +13,10 @@
       </tr>
     </table>
   </div>
-  <div class="container">
-    <table id="table1">
-      <tr>
-        <pre>Punkte: {{ turnData.points }}</pre>
-      </tr>
-    </table>
-  </div>
-  <div class="container">
-    <table id="table1">
-      <tr>
-        <td>
+  <pre class="points-box">Punkte: {{ turnData.points }}</pre>
+  <!-- Weltendetails links, Legende rechts – bündig mit der Weltenkarte -->
+  <div class="world-row">
+    <div class="world-detail">
           @if (node) {
           <svg class="world" width="200" height="200">
               <g [attr.transform]="'translate(100,100)'">
@@ -89,9 +82,8 @@
               bekommen.
             </div>
           }
-        </td>
         @if (node?.data?.classic; as classic) {
-          <td class="classic-info">
+          <div class="classic-info">
             <b>{{ node.label }}</b>
             @if (classic.blackHole) {
               <div>Schwarzes Loch</div>
@@ -114,10 +106,10 @@
                 }
               </table>
             }
-          </td>
+          </div>
         }
-        <td>
-          <svg class="world" width="200" height="200">
+    </div>
+          <svg class="world legend" width="240" height="200">
             <g transform="translate(0,20)">
               <circle
                 id="canvas1-oval"
@@ -208,15 +200,9 @@
               </text>
             </g>
           </svg>
-        </td>
-      </tr>
-    </table>
   </div>
-  <div class="container2">
-    <table id="table2">
-      <tr id="tr2">
+  <div class="player-legend">
         @for (aPlayerColor of playercolor$ | async; track aPlayerColor) {
-          <td id="td2">
             <svg class="world" width="80" height="80">
               <g transform="translate(40,40)">
                 <circle r="38" [attr.fill]="aPlayerColor.color"></circle>
@@ -230,10 +216,7 @@
                 </text>
               </g>
             </svg>
-          </td>
         }
-      </tr>
-    </table>
   </div>
 }
 <div class="map-compare">
