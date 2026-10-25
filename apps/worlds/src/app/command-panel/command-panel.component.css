@@ -10,11 +10,15 @@
   text-align: left;
 }
 
+/* Bootstraps .panel gibt nur 4 px Rundung – passend zu den Abschnitten innen runder. */
 .panel {
   display: flex;
   flex-direction: column;
   gap: 0.9em;
   margin-bottom: 1em;
+  padding: 0.6em;
+  border: 1px solid var(--line);
+  border-radius: 14px;
 }
 
 .panel.readonly {
