@@ -253,23 +253,18 @@
     </div>
   </div>
 </div>
-<div class="container">
-  <button mat-stroked-button color="primary" class="button" (click)="openSavedLayouts()">
-    Speicherungen
-  </button>
-</div>
 @if (savedLayouts) {
   <div class="popup-backdrop" (click)="closeSavedLayouts()">
-    <div class="popup" role="dialog" aria-label="Gespeicherte Darstellungsflächen" (click)="$event.stopPropagation()">
-      <h4>Gespeicherte Darstellungsflächen</h4>
+    <div class="popup" role="dialog" aria-label="Gespeicherte Anordnungen" (click)="$event.stopPropagation()">
+      <h4>Gespeicherte Anordnungen</h4>
       @if (savedLayouts.length === 0) {
-        <p>Noch keine Speicherungen. Mit „save“ wird die aktuelle Darstellung gesichert.</p>
+        <p>Noch keine Anordnungen gespeichert. Mit „Anordnung speichern“ werden die aktuellen Positionen der Welten gesichert.</p>
       } @else {
         <table class="popup-table">
           <tr>
             <th>Runde</th>
             <th>Welt</th>
-            <th>Distanzlevel</th>
+            <th>Sprungweite</th>
             <th></th>
           </tr>
           @for (save of savedLayouts; track save.key) {
@@ -289,10 +284,94 @@
     </div>
   </div>
 }
-<div class="container">
-  <table id="table1">
-    <tr>
-      <td>
+<div class="map-controls">
+  <fieldset class="control-group">
+    <legend>Runde</legend>
+    <div class="control-row">
+      <button
+        type="button"
+        class="button"
+        [disabled]="changeround === 0"
+        (click)="pressPrevRound()"
+        title="Karte der vorherigen Runde ansehen"
+        >
+        ◀ Vorherige
+      </button>
+      <span class="round-info">Runde {{ changeround + 1 }} von {{ round + 1 }}</span>
+      <button
+        type="button"
+        class="button"
+        [disabled]="changeround >= round"
+        (click)="pressNextRound()"
+        title="Karte der nächsten Runde ansehen"
+        >
+        Nächste ▶
+      </button>
+      <button
+        type="button"
+        class="button"
+        [disabled]="changeround >= round"
+        (click)="pressCurrentRound()"
+        title="Zur aktuellen Runde springen, in der Befehle möglich sind"
+        >
+        Aktuelle Runde
+      </button>
+    </div>
+    @if (changeround < round) {
+      <div class="control-hint">
+        Ältere Runde: nur zum Ansehen. Befehle sind nur in Runde {{ round + 1 }} möglich.
+      </div>
+    }
+  </fieldset>
+
+  <fieldset class="control-group">
+    <legend>Kartenausschnitt</legend>
+    <div class="control-row">
+      <label title="Diese Welt steht in der Mitte der Karte">
+        Mitte: Welt W<input
+          type="number"
+          min="1"
+          [value]="selectWorld"
+          (input)="selectWorld = +$any($event.target).value"
+          (keydown.enter)="pressViewWorld()"
+          />
+      </label>
+      <button
+        type="button"
+        class="button"
+        (click)="pressViewHomeWorld()"
+        [title]="'Heimatwelt ' + homeWorldName + ' in die Mitte setzen'"
+        >
+        Heimatwelt
+      </button>
+    </div>
+    <div class="control-row">
+      <label title="Distanzlevel: wie viele Sprünge rund um die Welt auf der Karte gezeigt werden">
+        Sprungweite:
+        <input
+          type="number"
+          min="0"
+          [value]="distanceLevelHomes"
+          (input)="distanceLevelHomes = +($any($event.target).value ?? 0)"
+          (keydown.enter)="pressViewWorld()"
+          />
+        Sprünge
+      </label>
+      <button
+        type="button"
+        class="button"
+        (click)="pressViewWorld()"
+        title="Karte mit dieser Welt in der Mitte und dieser Sprungweite laden (auch mit Enter)"
+        >
+        Karte anzeigen
+      </button>
+    </div>
+  </fieldset>
+
+  <fieldset class="control-group">
+    <legend>Ansicht</legend>
+    <div class="control-row">
+      <label title="Karte vergrößern oder verkleinern">
         Zoom
         <input
           type="range"
@@ -303,82 +382,45 @@
           (input)="onZoomChange($any($event.target).value)"
         />
         {{ zoom | number: '1.1-1' }}×
-        <button type="button" (click)="onZoomChange('1')">1×</button>
-      </td>
-      <td>
-        <label>
-          <input type="checkbox" [checked]="fixEnabled" (change)="toggleFix()" />
-          Fix
-        </label>
-      </td>
-      <td>
-        <button mat-stroked-button color="primary" class="button" (click)="pressSavewWorld()"> save
-        </button>
-      </td>
-    </tr>
-  </table>
-</div>
-<div class="container">
-  <table id="table1">
-    <tr>
-      <h3>Runden ändern und es wird Runde: {{ changeround + 1 }} angezeigt</h3>
-    </tr>
-  </table>
-</div>
-<div class="container">
-  <table id="table1">
-    <tr>
-      <td>
-        <button
-          [hidden]="ishiddenPrevButton"
-          mat-stroked-button
-          color="primary"
-          class="button"
-          (click)="pressPrevRound()"
-          >
-          &lt;--
-        </button>
-        <button
-          [hidden]="ishiddenNextButton"
-          mat-stroked-button
-          color="primary"
-          class="button"
-          (click)="pressNextRound()"
-          >
-          --&gt;
-        </button>
-      </td>
-      <td>
-        Distnacelevel:
-        <input
-          type="number"
-          [value]="distanceLevelHomes"
-          (input)="distanceLevelHomes = +($event.target['value'] ?? 0)"
-          size="4"
-          maxlength="4"
-          />
-      </td>
-      <td>
-        Select W<input
-        type="number"
-        [value]="selectWorld"
-        (input)="selectWorld = +$event.target['value']"
-        size="4"
-        maxlength="4"
-        />
-    </td>
-    <td>
-      <button
-        mat-stroked-button
-        color="primary"
-        class="button"
-        (click)="pressViewWorld()"
-        >
-        show
+      </label>
+      <button type="button" class="button" (click)="onZoomChange('1')" title="Zoom auf Originalgröße zurücksetzen">
+        1×
       </button>
-    </td>
-  </tr>
-</table>
+    </div>
+    <div class="control-row">
+      <label title="Welten bleiben, wo sie sind: keine automatische Anordnung, nur die gezogene Welt bewegt sich">
+        <input type="checkbox" [checked]="fixEnabled" (change)="toggleFix()" />
+        Welten festhalten
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset class="control-group">
+    <legend>Anordnung</legend>
+    <div class="control-row">
+      <button
+        type="button"
+        class="button"
+        (click)="pressSavewWorld()"
+        title="Positionen der Welten für diese Runde, Welt und Sprungweite merken"
+        >
+        Anordnung speichern
+      </button>
+      @if (savedFeedback) {
+        <span class="saved-feedback" role="status">✓ gespeichert</span>
+      }
+    </div>
+    <div class="control-row">
+      <button
+        type="button"
+        class="button"
+        (click)="openSavedLayouts()"
+        title="Gespeicherte Anordnungen ansehen, laden oder löschen"
+        >
+        Gespeicherte Anordnungen …
+      </button>
+    </div>
+  </fieldset>
 </div>
 
 </div>

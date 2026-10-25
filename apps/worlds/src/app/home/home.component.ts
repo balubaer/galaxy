@@ -99,8 +99,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   routePlan: RoutePlan | null = null;
 
   ishidden = false;
-  ishiddenNextButton = true;
-  ishiddenPrevButton = false;
+  /** Kurze Rückmeldung nach „Anordnung speichern“. */
+  savedFeedback = false;
+  private savedFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -353,7 +354,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .enter()
       .append('g')
       .attr('class', 'hidden-link');
-    hiddenLinks.append('title').text((d) => `${d.world} – ${d.target} (außerhalb des Distanzlevels)`);
+    hiddenLinks.append('title').text((d) => `${d.world} – ${d.target} (außerhalb der Sprungweite)`);
     hiddenLinks
       .append('path')
       .style('stroke', '#999')
@@ -710,6 +711,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.subscriptionsTurnData = null;
     }
     this.prevTurnDataSubscription?.unsubscribe();
+    clearTimeout(this.savedFeedbackTimer);
   }
 
   /** Zeigt die Karte der Runde aRound für die gewählte Welt (Select W). */
@@ -755,10 +757,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.changeround -= 1;
       this.readNewTurnDataWithRound(this.changeround);
       this.ishidden = true;
-      this.ishiddenNextButton = false;
-      if (this.changeround === 0) {
-        this.ishiddenPrevButton = true;
-      }
     }
   }
 
@@ -766,13 +764,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.changeround < this.round) {
       this.changeround += 1;
       this.readNewTurnDataWithRound(this.changeround);
-      if (this.changeround === this.round) {
-        this.ishidden = false;
-        this.ishiddenNextButton = true;
-      }
-      if (this.changeround > 0) {
-        this.ishiddenPrevButton = false;
-      }
+      this.ishidden = this.changeround < this.round;
+    }
+  }
+
+  /** Springt zurück zur aktuellen Runde, in der Befehle möglich sind. */
+  pressCurrentRound() {
+    if (this.changeround < this.round) {
+      this.changeround = this.round;
+      this.readNewTurnDataWithRound(this.changeround);
+      this.ishidden = false;
     }
   }
 
@@ -878,6 +879,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     const key = this.layoutKey(`W${this.selectWorld}`);
     localStorage.setItem(key, JSON.stringify(this.turnData));
+    this.savedFeedback = true;
+    clearTimeout(this.savedFeedbackTimer);
+    this.savedFeedbackTimer = setTimeout(() => (this.savedFeedback = false), 2500);
   }
 
 }

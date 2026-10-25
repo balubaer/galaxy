@@ -193,6 +193,64 @@ textarea {
   }
 }
 
+/* Steuerung unter der Karte, nach Aufgaben gruppiert. */
+.map-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 0.6em;
+  max-width: 750px;
+  margin: 0.8em 0;
+}
+
+.control-group {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.4em 0.8em 0.6em;
+  margin: 0;
+  min-width: 0;
+}
+
+.control-group legend {
+  float: none;
+  width: auto;
+  padding: 0 0.3em;
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: bold;
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.3em;
+}
+
+.control-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin: 0;
+}
+
+.round-info {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.control-hint {
+  margin-top: 0.3em;
+  font-size: 0.85em;
+  font-style: italic;
+  color: #555;
+}
+
+.saved-feedback {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
 .world-hint {
   width: 200px;
   height: 200px;
