@@ -1,3 +1,5 @@
+import type { CharacterType } from './player';
+
 /** Spieltyp: RSW Core (D-Schiffe) oder RSW Classic (Wirtschaft mit Metall, Industrie, I-/P-Schiffen). */
 export type GameType = 'core' | 'classic';
 
@@ -12,6 +14,8 @@ export interface GamePref {
     player: Array<string>;
     startShipCount: number;
     round: number;
+    /** Classic Game: gewählter Charakter je Spieler ('random' = zufällig zugelost, fehlt = Emperor). */
+    characterTypes?: { [playerName: string]: CharacterType | 'random' };
     /** Verdeckte Zielpunktzahl, wird nicht an die Spieler ausgeliefert. */
     targetScore?: number;
     finished?: boolean;

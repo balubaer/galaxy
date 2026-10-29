@@ -97,7 +97,7 @@ export class FinalPhaseCoreGame {
                     const fleetPlayer = passingFleet.player;
                     if ((worldPlayer != null) && (fleetPlayer != null)) {
                         if ((worldPlayer.playerName === fleetPlayer.playerName) === false) {
-                            if (worldPlayer.teammates.has(fleetPlayer) === false) {
+                            if (this.isSpared(worldPlayer, fleetPlayer) === false) {
                                 result = true;
                             }
                         }
@@ -106,6 +106,11 @@ export class FinalPhaseCoreGame {
             }
         }
         return result;
+    }
+
+    /** Teammates werden nicht aus dem Hinterhalt beschossen. */
+    isSpared(ambushPlayer: Player, passingPlayer: Player): boolean {
+        return ambushPlayer.teammates.has(passingPlayer);
     }
 
     isAmbushOffForFleet(world: World, ambushPlayer: Player): boolean {
@@ -127,7 +132,7 @@ export class FinalPhaseCoreGame {
 
                     if ((ambushPlayer !== null) && (passingFleetPlayer !== null)) {
                         if ((ambushPlayer.playerName === passingFleetPlayer.playerName) === false) {
-                            if (ambushPlayer.teammates.has(passingFleetPlayer) === false) {
+                            if (this.isSpared(ambushPlayer, passingFleetPlayer) === false) {
                                 result = this.isAmbushOffForFleet(world, ambushPlayer) === false;
                             }
                         }

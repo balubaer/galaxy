@@ -1,6 +1,6 @@
 import { World } from './world';
 import { NumberKey } from './number-key.interface';
-import { Player } from './player';
+import { Player, isCharacterType } from './player';
 import { Port } from './port';
 import { Fleet } from './fleet';
 import { WorldsPersist } from './worlds-persist.interface';
@@ -177,7 +177,7 @@ export class PersistenceManager {
         for (const playerPersist of playersPersist) {
             const player = new Player(playerPersist.name);
             player.points = playerPersist.points;
-            player.characterType = playerPersist.characterType === 'emperor' ? 'emperor' : null;
+            player.characterType = isCharacterType(playerPersist.characterType) ? playerPersist.characterType : null;
             this.allPlayerDict.set(playerPersist.name, player);
             playerPersistDict.set(playerPersist.name, playerPersist);
         }

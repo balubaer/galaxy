@@ -2,8 +2,26 @@ import { Fleet } from './fleet';
 import { World } from './world';
 import { FleetMovement } from './fleet-movement';
 
-/** Charaktertypen des Classic Games; bisher ist nur der Emperor umgesetzt. */
-export type CharacterType = 'emperor';
+/** Charaktertypen des Classic Games (Handbuch "Character Types and Scoring"). */
+export type CharacterType = 'emperor' | 'collector' | 'raider' | 'trader' | 'positronix' | 'missionary';
+
+export const CHARACTER_TYPES: ReadonlyArray<CharacterType> = ['emperor', 'collector', 'raider', 'trader', 'positronix', 'missionary'];
+
+/** Charaktertypen, deren Regeln bereits umgesetzt sind und die gewählt bzw. zugelost werden können. */
+export const PLAYABLE_CHARACTER_TYPES: ReadonlyArray<CharacterType> = ['emperor', 'raider'];
+
+export const CHARACTER_TYPE_NAMES: { [key in CharacterType]: string } = {
+    emperor: 'Emperor',
+    collector: 'Collector',
+    raider: 'Raider',
+    trader: 'Trader',
+    positronix: 'Positronix',
+    missionary: 'Missionar',
+};
+
+export function isCharacterType(value: unknown): value is CharacterType {
+    return CHARACTER_TYPES.includes(value as CharacterType);
+}
 
 export class Player {
     playerName: string;

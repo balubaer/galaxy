@@ -1,4 +1,4 @@
-import { Player, isWorldOwnedByPlayer, isFleetOwnedByPlayer } from './player';
+import { Player, isWorldOwnedByPlayer, isFleetOwnedByPlayer, CHARACTER_TYPE_NAMES } from './player';
 import { World } from './world';
 
 /** Übersicht eines Spielers im Classic Game für den Rundenbericht. */
@@ -46,7 +46,7 @@ export class OutputPlayerStatisticClassicGame {
     }
 
     description(): string {
-        const character = this.player.characterType === 'emperor' ? 'Emperor' : 'ohne Charakter';
+        const character = this.player.characterType !== null ? CHARACTER_TYPE_NAMES[this.player.characterType] : 'ohne Charakter';
         let desc = `Punkte: ${this.player.points ?? 0} | Charakter: ${character}\n`;
         desc += `Welten: ${this.worldsCount} | Bevölkerung: ${this.population} | Industrie: ${this.industry} | Minen: ${this.mines}\n`;
         desc += `Metall auf Welten: ${this.metalOnWorlds} | Metall auf Flotten: ${this.metalOnFleets}\n`;

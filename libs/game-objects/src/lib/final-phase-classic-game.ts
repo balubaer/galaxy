@@ -6,11 +6,16 @@ import { Fleet } from './fleet';
 import { ambushDamage, applyGroundShots, destroyShips, dropPbb, resetCombatTurn } from './classic-combat';
 import { PBB_MIN_SHIPS, PBB_SHIP_COST } from './classic-combat-commands';
 import { CLASSIC_PLUNDER_RECOVERY, CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
-import { PENALTY_PER_PBB, PENALTY_PER_PLUNDER, PENALTY_PER_POPULATION_KILLED, addPenalty, turnPoints } from './classic-scoring';
+import {
+    PENALTY_PER_PBB, PENALTY_PER_PLUNDER, PENALTY_PER_POPULATION_KILLED, PenaltyKind, addPenalty, raiderPlunderPoints, turnPoints
+} from './classic-scoring';
+
+/** Der Raider kapert, wenn er mehr als dreimal so viele Schiffe auf Flotten hat wie alle anderen. */
+export const COMMANDEER_RATIO = 3;
 
 /**
- * Rundenende des Classic Games: Kampf, Flüge und Besitzwechsel wie im Core Game, danach die Wirtschaft
- * (Besitzdauer, Minen, Bevölkerung), Plünderungen und die Punkte je Charakter (bisher Emperor) samt Strafen.
+ * Rundenende des Classic Games: Kampf, Flüge und Besitzwechsel wie im Core Game, danach Commandeer der Raider,
+ * die Wirtschaft (Besitzdauer, Minen, Bevölkerung), Plünderungen und die Punkte je Charakter samt Strafen.
  */
 export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
     private ownerAtStart: Map<World, Player> = new Map();
@@ -37,13 +42,13 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             const result = applyGroundShots(world, attack.shots, attack.target);
             world.addReportPlayer(owner);
             world.addEvent(`Beschuss durch ${attack.player.stringName()}: ${result.text}`);
-            this.penalize(attack.player, result.killed * PENALTY_PER_POPULATION_KILLED, `${result.killed} Bevölkerung auf ${world.name} getötet`);
+            this.penalize(attack.player, result.killed * PENALTY_PER_POPULATION_KILLED, 'kill', `${result.killed} Bevölkerung auf ${world.name} getötet`);
         }
         for (const fleet of world.pbbDrops) {
             if (fleet.ships > 0 && fleet.pbb) {
                 const killed = world.population;
                 dropPbb(world);
-                this.penalize(fleet.player, PENALTY_PER_PBB + killed * PENALTY_PER_POPULATION_KILLED,
+                this.penalize(fleet.player, PENALTY_PER_PBB + killed * PENALTY_PER_POPULATION_KILLED, 'pbb',
                     `PBB auf ${world.name}, ${killed} Bevölkerung getötet`);
                 world.addEvent(`PBB von ${fleet.name()} zerstört alles Leben auf ${world.name}`);
             }
@@ -64,6 +69,11 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             world.dShipsAmbush = true;
         }
         return shooters;
+    }
+
+    /** Im Classic Game werden Verbündete (und Teammates) nicht aus dem Hinterhalt beschossen. */
+    override isSpared(ambushPlayer: Player, passingPlayer: Player): boolean {
+        return super.isSpared(ambushPlayer, passingPlayer) || this.isAllyOf(ambushPlayer, passingPlayer);
     }
 
     override applyAmbushDamage(fleet: Fleet, shooters: number) {
@@ -99,6 +109,37 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         super.changeFleetOwner(world, fleet, player);
     }
 
+    /**
+     * Commandeer des Raiders am Rundenende: Haben seine Flotten (nicht At Peace) mehr als dreimal so viele
+     * Schiffe wie alle anderen Flotten der Welt zusammen (auch Verbündete und Flotten At Peace), übernimmt er
+     * alle Flotten mit Schiffen außer denen seiner Verbündeten, samt Metall. I- und P-Schiffe zählen nicht.
+     */
+    commandeer(world: World) {
+        const raiders = new Set<Player>();
+        for (const fleet of world.fleets) {
+            if (fleet.player !== null && fleet.player.characterType === 'raider' && fleet.ships > 0 && fleet.atPeace === false) {
+                raiders.add(fleet.player);
+            }
+        }
+        for (const raider of raiders) {
+            const raiderShips = world.fleets
+                .filter(fleet => fleet.player === raider && fleet.atPeace === false)
+                .reduce((sum, fleet) => sum + fleet.ships, 0);
+            const others = world.fleets.filter(fleet => fleet.player !== raider && fleet.ships > 0);
+            const otherShips = others.reduce((sum, fleet) => sum + fleet.ships, 0);
+            if (otherShips === 0 || raiderShips <= COMMANDEER_RATIO * otherShips) {
+                continue;
+            }
+            const victims = others.filter(fleet => fleet.player === null || this.isAllyOf(raider, fleet.player) === false);
+            for (const fleet of victims) {
+                world.addEvent(`${fleet.name()} gekapert von ${raider.stringName()} (${raiderShips} zu ${otherShips} Schiffen)`);
+                this.changeFleetOwner(world, fleet, raider);
+            }
+            // Mehr als dreimal so stark kann nur ein Raider je Welt sein.
+            return;
+        }
+    }
+
     /** PBB-Bau am Rundenende, wenn die Flotte noch dem Besteller gehört und genug Schiffe hat. */
     buildPbbs() {
         for (const world of this.worlds) {
@@ -118,9 +159,8 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         return;
     }
 
-    private penalize(player: Player | null, points: number, reason: string) {
-        if (player !== null && points > 0) {
-            addPenalty(player, points);
+    private penalize(player: Player | null, points: number, kind: PenaltyKind, reason: string) {
+        if (addPenalty(player, points, kind) > 0) {
             classicLog(`${player.playerName}: -${points} Punkte (${reason})`);
         }
     }
@@ -135,7 +175,12 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         world.plunderCount += 1;
         world.plunderRecovery = CLASSIC_PLUNDER_RECOVERY;
         world.addEvent(`${world.name} geplündert von ${plunderer.stringName()}`);
-        this.penalize(plunderer, PENALTY_PER_PLUNDER, `${world.name} geplündert`);
+        this.penalize(plunderer, PENALTY_PER_PLUNDER, 'plunder', `${world.name} geplündert`);
+        if (plunderer.characterType === 'raider') {
+            const points = raiderPlunderPoints(world.plunderCount);
+            plunderer.points = (plunderer.points ?? 0) + points;
+            classicLog(`${plunderer.playerName}: +${points} Punkte (${world.name} zum ${world.plunderCount}. Mal geplündert)`);
+        }
     }
 
     /** Punkte der Runde je Spieler aus dem Stand am Rundenende. */
@@ -152,6 +197,9 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             this.ownerAtStart.set(world, world.player);
         }
         super.doFinal();
+        for (const world of this.worlds) {
+            this.commandeer(world);
+        }
         this.buildPbbs();
         this.completeGifts();
         for (const world of this.worlds) {

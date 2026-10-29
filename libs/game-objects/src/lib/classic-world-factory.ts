@@ -1,4 +1,5 @@
 import { World } from './world';
+import { CharacterType, PLAYABLE_CHARACTER_TYPES, isCharacterType } from './player';
 import {
     CLASSIC_BLACK_HOLE_RATIO, CLASSIC_HOME_METAL, CLASSIC_HOME_MINES, CLASSIC_HOME_POPULATION, CLASSIC_HOME_POPULATION_LIMIT,
     CLASSIC_INDUSTRY_WORLD_RATIO, CLASSIC_MAX_EXTRA_POPULATION_LIMIT, CLASSIC_MAX_MINES, CLASSIC_MAX_POPULATION,
@@ -10,7 +11,17 @@ import {
  * Wirtschaft der Heimatwelten und der übrigen Welten sowie Schwarze Löcher.
  */
 export class ClassicWorldFactory {
-    constructor(private random: () => number = Math.random) { }
+    constructor(private random: () => number = Math.random,
+        private characterTypes: { [playerName: string]: CharacterType | 'random' } = {}) { }
+
+    /** Charakter eines Spielers: gewählt, zufällig aus den spielbaren Typen oder ohne Angabe Emperor. */
+    characterTypeFor(playerName: string): CharacterType {
+        const choice = this.characterTypes[playerName];
+        if (choice === 'random') {
+            return PLAYABLE_CHARACTER_TYPES[this.randomInt(0, PLAYABLE_CHARACTER_TYPES.length - 1)];
+        }
+        return isCharacterType(choice) ? choice : 'emperor';
+    }
 
     private randomInt(min: number, max: number): number {
         return min + Math.floor(this.random() * (max - min + 1));
@@ -43,7 +54,7 @@ export class ClassicWorldFactory {
     }
 
     initHomeWorld(world: World) {
-        world.player.characterType = 'emperor';
+        world.player.characterType = this.characterTypeFor(world.player.playerName);
         world.player.points = world.player.points ?? 0;
         world.industry = CLASSIC_START_INDUSTRY;
         world.metal = CLASSIC_HOME_METAL;

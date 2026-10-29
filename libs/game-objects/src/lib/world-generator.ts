@@ -45,7 +45,7 @@ export class WorldGenerator {
         playerFactory.createWithWorldArray(this.worlds, fleetCount, this.gamePref.fleetsOnHomeWorld, this.gamePref.startShipCount, this.gamePref.distanceLevelHomes);
 
         if (gameTypeOf(this.gamePref) === 'classic') {
-            new ClassicWorldFactory().initWorlds(this.worlds);
+            new ClassicWorldFactory(Math.random, this.gamePref.characterTypes ?? {}).initWorlds(this.worlds);
         }
 
         //Write to file
