@@ -26,6 +26,8 @@ export class CommandTableComponent {
   @Input() ownColor = '';
   /** Namen der anderen Spieler (für Geschenke und Beziehungen im Classic Game). */
   @Input() players: string[] = [];
+  /** Classic Game: eigener Charakter (z. B. für die Plünderpunkte). */
+  @Input() characterType: string | null = null;
   /** Aktueller Inhalt des Befehls-Textfelds. */
   @Input() commandText = '';
   @Input() readonly = false;
@@ -56,6 +58,7 @@ export class CommandTableComponent {
           this.count,
           splitCommands(this.commandText),
           this.players,
+          this.characterType,
         )
       : [];
   }

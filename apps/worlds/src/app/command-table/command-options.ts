@@ -5,6 +5,9 @@ import {
   CLASSIC_BUILD_COST,
   CLASSIC_EMPEROR_INDUSTRY_COST,
   CLASSIC_EMPEROR_SCRAP_I_SHIPS,
+  CLASSIC_PLUNDER_RECOVERY,
+  PENALTY_PER_PLUNDER,
+  raiderPlunderPoints,
 } from '@galaxy/game-objects';
 
 export interface CommandOption {
@@ -73,6 +76,16 @@ export interface ClassicInfo {
   pShips: number;
   /** Runden, die sich die Welt noch von einer Plünderung erholt. */
   plunderRecovery?: number;
+  /** Wie oft die Welt schon geplündert wurde. */
+  plunderCount?: number;
+}
+
+/** Beschriftung des Plünderbefehls: Der Raider bekommt Punkte (weniger je Wiederholung), alle anderen zahlen Strafe. */
+export function plunderLabel(classic: ClassicInfo, characterType: string | null): string {
+  const points = characterType === 'raider'
+    ? `+${raiderPlunderPoints((classic.plunderCount ?? 0) + 1)}`
+    : `−${PENALTY_PER_PLUNDER}`;
+  return `Plündern (${points} Punkte, ${CLASSIC_PLUNDER_RECOVERY} Runden unproduktiv)`;
 }
 
 /** d3 ersetzt source/target der Kanten durch die Knoten-Objekte. */
@@ -268,6 +281,7 @@ export function buildCommandGroups(
   count: number,
   selected: string[] = [],
   players: string[] = [],
+  characterType: string | null = null,
 ): CommandGroup[] {
   const world = node.id.replace(/^W/, '');
   const isOwnWorld = node.data?.backgroundColor === ownColor;
@@ -599,7 +613,7 @@ export function buildCommandGroups(
       {
         label: `Welt ${world}`,
         kind: 'plunder',
-        options: [opt(`W${world}X`, 'Plündern (−5 Punkte, 3 Runden unproduktiv)')],
+        options: [opt(`W${world}X`, plunderLabel(classic, characterType))],
       },
     ]);
   }

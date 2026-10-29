@@ -504,4 +504,23 @@ describe('Classic Game: M5 Plündern', () => {
     expect(all(plunderNode(OWN, 2))).not.toContain('W1X');
     expect(all(plunderNode('blue', 0))).not.toContain('W1X');
   });
+
+  const plunderText = (n: Node, characterType: string | null) =>
+    buildCommandGroups(n, links, OWN, 1, [], [], characterType)
+      .flatMap((g) => g.rows.flatMap((r) => r.options))
+      .find((o) => o.command === 'W1X')?.label;
+
+  it('shows the plunder penalty for non-raiders', () => {
+    expect(plunderText(plunderNode(OWN, 0), 'emperor')).toBe('Plündern (−5 Punkte, 3 Runden unproduktiv)');
+    expect(plunderText(plunderNode(OWN, 0), null)).toBe('Plündern (−5 Punkte, 3 Runden unproduktiv)');
+  });
+
+  it('shows the raider points for the next plunder of this world', () => {
+    expect(plunderText(plunderNode(OWN, 0), 'raider')).toBe('Plündern (+50 Punkte, 3 Runden unproduktiv)');
+    const twice: Node = plunderNode(OWN, 0);
+    twice.data.classic.plunderCount = 2;
+    expect(plunderText(twice, 'raider')).toBe('Plündern (+30 Punkte, 3 Runden unproduktiv)');
+    twice.data.classic.plunderCount = 7;
+    expect(plunderText(twice, 'raider')).toBe('Plündern (+10 Punkte, 3 Runden unproduktiv)');
+  });
 });

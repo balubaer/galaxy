@@ -140,13 +140,14 @@ export class GamePlayController {
     const player = pm.allPlayerDict.get(request.playerName);
 
     const respondTurnData: RespondTurnData = {
-      points: player.points,
+      points: player?.points ?? 0,
       turnCommanTxt: commandString,
       turnDataTxt: turnDataTxTstring,
       links: dataGraf.links,
       nodes: dataGraf.nodes,
       hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
+      characterType: player?.characterType ?? null,
     };
     return respondTurnData;
   }
@@ -194,13 +195,14 @@ export class GamePlayController {
     const player = pm.allPlayerDict.get(request.playerName);
 
     const respondTurnData: RespondTurnData = {
-      points: player.points,
+      points: player?.points ?? 0,
       turnCommanTxt: commandString,
       turnDataTxt: turnDataTxTstring,
       links: dataGraf.links,
       nodes: dataGraf.nodes,
       hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
+      characterType: player?.characterType ?? null,
     };
     return respondTurnData;
   }
