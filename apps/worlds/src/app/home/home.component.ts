@@ -134,6 +134,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   playercolor$: Observable<Array<PlayerColor>> | undefined;
 
   turnCommandTxt = '';
+  /** Zuletzt geladener bzw. gespeicherter Befehlstext (null: noch nicht geladen). */
+  savedCommands: string | null = null;
   ownColor = '';
   /** Namen der anderen Spieler, für Geschenke und Beziehungen im Classic Game. */
   otherPlayerNames: string[] = [];
@@ -186,6 +188,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (element) {
           element.setValue(aPlayerCommands.commands);
         }
+        this.savedCommands = aPlayerCommands.commands ?? '';
       }
     });
 
@@ -1100,6 +1103,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       .attr('cy', (d) => d.y ?? 0);
   }
 
+  /** Im Befehlsfeld steht Text, der noch nicht gespeichert ist. */
+  get hasUnsavedCommands(): boolean {
+    return this.savedCommands !== null && (this.form.value.Commands ?? '') !== this.savedCommands;
+  }
+
   /** Das Befehlsfeld wächst mit der Zahl der Zeilen (mindestens 5). */
   get commandRows(): number {
     const lines = ((this.form.value.Commands as string) ?? '').split('\n').length;
@@ -1127,7 +1135,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         commands: this.form.value.Commands,
       };
       this.subscriptions.add(
-        this.gamePlayService.setCommands(commands).subscribe()
+        this.gamePlayService.setCommands(commands).subscribe(() => {
+          this.savedCommands = commands.commands ?? '';
+        })
       );
       this.turnCommandTxt = this.form.value.Commands;
     }
@@ -1184,6 +1194,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.loadPrevMap(aWorldName);
       if (this.changeround === this.round) {
         this.form.get('Commands').setValue(aTurnData.turnCommanTxt);
+        this.savedCommands = aTurnData.turnCommanTxt ?? '';
       }
     });
   }

@@ -497,6 +497,9 @@
           formControlName="Commands"
         ></textarea>
         <button>Speichern</button>
+        @if (hasUnsavedCommands) {
+          <span class="unsaved-warning" role="status">⚠ nicht gespeichert</span>
+        }
       </form>
     </details>
   </div>
