@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { GamePref, GameType, PlayerColor, coreGameDefaults, classicGameDefaults } from '@galaxy/game-objects';
+import {
+  GamePref, GameType, PlayerColor, CharacterType, coreGameDefaults, classicGameDefaults, PLAYABLE_CHARACTER_TYPES, CHARACTER_TYPE_NAMES
+} from '@galaxy/game-objects';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../game-service.service';
 import { Observable, Subscribable, Subscription } from 'rxjs';
 import { GamePlayService } from '../player/game-play.service';
+import { UserService } from '../_services/user.service';
 
 @Component({
     selector: 'galaxy-create-game',
@@ -22,15 +25,20 @@ export class CreateGameComponent implements OnDestroy {
     StartShipCount: ['']
   });
   players: Array<string> = [];
+  /** Classic Game: gewählter Charakter je Spieler. */
+  characterTypes: { [playerName: string]: CharacterType | 'random' } = {};
+  characterTypeOptions = PLAYABLE_CHARACTER_TYPES.map(type => ({ value: type, name: CHARACTER_TYPE_NAMES[type] }));
   playerForm: FormGroup = this.fb.group({
     PlayerName: ['']
   });
   playercolor$: Observable<Array<PlayerColor>>;
   playercolorubscription: Subscription;
+  userSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
     private gameService: GameServiceService,
-    private gamePlayService: GamePlayService
+    private gamePlayService: GamePlayService,
+    private userService: UserService
   ) {
     this.playercolor$ = this.gamePlayService.getPlayerColor();
     this.playercolorubscription = this.playercolor$.subscribe(aPlyerColor => {
@@ -39,6 +47,14 @@ export class CreateGameComponent implements OnDestroy {
       }
       this.useDefaults();
     })
+    // Vorbelegung mit dem Charakter, den der User bei der Registrierung gewählt hat.
+    this.userSubscription = this.userService.getAll().subscribe(users => {
+      for (const user of users) {
+        if (user.characterType !== undefined && this.characterTypes[user.username] === undefined) {
+          this.characterTypes[user.username] = user.characterType as CharacterType | 'random';
+        }
+      }
+    });
 
   }
 
@@ -58,6 +74,7 @@ export class CreateGameComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.playercolorubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   onSubmitPlayer() {
@@ -75,6 +92,12 @@ export class CreateGameComponent implements OnDestroy {
       player: this.players,
       startShipCount: this.form.value.StartShipCount,
       round: 0
+    }
+    if (gamepref.gameType === 'classic') {
+      gamepref.characterTypes = {};
+      for (const player of this.players) {
+        gamepref.characterTypes[player] = this.characterTypes[player] ?? 'emperor';
+      }
     }
 
     this.gameService.setGamePref(gamepref)

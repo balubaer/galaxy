@@ -52,6 +52,14 @@
       </div>
     }
   </div>
+  <div class="form-group">
+    <label for="characterType">Charakter (Classic Game)</label>
+    <select id="characterType" formControlName="characterType" class="form-control">
+      @for (option of characterTypeOptions; track option.value) {
+        <option [value]="option.value">{{ option.name }}</option>
+      }
+    </select>
+  </div>
   <h4 [hidden]="isPickerHidden">Bitte Farbe auswählen</h4>
   <button class="btn btn-default" (click)="showHideColorPicker()" [hidden]="isButtonHidden">Select color </button>
   <div class="color-picker" [hidden]="isPickerHidden">

@@ -8,7 +8,7 @@ import { AlertService } from '../_services/alert.service';
 import { User } from '@galaxy/api-interfaces';
 import { Observable } from 'rxjs';
 import { GameServiceService } from '../game-service.service';
-import { PlayerColor } from '@galaxy/game-objects';
+import { PlayerColor, PLAYABLE_CHARACTER_TYPES, CHARACTER_TYPE_NAMES } from '@galaxy/game-objects';
 import { GamePlayService } from '../player/game-play.service';
 
 @Component({
@@ -27,6 +27,11 @@ export class RegisterComponent implements OnInit {
     isColorHidden = true;
     isButtonHidden = true;
     playercolor$: Observable<Array<PlayerColor>> | undefined;
+    /** Auswahl für den bevorzugten Charakter im Classic Game. */
+    characterTypeOptions = [
+        ...PLAYABLE_CHARACTER_TYPES.map(type => ({ value: type as string, name: CHARACTER_TYPE_NAMES[type] })),
+        { value: 'random', name: 'Zufällig' }
+    ];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -48,7 +53,8 @@ export class RegisterComponent implements OnInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             username: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(6)]]
+            password: ['', [Validators.required, Validators.minLength(6)]],
+            characterType: ['emperor']
         });
         this.colors$ = this.gameService.getColors();
         this.playercolor$ = this.gamePlayService.getPlayerColor();
@@ -76,7 +82,8 @@ export class RegisterComponent implements OnInit {
             firstName: this.registerForm?.value.firstName,
             lastName: this.registerForm?.value.lastName,
             token: '',
-            color: this.color
+            color: this.color,
+            characterType: this.registerForm?.value.characterType
         }
 
         this.loading = true;

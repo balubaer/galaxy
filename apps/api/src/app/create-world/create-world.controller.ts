@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface } from '@galaxy/game-objects';
-import { Message } from '@galaxy/api-interfaces';
+import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface, gameTypeOf, CharacterType } from '@galaxy/game-objects';
+import { Message, User } from '@galaxy/api-interfaces';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
 @Controller('create-world')
@@ -11,7 +11,7 @@ export class CreateWorldController {
   @Get('CreateWorld')
   getData(): Message {
     const stringData = readFileSync('gamePref.json', 'utf8');
-    const gamepref: GamePref = startGamePref(JSON.parse(stringData));
+    const gamepref: GamePref = this.withUserCharacterTypes(startGamePref(JSON.parse(stringData)));
     const worldGen = new WorldGenerator(gamepref);
     let outString = '';
     const outPath = `${gamepref.playName}/Turn${gamepref.round}/`
@@ -36,6 +36,22 @@ export class CreateWorldController {
     writeFileSync(outPath + 'worlds.txt', outString);
     writeFileSync('gamePref.json', JSON.stringify(gamepref));
     return { message: 'OK' };
+  }
+
+  /** Classic Game: Spieler ohne Charakter in der Gamepref bekommen den beim User gespeicherten. */
+  withUserCharacterTypes(gamepref: GamePref): GamePref {
+    if (gameTypeOf(gamepref) !== 'classic' || existsSync('user.json') === false) {
+      return gamepref;
+    }
+    const users: Array<User> = JSON.parse(readFileSync('user.json', 'utf8'));
+    const characterTypes = { ...gamepref.characterTypes };
+    for (const player of gamepref.player) {
+      const userType = users.find(user => user.username === player)?.characterType;
+      if (characterTypes[player] === undefined && userType !== undefined) {
+        characterTypes[player] = userType as CharacterType | 'random';
+      }
+    }
+    return { ...gamepref, characterTypes };
   }
 
   @Get('GetGamePref')

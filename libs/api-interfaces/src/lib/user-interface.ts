@@ -7,4 +7,6 @@ export interface User {
     lastName: string;
     token: string;
     color: string;
+    /** Bevorzugter Charakter im Classic Game (z. B. 'emperor', 'raider' oder 'random'). */
+    characterType?: string;
 }

@@ -16,7 +16,17 @@
   <h4>Spieler-Liste</h4>
   <ol>
     @for (player of players; track player) {
-      <li>{{ player }}</li>
+      <li>{{ player }}
+        @if (form.value.GameType === 'classic') {
+          <select [value]="characterTypes[player] ?? 'emperor'"
+            (change)="characterTypes[player] = $any($event.target).value">
+            @for (option of characterTypeOptions; track option.value) {
+              <option [value]="option.value">{{ option.name }}</option>
+            }
+            <option value="random">Zufällig</option>
+          </select>
+        }
+      </li>
     }
   </ol>
   <form [formGroup]="playerForm" (ngSubmit)="onSubmitPlayer()">

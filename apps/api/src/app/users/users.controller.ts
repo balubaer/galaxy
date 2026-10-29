@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, HttpException, HttpStatus, UnauthorizedExc
 import { Login, User, Message } from '@galaxy/api-interfaces';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { compareSync, hashSync } from 'bcryptjs';
+import { PLAYABLE_CHARACTER_TYPES } from '@galaxy/game-objects';
 
 //import {Response} from "express";
 
@@ -29,6 +30,9 @@ export class UsersController {
             userArray = [];
         }
         user.password = hashSync(user.password, 10);
+        if (user.characterType !== 'random' && PLAYABLE_CHARACTER_TYPES.includes(user.characterType as never) === false) {
+            delete user.characterType;
+        }
 
         userArray.push(user);
 
