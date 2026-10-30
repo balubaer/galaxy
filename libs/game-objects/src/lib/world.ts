@@ -40,6 +40,8 @@ export interface ClassicWorldInfo {
     pShips: number;
     plunderCount: number;
     plunderRecovery: number;
+    /** Wie oft der Empfänger des Berichts hier schon Konsumgüter entladen hat (nur Trader). */
+    ownConsumerGoods?: number;
 }
 
 export class World implements NumberKey {
@@ -69,6 +71,8 @@ export class World implements NumberKey {
     plunderCount = 0;
     /** Runden, die sich die Welt noch von der letzten Plünderung erholt (unproduktiv). */
     plunderRecovery = 0;
+    /** Trader: wie oft jeder Trader hier Konsumgüter entladen hat (wird gespeichert). */
+    consumerGoodsBy: { [playerName: string]: number } = {};
 
     // Rundenzustand der Classic-Wirtschaft, wird nicht gespeichert und am Rundenende zurückgesetzt.
     /** Metall, das in dieser Runde entladen wurde und erst nächste Runde zum Bauen bereitsteht. */
@@ -79,6 +83,8 @@ export class World implements NumberKey {
     industryWorkers = 0;
     /** Zielwelt der Migration dieser Runde (pro Welt nur eine). */
     migratesTo: World | null = null;
+    /** Trader: in dieser Runde an den Welteigner geliefertes Metall je Trader. */
+    deliveredBy: Map<string, number> = new Map();
     /** Geschenk dieser Runde an einen anderen Spieler, wird am Rundenende vollzogen. */
     giftTo: Player | null = null;
 

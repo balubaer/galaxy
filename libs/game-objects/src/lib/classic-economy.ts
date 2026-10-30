@@ -128,4 +128,5 @@ export function resetEconomyTurn(world: World) {
     world.buildBudget = null;
     world.industryWorkers = 0;
     world.migratesTo = null;
+    world.deliveredBy = new Map();
 }

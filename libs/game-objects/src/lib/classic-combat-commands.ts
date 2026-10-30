@@ -8,6 +8,7 @@ import {
     HomeShipsAlreadyFired_Error, FireOnOwnWorld_Error, NoPbb_Error, PbbNeedsShips_Error, AlreadyPbb_Error
 } from './error';
 import { addAttack, fleetShots, homeShipShots, isAttackOf } from './classic-combat';
+import { capFleetMetal } from './classic-trader';
 
 /** Schiffe, die mindestens auf einer Flotte stehen müssen, damit sie eine PBB bauen kann. */
 export const PBB_MIN_SHIPS = 26;
@@ -218,7 +219,7 @@ export class ClassicProbe extends Command implements ExecuteCommand {
                 return;
             }
             this.source.ships -= 1;
-            this.source.metal = Math.min(this.source.metal, this.source.ships);
+            capFleetMetal(this.source);
         } else if (this.source === 'I') {
             this.world.iShips = Math.max(0, this.world.iShips - 1);
         } else {

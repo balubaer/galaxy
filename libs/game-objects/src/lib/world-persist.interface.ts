@@ -18,4 +18,6 @@ export interface WorldPersist {
     blackHole?: boolean;
     plunderCount?: number;
     plunderRecovery?: number;
+    /** Trader: Konsumgüter-Entladungen je Trader. */
+    consumerGoodsBy?: { [playerName: string]: number };
 }

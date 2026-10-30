@@ -1,4 +1,4 @@
-import { World } from './world';
+import { World, ClassicWorldInfo } from './world';
 import { NodesAndLinks } from './nodes-and-links.interface';
 import { Player, isWorldOutPutForPlayer } from './player';
 import { Edge, Node } from '@galaxy/api-interfaces';
@@ -83,6 +83,13 @@ export class PersistenceGrafManager {
         return fleets;
     }
 
+    /** Classic-Werte der Welt, dazu wie oft dieser Spieler hier schon Konsumgüter entladen hat. */
+    classicInfoForPlayer(world: World, playerName: string): ClassicWorldInfo | null {
+        const info = world.classicInfo();
+        const consumerGoods = world.consumerGoodsBy[playerName] ?? 0;
+        return info !== null && consumerGoods > 0 ? { ...info, ownConsumerGoods: consumerGoods } : info;
+    }
+
     generateNodesAndLinks(playerName: string): NodesAndLinks {
         const player = this.allPlayerDict.get(playerName);
         const edgeArray: Array<Edge> = new Array<Edge>();
@@ -97,7 +104,7 @@ export class PersistenceGrafManager {
                         label: world.name,
                         data: {
                             dships: world.dShips,
-                            classic: world.classicInfo(),
+                            classic: this.classicInfoForPlayer(world, playerName),
                             backgroundColor: world.blackHole ? 'black' : this.getColorWithPlayer(world.player),
                             fleets: this.getFleetsWithWorld(world),
                             fontColor: world.blackHole ? 'white' : this.getFontColorWithPlayer(world.player)

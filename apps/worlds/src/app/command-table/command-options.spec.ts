@@ -524,3 +524,32 @@ describe('Classic Game: M5 Plündern', () => {
     expect(plunderText(twice, 'raider')).toBe('Plündern (+10 Punkte, 3 Runden unproduktiv)');
   });
 });
+
+describe('Classic Game: Trader-Konsumgüter', () => {
+  const traderNode = (ownConsumerGoods?: number): Node => ({
+    id: 'W1',
+    data: {
+      dships: 0,
+      backgroundColor: OWN,
+      classic: {
+        blackHole: false, population: 50, populationLimit: 100, industry: 30, metal: 30, mines: 2,
+        turnsOwned: 1, iShips: 1, pShips: 1, plunderCount: 0, plunderRecovery: 0, ownConsumerGoods,
+      },
+      fleets: [{ label: 'F1=5', backgroundColor: OWN, metal: 5 }],
+    },
+  });
+  const label = (n: Node, characterType: string | null) =>
+    buildCommandGroups(n, links, OWN, 1, [], [], characterType)
+      .flatMap((g) => g.rows.flatMap((r) => r.options))
+      .find((o) => o.command === 'F1N')?.label;
+
+  it('shows the points of the next consumer goods unload for a trader', () => {
+    expect(label(traderNode(), 'trader')).toBe('alles als Konsumgüter (+10 Punkte)');
+    expect(label(traderNode(2), 'trader')).toBe('alles als Konsumgüter (+5 Punkte)');
+    expect(label(traderNode(9), 'trader')).toBe('alles als Konsumgüter (+1 Punkte)');
+  });
+
+  it('shows no points for other characters', () => {
+    expect(label(traderNode(), 'emperor')).toBe('alles als Konsumgüter');
+  });
+});

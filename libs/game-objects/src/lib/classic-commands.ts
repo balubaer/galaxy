@@ -10,6 +10,7 @@ import {
 } from './error';
 import { classicLog } from './classic-log';
 import { buildBudget, spendIndustry, industryBuildCost, scrapIShipsPerIndustry, CLASSIC_BUILD_COST } from './classic-economy';
+import { awardConsumerGoods, awardDelivery, capFleetMetal, metalCapacity } from './classic-trader';
 
 abstract class FleetMetalCommand extends Command {
     constructor(protected fleet: Fleet, protected homeWorld: World, protected amount: number | null,
@@ -61,6 +62,9 @@ export class UnloadMetal extends FleetMetalCommand implements ExecuteCommand {
                 this.homeWorld.metal += metal;
                 // Entladenes Metall steht erst in der nächsten Runde zum Bauen bereit.
                 this.homeWorld.unloadedMetal += metal;
+                awardDelivery(this.player, this.homeWorld, metal);
+            } else {
+                awardConsumerGoods(this.player, this.homeWorld);
             }
         }
     }
@@ -104,9 +108,9 @@ export class LoadMetal extends FleetMetalCommand implements ExecuteCommand {
             || Array.from(owner.loaders).some(loader => loader.playerName === this.player.playerName);
     }
 
-    /** Jedes Schiff trägt eine Einheit Metall. */
+    /** Jedes Schiff trägt eine Einheit Metall, beim Trader zwei. */
     private capacity(): number {
-        return Math.max(0, this.fleet.ships - this.fleet.metal);
+        return Math.max(0, metalCapacity(this.fleet) - this.fleet.metal);
     }
 
     private metalToLoad(): number {
@@ -353,7 +357,7 @@ export class TransferShipsClassic extends Command implements ExecuteCommand {
             this.world.pShips += count;
         } else {
             place.ships += count;
-            place.metal = Math.min(place.metal, place.ships);
+            capFleetMetal(place);
         }
     }
 

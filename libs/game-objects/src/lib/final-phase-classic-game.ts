@@ -5,6 +5,7 @@ import { classicLog } from './classic-log';
 import { Fleet } from './fleet';
 import { ambushDamage, applyGroundShots, destroyShips, dropPbb, resetCombatTurn } from './classic-combat';
 import { PBB_MIN_SHIPS, PBB_SHIP_COST } from './classic-combat-commands';
+import { capFleetMetal } from './classic-trader';
 import { CLASSIC_PLUNDER_RECOVERY, CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
 import {
     PENALTY_PER_PBB, PENALTY_PER_PLUNDER, PENALTY_PER_POPULATION_KILLED, PenaltyKind, addPenalty, raiderPlunderPoints, turnPoints
@@ -101,12 +102,13 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         return true;
     }
 
-    /** Wechselt eine Flotte den Besitzer, verschwindet ihre PBB. */
+    /** Wechselt eine Flotte den Besitzer, verschwindet ihre PBB; Metall über dem neuen Laderaum geht verloren. */
     override changeFleetOwner(world: World, fleet: Fleet, player: Player) {
         if (fleet.player !== player) {
             fleet.pbb = false;
         }
         super.changeFleetOwner(world, fleet, player);
+        capFleetMetal(fleet);
     }
 
     /**
@@ -146,7 +148,7 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             for (const fleet of world.fleets) {
                 if (fleet.buildPbbBy !== null && fleet.player === fleet.buildPbbBy && fleet.ships >= PBB_MIN_SHIPS) {
                     fleet.ships -= PBB_SHIP_COST;
-                    fleet.metal = Math.min(fleet.metal, fleet.ships);
+                    capFleetMetal(fleet);
                     fleet.pbb = true;
                     world.addEvent(`${fleet.name()} hat eine PBB gebaut`);
                 }

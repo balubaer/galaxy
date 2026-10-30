@@ -8,6 +8,7 @@ import {
   CLASSIC_PLUNDER_RECOVERY,
   PENALTY_PER_PLUNDER,
   raiderPlunderPoints,
+  consumerGoodsPoints,
 } from '@galaxy/game-objects';
 
 export interface CommandOption {
@@ -78,6 +79,15 @@ export interface ClassicInfo {
   plunderRecovery?: number;
   /** Wie oft die Welt schon geplündert wurde. */
   plunderCount?: number;
+  /** Wie oft man selbst hier schon Konsumgüter entladen hat (nur Trader). */
+  ownConsumerGoods?: number;
+}
+
+/** Beschriftung für Konsumgüter: Der Trader sieht die Punkte der nächsten Entladung auf dieser Welt. */
+export function consumerGoodsLabel(classic: ClassicInfo, characterType: string | null): string {
+  return characterType === 'trader'
+    ? `alles als Konsumgüter (+${consumerGoodsPoints((classic.ownConsumerGoods ?? 0) + 1)} Punkte)`
+    : 'alles als Konsumgüter';
 }
 
 /** Beschriftung des Plünderbefehls: Der Raider bekommt Punkte (weniger je Wiederholung), alle anderen zahlen Strafe. */
@@ -555,7 +565,7 @@ export function buildCommandGroups(
               ? [
                   opt(`F${f.number}U`, 'alles entladen'),
                   ...counted((n) => opt(`F${f.number}U${n}`, `${n} entladen`)),
-                  opt(`F${f.number}N`, 'alles als Konsumgüter'),
+                  opt(`F${f.number}N`, consumerGoodsLabel(classic, characterType)),
                   opt(`F${f.number}J`, 'alles wegwerfen'),
                 ]
               : []),

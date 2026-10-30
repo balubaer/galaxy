@@ -3,6 +3,7 @@ import { Fleet } from './fleet';
 import { World } from './world';
 import { FleetMovement } from './fleet-movement';
 import { DistanceLevel } from './distance-level';
+import { capFleetMetal } from './classic-trader';
 import {
     CommandError, FleetNotOnWorld_Error, FleetNotFound_Error, WorldNotFound_Error, FleetNotOwned_Error, WorldNotOwned_Error,
     NotSameWorld_Error, NotEnoughShips_Error, NoConnection_Error, FleetAlreadyActed_Error, FleetHasNoShips_Error,
@@ -222,7 +223,7 @@ export class TransferShipsFleetToFleet extends Command implements ExecuteCommand
             this.fromFleet.ships -= this.shipsToTransfer;
             this.toFleet.ships += this.shipsToTransfer;
             // Classic: Metall, das nicht entladen wurde, geht mit den Schiffen verloren.
-            this.fromFleet.metal = Math.min(this.fromFleet.metal, this.fromFleet.ships);
+            capFleetMetal(this.fromFleet);
         }
     }
 }

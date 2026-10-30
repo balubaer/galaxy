@@ -79,7 +79,7 @@ describe('Classic Charaktertypen', () => {
     expect(new ClassicWorldFactory(() => 0, { A: 'raider' }).characterTypeFor('A')).toBe('raider');
     expect(new ClassicWorldFactory(() => 0, {}).characterTypeFor('A')).toBe('emperor');
     expect(new ClassicWorldFactory(() => 0, { A: 'random' }).characterTypeFor('A')).toBe('emperor');
-    expect(new ClassicWorldFactory(() => 0.99, { A: 'random' }).characterTypeFor('A')).toBe('raider');
+    expect(new ClassicWorldFactory(() => 0.5, { A: 'random' }).characterTypeFor('A')).toBe('raider');
   });
 
   it('Heimatwelt bekommt den gewählten Charakter', () => {

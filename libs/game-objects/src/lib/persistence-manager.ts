@@ -75,6 +75,9 @@ export class PersistenceManager {
         if (world.blackHole) {
             result.blackHole = true;
         }
+        if (Object.keys(world.consumerGoodsBy).length > 0) {
+            result.consumerGoodsBy = { ...world.consumerGoodsBy };
+        }
         return result;
     }
 
@@ -219,6 +222,7 @@ export class PersistenceManager {
             world.blackHole = worldPersist.blackHole ?? false;
             world.plunderCount = worldPersist.plunderCount ?? 0;
             world.plunderRecovery = worldPersist.plunderRecovery ?? 0;
+            world.consumerGoodsBy = { ...(worldPersist.consumerGoodsBy ?? {}) };
             this.worldArray.push(world);
             this.worldDict.set(worldPersist.number, world);
         }

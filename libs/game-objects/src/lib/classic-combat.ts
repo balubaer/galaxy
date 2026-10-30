@@ -1,10 +1,11 @@
 import { Fleet } from './fleet';
 import { World } from './world';
 import { Player } from './player';
+import { capFleetMetal, loadedShips, overloadedShips } from './classic-trader';
 
-/** Schiffe auf Flotten feuern je einen Schuss. */
+/** Schiffe auf Flotten feuern je einen Schuss, überladene Schiffe eines Traders gar nicht. */
 export function fleetShots(fleet: Fleet): number {
-    return fleet.ships;
+    return fleet.ships - overloadedShips(fleet);
 }
 
 /** I- und P-Schiffe feuern nur halb so stark: je zwei Schiffe ein Schuss (abgerundet). */
@@ -14,12 +15,14 @@ export function homeShipShots(ships: number): number {
 
 /**
  * Zerstört Schiffe einer Flotte: zwei Schuss je Schiff, beladene Schiffe fallen schon mit einem Schuss,
- * getroffen werden zuerst die unbeladenen. Gerundet wird je feuernder Flotte bzw. Gruppe (shotsPerShooter).
- * Fliegt die Flotte weg, nimmt sie nur den halben Schaden (abgerundet). Liefert die Zahl zerstörter Schiffe.
+ * getroffen werden zuerst die unbeladenen, dann die mit einer Einheit Metall, zuletzt überladene (Trader, zwei Einheiten).
+ * Gerundet wird je feuernder Flotte bzw. Gruppe (shotsPerShooter). Fliegt die Flotte weg, nimmt sie nur den
+ * halben Schaden (abgerundet). Mit beladenen Schiffen geht ihr Metall verloren. Liefert die Zahl zerstörter Schiffe.
  */
 export function destroyShips(fleet: Fleet, shotsPerShooter: Array<number>, moving: boolean): number {
-    let unloaded = Math.max(0, fleet.ships - fleet.metal);
-    let loaded = Math.min(fleet.metal, fleet.ships);
+    const overloaded = overloadedShips(fleet);
+    let unloaded = fleet.ships - loadedShips(fleet);
+    let loaded = loadedShips(fleet);
     let killedUnloaded = 0;
     let killedLoaded = 0;
     for (const shotsOfShooter of shotsPerShooter) {
@@ -37,9 +40,11 @@ export function destroyShips(fleet: Fleet, shotsPerShooter: Array<number>, movin
         killedUnloaded = Math.min(killedUnloaded, total);
         killedLoaded = total - killedUnloaded;
     }
+    const singleLoaded = loadedShips(fleet) - overloaded;
+    const killedOverloaded = Math.max(0, killedLoaded - singleLoaded);
     fleet.ships -= killedUnloaded + killedLoaded;
-    // Mit beladenen Schiffen geht ihr Metall verloren.
-    fleet.metal = Math.min(fleet.metal - killedLoaded, fleet.ships);
+    fleet.metal -= killedLoaded + killedOverloaded;
+    capFleetMetal(fleet);
     return killedUnloaded + killedLoaded;
 }
 
