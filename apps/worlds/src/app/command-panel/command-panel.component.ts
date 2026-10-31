@@ -58,6 +58,7 @@ const FLEET_ACTIONS: Action[] = [
 const WORLD_ACTIONS: Action[] = [
   { key: 'build', label: 'Werft', icon: '⚒', kinds: ['build', 'industry', 'migration'], amount: true },
   { key: 'plunder', label: 'Plündern', icon: '⚑', kinds: ['plunder'] },
+  { key: 'artifact', label: 'Artefakte', icon: '◆', kinds: ['artifact'] },
   { key: 'stock', label: 'Lager', icon: '⇄', kinds: ['dTransfer', 'homeTransfer', 'homeProbe'], amount: true },
   { key: 'defense', label: 'Verteidigung', icon: '⛨', kinds: ['dFire', 'homeFire', 'ambush'] },
   { key: 'diplomacy', label: 'Diplomatie', icon: '✉', kinds: ['relation', 'worldGift'] },
@@ -128,6 +129,8 @@ export class CommandPanelComponent implements OnChanges {
   @Input() players: string[] = [];
   /** Classic Game: eigener Charakter (z. B. für die Plünderpunkte). */
   @Input() characterType: string | null = null;
+  /** Classic Game: Farben der Mitspieler, die man als Collector markiert hat. */
+  @Input() collectorColors: string[] = [];
   @Input() commandText = '';
   @Input() readonly = false;
   @Input() routePlan: RoutePlan | null = null;
@@ -197,7 +200,7 @@ export class CommandPanelComponent implements OnChanges {
     }
     const node = this.node;
     this.groups = buildCommandGroups(
-      node, this.links, this.ownColor, this.amount, this.selected, this.players, this.characterType,
+      node, this.links, this.ownColor, this.amount, this.selected, this.players, this.characterType, this.collectorColors,
     );
     this.projection = projectWorld(node, this.ownColor, this.selected);
     this.broken = brokenCommands(node, this.ownColor, this.selected);

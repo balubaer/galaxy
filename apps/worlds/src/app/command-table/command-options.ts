@@ -37,6 +37,7 @@ export type CommandKind =
   | 'homeProbe'
   | 'pbb'
   | 'plunder'
+  | 'artifact'
   | 'peace'
   | 'gift'
   | 'worldGift'
@@ -65,6 +66,16 @@ export interface WorldFleet {
   atPeace: boolean;
   /** Classic Game: Flotte trägt eine PBB. */
   pbb: boolean;
+  /** Classic Game: angehängte Artefakte. */
+  artifacts: ArtifactInfo[];
+  /** Farbe des Besitzers (wie auf der Karte). */
+  color: string;
+}
+
+/** Artefakt, wie es das Backend in den Kartendaten liefert. */
+export interface ArtifactInfo {
+  number: number;
+  name: string;
 }
 
 /** Classic-Werte einer Welt, wie sie das Backend in node.data.classic liefert. */
@@ -81,6 +92,8 @@ export interface ClassicInfo {
   plunderCount?: number;
   /** Wie oft man selbst hier schon Konsumgüter entladen hat (nur Trader). */
   ownConsumerGoods?: number;
+  /** Artefakte auf der Welt. */
+  artifacts?: ArtifactInfo[];
 }
 
 /** Beschriftung für Konsumgüter: Der Trader sieht die Punkte der nächsten Entladung auf dieser Welt. */
@@ -104,7 +117,7 @@ export function idOf(end: unknown): string {
 }
 
 function readFleets(node: Node, ownColor: string): WorldFleet[] {
-  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number; atPeace?: boolean; pbb?: boolean }> =
+  const fleets: Array<{ label?: string; backgroundColor?: string; metal?: number; atPeace?: boolean; pbb?: boolean; artifacts?: ArtifactInfo[] }> =
     node.data?.fleets ?? [];
   const result: WorldFleet[] = [];
   for (const fleet of fleets) {
@@ -117,6 +130,8 @@ function readFleets(node: Node, ownColor: string): WorldFleet[] {
         metal: fleet.metal ?? 0,
         atPeace: fleet.atPeace ?? false,
         pbb: fleet.pbb ?? false,
+        artifacts: fleet.artifacts ?? [],
+        color: fleet.backgroundColor ?? '',
       });
     }
   }
@@ -292,6 +307,7 @@ export function buildCommandGroups(
   selected: string[] = [],
   players: string[] = [],
   characterType: string | null = null,
+  collectorColors: string[] = [],
 ): CommandGroup[] {
   const world = node.id.replace(/^W/, '');
   const isOwnWorld = node.data?.backgroundColor === ownColor;
@@ -629,6 +645,38 @@ export function buildCommandGroups(
   }
 
   if (classic && !classic.blackHole) {
+    // Artefakte: von der eigenen Welt an eigene Flotten hängen, von eigenen Flotten abwerfen.
+    // Flotten von Spielern, die man als Collector markiert hat, nehmen Artefakte von Welt und Flotte;
+    // von Flotte zu eigener Flotte geht es nur, wenn man selbst Collector ist.
+    const collectorFleets = enemyFleets.filter((f) => collectorColors.includes(f.color));
+    const hook = (artifact: ArtifactInfo, fleet: WorldFleet, collector: boolean) =>
+      opt(`V${artifact.number}F${fleet.number}`, collector ? `an Flotte ${fleet.number} (Collector)` : `an Flotte ${fleet.number}`);
+    add('Artefakte', [
+      ...(isOwnWorld ? classic.artifacts ?? [] : []).map((artifact) => ({
+        label: `V${artifact.number} ${artifact.name}`,
+        kind: 'artifact' as CommandKind,
+        options: [
+          ...ownFleets.map((f) => hook(artifact, f, false)),
+          ...collectorFleets.map((f) => hook(artifact, f, true)),
+        ],
+      })),
+      ...ownFleets.flatMap((f) =>
+        f.artifacts.map((artifact) => ({
+          label: `V${artifact.number} ${artifact.name} (Flotte ${f.number})`,
+          kind: 'artifact' as CommandKind,
+          options: [
+            opt(`V${artifact.number}W`, `auf Welt ${world} abwerfen`),
+            ...(characterType === 'collector'
+              ? ownFleets.filter((t) => t.number !== f.number).map((t) => hook(artifact, t, false))
+              : []),
+            ...collectorFleets.map((t) => hook(artifact, t, true)),
+          ],
+        })),
+      ),
+    ].filter((row) => row.options.length > 0));
+  }
+
+  if (classic && !classic.blackHole) {
     add(
       'At Peace',
       ownFleets.map((f) => ({
@@ -787,6 +835,12 @@ export function commandsConflict(a: string, b: string): boolean {
   const home = /^([IP]\d+)[AC]F\d+$/.exec(a);
   const otherHome = /^([IP]\d+)[AC]F\d+$/.exec(b);
   if (home && otherHome && home[1] === otherHome[1]) {
+    return true;
+  }
+  // Jedes Artefakt bekommt pro Zug nur einen Befehl (anhängen oder abwerfen).
+  const artifact = /^V(\d+)(?:F\d+|W)$/.exec(a);
+  const otherArtifact = /^V(\d+)(?:F\d+|W)$/.exec(b);
+  if (artifact && otherArtifact && artifact[1] === otherArtifact[1]) {
     return true;
   }
   // Pro Flotte entweder At Peace oder nicht.

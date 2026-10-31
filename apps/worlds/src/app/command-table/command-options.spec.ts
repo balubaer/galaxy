@@ -553,3 +553,52 @@ describe('Classic Game: Trader-Konsumgüter', () => {
     expect(label(traderNode(), 'emperor')).toBe('alles als Konsumgüter');
   });
 });
+
+describe('Classic Game: Artefakte', () => {
+  const artifactNode = (owner: string): Node => ({
+    id: 'W1',
+    data: {
+      dships: 0,
+      backgroundColor: owner,
+      classic: {
+        blackHole: false, population: 50, populationLimit: 100, industry: 30, metal: 30, mines: 2,
+        turnsOwned: 1, iShips: 1, pShips: 1, plunderCount: 0, plunderRecovery: 0,
+        artifacts: [{ number: 3, name: 'Holy Grail' }],
+      },
+      fleets: [
+        { label: 'F1=5', backgroundColor: OWN, metal: 0, artifacts: [{ number: 4, name: 'Cursed Grail' }] },
+        { label: 'F2=5', backgroundColor: OWN, metal: 0 },
+      ],
+    },
+  });
+  const commands = (n: Node, characterType: string | null = null) =>
+    buildCommandGroups(n, links, OWN, 1, [], [], characterType)
+      .flatMap((g) => g.rows.filter((r) => r.kind === 'artifact').flatMap((r) => r.options.map((o) => o.command)));
+
+  it('offers hooking world artifacts onto own fleets and dropping fleet artifacts', () => {
+    expect(commands(artifactNode(OWN))).toEqual(['V3F1', 'V3F2', 'V4W']);
+  });
+
+  it('offers fleet-to-fleet only to a collector', () => {
+    expect(commands(artifactNode(OWN), 'collector')).toEqual(['V3F1', 'V3F2', 'V4W', 'V4F2']);
+  });
+
+  it('offers hooking onto fleets of players marked as collector, from world and fleet', () => {
+    const n = artifactNode(OWN);
+    n.data.fleets.push({ label: 'F6=2', backgroundColor: 'blue', metal: 0 }, { label: 'F7=2', backgroundColor: 'red', metal: 0 });
+    const marked = buildCommandGroups(n, links, OWN, 1, [], [], null, ['blue'])
+      .flatMap((g) => g.rows.filter((r) => r.kind === 'artifact').flatMap((r) => r.options));
+    expect(marked.map((o) => o.command)).toEqual(['V3F1', 'V3F2', 'V3F6', 'V4W', 'V4F6']);
+    expect(marked.find((o) => o.command === 'V3F6')?.label).toBe('an Flotte 6 (Collector)');
+    expect(commands(n)).not.toContain('V3F6');
+  });
+
+  it('offers no hooking from a foreign world', () => {
+    expect(commands(artifactNode('blue'))).toEqual(['V4W']);
+  });
+
+  it('allows only one order per artifact', () => {
+    expect(commandsConflict('V3F1', 'V3W')).toBe(true);
+    expect(commandsConflict('V3F1', 'V4F1')).toBe(false);
+  });
+});

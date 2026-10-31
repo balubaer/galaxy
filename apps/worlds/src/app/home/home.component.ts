@@ -43,6 +43,7 @@ import { outwardAngle, stubAngles } from '../_helpers/hidden-links';
 import { applyRingLayout } from '../_helpers/ring-layout';
 import { Box, forceBoxCollide } from '../_helpers/box-collide';
 import { parseSaveKey, SavedLayout } from './saved-layouts';
+import { PlayerNotesService } from './player-notes.service';
 import { LayoutStoreService } from './layout-store.service';
 
 /** Steuerungsart der Befehle: klassische Tabelle oder Kommandopult mit Maussteuerung. */
@@ -139,6 +140,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   ownColor = '';
   /** Namen der anderen Spieler, für Geschenke und Beziehungen im Classic Game. */
   otherPlayerNames: string[] = [];
+  /** Farbe je Spieler, um Flotten auf der Karte ihrem Besitzer zuzuordnen. */
+  playerColors: PlayerColor[] = [];
+  /** Mitspieler, die man selbst als Collector markiert hat (Classic Game). */
+  collectors: string[] = [];
+  /** Farben der markierten Collector für das Kommandopult. */
+  collectorColors: string[] = [];
   /** Classic Game: Legende und Flotten-Infos zeigen Wirtschaft statt D-Schiffen. */
   isClassic = false;
   readonly fleetInfo = fleetInfo;
@@ -163,6 +170,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private gamePlayService: GamePlayService,
     private gamePrefService: GameServiceService,
     private layoutStore: LayoutStoreService,
+    private playerNotes: PlayerNotesService,
     private fb: FormBuilder
   ) {
     this.homeWorldName = '';
@@ -213,7 +221,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.otherPlayerNames = colors
           .map((c) => c.playername)
           .filter((name) => name !== this.currentUser.username);
+        this.playerColors = colors;
+        this.updateCollectorColors();
         this.updateModernMap();
+      })
+    );
+    this.subscriptions.add(
+      this.playerNotes.collectors(this.currentUser.username).subscribe((collectors) => {
+        this.collectors = collectors;
+        this.updateCollectorColors();
       })
     );
     this.subscriptions.add(
@@ -229,6 +245,35 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.winner = aGamePref.winner ?? '';
       this.isClassic = aGamePref.gameType === 'classic';
     });
+  }
+
+  /** Markiert einen Mitspieler als Collector oder nimmt die Markierung zurück und speichert sie. */
+  toggleCollector(playerName: string) {
+    const next = this.collectors.includes(playerName)
+      ? this.collectors.filter((name) => name !== playerName)
+      : [...this.collectors, playerName];
+    this.collectors = next;
+    this.updateCollectorColors();
+    this.subscriptions.add(
+      this.playerNotes.saveCollectors(this.currentUser.username, next).subscribe((saved) => {
+        this.collectors = saved;
+        this.updateCollectorColors();
+      })
+    );
+  }
+
+  private updateCollectorColors() {
+    this.collectorColors = this.playerColors
+      .filter((c) => this.collectors.includes(c.playername))
+      .map((c) => c.color);
+  }
+
+  /** Flotten der Welt, an denen Artefakte hängen (für die Weltinfo). */
+  fleetsWithArtifacts(node: Node | undefined): Array<{ label: string; artifacts: Array<{ number: number; name: string }> }> {
+    const fleets: Array<{ label?: string; artifacts?: Array<{ number: number; name: string }> }> = node?.data?.fleets ?? [];
+    return fleets
+      .filter((fleet) => (fleet.artifacts?.length ?? 0) > 0)
+      .map((fleet) => ({ label: (fleet.label ?? '').replace(/=.*/, ''), artifacts: fleet.artifacts ?? [] }));
   }
 
   deleteGraf(selector = 'svg#v7') {

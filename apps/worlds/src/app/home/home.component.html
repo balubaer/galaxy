@@ -96,6 +96,26 @@
                 <tr><td>I-Schiffe</td><td>{{ classic.iShips }}</td></tr>
                 <tr><td>P-Schiffe</td><td>{{ classic.pShips }}</td></tr>
                 <tr><td>Runden im Besitz</td><td>{{ classic.turnsOwned }}</td></tr>
+                @if (classic.artifacts?.length > 0) {
+                  <tr>
+                    <td>Artefakte</td>
+                    <td>
+                      @for (artifact of classic.artifacts; track artifact.number) {
+                        <div>V{{ artifact.number }} {{ artifact.name }}</div>
+                      }
+                    </td>
+                  </tr>
+                }
+                @for (fleet of fleetsWithArtifacts(node); track fleet.label) {
+                  <tr>
+                    <td>{{ fleet.label }}</td>
+                    <td>
+                      @for (artifact of fleet.artifacts; track artifact.number) {
+                        <div>V{{ artifact.number }} {{ artifact.name }}</div>
+                      }
+                    </td>
+                  </tr>
+                }
                 @if (classic.plunderCount > 0) {
                   <tr>
                     <td>Geplündert</td>
@@ -459,6 +479,7 @@
         [ownColor]="ownColor"
         [players]="otherPlayerNames"
         [characterType]="turnData.characterType ?? null"
+        [collectorColors]="collectorColors"
         [commandText]="form.value.Commands"
         [readonly]="ishidden"
         [routePlan]="routePlan"
@@ -479,6 +500,7 @@
         [ownColor]="ownColor"
         [players]="otherPlayerNames"
         [characterType]="turnData.characterType ?? null"
+        [collectorColors]="collectorColors"
         [commandText]="form.value.Commands"
         [readonly]="ishidden"
         [routePlan]="routePlan"
@@ -488,6 +510,21 @@
         (routeCancelled)="onRouteCancelled()"
         (commandToggled)="onCommandToggled($event)"
       ></galaxy-command-table>
+    }
+    @if (isClassic && otherPlayerNames.length > 0) {
+      <details class="player-notes">
+        <summary>Mitspieler</summary>
+        <p class="player-notes-hint">
+          Wen hältst du für einen Collector? An dessen Flotten bietet das Kommandopult an, Artefakte zu hängen.
+        </p>
+        @for (player of otherPlayerNames; track player) {
+          <label class="player-note">
+            <input type="checkbox" [checked]="collectors.includes(player)" [disabled]="ishidden"
+              (change)="toggleCollector(player)" />
+            {{ player }} ist Collector
+          </label>
+        }
+      </details>
     }
     <details class="command-text" [open]="!modern">
       <summary>Befehlstext</summary>

@@ -384,3 +384,18 @@ textarea {
   font-style: italic;
   text-align: center;
 }
+
+.player-notes {
+  margin: 8px 0;
+}
+
+.player-notes-hint {
+  margin: 4px 0;
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
+.player-note {
+  display: block;
+  cursor: pointer;
+}

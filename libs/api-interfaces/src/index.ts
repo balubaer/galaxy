@@ -4,3 +4,4 @@ export * from './lib/user-interface';
 export * from  './lib/edge-interface';
 export * from  './lib/node-interface';
 export * from  './lib/layout-interface';
+export * from  './lib/player-notes-interface';
