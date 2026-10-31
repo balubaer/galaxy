@@ -14,6 +14,9 @@ import {
   RequestTurnDataOnlyPlayerAndRound,
   StripGraphFactory,
   checkGameEnd,
+  classicEndBonus,
+  classicLog,
+  gameTypeOf,
 } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 import { AppService } from '../app.service';
@@ -237,7 +240,8 @@ export class GamePlayController {
       }
     }
     executeCommand.start(commandsDict);
-    checkGameEnd(gamepref, executeCommand.allPlayerDict.values());
+    checkGameEnd(gamepref, executeCommand.allPlayerDict.values(),
+      gameTypeOf(gamepref) === 'classic' ? classicEndBonus(executeCommand.worlds, classicLog) : undefined);
 
     mkdirSync(`${gamepref.playName}/Turn${gamepref.round}`, { recursive: true });
     const outputDict = executeCommand.generateOutput();

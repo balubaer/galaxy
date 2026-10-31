@@ -8,7 +8,7 @@ export type CharacterType = 'emperor' | 'collector' | 'raider' | 'trader' | 'pos
 export const CHARACTER_TYPES: ReadonlyArray<CharacterType> = ['emperor', 'collector', 'raider', 'trader', 'positronix', 'missionary'];
 
 /** Charaktertypen, deren Regeln bereits umgesetzt sind und die gewählt bzw. zugelost werden können. */
-export const PLAYABLE_CHARACTER_TYPES: ReadonlyArray<CharacterType> = ['emperor', 'raider', 'trader'];
+export const PLAYABLE_CHARACTER_TYPES: ReadonlyArray<CharacterType> = ['emperor', 'collector', 'raider', 'trader'];
 
 export const CHARACTER_TYPE_NAMES: { [key in CharacterType]: string } = {
     emperor: 'Emperor',

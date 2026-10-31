@@ -1,4 +1,4 @@
-import { World, ClassicWorldInfo } from './world';
+import { World, ClassicWorldInfo, artifactInfos } from './world';
 import { NodesAndLinks } from './nodes-and-links.interface';
 import { Player, isWorldOutPutForPlayer } from './player';
 import { Edge, Node } from '@galaxy/api-interfaces';
@@ -75,6 +75,7 @@ export class PersistenceGrafManager {
                     metal: fleet.metal,
                     atPeace: fleet.atPeace,
                     pbb: fleet.pbb,
+                    ...(fleet.artifacts.length > 0 ? { artifacts: artifactInfos(fleet.artifacts) } : {}),
                     fontColor: this.getFontColorWithPlayer(fleet.player)
                 }
             )

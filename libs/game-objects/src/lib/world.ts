@@ -4,6 +4,7 @@ import { Player } from './player';
 import { createBracketAndCommarStringWithStringArray } from './utils';
 import { FleetMovement } from './fleet-movement';
 import { NumberKey } from './number-key.interface';
+import { Artifact, artifactKind, artifactName } from './classic-artifacts';
 
 export function worldWithNumber(worlds: Array<World>, number: number): World {
     let aResult: World = null;
@@ -27,6 +28,11 @@ export function worldWithName(worlds: Array<World>, name: string): World {
     return aResult;
 }
 
+/** Artefakte für Karte und Frontend: Nummer und Name. */
+export function artifactInfos(artifacts: Array<Artifact>): Array<{ number: number; name: string }> {
+    return artifacts.map(artifact => ({ number: artifact.number, name: artifactKind(artifact.type).name }));
+}
+
 /** Classic-Werte einer Welt, wie sie an die Karte im Frontend geliefert werden. */
 export interface ClassicWorldInfo {
     blackHole: boolean;
@@ -40,6 +46,8 @@ export interface ClassicWorldInfo {
     pShips: number;
     plunderCount: number;
     plunderRecovery: number;
+    /** Artefakte auf der Welt (Nummer und Name). */
+    artifacts?: Array<{ number: number; name: string }>;
     /** Wie oft der Empfänger des Berichts hier schon Konsumgüter entladen hat (nur Trader). */
     ownConsumerGoods?: number;
 }
@@ -73,6 +81,8 @@ export class World implements NumberKey {
     plunderRecovery = 0;
     /** Trader: wie oft jeder Trader hier Konsumgüter entladen hat (wird gespeichert). */
     consumerGoodsBy: { [playerName: string]: number } = {};
+    /** Artefakte auf der Welt; sie gehören dem Eigner der Welt. */
+    artifacts: Array<Artifact> = [];
 
     // Rundenzustand der Classic-Wirtschaft, wird nicht gespeichert und am Rundenende zurückgesetzt.
     /** Metall, das in dieser Runde entladen wurde und erst nächste Runde zum Bauen bereitsteht. */
@@ -167,7 +177,7 @@ export class World implements NumberKey {
     isClassic(): boolean {
         return this.blackHole || this.population > 0 || this.populationLimit > 0 || this.industry > 0
             || this.metal > 0 || this.mines > 0 || this.iShips > 0 || this.pShips > 0 || this.turnsOwned > 0
-            || this.plunderCount > 0;
+            || this.plunderCount > 0 || this.artifacts.length > 0;
     }
 
     /** Werte der Welt für Bericht und Karte, null im Core Game. */
@@ -187,6 +197,7 @@ export class World implements NumberKey {
             pShips: this.pShips,
             plunderCount: this.plunderCount,
             plunderRecovery: this.plunderRecovery,
+            ...(this.artifacts.length > 0 ? { artifacts: artifactInfos(this.artifacts) } : {}),
         };
     }
 
@@ -262,6 +273,10 @@ export class World implements NumberKey {
                 }
             }
             desc += ')';
+        }
+
+        if (this.artifacts.length > 0) {
+            desc += `\n   Artefakte: ${this.artifacts.map(artifactName).join(', ')}`;
         }
 
         for (const event of this.events) {

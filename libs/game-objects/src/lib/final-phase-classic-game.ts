@@ -6,6 +6,7 @@ import { Fleet } from './fleet';
 import { ambushDamage, applyGroundShots, destroyShips, dropPbb, resetCombatTurn } from './classic-combat';
 import { PBB_MIN_SHIPS, PBB_SHIP_COST } from './classic-combat-commands';
 import { capFleetMetal } from './classic-trader';
+import { artifactName, isPandora, removeArtifact, scatterArtifacts } from './classic-artifacts';
 import { CLASSIC_PLUNDER_RECOVERY, CLASSIC_POPULATION_GROWTH, CLASSIC_TURNS_OWNED_CYCLE, resetEconomyTurn } from './classic-economy';
 import {
     PENALTY_PER_PBB, PENALTY_PER_PLUNDER, PENALTY_PER_POPULATION_KILLED, PenaltyKind, addPenalty, raiderPlunderPoints, turnPoints
@@ -94,6 +95,10 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         fleet.ships = 0;
         fleet.metal = 0;
         fleet.pbb = false;
+        if (fleet.artifacts.length > 0) {
+            world.addEvent(`Artefakte von ${fleet.name()} über die Galaxie verstreut: ${fleet.artifacts.map(artifactName).join(', ')}`);
+            scatterArtifacts(fleet.artifacts.splice(0), this.worlds, this.random);
+        }
         const safeWorlds = this.worlds.filter(w => w.blackHole === false);
         if (safeWorlds.length > 0) {
             world.fleets.splice(world.fleets.indexOf(fleet), 1);
@@ -139,6 +144,43 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
             }
             // Mehr als dreimal so stark kann nur ein Raider je Welt sein.
             return;
+        }
+    }
+
+    /**
+     * Pandora's Box wirkt jede Runde, in der sie jemandem gehört, je nach Verhalten dieses Spiels:
+     * +1 Industrie bzw. +1 Mine auf der Welt, auf (bzw. über) der sie liegt, wenn die Welt ihrem Besitzer gehört;
+     * oder sie zerstört die Flotte, an der sie hängt, samt Schiffen und taucht woanders wieder auf.
+     */
+    openPandorasBox() {
+        for (const world of this.worlds) {
+            const holders = [world, ...world.fleets];
+            for (const holder of holders) {
+                const box = holder.artifacts.find(isPandora);
+                if (box === undefined || holder.player === null) {
+                    continue;
+                }
+                const owner = holder.player;
+                if (box.pandora === 'selfDestruct') {
+                    if (holder instanceof Fleet) {
+                        world.addReportPlayer(owner);
+                        world.addEvent(`${artifactName(box)} zerstört ${holder.name()} mit ${holder.ships} Schiffen`);
+                        holder.ships = 0;
+                        holder.metal = 0;
+                        holder.pbb = false;
+                        removeArtifact(holder, box);
+                        scatterArtifacts([box], this.worlds, this.random);
+                    }
+                } else if (world.player === owner && world.blackHole === false) {
+                    if (box.pandora === 'industry') {
+                        world.industry += 1;
+                    } else {
+                        world.mines += 1;
+                    }
+                    classicLog(`${artifactName(box)} auf ${world.name}: +1 ${box.pandora === 'industry' ? 'Industrie' : 'Mine'}`);
+                }
+                return;
+            }
         }
     }
 
@@ -204,6 +246,7 @@ export class FinalPhaseClassicGame extends FinalPhaseCoreGame {
         }
         this.buildPbbs();
         this.completeGifts();
+        this.openPandorasBox();
         for (const world of this.worlds) {
             this.endEconomy(world);
             this.applyPlunder(world);

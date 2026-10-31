@@ -10,6 +10,7 @@ import {
     BuildDefaultIShips, TransferShipsClassic, SetAtPeace, SetRelation, RelationKind, GiveFleet, GiveWorld,
     PlunderWorld
 } from './classic-commands';
+import { HookArtifact, DropArtifact } from './classic-artifact-commands';
 import { ClassicFire, ClassicProbe, BuildPbb, DropPbb, ResolveConditionalFire, ResolveProbes, Shooter, FireTarget } from './classic-combat-commands';
 import { CommandError, NotInCoreGame_Error, NotInClassicGame_Error, UnknownCommand_Error } from './error';
 
@@ -593,6 +594,12 @@ export class CommandFactory {
                     ? new ClassicProbe(worldWithNumber(this.worlds, numbers[0]), this.commandChars.charAt(0) as 'I' | 'P',
                         worldWithNumber(this.worlds, numbers[1]), this.probeOrders, text, player)
                     : null;
+            case 'VF':
+                return numbers.length === 2
+                    ? new HookArtifact(this.worlds, numbers[0], this.fleetAndWorld(numbers[1]).fleet, text, player)
+                    : null;
+            case 'VW':
+                return numbers.length === 1 ? new DropArtifact(this.worlds, numbers[0], text, player) : null;
             case 'WX':
                 return numbers.length === 1 ? new PlunderWorld(worldWithNumber(this.worlds, numbers[0]), text, player) : null;
             case 'FB':

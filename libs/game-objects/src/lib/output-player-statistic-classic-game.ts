@@ -1,3 +1,4 @@
+import { artifactPoints, ownedArtifacts } from './classic-artifacts';
 import { Player, isWorldOwnedByPlayer, isFleetOwnedByPlayer, CHARACTER_TYPE_NAMES } from './player';
 import { World } from './world';
 
@@ -14,10 +15,15 @@ export class OutputPlayerStatisticClassicGame {
     fleetCount = 0;
     shipsOnFleets = 0;
     pbbCount = 0;
+    artifactCount = 0;
+    artifactPoints = 0;
 
     constructor(private worlds: Array<World>, private player: Player) { }
 
     calculateStatistic() {
+        const artifacts = ownedArtifacts(this.player, this.worlds);
+        this.artifactCount = artifacts.length;
+        this.artifactPoints = artifacts.reduce((sum, artifact) => sum + artifactPoints(this.player, artifact), 0);
         for (const world of this.worlds) {
             if (isWorldOwnedByPlayer(this.player, world)) {
                 this.worldsCount++;
@@ -55,6 +61,9 @@ export class OutputPlayerStatisticClassicGame {
             desc += ` | PBB: ${this.pbbCount}`;
         }
         desc += '\n';
+        if (this.artifactCount > 0) {
+            desc += `Artefakte: ${this.artifactCount} | Artefakt-Punkte je Runde: ${this.artifactPoints}\n`;
+        }
         desc += `Verbündete: ${this.names(this.player.allies)} | Loader: ${this.names(this.player.loaders)}\n`;
         return desc;
     }

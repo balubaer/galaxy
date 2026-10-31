@@ -1,4 +1,5 @@
 import { FleetPersist } from './fleet-persist.interface';
+import type { Artifact } from './classic-artifacts';
 
 export interface WorldPersist {
     number: number;
@@ -20,4 +21,5 @@ export interface WorldPersist {
     plunderRecovery?: number;
     /** Trader: Konsumgüter-Entladungen je Trader. */
     consumerGoodsBy?: { [playerName: string]: number };
+    artifacts?: Array<Artifact>;
 }

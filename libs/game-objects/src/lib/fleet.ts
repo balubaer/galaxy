@@ -3,6 +3,7 @@ import { FleetMovement } from './fleet-movement';
 import { World } from './world';
 import { Player } from './player';
 import { NumberKey } from './number-key.interface';
+import { Artifact, artifactName } from './classic-artifacts';
 
 export function fleetAndHomeWorldWithNumber(worlds: Array<World>, number: number): { fleet: Fleet, homeWorld: World} {
     let fleet: Fleet = null;
@@ -41,6 +42,8 @@ export class Fleet implements NumberKey {
     giftFrom: Player | null = null;
     /** Classic Game: Flotte trägt eine Planet Buster Bomb (wird gespeichert). */
     pbb = false;
+    /** Classic Game: angehängte Artefakte; sie gehören dem Eigner der Flotte. */
+    artifacts: Array<Artifact> = [];
     // Rundenzustand des Classic-Kampfs, wird nicht gespeichert.
     /** Schüsse auf diese Flotte, je feuernder Flotte bzw. Gruppe einzeln (Rundung je Feuernder). */
     incomingShots: Array<number> = [];
@@ -54,7 +57,6 @@ export class Fleet implements NumberKey {
 
 
 
-    //TODO: niklas Kunstwerke ... V70:Plastik Mondstein
     //TODO: niklas schenken
 
     player: Player = null;
@@ -112,6 +114,9 @@ export class Fleet implements NumberKey {
         }
         if (this.pbb === true) {
             infoArray.push('PBB');
+        }
+        if (this.artifacts.length > 0) {
+            infoArray.push(`Artefakte: ${this.artifacts.map(artifactName).join(', ')}`);
         }
         if (this.fired === true) {
             if (this.firedBy !== null && this.firedBy !== this.player) {

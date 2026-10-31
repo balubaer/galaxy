@@ -1,3 +1,5 @@
+import type { Artifact } from './classic-artifacts';
+
 export interface FleetPersist {
     number: number;
     ships: number;
@@ -7,4 +9,5 @@ export interface FleetPersist {
     metal?: number;
     atPeace?: boolean;
     pbb?: boolean;
+    artifacts?: Array<Artifact>;
 }

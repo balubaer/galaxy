@@ -1,5 +1,6 @@
 import { World } from './world';
 import { Player } from './player';
+import { artifactTurnPoints } from './classic-artifacts';
 
 // Punkte und Strafen des Classic Games (Handbuch "Character Types and Scoring").
 /** Emperor: 1 Punkt je 10 Bevölkerung einer Welt, je Industrie und je Mine. */
@@ -36,8 +37,13 @@ function ownsFleets(player: Player, worlds: Array<World>): number {
     return worlds.reduce((sum, world) => sum + world.fleets.filter(fleet => fleet.player === player).length, 0);
 }
 
-/** Punkte dieser Runde aus dem Besitz am Rundenende, je nach Charakter. */
+/** Punkte dieser Runde aus dem Besitz am Rundenende: je nach Charakter, dazu die Artefakte. */
 export function turnPoints(player: Player, worlds: Array<World>): number {
+    return characterTurnPoints(player, worlds) + artifactTurnPoints(player, worlds);
+}
+
+/** Punkte aus dem Besitz von Welten bzw. Flotten, je nach Charakter (ohne Artefakte). */
+export function characterTurnPoints(player: Player, worlds: Array<World>): number {
     switch (player.characterType) {
         case 'emperor':
             return worlds

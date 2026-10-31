@@ -35,3 +35,5 @@ export * from './lib/classic-scoring';
 export * from './lib/output-player-statistic-classic-game';
 export * from './lib/classic-trader';
 export * from './lib/classic-character-info';
+export * from './lib/classic-artifacts';
+export * from './lib/classic-artifact-commands';

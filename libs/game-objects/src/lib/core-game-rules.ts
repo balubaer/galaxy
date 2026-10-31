@@ -60,16 +60,22 @@ export function keepHiddenGamePref(newPref: GamePref, storedPref: GamePref): Gam
 }
 
 /**
- * Prüft nach einer Runde, ob ein Spieler die Zielpunktzahl erreicht hat.
- * Sieger ist der Spieler mit den meisten Punkten (bei Gleichstand alle, mit Komma getrennt).
+ * Prüft nach einer Runde, ob ein Spieler die Zielpunktzahl erreicht hat. Dann gibt es die Boni am Spielende
+ * (endBonus, z. B. Artefakt-Sätze im Classic Game), und Sieger ist der Spieler mit den meisten Punkten
+ * (bei Gleichstand alle, mit Komma getrennt).
  */
-export function checkGameEnd(gamePref: GamePref, players: Iterable<Player>): void {
+export function checkGameEnd(gamePref: GamePref, players: Iterable<Player>, endBonus?: (player: Player) => number): void {
     if (gamePref.targetScore === undefined || gamePref.finished) {
         return;
     }
     const all = Array.from(players);
-    const best = Math.max(...all.map(p => p.points ?? 0));
-    if (best >= gamePref.targetScore) {
+    if (Math.max(...all.map(p => p.points ?? 0)) >= gamePref.targetScore) {
+        if (endBonus !== undefined) {
+            for (const player of all) {
+                player.points = (player.points ?? 0) + endBonus(player);
+            }
+        }
+        const best = Math.max(...all.map(p => p.points ?? 0));
         gamePref.finished = true;
         gamePref.winner = all.filter(p => (p.points ?? 0) === best).map(p => p.playerName).join(', ');
     }

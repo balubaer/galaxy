@@ -1,4 +1,5 @@
 import { World } from './world';
+import { placeArtifacts } from './classic-artifacts';
 import { CharacterType, PLAYABLE_CHARACTER_TYPES, isCharacterType } from './player';
 import {
     CLASSIC_BLACK_HOLE_RATIO, CLASSIC_HOME_METAL, CLASSIC_HOME_MINES, CLASSIC_HOME_POPULATION, CLASSIC_HOME_POPULATION_LIMIT,
@@ -38,6 +39,7 @@ export class ClassicWorldFactory {
         }
         this.placeBlackHoles(worlds, homeWorlds);
         this.moveFleetsOffBlackHoles(worlds);
+        placeArtifacts(worlds, homeWorlds.length, this.random);
     }
 
     /** Die Flottenschlüssel liegen zu Spielbeginn nie in einem Schwarzen Loch. */

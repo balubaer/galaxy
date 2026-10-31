@@ -78,6 +78,9 @@ export class PersistenceManager {
         if (Object.keys(world.consumerGoodsBy).length > 0) {
             result.consumerGoodsBy = { ...world.consumerGoodsBy };
         }
+        if (world.artifacts.length > 0) {
+            result.artifacts = world.artifacts.map(artifact => ({ ...artifact }));
+        }
         return result;
     }
 
@@ -151,6 +154,9 @@ export class PersistenceManager {
         if (aFleet.pbb) {
             result.pbb = true;
         }
+        if (aFleet.artifacts.length > 0) {
+            result.artifacts = aFleet.artifacts.map(artifact => ({ ...artifact }));
+        }
         return result;
     }
 
@@ -223,6 +229,7 @@ export class PersistenceManager {
             world.plunderCount = worldPersist.plunderCount ?? 0;
             world.plunderRecovery = worldPersist.plunderRecovery ?? 0;
             world.consumerGoodsBy = { ...(worldPersist.consumerGoodsBy ?? {}) };
+            world.artifacts = (worldPersist.artifacts ?? []).map(artifact => ({ ...artifact }));
             this.worldArray.push(world);
             this.worldDict.set(worldPersist.number, world);
         }
@@ -251,6 +258,7 @@ export class PersistenceManager {
             }
             fleet.moved = fleetPersist.moved;
             fleet.metal = fleetPersist.metal ?? 0;
+            fleet.artifacts = (fleetPersist.artifacts ?? []).map(artifact => ({ ...artifact }));
             fleet.atPeace = fleetPersist.atPeace ?? false;
             fleet.pbb = fleetPersist.pbb ?? false;
             this.fleetDict.set(fleetPersist.number, fleet);
