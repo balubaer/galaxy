@@ -412,6 +412,18 @@
         Welten festhalten
       </label>
     </div>
+    <div class="control-row">
+      <label title="Orange gestrichelte Pfeile: wer in der letzten Runde auf wen gefeuert hat">
+        <input type="checkbox" [checked]="showFire" (change)="toggleFire()" />
+        Feuer der letzten Runde
+      </label>
+    </div>
+    <div class="control-row">
+      <label title="Rote Pfeile: die Feuerbefehle, die gerade im Befehlsfeld stehen">
+        <input type="checkbox" [checked]="showPlannedFire" (change)="togglePlannedFire()" />
+        Neue Feuerbefehle
+      </label>
+    </div>
   </fieldset>
 
   <fieldset class="control-group">
@@ -484,6 +496,7 @@
         [nodes]="turnData.nodes"
         [ownColor]="ownColor"
         [players]="otherPlayerNames"
+        [classic]="isClassic"
         [characterType]="turnData.characterType ?? null"
         [collectorColors]="collectorColors"
         [commandText]="form.value.Commands"
@@ -505,7 +518,6 @@
         [links]="turnData.links"
         [ownColor]="ownColor"
         [players]="otherPlayerNames"
-        [classic]="isClassic"
         [characterType]="turnData.characterType ?? null"
         [collectorColors]="collectorColors"
         [commandText]="form.value.Commands"

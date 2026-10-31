@@ -69,6 +69,8 @@ interface OrderArrow {
   worlds: string[];
   fromFleet?: number;
   toFleet?: number;
+  /** Feuer auf den Boden: I-Schiffe/Industrie, P-Schiffe/Bevölkerung oder beides. */
+  ground?: GroundTarget;
   label: string;
 }
 
@@ -79,8 +81,37 @@ const ORDER_COLORS: Record<OrderArrow['kind'], string> = {
   fire: '#c62828',
 };
 
-/** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace) für Tooltips. */
-export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean }): string {
+type GroundTarget = 'I' | 'P' | 'H';
+
+// Lage der InfoBox einer Classic-Welt (relativ zur Welt): Die Zeile mit I- und P-Schiffen
+// ist zugleich Ziel für Feuer auf den Boden.
+const INFO_BOX_TOP = 28;
+const INFO_LINE_HEIGHT = 5.5;
+const INFO_BOX_WIDTH = 40;
+const GROUND_LINE = 3;
+const GROUND_LINE_MIDDLE = INFO_BOX_TOP + 1.5 + GROUND_LINE * INFO_LINE_HEIGHT + INFO_LINE_HEIGHT / 2;
+
+/** Punkt, auf den ein Pfeil für Feuer auf den Boden zeigt: I- bzw. P-Feld der InfoBox, sonst die Welt. */
+function groundTargetPosition(world: Node, target: GroundTarget | null): Point {
+  const x = world.x ?? 0;
+  const y = world.y ?? 0;
+  if (!target || !world.data?.classic || world.data.classic.blackHole) {
+    return { x, y };
+  }
+  const dx = target === 'I' ? -INFO_BOX_WIDTH / 4 : target === 'P' ? INFO_BOX_WIDTH / 4 : 0;
+  return { x: x + dx, y: y + GROUND_LINE_MIDDLE };
+}
+
+/** Bodenziel aus dem Bericht ("I-Schiffe und Industrie W6", "P-Schiffe und Bevölkerung W6", "I- und P-Schiffe W6"). */
+function groundTargetOf(firesTo: string): GroundTarget | null {
+  return firesTo.startsWith('I-Schiffe') ? 'I' : firesTo.startsWith('P-Schiffe') ? 'P' : firesTo.startsWith('I- und P') ? 'H' : null;
+}
+
+/** Farbe der Schüsse der letzten Runde (geplante Feuerbefehle sind rot). */
+const FIRE_COLOR = '#ff6f00';
+
+/** Flottenlabel mit den Classic-Angaben (Metall, PBB, At Peace, Feuer) für Tooltips. */
+export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean; atPeace?: boolean; firesTo?: string }): string {
   const parts = [fleet.label ?? ''];
   if (fleet.metal) {
     parts.push(`Metall ${fleet.metal}`);
@@ -90,6 +121,9 @@ export function fleetInfo(fleet: { label?: string; metal?: number; pbb?: boolean
   }
   if (fleet.atPeace) {
     parts.push('At Peace');
+  }
+  if (fleet.firesTo) {
+    parts.push(`feuerte auf ${fleet.firesTo}`);
   }
   return parts.join(', ');
 }
@@ -128,6 +162,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   force: any;
     
   fixEnabled = false;
+  /** Schüsse der letzten Runde als Pfeile auf der Karte zeigen. */
+  showFire = true;
+  /** Feuerbefehle aus dem Befehlsfeld als Pfeile zeigen, auch mit klassischer Steuerung. */
+  showPlannedFire = true;
   zoom = 1;
 
   round = 0;
@@ -285,7 +323,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const delnodes = svgv7.selectAll('.nodes');
     delnodes.remove();
     svgv7.selectAll('.hidden-link').remove();
-    svgv7.selectAll('g.orders').remove();
+    svgv7.selectAll('g.orders, g.fire-shots').remove();
   }
 
   /** Zeichnet die Karte; ohne Sicherung werden die Welten auf Ringen um die gewählte Welt verteilt. */
@@ -382,6 +420,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       keepNodesInArea(th.turnData.nodes, width, height, margin);
       map.render();
       th.renderPrevMap?.();
+      th.renderFire();
       th.renderOrders();
     }
     th.force.on('tick', render);
@@ -554,11 +593,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         `I ${info.iShips} · P ${info.pShips}`,
         ...(info.plunderRecovery > 0 ? [`geplündert, noch ${info.plunderRecovery} Rd.`] : []),
       ];
-      const lineHeight = 5.5;
-      const boxWidth = 40;
+      const lineHeight = INFO_LINE_HEIGHT;
+      const boxWidth = INFO_BOX_WIDTH;
       const boxHeight = lines.length * lineHeight + 3;
       // Die Flotten liegen bis ca. 25 unterhalb des Mittelpunkts, die Box beginnt darunter.
-      const boxTop = 28;
+      const boxTop = INFO_BOX_TOP;
       const box = d3.select(this).append('g').attr('class', 'info-box');
       box.append('title').text(`${d.id}: ${lines.join(', ')}, Besitz seit ${info.turnsOwned}`);
       box
@@ -572,16 +611,43 @@ export class HomeComponent implements OnInit, OnDestroy {
         .style('fill-opacity', 0.9)
         .style('stroke', '#999')
         .style('stroke-width', 0.4);
+      const lineY = (index: number) => boxTop + 1.5 + (index + 1) * lineHeight - 1.5;
       lines.forEach((line, index) => {
+        if (index === GROUND_LINE) {
+          return;
+        }
         box
           .append('text')
           .attr('x', -boxWidth / 2 + 2)
-          .attr('y', boxTop + 1.5 + (index + 1) * lineHeight - 1.5)
+          .attr('y', lineY(index))
           .attr('font-family', 'sans-serif')
           .attr('font-size', 4)
           .attr('fill', '#222')
           .text(line);
       });
+      // I- und P-Schiffe als eigene Felder: Ziel, wenn man eine Flotte zum Feuern darauf zieht.
+      for (const [target, text, left] of [
+        ['I', `I ${info.iShips}`, -boxWidth / 2],
+        ['P', `P ${info.pShips}`, 0],
+      ] as const) {
+        const field = box.append('g').attr('class', 'ground-target').attr('data-target', target);
+        field
+          .append('rect')
+          .attr('x', left + 0.5)
+          .attr('y', boxTop + 1.5 + GROUND_LINE * lineHeight)
+          .attr('width', boxWidth / 2 - 1)
+          .attr('height', lineHeight)
+          .attr('rx', 1)
+          .style('fill', 'transparent');
+        field
+          .append('text')
+          .attr('x', left + 2)
+          .attr('y', lineY(GROUND_LINE))
+          .attr('font-family', 'sans-serif')
+          .attr('font-size', 4)
+          .attr('fill', '#222')
+          .text(text);
+      }
     });
 
     // Vor der Simulation sind die Enden der Verbindungen noch Welten-Ids.
@@ -801,6 +867,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.modern && !!this.turnData && this.changeround === this.round;
   }
 
+  /** Befehlspfeile gibt es nur in der aktuellen Runde: alle mit Maussteuerung, sonst die Feuerbefehle. */
+  private get ordersActive(): boolean {
+    return this.mapControlActive || (this.showPlannedFire && !!this.turnData && this.changeround === this.round);
+  }
+
+  togglePlannedFire() {
+    this.showPlannedFire = !this.showPlannedFire;
+    this.updateOrders();
+  }
+
   setControlMode(mode: ControlMode) {
     this.controlMode = mode;
     try {
@@ -871,7 +947,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   /**
    * Eigene Flotte auf der Karte ziehen: auf eine Welt = Flug (kürzester Weg, bis 3 Sprünge),
-   * auf eine fremde Flotte derselben Welt = Feuern, auf eine eigene = Transfer. Klick = Flotte im Pult.
+   * auf eine fremde Flotte derselben Welt = Feuern, auf I- bzw. P-Schiffe der fremden Welt (InfoBox) =
+   * Feuern auf den Boden, auf eine eigene Flotte = Transfer. Klick = Flotte im Pult.
    */
   private fleetDrag() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -886,6 +963,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       .on('start', function (this: SVGGElement, event: any, d: any) {
         start = { x: event.x, y: event.y };
         reach = reachableWorlds(th.turnData.links, d.id);
+        // Auf einer fremden Welt sind I- und P-Schiffe mögliche Ziele.
+        if (d.data?.backgroundColor !== th.ownColor) {
+          d3.select(this.parentNode as SVGGElement)
+            .selectAll('.ground-target rect')
+            .style('stroke', ORDER_COLORS.fire)
+            .style('stroke-width', 0.6)
+            .style('stroke-dasharray', '1,0.6');
+        }
         line = th
           .ordersLayer()
           .append('line')
@@ -908,6 +993,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .on('end', function (this: SVGGElement, event: any, d: any) {
         line?.remove();
         line = null;
+        d3.select(this.parentNode as SVGGElement).selectAll('.ground-target rect').style('stroke', null);
         const fleet = +(this.getAttribute('data-fleet') ?? 0);
         th.node = d;
         th.highlightRoute();
@@ -928,6 +1014,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     const source = event.sourceEvent;
     const point = source?.changedTouches?.[0] ?? source;
     const element = point ? document.elementFromPoint(point.clientX, point.clientY) : null;
+    const groundElement = element?.closest('g.ground-target') as SVGGElement | null;
+    const groundWorld = groundElement?.closest('g.nodes') as SVGGElement | null;
+    if (groundElement && groundWorld && (d3.select(groundWorld).datum() as Node)?.id === world.id) {
+      this.applyMapCommand(world, `F${fleet}A${groundElement.getAttribute('data-target')}`);
+      return;
+    }
     const fleetElement = element?.closest('g.fleet') as SVGGElement | null;
     if (fleetElement && (d3.select(fleetElement).datum() as Node)?.id === world.id) {
       const other = +(fleetElement.getAttribute('data-fleet') ?? 0);
@@ -942,7 +1034,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     const target = this.worldAt(event.x, event.y);
     if (!target || target.id === world.id) {
-      this.showMapHint('Flotte auf eine Welt (Flug), eine fremde Flotte (Feuern) oder eine eigene Flotte (Transfer) ziehen.');
+      this.showMapHint(
+        'Flotte auf eine Welt (Flug), eine fremde Flotte oder die I-/P-Schiffe einer fremden Welt (Feuern) oder eine eigene Flotte (Transfer) ziehen.'
+      );
       return;
     }
     const path = shortestRoute(this.turnData.links, world.id, target.id);
@@ -1021,11 +1115,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   /** Liest die geplanten Flüge, Sonden, Migrationen und Feuerbefehle aus dem Befehlstext. */
   updateOrders(text: string = this.form.value.Commands) {
     const nodes = this.turnData?.nodes ?? [];
-    const commands = this.mapControlActive ? splitCommands(text) : [];
+    const commands = this.ordersActive ? splitCommands(text ?? '') : [];
     this.orderArrows = [];
     for (const command of commands) {
       const fire = /^(?:F(\d+)|[DIP](\d+))[AC]F(\d+)$/.exec(command);
       if (fire) {
+        if (!this.showPlannedFire) {
+          continue;
+        }
         const world = fire[1] ? fleetWorld(nodes, +fire[1]) : `W${fire[2]}`;
         if (world) {
           this.orderArrows.push({
@@ -1039,7 +1136,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         }
         continue;
       }
-      const worlds = commandPath(command, nodes);
+      const ground = /^F(\d+)[AC]([IPH])$/.exec(command);
+      if (ground) {
+        const world = fleetWorld(nodes, +ground[1]);
+        if (world && this.showPlannedFire) {
+          this.orderArrows.push({
+            command,
+            kind: 'fire',
+            worlds: [world],
+            fromFleet: +ground[1],
+            ground: ground[2] as GroundTarget,
+            label: '',
+          });
+        }
+        continue;
+      }
+      const worlds = this.mapControlActive ? commandPath(command, nodes) : [];
       if (worlds.length >= 2) {
         const category = describeCommand(command).category;
         const kind = category === 'move' ? 'move' : category === 'probe' ? 'probe' : 'migration';
@@ -1060,21 +1172,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   /** Zeichnet die Befehlspfeile an den aktuellen Positionen der Welten. */
   renderOrders() {
     const svg = d3.select('svg#v7');
-    if (!this.mapControlActive) {
+    if (!this.ordersActive) {
       svg.selectAll('g.orders, defs.order-defs').remove();
       return;
     }
     const layer = this.ordersLayer();
     const byId = new Map((this.turnData?.nodes ?? []).map((n) => [n.id, n]));
-    const fleetPosition = (fleet: number | undefined) => {
-      for (const node of byId.values()) {
-        const found = (node.data?.fleets ?? []).find((f: any) => new RegExp(`^F${fleet}=`).test(f.label ?? ''));
-        if (found) {
-          return { x: (node.x ?? 0) + found.x * 0.3, y: (node.y ?? 0) + found.y * 0.3 };
-        }
-      }
-      return undefined;
-    };
+    const fleetPosition = (fleet: number | undefined) => fleetPositionOnMap(byId.values(), fleet);
     const hovered = this.hoveredCommand;
     const arrows = layer
       .selectAll<SVGGElement, OrderArrow>('g.order')
@@ -1100,7 +1204,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (d.kind === 'fire') {
           const world = byId.get(d.worlds[0]);
           const from = d.fromFleet !== undefined ? fleetPosition(d.fromFleet) : world && { x: world.x ?? 0, y: world.y ?? 0 };
-          const to = fleetPosition(d.toFleet);
+          const to = d.ground ? world && groundTargetPosition(world, d.ground) : fleetPosition(d.toFleet);
           if (from && to) {
             points.push(from, to);
           }
@@ -1120,7 +1224,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const width = (d.kind === 'move' ? 1.6 : 1.2) * (d.command === hovered ? 2 : 1);
         group
           .select('path')
-          .attr('d', points.length >= 2 ? curvedPath(points, d.kind === 'fire' ? 0 : 11) : null)
+          .attr('d', points.length >= 2 ? curvedPath(points, d.kind === 'fire' ? (d.ground ? 1 : 0) : 11) : null)
           .style('stroke', ORDER_COLORS[d.kind])
           .style('stroke-width', width)
           .style('stroke-dasharray', d.kind === 'probe' ? '2,2' : d.kind === 'migration' ? '4,2' : null)
@@ -1148,6 +1252,81 @@ export class HomeComponent implements OnInit, OnDestroy {
       .merge(ring)
       .attr('cx', (d) => d.x ?? 0)
       .attr('cy', (d) => d.y ?? 0);
+  }
+
+  toggleFire() {
+    this.showFire = !this.showFire;
+    this.renderFire();
+  }
+
+  /**
+   * Zeichnet die Schüsse der letzten Runde: Flotte auf Flotte, Flotte auf den Boden bzw. die
+   * D-Schiffe (Pfeil in die Welt) und D-/I-/P-Schiffe einer Welt auf eine Flotte.
+   */
+  renderFire() {
+    const svg = d3.select('svg#v7');
+    const nodes = this.turnData?.nodes ?? [];
+    const shots: Array<{ from: Point; to: Point; intoWorld: boolean }> = [];
+    if (this.showFire) {
+      for (const node of nodes) {
+        const world = { x: node.x ?? 0, y: node.y ?? 0 };
+        for (const fleet of node.data?.fleets ?? []) {
+          if (!fleet.firesTo) {
+            continue;
+          }
+          const from = { x: world.x + fleet.x * 0.3, y: world.y + fleet.y * 0.3 };
+          const target = /^F(\d+)/.exec(fleet.firesTo);
+          const ground = groundTargetOf(fleet.firesTo);
+          // PBB und D-Schiffe: Pfeil in die Welt, I-/P-Schiffe: auf ihr Feld in der InfoBox.
+          const to = target ? fleetPositionOnMap(nodes, +target[1]) : groundTargetPosition(node, ground);
+          if (to) {
+            shots.push({ from, to, intoWorld: !target && !ground });
+          }
+        }
+        for (const shot of node.data?.homeFire ?? []) {
+          const to = fleetPositionOnMap(nodes, shot.fleet);
+          if (to) {
+            shots.push({ from: world, to, intoWorld: false });
+          }
+        }
+      }
+    }
+    if (shots.length === 0) {
+      svg.selectAll('g.fire-shots').remove();
+      return;
+    }
+    if (svg.select('#fire-shot-arrow').empty()) {
+      svg
+        .append('defs')
+        .append('marker')
+        .attr('id', 'fire-shot-arrow')
+        .attr('viewBox', '0 0 10 10')
+        .attr('refX', 8)
+        .attr('refY', 5)
+        .attr('markerWidth', 4)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,0L10,5L0,10z')
+        .style('fill', FIRE_COLOR);
+    }
+    let layer = svg.select<SVGGElement>('g.fire-shots');
+    if (layer.empty()) {
+      layer = svg.append('g').attr('class', 'fire-shots').style('pointer-events', 'none');
+    }
+    layer.raise();
+    const paths = layer.selectAll<SVGPathElement, unknown>('path').data(shots);
+    paths.exit().remove();
+    paths
+      .enter()
+      .append('path')
+      .style('fill', 'none')
+      .style('stroke', FIRE_COLOR)
+      .style('stroke-width', 1)
+      .style('stroke-dasharray', '1.5,1')
+      .attr('marker-end', 'url(#fire-shot-arrow)')
+      .merge(paths)
+      .attr('d', (d) => curvedPath([d.from, d.to], d.intoWorld ? 10 : 1));
   }
 
   /** Im Befehlsfeld steht Text, der noch nicht gespeichert ist. */
@@ -1387,6 +1566,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.savedFeedbackTimer = setTimeout(() => (this.savedFeedback = false), 2500);
   }
 
+}
+
+type Point = { x: number; y: number };
+
+/** Position der Flotte auf der Karte (Ellipse neben ihrer Welt), undefined wenn sie nicht zu sehen ist. */
+function fleetPositionOnMap(nodes: Iterable<Node>, fleet: number | undefined): Point | undefined {
+  for (const node of nodes) {
+    const found = (node.data?.fleets ?? []).find((f: any) => new RegExp(`^F${fleet}=`).test(f.label ?? ''));
+    if (found) {
+      return { x: (node.x ?? 0) + found.x * 0.3, y: (node.y ?? 0) + found.y * 0.3 };
+    }
+  }
+  return undefined;
 }
 
 /** Weg durch die Punkte, jeder Abschnitt leicht gebogen, damit er neben der Verbindungslinie liegt. */

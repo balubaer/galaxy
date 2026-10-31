@@ -218,9 +218,9 @@
       }
     </section>
 
-    @if (enemies.length > 0) {
+    @if (enemies.length > 0 || groundTargets.length > 0) {
       <section>
-        <h4>Fremde Flotten <span class="hint">eigene Flotte hierher ziehen = feuern</span></h4>
+        <h4>Ziele <span class="hint">eigene Flotte hierher ziehen = feuern</span></h4>
         <div class="cards">
           @for (enemy of enemies; track enemy.number) {
             <button
@@ -243,6 +243,24 @@
               </div>
               <div class="ships">{{ enemy.ships }}</div>
               <div class="ships-label">✸ Ziel</div>
+            </button>
+          }
+          @for (tile of groundTargets; track tile.target) {
+            <button
+              type="button"
+              class="card enemy-card ground-card"
+              [class.drop-ok]="dragging && canDrop({ type: 'ground', target: tile.target })"
+              [class.drop-hover]="dropHover === 'ground' + tile.target"
+              [disabled]="readonly || activeFleet === null"
+              [title]="(activeFleet !== null ? 'F' + activeFleet + ' feuert auf ' : 'Eigene Flotte hierher ziehen: feuern auf ') + tile.label + ' (' + tile.hint + ')'"
+              (click)="fireAtGround(tile.target)"
+              (dragover)="onDragOver($event, { type: 'ground', target: tile.target })"
+              (dragleave)="onDragLeave({ type: 'ground', target: tile.target })"
+              (drop)="onDrop($event, { type: 'ground', target: tile.target })"
+            >
+              <div class="card-top"><span class="card-name">{{ tile.label }}</span></div>
+              <div class="ships">{{ tile.ships }}</div>
+              <div class="ships-label">✸ {{ node.id }}</div>
             </button>
           }
         </div>

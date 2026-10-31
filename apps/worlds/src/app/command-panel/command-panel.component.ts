@@ -82,6 +82,7 @@ type DragItem = { type: 'fleet'; fleet: number } | { type: 'D' | 'I' | 'P' };
 type DropTarget =
   | { type: 'fleet'; fleet: number }
   | { type: 'enemy'; fleet: number }
+  | { type: 'ground'; target: GroundTargetType }
   | { type: 'D' | 'I' | 'P' }
   | { type: 'world'; world: string };
 
@@ -91,6 +92,16 @@ interface AmountDialog {
   value: number;
   make: (n: number) => string;
   error?: string;
+}
+
+/** Feuer auf den Boden einer fremden Welt: I-, P-, I- und P-Schiffe (Classic) bzw. D-Schiffe. */
+type GroundTargetType = 'I' | 'P' | 'H' | 'D';
+
+interface GroundTile {
+  target: GroundTargetType;
+  label: string;
+  ships: number;
+  hint: string;
 }
 
 interface StockTile {
@@ -165,6 +176,8 @@ export class CommandPanelComponent implements OnChanges {
   broken: string[] = [];
   cards: FleetCard[] = [];
   enemies: WorldFleet[] = [];
+  /** Ziele auf dem Boden einer fremden Welt, auf die eigene Flotten feuern können. */
+  groundTargets: GroundTile[] = [];
   stock: StockTile[] = [];
   neighbours: string[] = [];
   worldActions: Action[] = [];
@@ -194,6 +207,7 @@ export class CommandPanelComponent implements OnChanges {
       this.projection = null;
       this.cards = [];
       this.enemies = [];
+      this.groundTargets = [];
       this.stock = [];
       this.neighbours = [];
       this.worldActions = [];
@@ -223,6 +237,18 @@ export class CommandPanelComponent implements OnChanges {
       this.activeAction = null;
     }
     this.enemies = p.fleets.filter((f) => !f.own);
+    this.groundTargets = [];
+    if (!p.isOwnWorld && this.cards.length > 0) {
+      if (p.classic && !p.classic.blackHole) {
+        this.groundTargets.push(
+          { target: 'I', label: 'I-Schiffe', ships: p.classic.iShips, hint: 'trifft auch Industrie' },
+          { target: 'P', label: 'P-Schiffe', ships: p.classic.pShips, hint: 'trifft auch Bevölkerung' },
+          { target: 'H', label: 'I + P', ships: p.classic.iShips + p.classic.pShips, hint: 'I- und P-Schiffe' },
+        );
+      } else if (!p.classic && (node.data?.dships ?? 0) > 0) {
+        this.groundTargets.push({ target: 'D', label: 'D-Schiffe', ships: node.data?.dships ?? 0, hint: 'Verteidigung der Welt' });
+      }
+    }
     this.stock = [];
     if (p.isOwnWorld && !p.classic) {
       this.stock.push({ type: 'D', label: 'D-Schiffe', ships: p.dships, before: node.data?.dships ?? 0 });
@@ -431,6 +457,8 @@ export class CommandPanelComponent implements OnChanges {
         return `${item.type}${item.fleet}`;
       case 'world':
         return `world${item.world}`;
+      case 'ground':
+        return `ground${item.target}`;
       default:
         return item.type;
     }
@@ -519,6 +547,8 @@ export class CommandPanelComponent implements OnChanges {
           return { title: `F${a} → ${target.type}-Schiffe`, max: this.fleetShips(a), make: (n) => `F${a}T${n}${target.type}` };
         case 'enemy':
           return { title: `F${a} feuert auf F${target.fleet}`, max: 0, make: () => `F${a}AF${target.fleet}` };
+        case 'ground':
+          return { title: `F${a} feuert auf ${this.groundLabel(target.target)}`, max: 0, make: () => `F${a}A${target.target}` };
         case 'world':
           return { title: `F${a} fliegt nach ${target.world}`, max: 0, make: () => `F${a}${target.world}` };
       }
@@ -597,6 +627,17 @@ export class CommandPanelComponent implements OnChanges {
     if (this.activeFleet !== null) {
       this.dropOn({ type: 'fleet', fleet: this.activeFleet }, { type: 'enemy', fleet: enemy });
     }
+  }
+
+  /** Klick auf ein Bodenziel, während eine eigene Flotte aufgeklappt ist: feuern. */
+  fireAtGround(target: GroundTargetType) {
+    if (this.activeFleet !== null) {
+      this.dropOn({ type: 'fleet', fleet: this.activeFleet }, { type: 'ground', target });
+    }
+  }
+
+  private groundLabel(target: GroundTargetType): string {
+    return target === 'H' ? 'I- und P-Schiffe' : `${target}-Schiffe`;
   }
 
   /** Klick auf eine Nachbarwelt: mit aufgeklappter Flotte hinfliegen, sonst die Welt ansehen. */
