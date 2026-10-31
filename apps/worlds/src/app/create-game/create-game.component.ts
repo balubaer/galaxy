@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
-  GamePref, GameType, PlayerColor, CharacterType, coreGameDefaults, classicGameDefaults, PLAYABLE_CHARACTER_TYPES, CHARACTER_TYPE_NAMES
+  GamePref, GameType, CharacterType, gameTypeOf, coreGameDefaults, classicGameDefaults, PLAYABLE_CHARACTER_TYPES, CHARACTER_TYPE_NAMES
 } from '@galaxy/game-objects';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../game-service.service';
-import { Observable, Subscribable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { GamePlayService } from '../player/game-play.service';
 import { UserService } from '../_services/user.service';
 
@@ -27,35 +27,62 @@ export class CreateGameComponent implements OnDestroy {
   players: Array<string> = [];
   /** Classic Game: gewählter Charakter je Spieler. */
   characterTypes: { [playerName: string]: CharacterType | 'random' } = {};
+  /** Gültige Charakterwahl aus user.json, hat Vorrang vor der gamePref.json. */
+  private userCharacterTypes: { [playerName: string]: CharacterType | 'random' } = {};
   characterTypeOptions = PLAYABLE_CHARACTER_TYPES.map(type => ({ value: type, name: CHARACTER_TYPE_NAMES[type] }));
   playerForm: FormGroup = this.fb.group({
     PlayerName: ['']
   });
-  playercolor$: Observable<Array<PlayerColor>>;
-  playercolorubscription: Subscription;
-  userSubscription: Subscription;
+  private readonly subscriptions = new Subscription();
 
   constructor(private fb: FormBuilder,
     private gameService: GameServiceService,
     private gamePlayService: GamePlayService,
     private userService: UserService
   ) {
-    this.playercolor$ = this.gamePlayService.getPlayerColor();
-    this.playercolorubscription = this.playercolor$.subscribe(aPlyerColor => {
-      for (const onePlayerColor of aPlyerColor) {
-        this.players.push(onePlayerColor.playername);
-      }
-      this.useDefaults();
-    })
-    // Vorbelegung mit dem Charakter, den der User bei der Registrierung gewählt hat.
-    this.userSubscription = this.userService.getAll().subscribe(users => {
+    // Vorbelegung mit der vorhandenen gamePref.json, ohne sie mit Spielern und Standardwerten des Spieltyps.
+    this.subscriptions.add(this.gameService.getGamePref().subscribe({
+      next: gamePref => this.useGamePref(gamePref),
+      error: () => this.useDefaultPlayers()
+    }));
+    // Vorbelegung mit dem Charakter, den der User bei der Registrierung gewählt hat (ungültige Werte zählen nicht).
+    this.subscriptions.add(this.userService.getAll().subscribe(users => {
       for (const user of users) {
-        if (user.characterType !== undefined && this.characterTypes[user.username] === undefined) {
-          this.characterTypes[user.username] = user.characterType as CharacterType | 'random';
+        const type = user.characterType;
+        if (type === 'random' || PLAYABLE_CHARACTER_TYPES.includes(type as CharacterType)) {
+          this.userCharacterTypes[user.username] = type as CharacterType | 'random';
         }
       }
-    });
+      this.characterTypes = { ...this.characterTypes, ...this.userCharacterTypes };
+    }));
 
+  }
+
+  /** Übernimmt Spieltyp, Werte, Spieler und Charaktere der gespeicherten Gamepref. */
+  useGamePref(gamePref: GamePref | null) {
+    if (!gamePref) {
+      this.useDefaultPlayers();
+      return;
+    }
+    this.players = [...(gamePref.player ?? [])];
+    this.characterTypes = { ...this.characterTypes, ...gamePref.characterTypes, ...this.userCharacterTypes };
+    this.form.patchValue({
+      GameType: gameTypeOf(gamePref),
+      PlayName: gamePref.playName,
+      DistanceLevelHomes: gamePref.distanceLevelHomes,
+      FleetCount: gamePref.fleetCount,
+      FleetsOnHomeWorld: gamePref.fleetsOnHomeWorld,
+      WorldsCount: gamePref.worldCount,
+      StartShipCount: gamePref.startShipCount
+    });
+  }
+
+  /** Ohne gamePref.json: alle Spieler mit Farbe und die Standardwerte des Spieltyps. */
+  useDefaultPlayers() {
+    this.subscriptions.add(this.gamePlayService.getPlayerColor().subscribe(aPlayerColor => {
+      this.players = aPlayerColor.map(onePlayerColor => onePlayerColor.playername);
+      this.useDefaults();
+    }));
   }
 
   useDefaults() {
@@ -73,8 +100,7 @@ export class CreateGameComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.playercolorubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
   onSubmitPlayer() {
