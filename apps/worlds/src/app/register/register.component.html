@@ -59,6 +59,7 @@
         <option [value]="option.value">{{ option.name }}</option>
       }
     </select>
+    <galaxy-character-info [characterType]="registerForm.value.characterType"></galaxy-character-info>
   </div>
   <h4 [hidden]="isPickerHidden">Bitte Farbe auswählen</h4>
   <button class="btn btn-default" (click)="showHideColorPicker()" [hidden]="isButtonHidden">Select color </button>

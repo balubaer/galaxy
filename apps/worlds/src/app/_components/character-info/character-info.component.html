@@ -1,0 +1,24 @@
+<div class="character-info">
+  @for (entry of entries; track entry.name) {
+    <div class="character-entry">
+      @if (characterType === undefined) {
+        <h5>{{ entry.name }}</h5>
+      }
+      <p class="character-summary">{{ entry.info.summary }}</p>
+      <strong>Punkte</strong>
+      <ul>
+        @for (line of entry.info.points; track line) {
+          <li>{{ line }}</li>
+        }
+      </ul>
+      <strong>Besonderheiten</strong>
+      <ul>
+        @for (line of entry.info.abilities; track line) {
+          <li>{{ line }}</li>
+        }
+      </ul>
+    </div>
+  } @empty {
+    <p class="character-summary">Der Charakter wird beim Anlegen des Spiels zugelost.</p>
+  }
+</div>

@@ -1,0 +1,27 @@
+.character-info {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid rgba(203, 203, 203, 0.6);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.character-entry + .character-entry {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(203, 203, 203, 0.6);
+}
+
+.character-info h5 {
+    margin-bottom: 4px;
+}
+
+.character-info ul {
+    margin-bottom: 6px;
+    padding-left: 20px;
+}
+
+.character-summary {
+    margin-bottom: 6px;
+    font-style: italic;
+}

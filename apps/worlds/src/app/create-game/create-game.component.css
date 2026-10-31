@@ -1,0 +1,7 @@
+.character-overview {
+    margin-bottom: 1em;
+}
+
+.character-overview summary {
+    cursor: pointer;
+}

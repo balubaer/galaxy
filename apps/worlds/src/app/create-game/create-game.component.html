@@ -29,6 +29,12 @@
       </li>
     }
   </ol>
+  @if (form.value.GameType === 'classic') {
+    <details class="character-overview">
+      <summary>Charaktere im Classic Game</summary>
+      <galaxy-character-info></galaxy-character-info>
+    </details>
+  }
   <form [formGroup]="playerForm" (ngSubmit)="onSubmitPlayer()">
     Spieler-Name: <input type="string" formControlName="PlayerName" />
     <button>Spieler zufügen</button>

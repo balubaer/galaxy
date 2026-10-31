@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationModule } from './NavigationComponent/navigation.module';
 import { CommandTableComponent } from './command-table/command-table.component';
 import { CommandPanelComponent } from './command-panel/command-panel.component';
+import { CharacterInfoComponent } from './_components/character-info/character-info.component';
 
 @NgModule({ declarations: [
         HomeComponent,
@@ -31,7 +32,8 @@ import { CommandPanelComponent } from './command-panel/command-panel.component';
         BrowserAnimationsModule,
         NavigationModule,
         CommandTableComponent,
-        CommandPanelComponent], providers: [
+        CommandPanelComponent,
+        CharacterInfoComponent], providers: [
         // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
         {

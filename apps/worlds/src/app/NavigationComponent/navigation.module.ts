@@ -14,6 +14,7 @@ import { AdminComponent } from './admin.component';
 import { NavigationComponentComponent } from './navigation-component/navigation-component.component';
 import { SetAdminComponent } from '../set-admin/set-admin.component';
 import { AdminLoginComponent } from '../adminLogin/admin-login.component';
+import { CharacterInfoComponent } from '../_components/character-info/character-info.component';
 
 @NgModule({ declarations: [
         AdminComponent,
@@ -28,5 +29,6 @@ import { AdminLoginComponent } from '../adminLogin/admin-login.component';
     ],
     exports: [AdminComponent], imports: [CommonModule,
         NavigationComponentRoutingModule,
-        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        ReactiveFormsModule,
+        CharacterInfoComponent], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class NavigationModule { }
