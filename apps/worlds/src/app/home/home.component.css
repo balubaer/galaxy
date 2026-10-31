@@ -48,7 +48,9 @@ textarea {
 
 /* Punktekasten, Weltendetails/Legende und Spielerlegende so breit wie die Weltenkarte. */
 .points-box,
+.artifact-balance,
 .character-box,
+.artifact-glossary-box,
 .world-row,
 .player-legend {
   width: 750px;
@@ -61,7 +63,8 @@ textarea {
   border-radius: 8px;
 }
 
-.character-box {
+.character-box,
+.artifact-glossary-box {
   margin-bottom: 1em;
 }
 
@@ -69,21 +72,151 @@ textarea {
   cursor: pointer;
 }
 
-/* Details der gewählten Welt links an der Karte, Legende rechts. */
+/* Glossar: Button mit Dreieck, das beim Aufklappen nach unten zeigt. */
+.glossary-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.glossary-triangle {
+  display: inline-block;
+  font-size: 0.8em;
+  transition: transform 0.15s;
+}
+
+.glossary-triangle.open {
+  transform: rotate(90deg);
+}
+
+/* Artefakte in der Weltinfo: Raute, Name, Punkte je Runde für den eigenen Charakter. */
+.artifact-entry + .artifact-entry {
+  margin-top: 4px;
+}
+
+.artifact-diamond {
+  color: #ffb300;
+}
+
+.artifact-points {
+  display: inline-block;
+  min-width: 2.2em;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #eee;
+  font-weight: bold;
+  text-align: center;
+}
+
+.artifact-points.positive {
+  background: #c8e6c9;
+  color: #1b5e20;
+}
+
+.artifact-points.negative {
+  background: #ffcdd2;
+  color: #b71c1c;
+}
+
+.artifact-note {
+  margin-left: 1.2em;
+  font-size: 0.85em;
+  color: #555;
+}
+
+.artifact-hint {
+  font-size: 0.85em;
+  font-style: italic;
+  color: #555;
+}
+
+/*
+ * Weltbild, Werte der Welt und Legende stehen immer nebeneinander in einer Zeile:
+ * Bild und Legende fest breit, die Werte nehmen den Platz dazwischen.
+ */
 .world-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1em;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 200px;
+  align-items: stretch;
+  gap: 0.75em;
   margin-bottom: 1em;
 }
 
-/* Weltdetails füllen den Platz bis zur Legende, der Wertekasten streckt sich darin. */
+/* Die Kinder (Bild bzw. Hinweis und Wertekasten) gehören direkt zum Raster. */
 .world-detail {
-  flex: 1 1 auto;
+  display: contents;
+}
+
+.world-row > .world-detail > svg.world,
+.world-row > .world-detail > .world-hint {
+  grid-column: 1;
+  align-self: start;
+}
+
+.world-row .classic-info {
+  grid-column: 2;
+}
+
+.world-row .legend-card {
+  grid-column: 3;
+}
+
+.legend-card {
+  box-sizing: border-box;
+  padding: 0.5em 0.75em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  font-size: 0.85em;
+}
+
+.legend-card h5 {
+  margin: 0 0 0.4em;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.legend-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-list li {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.35em;
+  line-height: 1.25;
+}
+
+.legend-list svg {
+  flex: 0 0 auto;
+}
+
+.legend-plus {
+  color: #2e7d32;
+}
+
+.legend-minus {
+  color: #c62828;
+}
+
+/* Schmale Fenster: Bild und Legende oben, die Werte darunter über die ganze Breite. */
+@media (max-width: 640px) {
+  .world-row {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+
+  .world-row .classic-info {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .world-row .legend-card {
+    grid-column: 2;
+    grid-row: 1;
+  }
 }
 
 /* Spielerfarben vom linken bis zum rechten Kartenrand verteilt. */
@@ -97,10 +230,9 @@ textarea {
 
 /* Weltenwerte als eigener Kasten neben der Weltgrafik, gleich hoch wie diese. */
 .classic-info {
-  flex: 1 1 auto;
+  min-width: 0;
   min-height: 200px;
   box-sizing: border-box;
-  margin-left: 0.5em;
   padding: 0.5em 1em;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -407,4 +539,43 @@ textarea {
 .player-note {
   display: block;
   cursor: pointer;
+}
+
+/* Artefakt-Bilanz unter dem Punktestand: grün bei Plus, rot bei Minus. */
+.artifact-balance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  margin-bottom: 1em;
+  padding: 0.5em 1em;
+  border: 2px solid #bbb;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+.artifact-balance.positive {
+  border-color: #2e7d32;
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.artifact-balance.negative {
+  border-color: #c62828;
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.artifact-balance-list {
+  flex-basis: 100%;
+  color: #222;
+}
+
+.artifact-balance-list td {
+  padding: 1px 8px 1px 0;
+}
+
+.artifact-balance-list .muted {
+  color: #666;
 }

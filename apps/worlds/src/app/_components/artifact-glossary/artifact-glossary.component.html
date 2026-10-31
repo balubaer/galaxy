@@ -1,0 +1,96 @@
+<div class="artifact-glossary">
+  <p>
+    Artefakte liegen zu Spielbeginn auf neutralen Welten. Gehört dir die Welt oder die Flotte, an der ein Artefakt
+    hängt, bringt es dir jede Runde Punkte – je nach Charakter auch Minuspunkte. Mit <code>VaaFbb</code> hängst du
+    Artefakt aa an Flotte bb (gleiche Welt), mit <code>VaaW</code> wirfst du es auf der Welt ab.
+  </p>
+
+  <h5>Nachschlagen</h5>
+  <input
+    type="search"
+    class="artifact-search"
+    placeholder="Name, z. B. Grail, Cursed, Key"
+    [value]="query"
+    (input)="onQuery($any($event.target).value)"
+  />
+  @if (query.trim() !== '') {
+    <ul class="artifact-matches">
+      @for (match of matches; track match.name) {
+        <li>
+          <b>{{ match.name }}</b>
+          @if (match.points !== null) {
+            <span class="points" [class.positive]="match.points > 0" [class.negative]="match.points < 0">
+              {{ signedPoints(match.points) }}/Runde
+            </span>
+          }
+          @for (note of match.notes; track note) {
+            <div class="note">{{ note }}</div>
+          }
+        </li>
+      } @empty {
+        <li>Kein Artefakt mit diesem Namen.</li>
+      }
+    </ul>
+  }
+
+  <h5>Punkte je Runde</h5>
+  <table class="glossary-table">
+    <tr>
+      <th>Artefakt</th>
+      <th [class.own]="characterType !== null && !isCollector">Andere Charaktere</th>
+      <th [class.own]="isCollector">Collector</th>
+    </tr>
+    @for (row of pointRows; track row.label) {
+      <tr>
+        <td>{{ row.label }}</td>
+        <td [class.own]="characterType !== null && !isCollector">{{ signedPoints(row.other) }}</td>
+        <td [class.own]="isCollector">{{ signedPoints(row.collector) }}</td>
+      </tr>
+    }
+  </table>
+
+  <h5>Größte Schätze der Charaktere</h5>
+  <table class="glossary-table">
+    @for (entry of treasures; track entry.type) {
+      <tr [class.own]="entry.type === characterType">
+        <td>{{ entry.name }}</td>
+        <td>{{ entry.treasure }}</td>
+      </tr>
+    }
+  </table>
+
+  <h5>Boni am Spielende</h5>
+  <table class="glossary-table">
+    <tr>
+      <th>Satz</th>
+      <th [class.own]="characterType !== null && !isCollector">Andere Charaktere</th>
+      <th [class.own]="isCollector">Collector</th>
+    </tr>
+    @for (row of bonusRows; track row.label) {
+      <tr>
+        <td>{{ row.label }}</td>
+        <td [class.own]="characterType !== null && !isCollector">{{ row.other > 0 ? '+' + row.other : '–' }}</td>
+        <td [class.own]="isCollector">{{ row.collector > 0 ? '+' + row.collector : '–' }}</td>
+      </tr>
+    }
+  </table>
+
+  <h5>The Pandora's Box</h5>
+  <p>
+    Es gibt genau eine. Solange sie jemandem gehört, wirkt sie jede Runde – welche Wirkung, wird je Spiel zufällig
+    bestimmt: +1 Industrie oder +1 Mine auf der eigenen Welt, auf der sie liegt, oder sie zerstört die Flotte, an der sie
+    hängt, und taucht anderswo wieder auf.
+  </p>
+
+  <h5>Namen</h5>
+  <p>
+    Jedes Artefakt außer den Sonderstücken heißt <i>Adjektiv Nomen</i>.<br />
+    <b>Adjektive:</b> {{ adjectives.join(', ') }}<br />
+    <b>Nomen:</b> {{ nouns.join(', ') }}<br />
+    <b>Sonderstücke:</b> The Key to Time (Segment 1–{{ keyToTimeSegments }}), {{ specials.join(', ') }}
+  </p>
+  <p class="hint">
+    Gerät eine Flotte mit Artefakten in ein Schwarzes Loch, werden die Artefakte über die Galaxie verstreut.
+    Artefakte zählen auch beim Collector nur, solange sie ihm gehören.
+  </p>
+</div>

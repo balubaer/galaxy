@@ -1,0 +1,69 @@
+.artifact-glossary {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid rgba(203, 203, 203, 0.6);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.artifact-glossary h5 {
+    margin: 10px 0 4px;
+}
+
+.glossary-table {
+    border-collapse: collapse;
+    margin-bottom: 6px;
+}
+
+.glossary-table th,
+.glossary-table td {
+    padding: 2px 8px;
+    border-bottom: 1px solid rgba(203, 203, 203, 0.6);
+    text-align: left;
+}
+
+/* Was für den eigenen Charakter gilt. */
+.glossary-table .own,
+.glossary-table tr.own td {
+    background: #fff8e1;
+    font-weight: bold;
+}
+
+.artifact-search {
+    width: 100%;
+    max-width: 320px;
+}
+
+.artifact-matches {
+    margin: 6px 0;
+    padding-left: 20px;
+}
+
+.points {
+    margin-left: 6px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: #eee;
+    font-weight: bold;
+}
+
+.points.positive {
+    background: #c8e6c9;
+    color: #1b5e20;
+}
+
+.points.negative {
+    background: #ffcdd2;
+    color: #b71c1c;
+}
+
+.note {
+    font-size: 0.85em;
+    color: #555;
+}
+
+.hint {
+    font-size: 0.85em;
+    font-style: italic;
+    color: #555;
+}

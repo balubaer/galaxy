@@ -62,6 +62,12 @@
           <span class="stat" title="Bevölkerung / Limit">👥 {{ p.classic.population }}</span>
           <span class="stat" title="Industrie">🏭 {{ p.classic.industry }}</span>
           <span class="stat" title="Metall">⛏ {{ p.classic.metal }}</span>
+          @if (artifacts; as a) {
+            <span class="stat artifact-stat" [class.positive]="a.points !== null && a.points > 0"
+              [class.negative]="a.points !== null && a.points < 0" [title]="a.title">
+              ◆ {{ a.count }}@if (a.points !== null) { ({{ signedPoints(a.points) }}/Rd.)}
+            </span>
+          }
         </div>
       }
     </header>

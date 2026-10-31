@@ -9,7 +9,7 @@ import { checkGameEnd } from './core-game-rules';
 import { GamePref } from './game-pref.interface';
 import {
   ARTIFACT_TYPE_COUNT, Artifact, artifactEndBonus, artifactTurnPoints, artifactKind, artifactPoints, classicEndBonus, isPandora,
-  placeArtifacts, ARTIFACT_ADJECTIVES, ARTIFACT_NOUNS,
+  placeArtifacts, ARTIFACT_ADJECTIVES, ARTIFACT_NOUNS, artifactEffect, artifactTypePoints, ownedArtifactInfos, artifactTypeByName,
 } from './classic-artifacts';
 import { characterTurnPoints, turnPoints } from './classic-scoring';
 import { PersistenceGrafManager } from './persistence-graf-manager';
@@ -136,10 +136,10 @@ describe('Classic Artefakte: Arten und Verteilung', () => {
     s.fleets[0].artifacts = [artifact(4, 'The Rhinovirus')];
     expect(s.worlds[1].description()).toContain('Artefakte: V3 Holy Grail');
     expect(s.fleets[0].description()).toContain('Artefakte: V4 The Rhinovirus');
-    expect(s.worlds[1].classicInfo().artifacts).toEqual([{ number: 3, name: 'Holy Grail' }]);
+    expect(s.worlds[1].classicInfo().artifacts).toEqual([{ number: 3, name: 'Holy Grail', type: 51 }]);
     const graf = new PersistenceGrafManager(s.worlds, s.players, new Map(), new Map()).generateNodesAndLinks('A');
     const w1 = graf.nodes.find(n => n.id === 'W1');
-    expect(w1.data.fleets[0].artifacts).toEqual([{ number: 4, name: 'The Rhinovirus' }]);
+    expect(w1.data.fleets[0].artifacts).toEqual([{ number: 4, name: 'The Rhinovirus', type: 97 }]);
   });
 });
 
@@ -339,4 +339,63 @@ describe("Classic Artefakte: Pandora's Box", () => {
     expect(s.fleets[0].artifacts.map(a => a.number)).toEqual([2]);
     expect(s.worlds[2].artifacts.map(a => a.number)).toEqual([1]);
   });
+});
+
+describe('Classic Game: Wert eines Artefakts für den Charakter', () => {
+    const typeOf = (name: string) => Array.from({ length: ARTIFACT_TYPE_COUNT }, (_, i) => i + 1).find(type => artifactKind(type).name === name);
+
+    it('names the treasure, the matching set and the end bonus', () => {
+        const effect = artifactEffect('emperor', typeOf('Imperial Sceptor'));
+        expect(effect.points).toBe(15);
+        expect(effect.notes).toContain('dein größter Schatz');
+        expect(effect.notes).toContain('zählt zum Satz aller Imperial-Artefakte (+500 am Spielende)');
+        expect(effect.notes).toContain('zählt zum Satz aller Sceptor-Artefakte ohne Cursed (+500 am Spielende)');
+    });
+
+    it('marks cursed artifacts as negative for other characters, not for the collector', () => {
+        expect(artifactEffect('raider', typeOf('Cursed Cutlass'))).toEqual({ points: -10, notes: ['verflucht'] });
+        const collector = artifactEffect('collector', typeOf('Cursed Cutlass'));
+        expect(collector.points).toBe(0);
+        expect(collector.notes).toEqual(['zählt für ein Museum (10 Artefakte auf einer eigenen Welt: +500)']);
+    });
+
+    it('describes Key to Time segments and the Pandora\'s Box', () => {
+        expect(artifactEffect('trader', typeOf('The Key to Time (segment 2)')).notes).toEqual(['Segment 2 von 5: alle Segmente +1000 am Spielende']);
+        const pandora = artifactEffect(null, typeOf("The Pandora's Box"));
+        expect(pandora.points).toBe(0);
+        expect(pandora.notes[0]).toMatch(/^wirkt jede Runde/);
+    });
+
+    it('gives the same points per turn as artifactTypePoints', () => {
+        for (let type = 1; type <= ARTIFACT_TYPE_COUNT; type++) {
+            expect(artifactEffect('collector', type).points).toBe(artifactTypePoints('collector', type));
+        }
+    });
+});
+
+describe('Classic Game: eigene Artefakte in den Rundendaten', () => {
+    it('lists own artifacts on worlds and fleets with location and points', () => {
+        const player = new Player('A'); player.characterType = 'missionary';
+        const other = new Player('B');
+        const world = new World(); world.setNumber(4); world.player = player;
+        world.artifacts = [{ number: 9, type: 87 }];
+        const fleet = new Fleet(); fleet.number = 2; fleet.player = player;
+        fleet.artifacts = [{ number: 3, type: 51 }];
+        const foreign = new Fleet(); foreign.number = 5; foreign.player = other;
+        foreign.artifacts = [{ number: 1, type: 1 }];
+        world.fleets = [fleet, foreign];
+        expect(ownedArtifactInfos(player, [world])).toEqual([
+            { number: 3, name: 'Holy Grail', type: 51, points: 15, location: 'F2 auf W4' },
+            { number: 9, name: 'Cursed Grail', type: 87, points: -10, location: 'W4' },
+        ]);
+    });
+});
+
+describe('Classic Game: Art aus dem Artefaktnamen', () => {
+    it('finds the type for every name and nothing for unknown names', () => {
+        for (let type = 1; type <= ARTIFACT_TYPE_COUNT; type++) {
+            expect(artifactTypeByName(artifactKind(type).name)).toBe(type);
+        }
+        expect(artifactTypeByName('Golden Banana')).toBeUndefined();
+    });
 });

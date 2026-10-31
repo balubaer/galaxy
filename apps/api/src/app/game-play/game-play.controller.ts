@@ -1,6 +1,7 @@
 import { Controller, Get, Body, Query, Post, ForbiddenException } from '@nestjs/common';
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import {
+  ownedArtifactInfos,
   RequestTurnData,
   RespondTurnData,
   GamePref,
@@ -151,6 +152,7 @@ export class GamePlayController {
       hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
       characterType: player?.characterType ?? null,
+      ownArtifacts: player ? ownedArtifactInfos(player, worlds) : [],
     };
     return respondTurnData;
   }
@@ -206,6 +208,7 @@ export class GamePlayController {
       hiddenLinks: dataGraf.hiddenLinks,
       homeWorldName: homeWorldName,
       characterType: player?.characterType ?? null,
+      ownArtifacts: player ? ownedArtifactInfos(player, worlds) : [],
     };
     return respondTurnData;
   }

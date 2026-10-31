@@ -16,6 +16,7 @@ import { NavigationModule } from './NavigationComponent/navigation.module';
 import { CommandTableComponent } from './command-table/command-table.component';
 import { CommandPanelComponent } from './command-panel/command-panel.component';
 import { CharacterInfoComponent } from './_components/character-info/character-info.component';
+import { ArtifactGlossaryComponent } from './_components/artifact-glossary/artifact-glossary.component';
 
 @NgModule({ declarations: [
         HomeComponent,
@@ -33,7 +34,8 @@ import { CharacterInfoComponent } from './_components/character-info/character-i
         NavigationModule,
         CommandTableComponent,
         CommandPanelComponent,
-        CharacterInfoComponent], providers: [
+        CharacterInfoComponent,
+        ArtifactGlossaryComponent], providers: [
         // { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         // { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }
         {

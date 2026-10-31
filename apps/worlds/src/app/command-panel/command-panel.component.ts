@@ -34,6 +34,35 @@ import {
   CommandDescription,
   describeCommand,
 } from '../command-table/command-describe';
+import { artifactLine, artifactPointsSum, ArtifactView, signedPoints } from '../_helpers/artifact-effect';
+import { CharacterType, isCharacterType } from '@galaxy/game-objects';
+
+/** Artefakte einer Welt (auf der Welt und an ihren Flotten) für den Kopf des Kommandopults. */
+export interface WorldArtifacts {
+  count: number;
+  /** Punkte je Runde für den eigenen Charakter, null wenn unbekannt. */
+  points: number | null;
+  title: string;
+}
+
+/** Fasst die Artefakte auf der Welt und an den Flotten dort zusammen; null ohne Artefakte. */
+export function worldArtifacts(node: Node, characterType: string | null): WorldArtifacts | null {
+  const type: CharacterType | null = isCharacterType(characterType) ? characterType : null;
+  const onWorld: ArtifactView[] = node.data?.classic?.artifacts ?? [];
+  const fleets: Array<{ label?: string; artifacts?: ArtifactView[] }> = node.data?.fleets ?? [];
+  const onFleets = fleets.filter((f) => (f.artifacts?.length ?? 0) > 0);
+  const all = [...onWorld, ...onFleets.flatMap((f) => f.artifacts ?? [])];
+  if (all.length === 0) {
+    return null;
+  }
+  const points = artifactPointsSum(all, type);
+  const lines = [
+    points === null ? 'Artefakte' : `Artefakte: ${signedPoints(points)} Punkte/Runde für dich, wenn sie dir gehören`,
+    ...onWorld.map((a) => `• ${artifactLine(a, type)}`),
+    ...onFleets.flatMap((f) => (f.artifacts ?? []).map((a) => `• ${(f.label ?? '').replace(/=.*/, '')}: ${artifactLine(a, type)}`)),
+  ];
+  return { count: all.length, points, title: lines.join('\n') };
+}
 
 interface Action {
   key: string;
@@ -142,6 +171,9 @@ export class CommandPanelComponent implements OnChanges {
   @Input() classic = false;
   /** Classic Game: eigener Charakter (z. B. für die Plünderpunkte). */
   @Input() characterType: string | null = null;
+  /** Artefakte auf der gewählten Welt und an ihren Flotten. */
+  artifacts: WorldArtifacts | null = null;
+  readonly signedPoints = signedPoints;
   /** Classic Game: Farben der Mitspieler, die man als Collector markiert hat. */
   @Input() collectorColors: string[] = [];
   @Input() commandText = '';
@@ -212,9 +244,11 @@ export class CommandPanelComponent implements OnChanges {
       this.neighbours = [];
       this.worldActions = [];
       this.budget = null;
+      this.artifacts = null;
       return;
     }
     const node = this.node;
+    this.artifacts = worldArtifacts(node, this.characterType);
     this.groups = buildCommandGroups(
       node, this.links, this.ownColor, this.amount, this.selected, this.players, this.characterType, this.collectorColors,
     );

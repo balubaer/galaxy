@@ -597,6 +597,24 @@ describe('Classic Game: Artefakte', () => {
     expect(commands(artifactNode('blue'))).toEqual(['V4W']);
   });
 
+  it('shows the points per turn for the own character in the artifact rows', () => {
+    const n = artifactNode(OWN);
+    n.data.classic.artifacts = [{ number: 3, name: 'Holy Grail', type: 51 }];
+    n.data.fleets[0].artifacts = [{ number: 4, name: 'Cursed Grail', type: 87 }];
+    const labels = (characterType: string | null) =>
+      buildCommandGroups(n, links, OWN, 1, [], [], characterType)
+        .flatMap((g) => g.rows.filter((r) => r.kind === 'artifact').map((r) => r.label));
+    expect(labels('missionary')).toEqual(['V3 Holy Grail (+15/Rd.)', 'V4 Cursed Grail (-10/Rd.) (Flotte 1)']);
+    expect(labels('collector')).toEqual(['V3 Holy Grail (+15/Rd.)', 'V4 Cursed Grail (0/Rd.) (Flotte 1)']);
+    expect(labels(null)).toEqual(['V3 Holy Grail', 'V4 Cursed Grail (Flotte 1)']);
+  });
+
+  it('derives the points from the name when older map data has no type', () => {
+    const labels = buildCommandGroups(artifactNode(OWN), links, OWN, 1, [], [], 'missionary')
+      .flatMap((g) => g.rows.filter((r) => r.kind === 'artifact').map((r) => r.label));
+    expect(labels).toEqual(['V3 Holy Grail (+15/Rd.)', 'V4 Cursed Grail (-10/Rd.) (Flotte 1)']);
+  });
+
   it('allows only one order per artifact', () => {
     expect(commandsConflict('V3F1', 'V3W')).toBe(true);
     expect(commandsConflict('V3F1', 'V4F1')).toBe(false);

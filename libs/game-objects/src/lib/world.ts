@@ -28,9 +28,9 @@ export function worldWithName(worlds: Array<World>, name: string): World {
     return aResult;
 }
 
-/** Artefakte für Karte und Frontend: Nummer und Name. */
-export function artifactInfos(artifacts: Array<Artifact>): Array<{ number: number; name: string }> {
-    return artifacts.map(artifact => ({ number: artifact.number, name: artifactKind(artifact.type).name }));
+/** Artefakte für Karte und Frontend: Nummer, Name und Art (für die Punkte je Charakter). */
+export function artifactInfos(artifacts: Array<Artifact>): Array<{ number: number; name: string; type: number }> {
+    return artifacts.map(artifact => ({ number: artifact.number, name: artifactKind(artifact.type).name, type: artifact.type }));
 }
 
 /** Classic-Werte einer Welt, wie sie an die Karte im Frontend geliefert werden. */
@@ -47,7 +47,7 @@ export interface ClassicWorldInfo {
     plunderCount: number;
     plunderRecovery: number;
     /** Artefakte auf der Welt (Nummer und Name). */
-    artifacts?: Array<{ number: number; name: string }>;
+    artifacts?: Array<{ number: number; name: string; type: number }>;
     /** Wie oft der Empfänger des Berichts hier schon Konsumgüter entladen hat (nur Trader). */
     ownConsumerGoods?: number;
 }

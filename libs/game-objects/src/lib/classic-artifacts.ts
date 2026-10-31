@@ -78,6 +78,16 @@ export function artifactKind(type: number): ArtifactKind {
     return { name: special ?? `Artefakt ${type}`, special };
 }
 
+/** Art zu einem Artefaktnamen (für Kartendaten ohne Art, die vor dieser Angabe gespeichert wurden). */
+export function artifactTypeByName(name: string): number | undefined {
+    for (let type = 1; type <= ARTIFACT_TYPE_COUNT; type++) {
+        if (artifactKind(type).name === name) {
+            return type;
+        }
+    }
+    return undefined;
+}
+
 export function artifactName(artifact: Artifact): string {
     return `V${artifact.number} ${artifactKind(artifact.type).name}`;
 }
@@ -92,12 +102,16 @@ export function isPandora(artifact: Artifact): boolean {
 
 /** Punkte, die ein Artefakt seinem Besitzer je Runde bringt. */
 export function artifactPoints(player: Player, artifact: Artifact): number {
-    const type = player.characterType;
-    if (type === null) {
+    return artifactTypePoints(player.characterType, artifact.type);
+}
+
+/** Punkte je Runde, die eine Artefakt-Art einem Charakter bringt (ohne Charakter keine). */
+export function artifactTypePoints(characterType: CharacterType | null, type: number): number {
+    if (characterType === null) {
         return 0;
     }
-    const table = type === 'collector' ? ARTIFACT_POINTS.collector : ARTIFACT_POINTS.other;
-    const kind = artifactKind(artifact.type);
+    const table = characterType === 'collector' ? ARTIFACT_POINTS.collector : ARTIFACT_POINTS.other;
+    const kind = artifactKind(type);
     if (kind.keyToTime !== undefined) {
         return table.keyToTime;
     }
@@ -107,7 +121,7 @@ export function artifactPoints(player: Player, artifact: Artifact): number {
     if (kind.adjective === CURSED) {
         return table.cursed;
     }
-    const treasure = CHARACTER_TREASURES[type];
+    const treasure = CHARACTER_TREASURES[characterType];
     if (kind.adjective === treasure.adjective && kind.noun === treasure.noun) {
         return table.treasure;
     }
@@ -115,6 +129,44 @@ export function artifactPoints(player: Player, artifact: Artifact): number {
         return table.half;
     }
     return table.default;
+}
+
+/** Was eine Artefakt-Art einem Charakter bringt: Punkte je Runde und Hinweise zu Schatz, Sätzen und Wirkung. */
+export function artifactEffect(characterType: CharacterType | null, type: number): { points: number; notes: Array<string> } {
+    const notes: Array<string> = [];
+    const kind = artifactKind(type);
+    if (kind.special === PANDORAS_BOX) {
+        notes.push('wirkt jede Runde: +1 Industrie, +1 Mine oder zerstört die Flotte, an der sie hängt (je Spiel zufällig)');
+    }
+    if (characterType === null) {
+        return { points: 0, notes };
+    }
+    const points = artifactTypePoints(characterType, type);
+    const bonus = characterType === 'collector' ? ARTIFACT_SET_BONUS.collector : ARTIFACT_SET_BONUS.other;
+    const treasure = CHARACTER_TREASURES[characterType];
+    if (kind.keyToTime !== undefined) {
+        notes.push(`Segment ${kind.keyToTime} von ${KEY_TO_TIME_SEGMENTS}: alle Segmente +${bonus.keyToTime} am Spielende`);
+    }
+    if (kind.adjective === treasure.adjective && kind.noun === treasure.noun) {
+        notes.push('dein größter Schatz');
+    } else if (kind.adjective === treasure.adjective) {
+        notes.push(`gleiches Adjektiv wie dein Schatz (${treasure.adjective} ${treasure.noun})`);
+    } else if (kind.noun === treasure.noun && kind.adjective !== CURSED) {
+        notes.push(`gleiches Nomen wie dein Schatz (${treasure.adjective} ${treasure.noun})`);
+    }
+    if (kind.adjective === treasure.adjective) {
+        notes.push(`zählt zum Satz aller ${treasure.adjective}-Artefakte (+${bonus.adjective} am Spielende)`);
+    }
+    if (kind.noun === treasure.noun && kind.adjective !== CURSED) {
+        notes.push(`zählt zum Satz aller ${treasure.noun}-Artefakte ohne Cursed (+${bonus.noun} am Spielende)`);
+    }
+    if (kind.adjective === CURSED && points < 0) {
+        notes.push('verflucht');
+    }
+    if (bonus.museum > 0) {
+        notes.push(`zählt für ein Museum (${MUSEUM_ARTIFACTS} Artefakte auf einer eigenen Welt: +${bonus.museum})`);
+    }
+    return { points, notes };
 }
 
 /** Alle Artefakte, die dem Spieler gehören: auf seinen Welten und auf seinen Flotten. */
@@ -131,6 +183,39 @@ export function ownedArtifacts(player: Player, worlds: Array<World>): Array<Arti
         }
     }
     return result;
+}
+
+/** Eigenes Artefakt für die Rundendaten: wo es liegt und was es dem Besitzer je Runde bringt. */
+export interface OwnedArtifactInfo {
+    number: number;
+    name: string;
+    type: number;
+    points: number;
+    /** Welt bzw. Flotte samt Welt, z. B. "W12" oder "F5 auf W12". */
+    location: string;
+}
+
+/** Alle Artefakte des Spielers mit Ort und Punkten je Runde, nach Nummer sortiert. */
+export function ownedArtifactInfos(player: Player, worlds: Array<World>): Array<OwnedArtifactInfo> {
+    const result: Array<OwnedArtifactInfo> = [];
+    const add = (artifact: Artifact, location: string) => result.push({
+        number: artifact.number,
+        name: artifactKind(artifact.type).name,
+        type: artifact.type,
+        points: artifactPoints(player, artifact),
+        location,
+    });
+    for (const world of worlds) {
+        if (world.player === player) {
+            world.artifacts.forEach(artifact => add(artifact, world.name));
+        }
+        for (const fleet of world.fleets) {
+            if (fleet.player === player) {
+                fleet.artifacts.forEach(artifact => add(artifact, `F${fleet.number} auf ${world.name}`));
+            }
+        }
+    }
+    return result.sort((a, b) => a.number - b.number);
 }
 
 export function artifactTurnPoints(player: Player, worlds: Array<World>): number {

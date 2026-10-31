@@ -47,6 +47,7 @@ import { Box, forceBoxCollide } from '../_helpers/box-collide';
 import { parseSaveKey, SavedLayout } from './saved-layouts';
 import { PlayerNotesService } from './player-notes.service';
 import { LayoutStoreService } from './layout-store.service';
+import { artifactEffectFor, artifactLine, artifactPointsSum, ArtifactView, signedPoints } from '../_helpers/artifact-effect';
 
 /** Steuerungsart der Befehle: klassische Tabelle oder Kommandopult mit Maussteuerung. */
 export type ControlMode = 'classic' | 'modern';
@@ -105,6 +106,27 @@ function groundTargetPosition(world: Node, target: GroundTarget | null): Point {
 /** Bodenziel aus dem Bericht ("I-Schiffe und Industrie W6", "P-Schiffe und Bevölkerung W6", "I- und P-Schiffe W6"). */
 function groundTargetOf(firesTo: string): GroundTarget | null {
   return firesTo.startsWith('I-Schiffe') ? 'I' : firesTo.startsWith('P-Schiffe') ? 'P' : firesTo.startsWith('I- und P') ? 'H' : null;
+}
+
+/** Artefakte auf der Karte: Raute grün bei Punkten für einen, rot bei Abzug, gelb bei 0 oder unbekannt. */
+function artifactFill(points: number | null): string {
+  return points === null || points === 0 ? '#ffc107' : points > 0 ? '#2e7d32' : '#c62828';
+}
+
+function artifactTextColor(points: number | null): string {
+  return points === null || points === 0 ? '#222' : 'white';
+}
+
+/** Raute mit Mittelpunkt (0,0) und halber Diagonale r. */
+function diamondPath(r: number): string {
+  return `M0,${-r}L${r},0L0,${r}L${-r},0Z`;
+}
+
+/** Tooltip für Artefakte auf der Karte, mit dem Wert für den eigenen Charakter. */
+function artifactsTooltip(where: string, artifacts: ArtifactView[], characterType: CharacterType | null): string {
+  const sum = artifactPointsSum(artifacts, characterType);
+  const head = sum === null ? `Artefakte ${where}` : `Artefakte ${where} (für dich ${signedPoints(sum)} Punkte/Runde, wenn sie dir gehören)`;
+  return [head, ...artifacts.map((artifact) => `• ${artifactLine(artifact, characterType)}`)].join('\n');
 }
 
 /** Farbe der Schüsse der letzten Runde (geplante Feuerbefehle sind rot). */
@@ -309,8 +331,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /** Flotten der Welt, an denen Artefakte hängen (für die Weltinfo). */
-  fleetsWithArtifacts(node: Node | undefined): Array<{ label: string; artifacts: Array<{ number: number; name: string }> }> {
-    const fleets: Array<{ label?: string; artifacts?: Array<{ number: number; name: string }> }> = node?.data?.fleets ?? [];
+  fleetsWithArtifacts(node: Node | undefined): Array<{ label: string; artifacts: ArtifactView[] }> {
+    const fleets: Array<{ label?: string; artifacts?: ArtifactView[] }> = node?.data?.fleets ?? [];
     return fleets
       .filter((fleet) => (fleet.artifacts?.length ?? 0) > 0)
       .map((fleet) => ({ label: (fleet.label ?? '').replace(/=.*/, ''), artifacts: fleet.artifacts ?? [] }));
@@ -475,6 +497,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Darstellungsfläche; render() setzt alles auf die aktuellen Positionen der Welten.
    */
   private drawMap(svg: any, data: RespondTurnData, width: number, height: number) {
+    const characterType = data.characterType ?? null;
     const links = svg
       .selectAll('line')
       .data(data.links)
@@ -566,6 +589,27 @@ export class HomeComponent implements OnInit, OnDestroy {
           .attr('text-anchor', 'middle')
           .attr('fill', fleet.fontColor ?? 'black')
           .text(fleet.label);
+        const fleetArtifacts: ArtifactView[] = fleet.artifacts ?? [];
+        if (fleetArtifacts.length > 0) {
+          const fleetPoints = artifactPointsSum(fleetArtifacts, characterType);
+          const mark = fleetGroup.append('g').attr('class', 'artifact-mark').attr('transform', 'translate(9,-2.5)');
+          mark.append('title').text(artifactsTooltip(`an ${fleet.label?.replace(/=.*/, '') ?? 'Flotte'}`, fleetArtifacts, characterType));
+          mark
+            .append('path')
+            .attr('d', diamondPath(3))
+            .style('fill', artifactFill(fleetPoints))
+            .style('stroke', 'white')
+            .style('stroke-width', 0.6);
+          mark
+            .append('text')
+            .attr('dy', 1.2)
+            .attr('font-family', 'sans-serif')
+            .attr('font-size', 3.2)
+            .attr('font-weight', 'bold')
+            .attr('text-anchor', 'middle')
+            .attr('fill', artifactTextColor(fleetPoints))
+            .text(fleetArtifacts.length);
+        }
       }
     });
 
@@ -579,6 +623,32 @@ export class HomeComponent implements OnInit, OnDestroy {
       // Schwarze Löcher liefern weiße Schrift.
       .attr('fill', (d) => d.data?.fontColor ?? 'black')
       .text((d) => d.id);
+
+    // Classic Game: Artefakte auf der Welt als Raute mit Anzahl oben rechts an der Welt.
+    nodes.each(function (this: SVGGElement, d: any) {
+      const artifacts: ArtifactView[] = d.data?.classic?.artifacts ?? [];
+      if (artifacts.length === 0) {
+        return;
+      }
+      const points = artifactPointsSum(artifacts, characterType);
+      const mark = d3.select(this).append('g').attr('class', 'artifact-mark').attr('transform', 'translate(10,-10)');
+      mark.append('title').text(artifactsTooltip(`auf ${d.id}`, artifacts, characterType));
+      mark
+        .append('path')
+        .attr('d', diamondPath(7.5))
+        .style('fill', artifactFill(points))
+        .style('stroke', 'white')
+        .style('stroke-width', 1);
+      mark
+        .append('text')
+        .attr('dy', 2.6)
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 7.5)
+        .attr('font-weight', 'bold')
+        .attr('text-anchor', 'middle')
+        .attr('fill', artifactTextColor(points))
+        .text(artifacts.length);
+    });
 
     // Classic Game: InfoBox mit den Weltenwerten unterhalb der Flotten.
     nodes.each(function (this: SVGGElement, d: any) {
@@ -1373,6 +1443,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.node = aNode;
         this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
         this.selectWorld = +extractNumberString(this.node.id);
+  }
+
+  /** Punkte je Runde und Hinweise, was das Artefakt dem eigenen Charakter bringt. */
+  artifactEffect(artifact: ArtifactView): { points: number | null; notes: string[] } {
+    return artifactEffectFor(artifact, this.turnData?.characterType ?? null);
+  }
+
+  readonly signedPoints = signedPoints;
+  /** Glossar der Artefakte aufgeklappt. */
+  glossaryOpen = false;
+  /** Liste der eigenen Artefakte unter der Artefakt-Bilanz aufgeklappt. */
+  artifactsOpen = false;
+
+  /** Summe der Punkte je Runde aus den eigenen Artefakten. */
+  artifactBalance(own: Array<{ points: number }>): number {
+    return own.reduce((sum, artifact) => sum + artifact.points, 0);
   }
 
   characterName(type: CharacterType): string {

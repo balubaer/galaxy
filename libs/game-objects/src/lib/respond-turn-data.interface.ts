@@ -1,5 +1,6 @@
 import { Edge, Node } from "@galaxy/api-interfaces";
 import type { CharacterType } from "./player";
+import type { OwnedArtifactInfo } from "./classic-artifacts";
 
 export interface RespondTurnData {
     turnDataTxt: string;
@@ -12,4 +13,6 @@ export interface RespondTurnData {
     homeWorldName: string;
     /** Classic Game: Charakter des anfragenden Spielers (für Anzeigen wie die Plünderpunkte). */
     characterType?: CharacterType | null;
+    /** Classic Game: eigene Artefakte mit Ort und Punkten je Runde. */
+    ownArtifacts?: Array<OwnedArtifactInfo>;
 }

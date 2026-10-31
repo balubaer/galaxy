@@ -9,6 +9,9 @@ import {
   PENALTY_PER_PLUNDER,
   raiderPlunderPoints,
   consumerGoodsPoints,
+  artifactTypePoints,
+  artifactTypeByName,
+  isCharacterType,
 } from '@galaxy/game-objects';
 
 export interface CommandOption {
@@ -76,6 +79,8 @@ export interface WorldFleet {
 export interface ArtifactInfo {
   number: number;
   name: string;
+  /** Art des Artefakts, bestimmt die Punkte je Charakter (fehlt bei älteren Kartendaten). */
+  type?: number;
 }
 
 /** Classic-Werte einer Welt, wie sie das Backend in node.data.classic liefert. */
@@ -94,6 +99,17 @@ export interface ClassicInfo {
   ownConsumerGoods?: number;
   /** Artefakte auf der Welt. */
   artifacts?: ArtifactInfo[];
+}
+
+/** Artefakt mit den Punkten je Runde für den eigenen Charakter, z. B. "V12 Holy Grail (+15/Rd.)". */
+export function artifactLabel(artifact: ArtifactInfo, characterType: string | null): string {
+  const label = `V${artifact.number} ${artifact.name}`;
+  const type = artifact.type ?? artifactTypeByName(artifact.name);
+  if (type === undefined || !isCharacterType(characterType)) {
+    return label;
+  }
+  const points = artifactTypePoints(characterType, type);
+  return `${label} (${points > 0 ? '+' : ''}${points}/Rd.)`;
 }
 
 /** Beschriftung für Konsumgüter: Der Trader sieht die Punkte der nächsten Entladung auf dieser Welt. */
@@ -653,7 +669,7 @@ export function buildCommandGroups(
       opt(`V${artifact.number}F${fleet.number}`, collector ? `an Flotte ${fleet.number} (Collector)` : `an Flotte ${fleet.number}`);
     add('Artefakte', [
       ...(isOwnWorld ? classic.artifacts ?? [] : []).map((artifact) => ({
-        label: `V${artifact.number} ${artifact.name}`,
+        label: artifactLabel(artifact, characterType),
         kind: 'artifact' as CommandKind,
         options: [
           ...ownFleets.map((f) => hook(artifact, f, false)),
@@ -662,7 +678,7 @@ export function buildCommandGroups(
       })),
       ...ownFleets.flatMap((f) =>
         f.artifacts.map((artifact) => ({
-          label: `V${artifact.number} ${artifact.name} (Flotte ${f.number})`,
+          label: `${artifactLabel(artifact, characterType)} (Flotte ${f.number})`,
           kind: 'artifact' as CommandKind,
           options: [
             opt(`V${artifact.number}W`, `auf Welt ${world} abwerfen`),

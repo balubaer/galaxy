@@ -92,6 +92,22 @@ h4 {
   white-space: nowrap;
 }
 
+/* Artefakte: goldene Raute, grün/rot je nach Punkten für den eigenen Charakter. */
+.artifact-stat {
+  border-color: #ffb300;
+  cursor: help;
+}
+
+.artifact-stat.positive {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.artifact-stat.negative {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
