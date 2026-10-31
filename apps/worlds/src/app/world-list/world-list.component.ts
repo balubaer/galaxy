@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subscription, Subject } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { clampToArea, keepNodesInArea } from '../_helpers/graph-bounds';
 import * as d3 from 'd3';
 
@@ -11,26 +11,12 @@ import * as d3 from 'd3';
     standalone: false
 })
 export class WorldListComponent implements OnInit, OnDestroy {
-  worlds$: Observable<string[]> | undefined;
   worldList$: Observable<string[]> | undefined;
-  width = 0;
-  height = 0;
 
   nodes: any[];
   links: any[];
-  public links$: Observable<any[]> | undefined;
-  public nodes$: Observable<any[]> | undefined;
 
   public node: any | null;
-  autoZoom = true;
-  autoCenter = true;
-
-  draggingEnabled = false;
-  panningEnabled = false;
-  zoomEnabled = false;
-
-  center$: Subject<boolean> = new Subject();
-  zoomToFit$: Subject<boolean> = new Subject();
 
   private readonly subscriptions = new Subscription();
 
@@ -40,21 +26,14 @@ export class WorldListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.worlds$ = this.http.get<string[]>('/api/WorldStringList');
     this.worldList$ = this.http.get<string[]>('/api/WorldsString');
-      this.links$ = this.http.get<any[]>('/api/GetWorldsEdge');
     this.subscriptions.add(
-      this.links$.subscribe((aLinks) => {
-        this.links = aLinks;
-        console.log(this.links);
-        this.initGraf();
-      })
-    );
-      this.nodes$ = this.http.get<any[]>('/api/GetWorldsNode');
-    this.subscriptions.add(
-      this.nodes$.subscribe((aNodes) => {
-        this.nodes = aNodes;
-        console.log(this.nodes);
+      forkJoin({
+        nodes: this.http.get<any[]>('/api/GetWorldsNode'),
+        links: this.http.get<any[]>('/api/GetWorldsEdge')
+      }).subscribe(({ nodes, links }) => {
+        this.nodes = nodes;
+        this.links = links;
         this.initGraf();
       })
     );
@@ -163,12 +142,11 @@ export class WorldListComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line no-inner-declarations
       function drag_start(d: {
         active: any;
-        subject: { fx: any; x: any; y: any };
-        subjectfy: unknown;
+        subject: { fx: any; fy: any; x: any; y: any };
       }) {
         if (!d.active) force.alphaTarget(0.3).restart();
         d.subject.fx = d.subject.x;
-        d.subjectfy = d.subject.y;
+        d.subject.fy = d.subject.y;
       }
 
       // eslint-disable-next-line no-inner-declarations
@@ -191,33 +169,5 @@ export class WorldListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
-  }
-
-  onNodeSelected(e, aNode) {
-    this.node = aNode;
-  }
-
-  clickdragging() {
-    if (this.draggingEnabled === true) {
-      this.draggingEnabled = false;
-    } else {
-      this.draggingEnabled = true;
-    }
-  }
-
-  clickpanning() {
-    if (this.panningEnabled === true) {
-      this.panningEnabled = false;
-    } else {
-      this.panningEnabled = true;
-    }
-  }
-
-  clickzoom() {
-    if (this.zoomEnabled === true) {
-      this.zoomEnabled = false;
-    } else {
-      this.zoomEnabled = true;
-    }
   }
 }

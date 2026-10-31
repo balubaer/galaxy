@@ -1,38 +1,13 @@
 <galaxy-navigation-component></galaxy-navigation-component>
 <h2>World List</h2>
 <svg id="v6" width="960" height="600"></svg><!--graph container-->
-<div class="container">
-  <table id="table1">
-    <tr>
-      <td> Enable Dragging </td>
-      <td> Enable Panning </td>
-      <td> Enable Zoom </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="checkbox" ng-model="draggingEnabled" (click)="clickdragging()">
-      </td>
-      <td>
-        <input type="checkbox" ng-model="panningEnabled" (click)="clickpanning()">
-      </td>
-      <td>
-        <input type="checkbox" ng-model="zoomEnabled" (click)="clickzoom()">
-      </td>
-    </tr>
-  </table>
-</div>
-<br />
-<button mat-stroked-button color="primary" class="button" (click)="center$.next(true)">Center</button>
-<button mat-stroked-button color="primary" class="button" (click)="zoomToFit$.next(true)">Zoom to fit</button>
-<br />
-
 <svg class="world" width="200" height="200">
   @if (node) {
     <g [attr.transform]="'translate(100,100)'">
       <circle [attr.r]="50" [attr.fill]="node.data?.backgroundColor"></circle>
       <circle [attr.r]="15" fill="black" [attr.cx]="30" [attr.cy]="30"></circle>
       <text alignment-baseline="central" text-anchor="middle" [attr.x]="30" [attr.y]="30"
-      fill="white">{{node.data.dships}}</text>>
+      fill="white">{{node.data.dships}}</text>
       <text fill="rgb(0, 0, 0)" font-family="HelveticaNeue, 'Helvetica Neue', Helvetica, Arial, sans-serif"
       alignment-baseline="central" text-anchor="middle">{{node.label}}</text>
       @for (fleet of node.data.fleets; track fleet) {
@@ -50,11 +25,3 @@
 @for (world of worldList$ | async; track world) {
   <pre>{{ world }}</pre>
 }
-<br />
-<pre>
-  @for (world of worlds$ | async; track world) {
-    <tr>
-      <td>{{ world }}</td>
-    </tr>
-  }</pre>
-  <br />
