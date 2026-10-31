@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { ShowGamePrefComponent } from '../show-game-pref/show-game-pref.component';
 import { CreateWorldsComponent } from '../create-worlds/create-worlds.component';
 import { CreateGameComponent } from '../create-game/create-game.component';
-import { ShowPlayerComponent } from '../show-player/show-player.component';
 import { WorldListComponent } from '../world-list/world-list.component';
 import { PlayerModule } from '../player/player.module';
 import { SetAdminComponent } from '../set-admin/set-admin.component';
@@ -26,11 +25,6 @@ const routes: Routes = [
   {
     path: 'admin/show-game',
     component: ShowGamePrefComponent,
-    canActivate: [AdminAuthGuard]
-  },
-  {
-    path: 'admin/show-player',
-    component: ShowPlayerComponent,
     canActivate: [AdminAuthGuard]
   },
   {

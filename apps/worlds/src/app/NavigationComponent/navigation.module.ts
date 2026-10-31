@@ -7,7 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NavigationComponentRoutingModule } from './navigation-component-routing.module';
 import { ShowGamePrefComponent } from '../show-game-pref/show-game-pref.component';
 import { CreateWorldsComponent } from '../create-worlds/create-worlds.component';
-import { ShowPlayerComponent } from '../show-player/show-player.component';
 import { WorldListComponent } from '../world-list/world-list.component';
 import { CreateGameComponent } from '../create-game/create-game.component';
 import { AdminComponent } from './admin.component';
@@ -15,10 +14,10 @@ import { NavigationComponentComponent } from './navigation-component/navigation-
 import { SetAdminComponent } from '../set-admin/set-admin.component';
 import { AdminLoginComponent } from '../adminLogin/admin-login.component';
 import { CharacterInfoComponent } from '../_components/character-info/character-info.component';
+import { PlayerCharactersComponent } from '../_components/player-characters/player-characters.component';
 
 @NgModule({ declarations: [
         AdminComponent,
-        ShowPlayerComponent,
         CreateWorldsComponent,
         WorldListComponent,
         CreateGameComponent,
@@ -30,5 +29,6 @@ import { CharacterInfoComponent } from '../_components/character-info/character-
     exports: [AdminComponent], imports: [CommonModule,
         NavigationComponentRoutingModule,
         ReactiveFormsModule,
-        CharacterInfoComponent], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        CharacterInfoComponent,
+        PlayerCharactersComponent], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class NavigationModule { }

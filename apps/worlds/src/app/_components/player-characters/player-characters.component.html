@@ -1,0 +1,22 @@
+<table class="player-characters">
+  <tr>
+    <th>Spieler</th>
+    <th>Gewählt</th>
+    <th>Charakter im Spiel</th>
+    <th>Punkte</th>
+  </tr>
+  @for (player of players$ | async; track player.playerName) {
+    <tr>
+      <td>
+        @if (linkPrefix !== undefined) {
+          <a [routerLink]="[linkPrefix, player.playerName]">{{ player.playerName }}</a>
+        } @else {
+          {{ player.playerName }}
+        }
+      </td>
+      <td>{{ characterName(player.chosen) }}</td>
+      <td>{{ characterName(player.characterType) }}</td>
+      <td>{{ player.points }}</td>
+    </tr>
+  }
+</table>

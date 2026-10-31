@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from '../app.service';
-import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface, gameTypeOf, CharacterType } from '@galaxy/game-objects';
+import { GamePref, World, WorldGenerator, startGamePref, publicGamePref, keepHiddenGamePref, WorldsPersist, OutPutLists, OutPutStringWithNodesAndLinksInterface, gameTypeOf, CharacterType, PlayerCharacter, PersistenceManager } from '@galaxy/game-objects';
 import { Message, User } from '@galaxy/api-interfaces';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 
@@ -72,6 +72,26 @@ export class CreateWorldController {
     const stringData = readFileSync('gamePref.json', 'utf8');
     const gamepref: GamePref = JSON.parse(stringData);
     return gamepref.player;
+  }
+
+  /** Charakter und Punkte je Spieler, aus der Gamepref und den Welten der aktuellen Runde. */
+  @Get('GetPlayerCharacters')
+  getPlayerCharacters(): Array<PlayerCharacter> {
+    const gamepref: GamePref = JSON.parse(readFileSync('gamePref.json', 'utf8'));
+    const worldsFile = `${gamepref.playName}/Turn${gamepref.round}/worlds.json`;
+    const pm = new PersistenceManager(new Array<World>());
+    if (existsSync(worldsFile)) {
+      pm.createWorldsWithWorldsPersist(JSON.parse(readFileSync(worldsFile, 'utf8')));
+    }
+    return gamepref.player.map(playerName => {
+      const player = pm.allPlayerDict.get(playerName);
+      return {
+        playerName,
+        chosen: gamepref.characterTypes?.[playerName],
+        characterType: player?.characterType ?? null,
+        points: player?.points ?? 0,
+      };
+    });
   }
 
   @Post('SetGamePref')

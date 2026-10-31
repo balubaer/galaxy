@@ -2,16 +2,4 @@
 <!--<div>Player: {{ player$ | async | json }}</div>-->
 <h4>Spieler-Liste</h4>
 
-<ol>
-  @for (player of players$| async; track player) {
-    <li>{{ player }}</li>
-  }
-</ol>
-
-<table>
-  @for (player of players$ | async; track player) {
-    <tr>
-      <td><a [routerLink]="[player]">{{ player }}</a></td>
-    </tr>
-  }
-</table>
+<galaxy-player-characters linkPrefix="/admin/player"></galaxy-player-characters>

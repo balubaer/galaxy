@@ -1,0 +1,15 @@
+.player-characters {
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+.player-characters th,
+.player-characters td {
+    border: 1px solid #ddd;
+    padding: 4px 10px;
+    text-align: left;
+}
+
+.player-characters th {
+    background-color: #f2f2f2;
+}

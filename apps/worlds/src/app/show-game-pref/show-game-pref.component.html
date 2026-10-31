@@ -3,6 +3,7 @@
 
 @if (gamePref$|async; as gamePref) {
   <div>
+    <div>Spieltyp: <b>{{ gamePref.gameType === 'classic' ? 'RSW Classic' : 'RSW Core' }}</b></div>
     <div>Runde: <b>"{{ gamePref.round }}"</b></div>
     @if (gamePref.finished) {
       <div><b>Das Spiel ist beendet. Sieger: {{ gamePref.winner }}</b></div>
@@ -15,12 +16,20 @@
     <div>Die Flotten, die Anfang des Spieles auf der Heimatwelt sind, haben <b>{{ gamePref.startShipCount }}
     Schiffe</b>.</div>
   </div>
-}
 
-<h4>Spieler-Liste</h4>
+  <h4>Spieler-Liste</h4>
 
-<ol>
-  @for (player of players$| async; track player) {
-    <li>{{ player }}</li>
+  @if (gamePref.gameType === 'classic') {
+    <galaxy-player-characters linkPrefix="/admin/player"></galaxy-player-characters>
+    <details class="character-overview">
+      <summary>Charaktere im Classic Game</summary>
+      <galaxy-character-info></galaxy-character-info>
+    </details>
+  } @else {
+    <ol>
+      @for (player of gamePref.player; track player) {
+        <li>{{ player }}</li>
+      }
+    </ol>
   }
-</ol>
+}

@@ -12,15 +12,11 @@ import { GameServiceService } from '../game-service.service';
 })
 export class ShowGamePrefComponent implements OnInit {
   gamePref$: Observable<GamePref> | undefined;
-  players$: Observable<Array<string>> | undefined;
 
   constructor(private route: ActivatedRoute, private gamePrefService: GameServiceService) { }
 
   ngOnInit() {
-    this.gamePref$ = this.route.params =
-      this.gamePrefService.getGamePref();
-      this.players$ = this.gamePrefService.getPlayerList();
-
+    this.gamePref$ = this.gamePrefService.getGamePref();
   }
 
 }

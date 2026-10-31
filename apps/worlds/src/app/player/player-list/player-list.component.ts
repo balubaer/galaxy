@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { GameServiceService } from '../../game-service.service';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'galaxy-player-list',
@@ -8,13 +6,5 @@ import { GameServiceService } from '../../game-service.service';
     styleUrls: ['./player-list.component.scss'],
     standalone: false
 })
-export class PlayerListComponent implements OnInit {
-  players$: Observable<Array<string>> | undefined;
-
-  constructor(private gameService: GameServiceService) { }
-
-  ngOnInit() {
-    this.players$ = this.gameService.getPlayerList();
-  }
-
+export class PlayerListComponent {
 }

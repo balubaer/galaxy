@@ -26,3 +26,13 @@ export interface GamePref {
 export function gameTypeOf(gamePref: GamePref): GameType {
     return gamePref.gameType === 'classic' ? 'classic' : 'core';
 }
+
+/** Charakter eines Spielers für die Admin-Konsole: Wahl laut Gamepref und tatsächlicher Charakter im Spiel. */
+export interface PlayerCharacter {
+    playerName: string;
+    /** Wahl bei der Spielanlage ('random' = zufällig zugelost). */
+    chosen?: CharacterType | 'random';
+    /** Charakter in der aktuellen Runde, null solange die Welten noch nicht erzeugt sind. */
+    characterType: CharacterType | null;
+    points: number;
+}

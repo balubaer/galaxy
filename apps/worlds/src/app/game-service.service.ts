@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { GamePref } from '@galaxy/game-objects';
+import { GamePref, PlayerCharacter } from '@galaxy/game-objects';
 import { Message } from '@galaxy/api-interfaces';
 
 
@@ -22,6 +22,10 @@ export class GameServiceService {
 
   getPlayerList(): Observable<Array<string>> {
     return this.http.get<Array<string>>('/api/create-world/GetPlayerList')
+  }
+
+  getPlayerCharacters(): Observable<Array<PlayerCharacter>> {
+    return this.http.get<Array<PlayerCharacter>>('/api/create-world/GetPlayerCharacters')
   }
 
   getColors(): Observable<Array<string>> {

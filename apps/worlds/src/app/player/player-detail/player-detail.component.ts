@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { GamePlayService } from '../game-play.service';
-import { RespondTurnData, GamePref, RequestTurnDataOnlyPlayer, PlayerCommands, PlayerColor, RequestTurnDataOnlyPlayerAndRound, extractNumberString } from '@galaxy/game-objects';
+import { RespondTurnData, GamePref, CHARACTER_TYPE_NAMES, CharacterType, RequestTurnDataOnlyPlayer, PlayerCommands, PlayerColor, RequestTurnDataOnlyPlayerAndRound, extractNumberString } from '@galaxy/game-objects';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { GameServiceService } from '../../game-service.service';
 
@@ -175,6 +175,10 @@ export class PlayerDetailComponent implements OnInit, OnDestroy {
         this.ishiddenPrevButton = false;
       }
     }
+  }
+
+  characterName(type: CharacterType): string {
+    return CHARACTER_TYPE_NAMES[type];
   }
 
   pressViewHomeWorld() {

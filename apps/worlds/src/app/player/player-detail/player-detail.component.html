@@ -38,6 +38,10 @@
             </tr>
         </table>
     </div>
+    <div *ngIf="turnData.characterType" class="container">
+        <div>Charakter: <b>{{ characterName(turnData.characterType) }}</b></div>
+        <galaxy-character-info [characterType]="turnData.characterType"></galaxy-character-info>
+    </div>
      <div class="container2">
         <table id="table2">
             <tr id="tr2">

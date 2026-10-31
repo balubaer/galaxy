@@ -8,6 +8,8 @@ import { PlayerListComponent } from './player-list/player-list.component';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavigationPlayerComponent } from './navigation-component/NavigationPlayerComponent';
+import { CharacterInfoComponent } from '../_components/character-info/character-info.component';
+import { PlayerCharactersComponent } from '../_components/player-characters/player-characters.component';
 
 
 @NgModule({ declarations: [
@@ -21,5 +23,7 @@ import { NavigationPlayerComponent } from './navigation-component/NavigationPlay
         PlayerListComponent,
     ], imports: [CommonModule,
         PlayerRoutingModule,
-        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        ReactiveFormsModule,
+        CharacterInfoComponent,
+        PlayerCharactersComponent], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class PlayerModule { }
