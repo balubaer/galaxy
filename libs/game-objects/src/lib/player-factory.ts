@@ -3,6 +3,9 @@ import { World, worldWithNumber } from './world'
 import { DistanceLevel } from './distance-level';
 import { Fleet, fleetAndHomeWorldWithNumber } from './fleet';
 import { Player } from './player';
+import { createGameLogger } from './game-log';
+
+const logger = createGameLogger('PlayerFactory');
 
 export class PlayerFactory {
     worldDice: Dice;
@@ -67,7 +70,7 @@ export class PlayerFactory {
             }
         }
         result = worldWithNumber(worldArray, foundWorldNumber);
-        console.log(`#### Gefundenen Welten: ${foundWorldNumber}`);
+        logger.debug(`#### Gefundenen Welten: ${foundWorldNumber}`);
 
         if (result === null) {
             result = this.findWorldWithDice(this.worldDice, worldArray);
@@ -113,7 +116,7 @@ export class PlayerFactory {
 
         for (let counter = 1; counter <= playerNameCount; counter++) {
             const player = this.findePlayerWithDice();
-            console.log(`#### ${counter} Player: ${player.playerName}`);
+            logger.debug(`#### ${counter} Player: ${player.playerName}`);
 
             let world: World = null;
             if (counter === 1) {
@@ -127,7 +130,7 @@ export class PlayerFactory {
                 world = this.findWorldWithMinWorldArea(this.nextLevelWorlds);
             }
 
-            console.log(`#### ${counter} vor setPlayer World: ${world.number} Player: ${world.player}`);
+            logger.debug(`#### ${counter} vor setPlayer World: ${world.number} Player: ${world.player}`);
 
             world.player = player;
             this.homeWorldsDict.set(player.playerName, world);

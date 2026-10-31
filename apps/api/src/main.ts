@@ -7,10 +7,12 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
+import { useNestLoggerForGameLog } from './app/common/nest-game-log';
 import { APP_VERSION, BUILD_COMMIT } from './version';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
+  useNestLoggerForGameLog();
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

@@ -1,6 +1,9 @@
 import { World } from './world'
 import { Dice } from './dice';
 import { Port } from './port';
+import { createGameLogger } from './game-log';
+
+const logger = createGameLogger('PortFactory');
 
 export class PortFactory {
     worldsWithEnoughConnections: Array<World>;
@@ -62,11 +65,11 @@ export class PortFactory {
             }
 
             let logString = `World [${aWorld.number}] ist fertig.`;
-            console.log(logString);
+            logger.debug(logString);
             logString = `Bearbeitete Welten: Anzahl [${this.workingWorlds.length}]`;
-            console.log(logString);
+            logger.debug(logString);
             logString = `Weld mit ausreichend Verfindungen: Anzahl [${this.worldsWithEnoughConnections.length}]`;
-            console.log(logString);
+            logger.debug(logString);
         }
 
     }

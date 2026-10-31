@@ -1,25 +1,21 @@
+import { createGameLogger } from './game-log';
+
 export type ClassicLogSink = (message: string) => void;
 
-function isTestRun(): boolean {
-    // Kein Node-Typ nötig, die Bibliothek wird auch im Browser eingebunden.
-    const env = (globalThis as { process?: { env?: { [key: string]: string | undefined } } }).process?.env;
-    return env?.['JEST_WORKER_ID'] !== undefined;
-}
+const logger = createGameLogger('Classic');
 
-const defaultSink: ClassicLogSink = message => {
-    if (isTestRun() === false) {
-        console.log(message);
-    }
-};
+let sink: ClassicLogSink | undefined;
 
-let sink: ClassicLogSink = defaultSink;
-
-/** Leitet die Classic-Logs um (z. B. in Tests); ohne Argument wieder auf die Konsole. */
+/** Leitet die Classic-Logs um (z. B. in Tests); ohne Argument wieder auf den Spiel-Logger. */
 export function setClassicLogSink(newSink?: ClassicLogSink) {
-    sink = newSink ?? defaultSink;
+    sink = newSink;
 }
 
 /** Protokoll der Classic-Auswertung, z. B. warum keine Schiffe gebaut werden. */
 export function classicLog(message: string) {
-    sink(`[Classic] ${message}`);
+    if (sink) {
+        sink(`[Classic] ${message}`);
+    } else {
+        logger.log(message);
+    }
 }

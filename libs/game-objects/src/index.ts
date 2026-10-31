@@ -28,6 +28,7 @@ export * from './lib/classic-world-factory';
 export * from './lib/classic-economy';
 export * from './lib/classic-commands';
 export * from './lib/final-phase-classic-game';
+export * from './lib/game-log';
 export * from './lib/classic-log';
 export * from './lib/classic-combat';
 export * from './lib/classic-combat-commands';

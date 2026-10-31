@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { existsSync, readFileSync } from 'fs';
 import { Login, User } from '@galaxy/api-interfaces';
 import { compareSync } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
+    private static readonly logger = new Logger(AuthService.name);
 
     public static async authenticateUser(user: { username: string, password: string }): Promise<Login> {
 
@@ -23,7 +24,7 @@ export class AuthService {
                             username: user.username,
                             password: aUser.password
                         };
-                        console.log('Alles Gut #############')
+                        AuthService.logger.debug(`Benutzer ${user.username} angemeldet`);
                         userFound = true;
                         break;
                     }
