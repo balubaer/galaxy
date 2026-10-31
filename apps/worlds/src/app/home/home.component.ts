@@ -11,6 +11,8 @@ import {
   RequestTurnDataOnlyPlayerAndRound,
   PlayerColor,
   extractNumberString,
+  CHARACTER_TYPE_NAMES,
+  CharacterType,
 } from '@galaxy/game-objects';
 import { GamePlayService } from '../player/game-play.service';
 import { Node } from "@galaxy/api-interfaces";
@@ -1192,6 +1194,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.node = aNode;
         this.readNewTurnDataWithRoundAndWorldName(this.changeround, this.node.id);
         this.selectWorld = +extractNumberString(this.node.id);
+  }
+
+  characterName(type: CharacterType): string {
+    return CHARACTER_TYPE_NAMES[type];
   }
 
   ngOnDestroy(): void {

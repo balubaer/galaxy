@@ -204,6 +204,17 @@ h4 {
   color: var(--muted);
 }
 
+.cargo {
+  font-size: 0.8em;
+  color: var(--muted);
+  margin-top: 0.2em;
+}
+
+.cargo.loaded {
+  color: inherit;
+  font-weight: bold;
+}
+
 .card-orders {
   display: flex;
   flex-direction: column;

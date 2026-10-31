@@ -101,9 +101,6 @@
                 @if (card.fleet.atPeace) {
                   <span class="badge" title="At Peace">☮</span>
                 }
-                @if (card.fleet.metal > 0) {
-                  <span class="badge" title="geladenes Metall">⛏{{ card.fleet.metal }}</span>
-                }
               </span>
             </div>
             <div class="ships">
@@ -113,6 +110,11 @@
               }
             </div>
             <div class="ships-label">Schiffe</div>
+            @if (classic) {
+              <div class="cargo" [class.loaded]="card.fleet.metal > 0" title="geladenes Metall">
+                ⛏ {{ card.fleet.metal }} Metall
+              </div>
+            }
             <div class="card-orders">
               @for (command of card.commands; track command) {
                 @let d = describe(command);

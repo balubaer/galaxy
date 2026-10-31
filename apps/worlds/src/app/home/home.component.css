@@ -48,6 +48,7 @@ textarea {
 
 /* Punktekasten, Weltendetails/Legende und Spielerlegende so breit wie die Weltenkarte. */
 .points-box,
+.character-box,
 .world-row,
 .player-legend {
   width: 750px;
@@ -58,6 +59,14 @@ textarea {
 .points-box {
   text-align: center;
   border-radius: 8px;
+}
+
+.character-box {
+  margin-bottom: 1em;
+}
+
+.character-box summary {
+  cursor: pointer;
 }
 
 /* Details der gewählten Welt links an der Karte, Legende rechts. */

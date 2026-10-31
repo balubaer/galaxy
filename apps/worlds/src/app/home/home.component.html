@@ -8,12 +8,18 @@
     <table id="table1">
       <tr>
         <h2>
-          Hi {{ currentUser.username }},du bist in Runde "{{ round + 1 }}"
+          Hi {{ currentUser.username }}, du bist in Runde "{{ round + 1 }}"
         </h2>
       </tr>
     </table>
   </div>
   <pre class="points-box">Punkte: {{ turnData.points }}</pre>
+  @if (turnData.characterType) {
+    <details class="character-box" open>
+      <summary>Dein Charakter: <b>{{ characterName(turnData.characterType) }}</b></summary>
+      <galaxy-character-info [characterType]="turnData.characterType"></galaxy-character-info>
+    </details>
+  }
   <!-- Weltendetails links, Legende rechts – bündig mit der Weltenkarte -->
   <div class="world-row">
     <div class="world-detail">
@@ -499,6 +505,7 @@
         [links]="turnData.links"
         [ownColor]="ownColor"
         [players]="otherPlayerNames"
+        [classic]="isClassic"
         [characterType]="turnData.characterType ?? null"
         [collectorColors]="collectorColors"
         [commandText]="form.value.Commands"

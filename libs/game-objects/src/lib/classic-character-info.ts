@@ -1,4 +1,5 @@
 import { CharacterType } from './player';
+import { ARTIFACT_POINTS, ARTIFACT_SET_BONUS, CHARACTER_TREASURES, MUSEUM_ARTIFACTS } from './classic-artifacts';
 import { CLASSIC_BUILD_COST, CLASSIC_EMPEROR_INDUSTRY_COST, CLASSIC_EMPEROR_SCRAP_I_SHIPS, CLASSIC_SCRAP_I_SHIPS } from './classic-economy';
 import {
     EMPEROR_POPULATION_PER_POINT, PENALTY_PER_PLUNDER, RAIDER_PLUNDER_POINTS, RAIDER_PLUNDER_POINTS_AFTER,
@@ -27,6 +28,24 @@ export const CHARACTER_INFOS: { [key in CharacterType]?: CharacterInfo } = {
         abilities: [
             `Industrie kostet nur ${CLASSIC_EMPEROR_INDUSTRY_COST} statt ${CLASSIC_BUILD_COST}`,
             `Eine Industrie aus ${CLASSIC_EMPEROR_SCRAP_I_SHIPS} statt ${CLASSIC_SCRAP_I_SHIPS} verschrotteten I-Schiffen`,
+        ],
+    },
+    collector: {
+        summary: 'Sammelt Artefakte und baut Museen.',
+        points: [
+            `Je Runde für jedes eigene Artefakt: ${CHARACTER_TREASURES.collector.adjective} ${CHARACTER_TREASURES.collector.noun} `
+                + `${ARTIFACT_POINTS.collector.treasure}, ${CHARACTER_TREASURES.collector.adjective} oder `
+                + `${CHARACTER_TREASURES.collector.noun} ${ARTIFACT_POINTS.collector.half}, Sonderstücke `
+                + `${ARTIFACT_POINTS.collector.special["The Philosopher's Stone"]}, Key to Time ${ARTIFACT_POINTS.collector.keyToTime}, `
+                + `alle anderen ${ARTIFACT_POINTS.collector.default} Punkte`,
+            `Am Spielende: Key to Time vollständig ${ARTIFACT_SET_BONUS.collector.keyToTime}, `
+                + `alle ${CHARACTER_TREASURES.collector.adjective}- bzw. alle ${CHARACTER_TREASURES.collector.noun}-Artefakte (ohne Cursed) je `
+                + `${ARTIFACT_SET_BONUS.collector.adjective} Punkte`,
+            `Am Spielende ${ARTIFACT_SET_BONUS.collector.museum} Punkte je Museum (eigene Welt mit mindestens ${MUSEUM_ARTIFACTS} Artefakten)`,
+        ],
+        abilities: [
+            'Cursed-Artefakte und schädliche Sonderstücke schaden ihm nicht',
+            'Andere Spieler dürfen Artefakte an seine Flotten hängen, auch von Flotte zu Flotte',
         ],
     },
     raider: {

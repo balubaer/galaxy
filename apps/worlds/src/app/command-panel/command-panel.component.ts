@@ -127,6 +127,8 @@ export class CommandPanelComponent implements OnChanges {
   @Input() nodes: Node[] = [];
   @Input() ownColor = '';
   @Input() players: string[] = [];
+  /** Classic Game: Flottenkarten zeigen das geladene Metall. */
+  @Input() classic = false;
   /** Classic Game: eigener Charakter (z. B. für die Plünderpunkte). */
   @Input() characterType: string | null = null;
   /** Classic Game: Farben der Mitspieler, die man als Collector markiert hat. */
