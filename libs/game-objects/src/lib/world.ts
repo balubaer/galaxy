@@ -117,6 +117,8 @@ export class World implements NumberKey {
     reportPlayers: Array<Player>;
     /** Hinweise zu Eroberung und Neutralisierung in dieser Runde (nur für den Bericht). */
     events: Array<string>;
+    /** Classic: Feuer der I-/P-Schiffe dieser Welt auf Flotten in dieser Runde (nur für Bericht und Karte). */
+    homeShipShots: Array<{ ships: 'I' | 'P'; fleet: Fleet }> = [];
 
     constructor() {
         this.fleets = new Array<Fleet>();

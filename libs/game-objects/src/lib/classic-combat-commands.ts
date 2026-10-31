@@ -129,6 +129,7 @@ export class ClassicFire extends Command implements ExecuteCommand {
                 this.shooter.firesTo = this.target.name();
             } else {
                 this.world.addEvent(`${shooterName} feuern auf ${this.target.name()}`);
+                this.world.homeShipShots.push({ ships: this.shooter as 'I' | 'P', fleet: this.target });
             }
         } else {
             this.world.groundShots.push({ player: this.player, shots, target: this.target });

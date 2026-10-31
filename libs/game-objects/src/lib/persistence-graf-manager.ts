@@ -76,12 +76,24 @@ export class PersistenceGrafManager {
                     atPeace: fleet.atPeace,
                     pbb: fleet.pbb,
                     ...(fleet.artifacts.length > 0 ? { artifacts: artifactInfos(fleet.artifacts) } : {}),
+                    // Feuer dieser Runde, z. B. 'F7[ZAPHOD]' oder 'I-Schiffe und Industrie W6'.
+                    ...(fleet.fired && fleet.firesTo ? { firesTo: fleet.firesTo } : {}),
                     fontColor: this.getFontColorWithPlayer(fleet.player)
                 }
             )
             this.nextPosForFleet();
         }
         return fleets;
+    }
+
+    /** Feuer der D-, I- und P-Schiffe der Welt in dieser Runde: Schiffsart und Nummer der beschossenen Flotte. */
+    homeFireWithWorld(world: World): { homeFire?: Array<{ ships: 'D' | 'I' | 'P'; fleet: number }> } {
+        const homeFire: Array<{ ships: 'D' | 'I' | 'P'; fleet: number }> = world.homeShipShots
+            .map(shot => ({ ships: shot.ships, fleet: shot.fleet.number }));
+        if (world.dShipsFired && world.dShipsFiredFleet) {
+            homeFire.unshift({ ships: 'D', fleet: world.dShipsFiredFleet.number });
+        }
+        return homeFire.length > 0 ? { homeFire } : {};
     }
 
     /** Classic-Werte der Welt, dazu wie oft dieser Spieler hier schon Konsumgüter entladen hat. */
@@ -108,6 +120,7 @@ export class PersistenceGrafManager {
                             classic: this.classicInfoForPlayer(world, playerName),
                             backgroundColor: world.blackHole ? 'black' : this.getColorWithPlayer(world.player),
                             fleets: this.getFleetsWithWorld(world),
+                            ...this.homeFireWithWorld(world),
                             fontColor: world.blackHole ? 'white' : this.getFontColorWithPlayer(world.player)
                         }
                     }

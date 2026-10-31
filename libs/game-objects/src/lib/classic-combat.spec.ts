@@ -6,6 +6,7 @@ import { CommandFactory } from './command-factory';
 import { FinalPhaseClassicGame } from './final-phase-classic-game';
 import { destroyShips } from './classic-combat';
 import { PersistenceManager } from './persistence-manager';
+import { PersistenceGrafManager } from './persistence-graf-manager';
 
 interface Setup {
   worlds: Array<World>;
@@ -125,6 +126,23 @@ describe('Classic Feuerbefehle', () => {
     endTurn(s);
     // I: 3 Schuss -> 1 Schiff, P: 2 Schuss -> 1 Schiff
     expect(s.fleets[5].ships).toBe(4);
+  });
+
+  it('Karte zeigt die Schüsse der Runde an Flotten und Heimatschiffen', () => {
+    const s = setup();
+    noBuild(s);
+    s.worlds[0].iShips = 7;
+    s.fleets[0].ships = 5; s.fleets[1].ships = 5;
+    place(s, s.fleets[5], s.worlds[0], 6);
+    run(s, { A: 'I1AF6 F1AF6', B: 'F6AI' });
+    endTurn(s);
+    const graf = new PersistenceGrafManager(s.worlds, s.players, new Map(), new Map()).generateNodesAndLinks('A');
+    const w1 = graf.nodes.find(n => n.id === 'W1');
+    expect(w1.data.homeFire).toEqual([{ ships: 'I', fleet: 6 }]);
+    const fleets = w1.data.fleets.map((f: { label: string; firesTo?: string }) => [f.label.replace(/=.*/, ''), f.firesTo]);
+    expect(fleets).toContainEqual(['F1', 'F6[B]']);
+    expect(fleets).toContainEqual(['F2', undefined]);
+    expect(fleets).toContainEqual(['F6', 'I-Schiffe und Industrie W1']);
   });
 
   it('eigene Flotte, eigene Welt und I-Schiffe auf den Boden werden abgelehnt', () => {
